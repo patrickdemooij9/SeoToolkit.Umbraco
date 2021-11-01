@@ -1,0 +1,27 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContactViewModel>
+
+@using Clean.Core.Controllers.Surface
+@using Clean.Core.Models.ViewModels;
+@using Umbraco.Extensions
+
+@using (Html.BeginUmbracoForm<ContactSurfaceController>("SubmitForm", FormMethod.Post, new { @class = "text-left" }))
+{
+    <div class="form-group">
+        <label for="Name">@Umbraco.GetDictionaryValue("ContactForm.Name")</label>
+        <input asp-for="@Model.Name" class="form-control" />
+        <span asp-validation-for="@Model.Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Email">@Umbraco.GetDictionaryValue("ContactForm.Email")</label>
+        <input asp-for="@Model.Email" class="form-control" />
+        <span asp-validation-for="@Model.Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Message">@Umbraco.GetDictionaryValue("ContactForm.Message")</label>
+        <textarea asp-for="@Model.Message" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="@Model.Message" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <button class="btn btn-primary btn-block btn-lg" type="submit">@Umbraco.GetDictionaryValue("ContactForm.Send")</button>
+    </div>
+}

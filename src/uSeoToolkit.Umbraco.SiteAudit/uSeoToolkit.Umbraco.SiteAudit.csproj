@@ -1,0 +1,162 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <ContentTargetFolders>.</ContentTargetFolders>
+        <Product>uSeoToolkit.Umbraco.SiteAudit</Product>
+        <PackageId>uSeoToolkit.Umbraco.SiteAudit</PackageId>
+        <Title>uSeoToolkit.Umbraco.SiteAudit</Title>
+        <Description>...</Description>
+        <Product>...</Product>
+        <PackageTags>umbraco plugin package</PackageTags>
+        <RootNamespace>uSeoToolkit.Umbraco.SiteAudit</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+      <None Remove="App_Plugins\uSeoToolkit\backoffice\SiteAudit\create.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\backoffice\SiteAudit\create.html" />
+      <None Remove="App_Plugins\uSeoToolkit\backoffice\SiteAudit\detail.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\backoffice\SiteAudit\detail.html" />
+      <None Remove="App_Plugins\uSeoToolkit\backoffice\SiteAudit\list.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\backoffice\SiteAudit\list.html" />
+      <None Remove="App_Plugins\uSeoToolkit\backoffice\SiteAudit\package.manifest" />
+      <None Remove="App_Plugins\uSeoToolkit\css\main.css" />
+      <None Remove="App_Plugins\uSeoToolkit\css\siteAudit.css" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\Components\DynamicSelectBox\dynamicSelectBox.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\Components\DynamicSelectBox\dynamicSelectBox.html" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.html" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\ContentApps\DocumentSettings\documentSettings.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\ContentApps\DocumentSettings\documentSettings.html" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\ContentApps\SeoSettings\seoSettings.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\ContentApps\SeoSettings\seoSettings.html" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\Dashboards\SiteAudit\siteAuditDashboard.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\Dashboards\SiteAudit\siteAuditDashboard.html" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.html" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.html" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.html" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\SiteAudit\create.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\SiteAudit\create.html" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\SiteAudit\detail.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\SiteAudit\detail.html" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\SiteAudit\overview.controller.js" />
+      <None Remove="App_Plugins\uSeoToolkit\Interface\SiteAudit\overview.html" />
+      <None Remove="App_Plugins\uSeoToolkit\js\siteAuditHub.js" />
+      <None Remove="App_Plugins\uSeoToolkit\lang\en-us.xml" />
+      <None Remove="App_Plugins\uSeoToolkit\libs\chart.min.js" />
+      <None Remove="App_Plugins\uSeoToolkit\package.manifest" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="App_Plugins\uSeoToolkit\backoffice\SiteAudit\create.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\backoffice\SiteAudit\create.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\backoffice\SiteAudit\detail.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\backoffice\SiteAudit\detail.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\backoffice\SiteAudit\list.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\backoffice\SiteAudit\list.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\backoffice\SiteAudit\package.manifest">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\css\main.css">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\css\siteAudit.css">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\Components\DynamicSelectBox\dynamicSelectBox.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\Components\DynamicSelectBox\dynamicSelectBox.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\ContentApps\DocumentSettings\documentSettings.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\ContentApps\DocumentSettings\documentSettings.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\ContentApps\SeoSettings\seoSettings.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\ContentApps\SeoSettings\seoSettings.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\Dashboards\SiteAudit\siteAuditDashboard.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\Dashboards\SiteAudit\siteAuditDashboard.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\SiteAudit\create.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\SiteAudit\create.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\SiteAudit\detail.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\SiteAudit\detail.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\SiteAudit\overview.controller.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\Interface\SiteAudit\overview.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\js\siteAuditHub.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\lang\en-us.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\libs\chart.min.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="App_Plugins\uSeoToolkit\package.manifest">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.0.1" />
+        <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.1" />
+    </ItemGroup>
+</Project>

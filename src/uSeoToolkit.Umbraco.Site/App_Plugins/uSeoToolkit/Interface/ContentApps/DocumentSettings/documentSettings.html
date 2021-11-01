@@ -1,0 +1,60 @@
+﻿<div ng-controller="uSeoToolkit.ContentApps.DocumentSettingController as vm" class="form-horizontal">
+    <umb-box ng-show="vm.loading === false">
+        <umb-box-content>
+            <div class="control-group umb-control-group">
+                <div class="umb-el-wrap">
+                    <div class="control-header">
+                        <label class="control-label">Enable Seo Settings</label>
+                        <small class="control-description">
+                            Enables the manual Seo Settings for this document type. If you are doing custom seo settings, you don't have to use this
+                        </small>
+                    </div>
+                    <div class="controls">
+                        <div class="umb-property-editor">
+                            <umb-toggle checked="vm.model.enableSeoSettings"
+                                        on-click="vm.toggleSeoSettings()">
+                            </umb-toggle>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="vm.model.enableSeoSettings">
+                <div class="control-group umb-control-group">
+                    <div class="umb-el-wrap">
+                        <div class="control-header">
+                            <label class="control-label">Inheritance</label>
+                            <small class="control-description">
+                                Control from which type this should be inherited. It'll then use the values from that type.
+                            </small>
+                        </div>
+                        <div class="controls">
+                            <a id="starting-node" ng-if="vm.model.inheritance == null" ng-click="vm.openContentTypeDialog()">Select inheritance</a>
+                            <a ng-if="vm.model.inheritance != null" ng-click="vm.openContentTypeDialog()">{{vm.model.inheritance.name}}</a>
+                            <i class="icon-delete" ng-if="vm.model.inheritance != null" ng-click="vm.removeInheritance()"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group umb-control-group" ng-repeat="field in vm.model.values">
+                    <div class="umb-el-wrap">
+                        <div class="control-header">
+                            <label class="control-label">{{field.title}}</label>
+                            <small class="control-description">
+                                {{field.description}}
+                            </small>
+                        </div>
+                        <div class="controls">
+                            <span ng-if="!field.useInheritedValue">{{vm.formatFieldValue(field)}}</span>
+                            <b ng-if="field.useInheritedValue">Inherited value</b>
+
+                            <div style="float: right;">
+                                <a class="btn btn-success" ng-click="vm.openSettingDialog(field)" ng-if="!field.useInheritedValue">Open settings</a>
+                                <a class="btn" ng-click="vm.toggleUseInheritedValue(field, false)" ng-if="field.useInheritedValue">Override</a>
+                                <a class="btn" ng-click="vm.toggleUseInheritedValue(field, true)" ng-if="!field.useInheritedValue && vm.model.inheritance != null">Use inherited</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </umb-box-content>
+    </umb-box>
+</div>

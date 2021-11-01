@@ -1,0 +1,41 @@
+﻿@inherits UmbracoViewPage<Clean.Core.Models.ViewModels.PageHeaderViewModel>
+
+@{
+    string mainImageUrl = Model.HasBackgroundImage ? Model.BackgroundImage.GetCropUrl(1903,628) : "/media/f01jqvmq/2.jpg";
+}
+
+<header class="masthead" style="background-image: url('@mainImageUrl')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="@(Model.ArticleDate.HasValue ? "post-heading" : "site-heading")">
+                    <h1>@(!string.IsNullOrWhiteSpace(Model.Title) ? Model.Title : Model.Name)</h1>
+
+                    @if (Model.IsArticle)
+                    {
+                        if (Model.HasSubtitle)
+                        {
+                            <h2 class="subheading">@Model.Subtitle</h2>
+                        }
+                        <span class="meta">
+                            Posted
+                            @if (Model.HasAuthor)
+                            {
+                                @Umbraco.GetDictionaryValue("Article.By")@:&nbsp;@Model.AuthorName
+                            }
+                            @Umbraco.GetDictionaryValue("Article.On")@Html.Raw("&nbsp;")@Model.ArticleDate.Value.ToString("MMMM dd, yyyy")
+                        </span>
+                    }
+                    else
+                    {
+                        if (Model.HasSubtitle)
+                        {
+                            <span class="subheading">@(Model.Subtitle)</span>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

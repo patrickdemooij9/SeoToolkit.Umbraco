@@ -1,0 +1,211 @@
+﻿<div ng-controller="uSeoToolkit.SiteAudit.DetailController as vm" class="umb-scrollable">
+    <div class="umb-dashboard umb-scrollable row-fluid">
+        <div class="umb-dashboard__content">
+            <umb-load-indicator ng-if="vm.isLoading"></umb-load-indicator>
+
+            <div ng-if="!vm.isLoading">
+
+                <umb-editor-sub-header>
+                    <umb-editor-sub-header-content-right>
+                        <div class="pull-right">
+                            <umb-button type="button"
+                                        label="Actions"
+                                        action="vm.toggle()"
+                                        button-style="outline"
+                                        show-caret="true">
+                            </umb-button>
+                            <umb-dropdown ng-if="vm.dropdownOpen" on-close="vm.close()" umb-keyboard-list class="siteaudit-actions umb-actions">
+                                <umb-dropdown-item ng-repeat="item in vm.items">
+                                    <button type="button" class="btn-reset" ng-click="vm.select(item)">
+                                        <i class="icon {{item.icon}}"></i>
+                                        <span class="menu-label">{{ item.name }}</span>
+                                    </button>
+                                </umb-dropdown-item>
+                            </umb-dropdown>
+                        </div>
+                    </umb-editor-sub-header-content-right>
+                </umb-editor-sub-header>
+
+                <umb-box>
+                    <div class="umb-box-header">
+                        {{vm.audit.Name}}
+                        <div>
+                            <div class="umb-healthcheck-message" style="margin: 0;">
+                                <i class="icon-delete color-red" aria-hidden="true"></i>
+                                {{vm.errors}}
+                            </div>
+                            <div class="umb-healthcheck-message" style="margin: 0;">
+                                <i class="icon-info color-orange" aria-hidden="true"></i>
+                                {{vm.warnings}}
+                            </div>
+                            <div class="umb-healthcheck-message" style="margin: 0;">
+                                <i class="icon-document" aria-hidden="true"></i>
+                                {{vm.audit.PagesCrawled.length}}/{{vm.audit.MaxPagesToCrawl ? vm.audit.MaxPagesToCrawl : vm.audit.TotalPagesFound}}
+                            </div>
+                        </div>
+                    </div>
+                    <umb-progress-bar class="siteaudit-progress" percentage="{{vm.audit.Progress}}" data-test="{{vm.audit.Progress}}">
+                    </umb-progress-bar>
+                    <div class="umb-box-content">
+                        <h4>Status: {{vm.audit.Status}}</h4>
+                        <hr />
+                        <h4>Summary</h4>
+                        <div class="siteaudit-results">
+                            <div ng-repeat="(checkResultKey, checkResultValue) in vm.checkResults">
+                                <i class="icon-delete color-red" ng-if="checkResultValue.isError"></i>
+                                <i class="icon-info color-orange" ng-if="checkResultValue.isWarning"></i>
+                                <a ng-click="vm.filterResultsOnCheck(checkResultKey)">{{vm.getCheckById(checkResultKey).ErrorMessage}} ({{checkResultValue.count}} times)</a>
+                            </div>
+                        </div>
+                        <!--<canvas id="myChart" ng-init="vm.initChart()" width="400" height="400"></canvas>-->
+                    </div>
+                </umb-box>
+                <div class="umb-packages-section">
+                    <div class="umb-packages-categories">
+                        <button type="button" class="umb-packages-category -first" style="max-width: 100%" ng-click="vm.setOverviewPage('allPages')">
+                            All pages
+                        </button>
+                        <button type="button" class="umb-packages-category -last" style="max-width: 100%" ng-click="vm.setOverviewPage('allChecks')">
+                            All checks
+                        </button>
+                    </div>
+                </div>
+                <div class="umb-panel-group__details-group" ng-if="vm.overviewPage == 'allPages'">
+                    <div class="umb-panel-group__details-group-title">
+                        <div class="umb-panel-group__details-group-name">All Crawled pages</div>
+                        <div>
+                            <umb-toggle checked="vm.onlyShowIssues"
+                                        on-click="vm.toggleShowIssues()"
+                                        show-labels="true"
+                                        label-on="Only showing items with issues"
+                                        label-off="No issue filter">
+                            </umb-toggle>
+                        </div>
+                    </div>
+                    <div class="umb-panel-group__details-checks">
+                        <div class="umb-panel-group__details-check">
+                            <div ng-repeat="page in vm.pages">
+                                <div class="umb-panel-group__details-status" style="justify-content: space-between; padding-left: 20px; padding-right: 20px;">
+                                    <div style="flex: 1;">{{page.Url}}</div>
+                                    <div style="flex: 1;">Status: <span ng-class="{'error-status': page.StatusCode < 200 || page.StatusCode > 299}">{{page.StatusCode}}</span></div>
+                                    <div class="umb-healthcheck-messages" style="margin: 0; flex: 1;">
+                                        <div class="umb-healthcheck-message" ng-show="page.Errors > 0" style="margin: 0;">
+                                            <i class="icon-delete color-red" aria-hidden="true"></i>
+                                            {{page.Errors}}
+                                        </div>
+                                        <div class="umb-healthcheck-message" ng-show="page.Warnings > 0" style="margin: 0;">
+                                            <i class="icon-info color-orange" aria-hidden="true"></i>
+                                            {{page.Warnings}}
+                                        </div>
+                                    </div>
+                                    <a ng-click="vm.openPage(page)" ng-show="!page.Show">
+                                        Open
+                                    </a>
+                                    <a ng-click="vm.closePage(page)" ng-show="page.Show">
+                                        Close
+                                    </a>
+                                </div>
+                                <div class="umb-panel-group__details-status" ng-show="page.Show" style="padding: 0 20px 15px 40px; border-top: none; display: block;">
+                                    <div ng-repeat="result in page.Results" ng-show="page.Results.length > 0">
+                                        {{result.Message}}
+                                    </div>
+                                    <div ng-show="page.Results.length == 0">
+                                        No results for this page!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="vm.pagination.totalPages > 1">
+                            <umb-pagination page-number="vm.pagination.pageNumber"
+                                            total-pages="vm.pagination.totalPages"
+                                            on-next="vm.nextPage"
+                                            on-prev="vm.prevPage"
+                                            on-change="vm.changePage"
+                                            on-go-to-page="vm.goToPage"
+                                            class="siteaudit-pagination">
+                            </umb-pagination>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="umb-panel-group__details-group" ng-if="vm.overviewPage == 'allChecks'">
+                    <div class="umb-panel-group__details-group-title">
+                        <div class="umb-panel-group__details-group-name">All checks</div>
+                    </div>
+                    <div class="umb-panel-group__details-checks">
+                        <div class="umb-panel-group__details-check">
+                            <div ng-repeat="check in vm.audit.Checks">
+                                <div class="umb-panel-group__details-status" style="justify-content: space-between; padding-left: 20px; padding-right: 20px;">
+                                    <div style="flex: 1;">{{check.Name}}</div>
+                                    <div class="umb-healthcheck-messages" style="margin: 0; flex: 1;" ng-show="vm.checkResults[check.Id]">
+                                        <div class="umb-healthcheck-message" ng-show="vm.checkResults[check.Id].isError" style="margin: 0;">
+                                            <i class="icon-delete color-red" aria-hidden="true"></i>
+                                            {{vm.checkResults[check.Id].count}}
+                                        </div>
+                                        <div class="umb-healthcheck-message" ng-show="vm.checkResults[check.Id].isWarning" style="margin: 0;">
+                                            <i class="icon-info color-orange" aria-hidden="true"></i>
+                                            {{vm.checkResults[check.Id].count}}
+                                        </div>
+                                    </div>
+                                    <a ng-click="vm.filterResultsOnCheck(check.Id)">
+                                        Show occurrences
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="umb-panel-group__details-group" ng-if="vm.overviewPage == 'filteredCheck'">
+                    <div class="umb-panel-group__details-group-title">
+                        <div class="umb-panel-group__details-group-name">{{vm.filterCheck.Name}}</div>
+                    </div>
+                    <div class="umb-panel-group__details-checks">
+                        <div class="umb-panel-group__details-check">
+                            <div ng-repeat="page in vm.pages">
+                                <div class="umb-panel-group__details-status" style="justify-content: space-between; padding-left: 20px; padding-right: 20px;">
+                                    <div style="flex: 1;">{{page.Url}}</div>
+                                    <div class="umb-healthcheck-messages" style="margin: 0; flex: 1;">
+                                        <div class="umb-healthcheck-message" ng-show="page.Errors > 0" style="margin: 0;">
+                                            <i class="icon-delete color-red" aria-hidden="true"></i>
+                                            {{page.Errors}}
+                                        </div>
+                                        <div class="umb-healthcheck-message" ng-show="page.Warnings > 0" style="margin: 0;">
+                                            <i class="icon-info color-orange" aria-hidden="true"></i>
+                                            {{page.Warnings}}
+                                        </div>
+                                    </div>
+                                    <a ng-click="vm.openPage(page)" ng-show="!page.Show">
+                                        Open
+                                    </a>
+                                    <a ng-click="vm.closePage(page)" ng-show="page.Show">
+                                        Close
+                                    </a>
+                                </div>
+                                <div class="umb-panel-group__details-status" ng-show="page.Show" style="padding: 0 20px 15px 40px; border-top: none; display: block;">
+                                    <div ng-repeat="result in page.Results | filter:vm.resultFilter" ng-show="page.Results.length > 0">
+                                        {{result.Message}}
+                                    </div>
+                                    <div ng-show="page.Results.length == 0">
+                                        No results for this page!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="vm.pagination.totalPages > 1">
+                            <umb-pagination page-number="vm.pagination.pageNumber"
+                                            total-pages="vm.pagination.totalPages"
+                                            on-next="vm.nextPage"
+                                            on-prev="vm.prevPage"
+                                            on-change="vm.changePage"
+                                            on-go-to-page="vm.goToPage"
+                                            class="siteaudit-pagination">
+                            </umb-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

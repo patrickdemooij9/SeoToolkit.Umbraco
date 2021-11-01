@@ -1,0 +1,86 @@
+﻿<div ng-controller="uSeoToolkit.SiteAudit.CreateController as vm">
+    <div class="umb-pane">
+        <umb-load-indicator ng-if="vm.isLoading"></umb-load-indicator>
+
+        <div class="form-horizontal">
+            <div style="display: flex; justify-content: space-between">
+                <umb-box style="width: 50%; margin-right: 14px;">
+                    <div class="umb-box-header">
+                        1. Audit information
+                    </div>
+                    <div class="umb-box-content">
+                        <div class="control-group umb-control-group">
+                            <div class="umb-el-wrap">
+                                <div class="control-header">
+                                    <label for="name" class="control-label">Name</label>
+                                </div>
+                                <div class="controls">
+                                    <input type="text" class="umb-textstring" id="name" style="width: 100%;" ng-model="vm.selectedAudit.name" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group umb-control-group">
+                            <div class="umb-el-wrap" style="padding-top: 10px">
+                                <div class="control-header">
+                                    <label for="starting-node" class="control-label">Starting node</label>
+                                </div>
+                                <div class="controls">
+                                    <a id="starting-node" ng-if="vm.selectedAudit.selectedNode == null" ng-click="vm.openNodeDialog()">Select starting node</a>
+                                    <a ng-if="vm.selectedAudit.selectedNode != null" ng-click="vm.openNodeDialog()">{{vm.selectedAudit.selectedNode.name}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group umb-control-group">
+                            <div class="umb-el-wrap" style="padding-top: 10px">
+                                <div class="control-header">
+                                    <label for="starting-node" class="control-label">Max pages to crawl</label>
+                                    <small class="control-description">The max pages to crawl. Leave empty for no maximum</small>
+                                </div>
+                                <div class="controls">
+                                    <input type="number" class="umb-number" id="name" style="width: 100%;" ng-model="vm.selectedAudit.maxPagesToCrawl" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group umb-control-group">
+                            <div class="umb-el-wrap" style="padding-top: 10px">
+                                <div class="control-header">
+                                    <label for="starting-node" class="control-label">Minimum delay between requests</label>
+                                    <small class="control-description">Minimum delay to use between requests in seconds.</small>
+                                </div>
+                                <div class="controls">
+                                    <input type="number" class="umb-number" id="name" style="width: 100%;" ng-model="vm.selectedAudit.delayBetweenRequests" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </umb-box>
+                <umb-box style="width: 50%">
+                    <div class="umb-box-header">
+                        2. Checks
+                    </div>
+                    <div class="umb-box-content">
+                        <div class="control-group umb-control-group" ng-repeat="check in vm.checks">
+                            <div class="umb-el-wrap">
+                                <div class="control-header" style="padding-top: 0;">
+                                    <div class="control-label">{{check.name}}</div>
+                                    <small class="control-description">{{check.description}}</small>
+                                </div>
+                                <div class="controls">
+                                    <umb-toggle class="umb-permission__toggle"
+                                                checked="vm.selectedAudit.checks.includes(check.id)"
+                                                on-click="vm.toggleCheck(check)">
+                                    </umb-toggle>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </umb-box>
+            </div>
+            <div>
+                <umb-button type="button" style="float: right;" button-style="success btn-sm" size="xs" label-key="siteAudit_createAndStart" action="vm.createAudit(true)">Create and start</umb-button>
+                <umb-button type="button" style="float: right;" button-style="success btn-sm" size="xs" label-key="siteAudit_create" action="vm.createAudit(false)">Create</umb-button>
+                <umb-button type="button" style="float: right;" button-style="primary btn-sm" size="xs" label-key="siteAudit_cancel" action="vm.cancel()">Cancel</umb-button>
+            </div>
+        </div>
+    </div>
+</div>

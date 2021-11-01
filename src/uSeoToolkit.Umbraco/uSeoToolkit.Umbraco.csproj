@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <ContentTargetFolders>.</ContentTargetFolders>
+        <Product>uSeoToolkit.Umbraco</Product>
+        <PackageId>uSeoToolkit.Umbraco</PackageId>
+        <Title>uSeoToolkit.Umbraco</Title>
+        <Description>...</Description>
+        <Product>...</Product>
+        <PackageTags>umbraco plugin package</PackageTags>
+        <RootNamespace>uSeoToolkit.Umbraco</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+      <None Remove="App_Plugins\uSeoToolkit.Umbraco.Core\package.manifest" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="App_Plugins\uSeoToolkit.Umbraco.Core\package.manifest">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.0.1" />
+        <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.1" />
+    </ItemGroup>
+</Project>

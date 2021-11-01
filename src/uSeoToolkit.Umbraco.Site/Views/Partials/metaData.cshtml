@@ -1,0 +1,44 @@
+﻿@inherits UmbracoViewPage<IPublishedContent>
+
+@{
+    var homePage = Model.AncestorOrSelf<Home>();
+    string domainAddress = homePage.Url(mode:UrlMode.Absolute).TrimEnd('/');
+    string canonicalLink = domainAddress + Model.Url();
+    string metaName = Model.Value<string>("metaName");
+    string metaDescription = Model.Value<string>("metaDescription");
+    var metaKeywords = Model.Value<IEnumerable<string>>("metaKeywords");
+}
+
+<meta charset="utf-8" />
+<link rel="icon" type="image/png" href="/media/favicon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<title>
+    @string.Format("{0} | {1}", Model.Name, Umbraco.GetDictionaryValue("Navigation.SiteName"))
+</title>
+<meta name="Description" content="@metaDescription" />
+<meta name="Name" content="@metaName" />
+<meta name="Keywords" content="@string.Join(",", metaKeywords)" />
+<link rel="canonical" href="@canonicalLink" />
+
+<meta property="og:type" content="article" />
+<meta property="og:url" content="@canonicalLink" />
+<meta property="og:title" content="@metaName" />
+<meta property="og:description" content="@metaDescription" />
+<meta property="og:image" content="@(domainAddress)/socialimage.png">
+<meta property="og:image:type" content="image/png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="@metaName">
+<meta name="twitter:description" content="@metaDescription">
+<meta name="twitter:image" content="@(domainAddress)/socialimage.png">
+
+<link rel="apple-touch-icon" sizes="57x57" href="/media/favicon.png?width=57&height=57">
+<link rel="apple-touch-icon" sizes="60x60" href="/media/favicon.png?width=60&height=60">
+<link rel="apple-touch-icon" sizes="72x72" href="/media/favicon.png?width=72&height=72">
+<link rel="apple-touch-icon" sizes="76x76" href="/media/favicon.png?width=76&height=76">
+<link rel="apple-touch-icon" sizes="114x114" href="/media/favicon.png?width=114&height=114">
+<link rel="apple-touch-icon" sizes="120x120" href="/media/favicon.png?width=120&height=120">
+<link rel="apple-touch-icon" sizes="144x144" href="/media/favicon.png?width=144&height=144">
+<link rel="apple-touch-icon" sizes="152x152" href="/media/favicon.png?width=152&height=152">
+<link rel="apple-touch-icon" sizes="180x180" href="/media/favicon.png?width=180&height=180">

@@ -1,0 +1,86 @@
+﻿@inherits UmbracoViewPage
+
+@using Clean.Core.Helpers
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+
+@{
+    ArticleList articleList = UmbracoContext.Content.GetAtRoot().DescendantsOrSelf<ArticleList>().FirstOrDefault();
+    int modelId = Model.Id;
+    var isArticleListPage = modelId == articleList.Id;
+    var fallbackPageSize = isArticleListPage ? 10 : 3;
+
+    var pageSize = QueryStringHelper.GetIntFromQueryString(Context.Request.Query, "size", fallbackPageSize);
+    var pageNumber = QueryStringHelper.GetIntFromQueryString(Context.Request.Query, "page", 1);
+    var allArticles = articleList.Children<Article>().Where(x => x.IsVisible()).OrderByDescending(x => x.ArticleDate);
+    var pageOfArticles = allArticles.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+    var totalItemCount = allArticles.Count();
+    var pageCount = totalItemCount > 0 ? Math.Ceiling((double)totalItemCount / pageSize) : 1;
+
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            @foreach (var article in pageOfArticles)
+            {
+                <div class="post-preview">
+                    <a href="@article.Url()">
+                        <h2 class="post-title">
+                            @(!string.IsNullOrWhiteSpace(article.Title) ? article.Title : article.Name)
+                        </h2>
+                        @if (!string.IsNullOrWhiteSpace(article.Subtitle))
+                        {
+                            <h3 class="post-subtitle">@article.Subtitle</h3>
+                        }
+                    </a>
+                    <p class="post-meta">
+                        @Umbraco.GetDictionaryValue("Article.Posted")
+                        @if (!string.IsNullOrWhiteSpace(article.AuthorName))
+                        {
+                            @Umbraco.GetDictionaryValue("Article.By")@Html.Raw("&nbsp;")@article.AuthorName
+                        }
+                        @Umbraco.GetDictionaryValue("Article.On") @article.ArticleDate.ToString("MMMM dd, yyyy")
+                    </p>
+                </div>
+                <hr>
+            }
+            <!-- Pager -->
+            <div id="paging" class="clearfix">
+                @if (isArticleListPage)
+                {
+                    if (pageCount > 1)
+                    {
+                        <div class="paging-block">
+                            @if (pageNumber > 1)
+                            {
+                                <a class="btn btn-primary float-left" href="@($"{articleList.Url()}?page={pageNumber - 1}&size={pageSize}")">@Umbraco.GetDictionaryValue("Paging.Previous")</a>
+                            }
+                            else
+                            {
+                                @Html.Raw("&nbsp;")
+                            }
+                        </div>
+                        <div class="paging-block text-center">
+                            <span>@Umbraco.GetDictionaryValue("Paging.Page") @pageNumber @Umbraco.GetDictionaryValue("Paging.Of") @pageCount</span>
+                        </div>
+                        <div class="paging-block">
+                            @if (pageNumber < pageCount)
+                            {
+                                <a class="btn btn-primary float-right" href="@($"{articleList.Url()}?page={pageNumber + 1}&size={pageSize}")">@Umbraco.GetDictionaryValue("Paging.Next")</a>
+                            }
+                            else
+                            {
+                                @Html.Raw("&nbsp;")
+                            }
+                        </div>
+
+                    }
+                }
+                else
+                {
+                    <a class="btn btn-primary float-right" href="@(articleList.Url())">@Umbraco.GetDictionaryValue("ArticleList.ViewAll")</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

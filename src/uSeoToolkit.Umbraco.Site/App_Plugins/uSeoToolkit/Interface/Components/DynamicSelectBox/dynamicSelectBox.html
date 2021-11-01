@@ -1,0 +1,34 @@
+﻿<div class="dynamic-select-box">
+    <div class="controls">
+        <select ng-model="vm.selectedField" style="margin-bottom: 0;">
+            <option ng-repeat="field in vm.baseList" value="{{field.value}}" ng-bind="field.name"></option>
+        </select>
+        <button type="button" class="btn" ng-click="vm.addField()">
+            Add
+        </button>
+    </div>
+    <table class="table" ng-show="vm.selectedList.length > 0">
+        <thead>
+            <tr>
+                <td></td>
+                <th>Alias</th>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody ui-sortable="sortableOptions" ng-model="vm.selectedList">
+            <tr ng-repeat="val in vm.selectedList">
+                <td>
+                    <i class="icon icon-navigation handle" aria-hidden="true" aria-label="Sort"></i>
+                </td>
+                <td>
+                    {{val.name}}
+                </td>
+                <td>
+                    <button type="button" class="btn-icon" ng-click="vm.removeField(val)" aria-label="Remove">
+                        <i class="icon-trash" aria-hidden="true"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

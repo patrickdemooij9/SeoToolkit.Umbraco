@@ -1,0 +1,69 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Search>
+
+@using Clean.Core.Models.ViewModels
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+@inject Umbraco.Cms.Core.IPublishedContentQuery publishedContentQuery
+
+@{ 
+    Layout = "master.cshtml";
+    var searchQuery = Context.Request.Query["q"]; 
+}
+
+@await Html.PartialAsync("~/Views/Partials/pageHeader.cshtml", new PageHeaderViewModel(Model.Name, Model.Title, Model.Subtitle, Model.MainImage))
+
+<div class="container">
+    <form action="@Model.Url()" method="GET" id="search">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="form-group controls">
+                    <input type="text" class="form-control col-xs-6" placeholder="@Umbraco.GetDictionaryValue("Search.Placeholder")" name="q" value="@searchQuery" />
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="form-group">
+                    <button class="btn btn-primary search-button">@Umbraco.GetDictionaryValue("Search.SearchButton") <i class="fa fa-search"></i></button>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-10 mx-auto">
+                @if (!string.IsNullOrWhiteSpace(searchQuery))
+                {
+                    var results = publishedContentQuery.Search(searchQuery);
+                    long resultCount = results != null && results.Any() ? results.Count() : 0;
+                    @Html.Raw(string.Format(Umbraco.GetDictionaryValue("Search.Results"), resultCount, searchQuery)) if (resultCount > 0)
+                    {
+                        foreach (var result in results)
+                        {
+                            <div class="post-preview">
+                                <a href="@result.Content.Url()">
+                                    <h2 class="post-title">
+                                        @(result.Content.HasProperty("title") && result.Content.HasValue("title") && !string.IsNullOrWhiteSpace(result.Content.Value<string>("title")) ? result.Content.Value("title") : result.Content.Name)
+                                    </h2>
+                                    @if (result.Content.HasProperty("subtitle") && result.Content.HasValue("subtitle") && !string.IsNullOrWhiteSpace(result.Content.Value<string>("subtitle")))
+                                    {
+                                    <h3 class="post-subtitle">@(result.Content.Value<string>("subtitle"))</h3>}
+                                </a>
+                                @if (result.Content.HasProperty("authorName") && result.Content.HasValue("authorName") && !string.IsNullOrWhiteSpace(result.Content.Value<string>("authorName"))
+                                    || (result.Content.HasProperty("articleDate") && result.Content.HasValue("articleDate") && result.Content.Value<DateTime>("articleDate") > DateTime.MinValue))
+                                {
+                                    <p class="post-meta">
+                                        @Umbraco.GetDictionaryValue("Article.Posted")
+                                        @if (result.Content.HasProperty("authorName") && result.Content.HasValue("authorName") && !string.IsNullOrWhiteSpace(result.Content.Value<string>("authorName")))
+                                        {
+                                            @Umbraco.GetDictionaryValue("Article.By")@Html.Raw("&nbsp;")@(result.Content.Value<string>("authorName"))
+                                        }
+
+                                        @if (result.Content.HasProperty("articleDate") && result.Content.HasValue("articleDate") && result.Content.Value<DateTime>("articleDate") > DateTime.MinValue)
+                                        {
+                                            @Umbraco.GetDictionaryValue("Article.On")@:&nbsp;@(result.Content.Value<DateTime>("ArticleDate").ToString("MMMM dd, yyyy"))
+                                        }
+                                    </p>
+                                }
+                            </div> 
+                            }
+                        <hr>
+                    }
+                }
+            </div>
+        </div>
+    </form>
+</div>

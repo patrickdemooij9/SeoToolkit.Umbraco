@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <ContentTargetFolders>.</ContentTargetFolders>
+        <Product>uSeoToolkit.Umbraco.SiteAudit.Core</Product>
+        <PackageId>uSeoToolkit.Umbraco.SiteAudit.Core</PackageId>
+        <Title>uSeoToolkit.Umbraco.SiteAudit.Core</Title>
+        <Description>...</Description>
+        <Product>...</Product>
+        <PackageTags>umbraco plugin package</PackageTags>
+        <RootNamespace>uSeoToolkit.Umbraco.SiteAudit.Core</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.0.1" />
+        <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj" />
+      <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />
+    </ItemGroup>
+</Project>
