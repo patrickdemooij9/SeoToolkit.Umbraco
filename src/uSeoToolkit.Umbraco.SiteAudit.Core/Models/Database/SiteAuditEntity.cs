@@ -21,8 +21,8 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Models.Database
         [Column("CreatedDate")]
         public DateTime CreatedDate { get; set; }
 
-        [Column("StartingNodeId")]
-        public int StartingNodeId { get; set; }
+        [Column("StartingUrl")]
+        public string StartingUrl { get; set; }
 
         [Column("MaxPagesToCrawl")]
         [NullSetting(NullSetting = NullSettings.Null)]

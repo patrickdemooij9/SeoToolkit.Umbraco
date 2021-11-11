@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Extensions;
 using uSeoToolkit.Umbraco.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Collections;
+using uSeoToolkit.Umbraco.SiteAudit.Core.Common.Scheduler;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Enums;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Hubs;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
@@ -30,13 +32,15 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Controllers
         private readonly ISettingsService<SiteAuditConfigModel> _settingsService;
         private readonly ILogger<SiteAuditController> _logger;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly ISiteAuditScheduler _siteAuditScheduler;
 
         public SiteAuditController(SiteAuditService siteAuditService,
             ISiteCheckService siteCheckService,
             SiteAuditHubClientService siteAuditHubClient,
             ISettingsService<SiteAuditConfigModel> settingsService,
             ILogger<SiteAuditController> logger,
-            IUmbracoContextFactory umbracoContextFactory)
+            IUmbracoContextFactory umbracoContextFactory,
+            ISiteAuditScheduler siteAuditScheduler)
         {
             _siteAuditService = siteAuditService;
             _siteCheckService = siteCheckService;
@@ -44,6 +48,7 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Controllers
             _settingsService = settingsService;
             _logger = logger;
             _umbracoContextFactory = umbracoContextFactory;
+            _siteAuditScheduler = siteAuditScheduler;
         }
 
         [HttpGet]
@@ -71,7 +76,7 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Controllers
         [HttpGet]
         public IActionResult Connect(int auditId, string clientId)
         {
-            _siteAuditHubClient.AssignClient(Guid.NewGuid().ToString(), auditId);
+            _siteAuditHubClient.AssignClient(clientId, auditId);
             return Get(auditId);
         }
 
@@ -95,36 +100,37 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateAudit([FromBody] CreateAuditPostModel postModel)
+        public async Task<IActionResult> CreateAudit([FromBody] CreateAuditPostModel postModel)
         {
             //TODO: Move to mapper
-            using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
-            var model = new SiteAuditDto
+            SiteAuditDto model;
+            using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
             {
-                Name = postModel.Name,
-                CreatedDate = DateTime.UtcNow,
-                Status = SiteAuditStatus.Created,
-                StartingUrl = new Uri(ctx.UmbracoContext.Content.GetById(postModel.SelectedNodeId).Url(mode: UrlMode.Absolute)),
-                SiteChecks = _siteCheckService.GetAll().Where(it => postModel.Checks.Contains(it.Id)).ToList(),
-                MaxPagesToCrawl = postModel.MaxPagesToCrawl == 0 ? (int?)null : postModel.MaxPagesToCrawl,
-                DelayBetweenRequests = postModel.DelayBetweenRequests * 1000
-            };
+                model = new SiteAuditDto
+                {
+                    Name = postModel.Name,
+                    CreatedDate = DateTime.UtcNow,
+                    Status = postModel.StartAudit ? SiteAuditStatus.Scheduled : SiteAuditStatus.Created,
+                    StartingUrl = new Uri(ctx.UmbracoContext.Content.GetById(postModel.SelectedNodeId).Url(mode: UrlMode.Absolute)),
+                    SiteChecks = _siteCheckService.GetAll().Where(it => postModel.Checks.Contains(it.Id)).ToList(),
+                    MaxPagesToCrawl = postModel.MaxPagesToCrawl == 0 ? (int?)null : postModel.MaxPagesToCrawl,
+                    DelayBetweenRequests = postModel.DelayBetweenRequests * 1000
+                };
+            }
+
             model = _siteAuditService.Save(model);
             if (postModel.StartAudit)
             {
-                Task.Run(() =>
-                {
-                    try
-                    {
-                        var result = _siteAuditService.StartSiteAudit(model).Result;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Something went wrong!");
-                    }
-                });
+                _siteAuditScheduler.AddSiteAudit(model.Id);
             }
             return Ok(model.Id);
+        }
+
+        [HttpPost]
+        public IActionResult StopAudit(StopAuditPostModel model)
+        {
+            _siteAuditService.StopSiteAudit(model.Id);
+            return Ok();
         }
     }
 }

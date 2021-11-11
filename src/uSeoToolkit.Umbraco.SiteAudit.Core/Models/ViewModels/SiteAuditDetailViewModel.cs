@@ -46,13 +46,14 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Models.ViewModels
 
             if (model.Status == SiteAuditStatus.Running)
             {
-                if (MaxPagesToCrawl is null)
+                if (TotalPagesFound == 0)
+                    Progress = 0;
+                else if (MaxPagesToCrawl is null)
                 {
                     Progress = (float)PagesCrawled.Length / TotalPagesFound * 100;
                 }
                 else
                 {
-                    //TODO: Calculate progress
                     Progress = (float)PagesCrawled.Length / MaxPagesToCrawl.Value * 100;
                 }
             }

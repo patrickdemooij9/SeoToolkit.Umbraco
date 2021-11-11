@@ -3,9 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using NPoco;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Core.Web;
+using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Extensions;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Enums;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
@@ -16,13 +18,25 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Repositories
 {
     public class SiteAuditDatabaseRepository : ISiteAuditRepository
     {
-        private readonly IScopeProvider _scopeProvider;
+        private readonly IScopeAccessor _scopeAccessor;
         private readonly ISiteCheckService _siteCheckService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
 
-        public SiteAuditDatabaseRepository(IScopeProvider scopeProvider, ISiteCheckService siteCheckService, IUmbracoContextFactory umbracoContextFactory)
+        private IScope AmbientScope
         {
-            _scopeProvider = scopeProvider;
+            get
+            {
+                if (_scopeAccessor.AmbientScope is null)
+                    throw new Exception("No scope!");
+                return _scopeAccessor.AmbientScope;
+            }
+        }
+
+        private IUmbracoDatabase Database => AmbientScope.Database;
+
+        public SiteAuditDatabaseRepository(IScopeAccessor scopeAccessor, ISiteCheckService siteCheckService, IUmbracoContextFactory umbracoContextFactory)
+        {
+            _scopeAccessor = scopeAccessor;
             _siteCheckService = siteCheckService;
             _umbracoContextFactory = umbracoContextFactory;
         }
@@ -34,59 +48,49 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Repositories
 
         public void Delete(int id)
         {
-            using (var scope = _scopeProvider.CreateScope())
+            foreach (var page in Database.Fetch<SiteAuditPageEntity>(AmbientScope.SqlContext.Sql().SelectAll()
+                .From<SiteAuditPageEntity>()
+                .Where<SiteAuditPageEntity>(it => it.AuditId == id)))
             {
-                foreach (var page in scope.Database.Fetch<SiteAuditPageEntity>(scope.SqlContext.Sql().SelectAll()
-                    .From<SiteAuditPageEntity>()
-                    .Where<SiteAuditPageEntity>(it => it.AuditId == id)))
-                {
-                    foreach (var result in scope.Database.Fetch<SiteAuditCheckResultEntity>(scope.SqlContext.Sql()
-                        .SelectAll()
-                        .From<SiteAuditCheckResultEntity>()
-                        .Where<SiteAuditCheckResultEntity>(it => it.PageId == page.Id)))
-                    {
-                        scope.Database.Delete(result);
-                    }
-                    scope.Database.Delete(page);
-                }
-                foreach (var check in scope.Database.Fetch<SiteAuditCheckEntity>(scope.SqlContext.Sql()
+                foreach (var result in Database.Fetch<SiteAuditCheckResultEntity>(AmbientScope.SqlContext.Sql()
                     .SelectAll()
-                    .From<SiteAuditCheckEntity>()
-                    .Where<SiteAuditCheckEntity>(it => it.AuditId == id)))
+                    .From<SiteAuditCheckResultEntity>()
+                    .Where<SiteAuditCheckResultEntity>(it => it.PageId == page.Id)))
                 {
-                    scope.Database.Delete(check);
+                    Database.Delete(result);
                 }
-
-                scope.Database.Delete<SiteAuditEntity>(id);
-
-                scope.Complete();
+                Database.Delete(page);
             }
+            foreach (var check in Database.Fetch<SiteAuditCheckEntity>(AmbientScope.SqlContext.Sql()
+                .SelectAll()
+                .From<SiteAuditCheckEntity>()
+                .Where<SiteAuditCheckEntity>(it => it.AuditId == id)))
+            {
+                Database.Delete(check);
+            }
+
+            Database.Delete<SiteAuditEntity>(id);
         }
 
         public void SaveCrawledPage(SiteAuditDto audit, CrawledPageDto page)
         {
-            using (var scope = _scopeProvider.CreateScope())
+            var pageEntity = new SiteAuditPageEntity
             {
-                var pageEntity = new SiteAuditPageEntity
-                {
-                    AuditId = audit.Id,
-                    StatusCode = page.StatusCode,
-                    Url = page.PageUrl.ToString()
-                };
-                scope.Database.Insert(pageEntity);
-                scope.Complete();
+                AuditId = audit.Id,
+                StatusCode = page.StatusCode,
+                Url = page.PageUrl.ToString()
+            };
+            Database.Insert(pageEntity);
 
-                foreach (var result in page.Results)
+            foreach (var result in page.Results)
+            {
+                Database.Insert(new SiteAuditCheckResultEntity
                 {
-                    scope.Database.Insert(new SiteAuditCheckResultEntity
-                    {
-                        PageId = pageEntity.Id,
-                        CheckId = result.Check.Id,
-                        ResultId = (int)result.Result,
-                        ExtraValues = JsonConvert.SerializeObject(result.ExtraValues)
-                    });
-                }
-                scope.Complete();
+                    PageId = pageEntity.Id,
+                    CheckId = result.Check.Id,
+                    ResultId = (int)result.Result,
+                    ExtraValues = JsonConvert.SerializeObject(result.ExtraValues)
+                });
             }
         }
 
@@ -99,32 +103,30 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Repositories
         {
             using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
             {
-                using (var scope = _scopeProvider.CreateScope())
+                var entities = Database.Fetch<SiteAuditEntity>();
+                foreach (var entity in entities)
                 {
-                    var entities = scope.Database.Fetch<SiteAuditEntity>();
-                    foreach (var entity in entities)
+                    yield return new SiteAuditDto
                     {
-                        yield return new SiteAuditDto
-                        {
-                            Id = entity.Id,
-                            Name = entity.Name,
-                            CreatedDate = entity.CreatedDate,
-                            Status = (SiteAuditStatus)entity.StatusId,
-                            MaxPagesToCrawl = entity.MaxPagesToCrawl,
-                            DelayBetweenRequests = entity.DelayBetweenRequests,
-                            TotalPagesFound = entity.TotalPagesFound,
-                            StartingUrl = new Uri(ctx.UmbracoContext.Content.GetById(entity.StartingNodeId)?.Url(mode: UrlMode.Absolute)),
-                            SiteChecks = scope.Database.Fetch<SiteAuditCheckEntity>(scope.SqlContext.Sql()
+                        Id = entity.Id,
+                        Name = entity.Name,
+                        CreatedDate = entity.CreatedDate,
+                        Status = (SiteAuditStatus)entity.StatusId,
+                        MaxPagesToCrawl = entity.MaxPagesToCrawl,
+                        DelayBetweenRequests = entity.DelayBetweenRequests,
+                        TotalPagesFound = entity.TotalPagesFound,
+                        StartingUrl = new Uri(entity.StartingUrl),
+                        SiteChecks = Database.Fetch<SiteAuditCheckEntity>(AmbientScope.SqlContext.Sql()
                                 .SelectAll()
                                 .From<SiteAuditCheckEntity>()
                                 .Where<SiteAuditCheckEntity>(it => it.AuditId == entity.Id))
                             .Select(it => _siteCheckService.GetAll().FirstOrDefault(s => s.Id == it.CheckId)).ToList(),
-                            CrawledPages = new ConcurrentQueue<CrawledPageDto>(scope.Database.Fetch<SiteAuditPageEntity>(scope.SqlContext.Sql()
+                        CrawledPages = new ConcurrentQueue<CrawledPageDto>(Database.Fetch<SiteAuditPageEntity>(AmbientScope.SqlContext.Sql()
                                 .SelectAll()
                                 .From<SiteAuditPageEntity>()
-                                .Where<SiteAuditPageEntity>(it => it.AuditId == entity.Id)).Select(it => Map(scope, it)))
-                        };
-                    }
+                                .Where<SiteAuditPageEntity>(it => it.AuditId == entity.Id)).Select(it => Map(AmbientScope, it))
+                            .ToArray())
+                    };
                 }
             }
         }
@@ -140,38 +142,29 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Repositories
                     Name = model.Name,
                     CreatedDate = model.CreatedDate,
                     StatusId = (int)model.Status,
-                    StartingNodeId = ctx.UmbracoContext.Content.GetByRoute(new Uri(model.StartingUrl.ToString()).AbsolutePath).Id,
+                    StartingUrl = model.StartingUrl.ToString(),
                     MaxPagesToCrawl = model.MaxPagesToCrawl,
                     DelayBetweenRequests = model.DelayBetweenRequests,
                     TotalPagesFound = model.TotalPagesFound
                 };
-                using (var scope = _scopeProvider.CreateScope())
-                {
-                    if (isNew)
-                        scope.Database.Insert(entity);
-                    else
-                        scope.Database.Update(entity);
 
-                    scope.Complete();
-                    //TODO: Probably save pages and results here again?
-                }
+                if (isNew)
+                    Database.Insert(entity);
+                else
+                    Database.Update(entity);
+                //TODO: Probably save pages and results here again?
 
                 var currentSiteChecks = GetChecksByAudit(entity.Id).ToArray();
-                using (var scope = _scopeProvider.CreateScope())
+                foreach (var newCheck in model.SiteChecks.Where(it => currentSiteChecks.All(x => x.CheckId != it.Id)))
                 {
-                    foreach (var newCheck in model.SiteChecks.Where(it => currentSiteChecks.All(x => x.CheckId != it.Id)))
-                    {
-                        var checkEntity = new SiteAuditCheckEntity { AuditId = entity.Id, CheckId = newCheck.Id };
-                        scope.Database.Insert(checkEntity);
-                    }
+                    var checkEntity = new SiteAuditCheckEntity { AuditId = entity.Id, CheckId = newCheck.Id };
+                    Database.Insert(checkEntity);
+                }
 
-                    foreach (var deletedCheck in currentSiteChecks.Where(it =>
-                        model.SiteChecks.All(x => x.Id != it.CheckId)))
-                    {
-                        scope.Database.Delete(deletedCheck);
-                    }
-
-                    scope.Complete();
+                foreach (var deletedCheck in currentSiteChecks.Where(it =>
+                    model.SiteChecks.All(x => x.Id != it.CheckId)))
+                {
+                    Database.Delete(deletedCheck);
                 }
 
                 model.Id = entity.Id;
@@ -181,13 +174,10 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Repositories
 
         private IEnumerable<SiteAuditCheckEntity> GetChecksByAudit(int auditId)
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                return scope.Database.Fetch<SiteAuditCheckEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<SiteAuditCheckEntity>()
-                    .Where<SiteAuditCheckEntity>(it => it.AuditId == auditId));
-            }
+            return Database.Fetch<SiteAuditCheckEntity>(AmbientScope.SqlContext.Sql()
+                .SelectAll()
+                .From<SiteAuditCheckEntity>()
+                .Where<SiteAuditCheckEntity>(it => it.AuditId == auditId));
         }
 
         //TODO: Move to mapper

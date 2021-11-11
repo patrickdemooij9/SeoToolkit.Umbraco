@@ -8,7 +8,6 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Models.Database
     [PrimaryKey("Id", AutoIncrement = true)]
     public class SiteAuditCheckEntity
     {
-        //TODO: See if we can have 2 primary keys here instead of autoincrement
         [PrimaryKeyColumn(AutoIncrement = true)]
         [Column("Id")]
         public int Id { get; set; }

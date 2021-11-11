@@ -13,7 +13,7 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Checks
     public class BrokenLinkCheck : ISiteCheck
     {
         private readonly ILogger<BrokenLinkCheck> _logger;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly HttpClient _httpClient;
 
         private const string BrokenLinkUrl = "BrokenLinkUrl";
         private const string BrokenLinkStatusCode = "BrokenLinkStatusCode";
@@ -24,10 +24,10 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Checks
         public string Description => "Checks for broken links on your page!";
         public string ErrorMessage => "Your site has some broken links!";
 
-        public BrokenLinkCheck(ILogger<BrokenLinkCheck> logger, IHttpClientFactory httpClientFactory)
+        public BrokenLinkCheck(ILogger<BrokenLinkCheck> logger, HttpClient httpClient)
         {
             _logger = logger;
-            _httpClientFactory = httpClientFactory;
+            _httpClient = httpClient;
         }
 
         public string FormatMessage(CheckPageCrawlResult crawlResult)
@@ -41,14 +41,13 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Checks
                 return new List<CheckPageCrawlResult>(0);
             
             var results = new List<CheckPageCrawlResult>();
-            var httpClient = _httpClientFactory.CreateClient("BrokenLinkCheck");
             foreach (var url in page.FoundUrls)
             {
                 using (var message = new HttpRequestMessage(HttpMethod.Head, url))
                 {
                     try
                     {
-                        var response = httpClient.SendAsync(message, CancellationToken.None).Result;
+                        var response = _httpClient.SendAsync(message, CancellationToken.None).Result;
                         if (!response.IsSuccessStatusCode)
                             results.Add(new CheckPageCrawlResult
                             {

@@ -13,8 +13,6 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Checks
     public class BrokenImageCheck : ISiteCheck
     {
         private readonly ILogger<BrokenImageCheck> _logger;
-
-        //TODO: Probably replace this with a global httpclient
         private readonly HttpClient _httpClient;
 
         private const string BrokenLinkUrl = "BrokenLinkUrl";
@@ -25,14 +23,10 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Checks
         public string Description => "Checks if there are any missing images";
         public string ErrorMessage => "You have broken images on your site!";
 
-        public BrokenImageCheck(ILogger<BrokenImageCheck> logger)
+        public BrokenImageCheck(ILogger<BrokenImageCheck> logger, HttpClient httpClient)
         {
             _logger = logger;
-            var httpClientHandler = new HttpClientHandler()
-            {
-                ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => true
-            };
-            _httpClient = new HttpClient(httpClientHandler);
+            _httpClient = httpClient;
         }
 
         public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page)
@@ -51,7 +45,7 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Checks
                 if (string.IsNullOrWhiteSpace(sourceUrl))
                     continue;
 
-                if (sourceUrl.StartsWith("/"))
+                if (!sourceUrl.StartsWith("http"))
                     sourceUrl = new Uri(page.Url, sourceUrl).ToString();
                 using (var message = new HttpRequestMessage(HttpMethod.Head, sourceUrl))
                 {

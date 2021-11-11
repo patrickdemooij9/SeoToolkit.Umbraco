@@ -5,6 +5,7 @@
         Created = 0,
         Running = 1,
         Finished = 2,
-        Error = 3
+        Error = 3,
+        Scheduled = 4
     }
 }

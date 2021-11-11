@@ -73,6 +73,7 @@
                     })
                 }).then(function (response) {
                     setItems(response.data);
+                    clearSelection();
                     vm.loading = false;
                 });
         }

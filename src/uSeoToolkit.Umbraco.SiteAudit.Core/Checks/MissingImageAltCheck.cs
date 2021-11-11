@@ -14,10 +14,7 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Checks
         public string ErrorMessage => "There are images without an alt text!";
         public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page)
         {
-            if (page.Content is null)
-                yield break;
-
-            var images = page.Content.DocumentNode.SelectNodes("//img");
+            var images = page.Content?.DocumentNode.SelectNodes("//img");
             if (images is null)
                 yield break;
 

@@ -48,19 +48,17 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Services
                 return;
 
             _items = new List<SiteCheckDto>();
-            foreach (var settingCheck in _settings.Checks)
+            foreach (var codeCheck in _checkCollection)
             {
-                var codeCheck = _checkCollection.FirstOrDefault(it => it.Alias.Equals(settingCheck.Alias, StringComparison.InvariantCultureIgnoreCase));
-                if (codeCheck is null) //If we cannot find the code logic for it, no reason to load it
-                    continue;
-
-                var registeredCheckId = _siteCheckRepository.Get(settingCheck.Alias);
+                //If we cannot find the settings for it, just use default
+                var settingsCheck = _settings.Checks.FirstOrDefault(it => it.Alias.Equals(codeCheck.Alias, StringComparison.InvariantCultureIgnoreCase));
+                var registeredCheckId = _siteCheckRepository.Get(codeCheck.Alias);
                 if (registeredCheckId == 0)
                 {
                     registeredCheckId = _siteCheckRepository.RegisterCheck(codeCheck);
                 }
 
-                if (settingCheck.Enabled)
+                if (settingsCheck is null || settingsCheck.Enabled)
                     _items.Add(new SiteCheckDto { Id = registeredCheckId, Check = codeCheck });
             }
         }

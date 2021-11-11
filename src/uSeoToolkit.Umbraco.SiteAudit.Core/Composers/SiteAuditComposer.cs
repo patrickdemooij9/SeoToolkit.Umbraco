@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Net.Http;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
 using uSeoToolkit.Umbraco.Core.Services.SettingsService;
+using uSeoToolkit.Umbraco.SiteAudit.Core.BackgroundTasks;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Checks;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Collections;
+using uSeoToolkit.Umbraco.SiteAudit.Core.Common.Scheduler;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Components;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Config;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Config.Models;
@@ -26,13 +29,16 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            builder.Services.AddScoped(typeof(ISiteAuditRepository), typeof(SiteAuditDatabaseRepository));
-            builder.Services.AddScoped(typeof(ISiteCrawlerFactory), typeof(DefaultSiteCrawlerFactory));
-            builder.Services.AddScoped(typeof(SiteAuditService), typeof(SiteAuditService));
-            builder.Services.AddScoped(typeof(ISiteCheckService), typeof(SiteCheckService));
-            builder.Services.AddSingleton(typeof(SiteAuditHubClientService), typeof(SiteAuditHubClientService));
-            builder.Services.AddScoped(typeof(ISettingsService<SiteAuditConfigModel>), typeof(SiteAuditConfigurationService));
-            builder.Services.AddScoped(typeof(ISiteCheckRepository), typeof(SiteCheckDatabaseRepository));
+            builder.Services.AddSingleton(typeof(ISiteAuditRepository), typeof(SiteAuditDatabaseRepository));
+            builder.Services.AddSingleton(typeof(ISiteCrawlerFactory), typeof(DefaultSiteCrawlerFactory));
+            builder.Services.AddSingleton(typeof(SiteAuditService), typeof(SiteAuditService));
+            builder.Services.AddSingleton(typeof(ISiteCheckService), typeof(SiteCheckService));
+            builder.Services.AddSingleton(typeof(SiteAuditHubClientService));
+            builder.Services.AddSingleton(typeof(ISettingsService<SiteAuditConfigModel>), typeof(SiteAuditConfigurationService));
+            builder.Services.AddSingleton(typeof(ISiteCheckRepository), typeof(SiteCheckDatabaseRepository));
+            builder.Services.AddSingleton(typeof(ISiteAuditScheduler), typeof(SiteAuditScheduler));
+
+            builder.Services.AddHostedService<ScheduledSiteAuditTask>();
 
             builder.WithCollectionBuilder<SiteAuditCheckCollectionBuilder>()
                 .Append<BrokenLinkCheck>()
@@ -50,6 +56,17 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Composers
             builder.Services.AddUnique<SiteAuditHubRoutes>();
             builder.Services.AddSignalR();
             builder.Services.AddHubSignalR();
+
+            builder.Services.AddHttpClient<BrokenImageCheck>()
+                .ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => true
+                });
+            builder.Services.AddHttpClient<BrokenLinkCheck>()
+                .ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => true
+                });
         }
     }
 }
