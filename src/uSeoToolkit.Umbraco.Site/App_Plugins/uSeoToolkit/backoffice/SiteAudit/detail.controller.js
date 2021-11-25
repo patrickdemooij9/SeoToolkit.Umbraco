@@ -162,7 +162,7 @@
         }
 
         function stopAudit() {
-
+            console.log("Trying to stop!");
         }
 
         function openPage(page) {

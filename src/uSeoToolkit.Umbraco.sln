@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.SiteAud
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.Site", "uSeoToolkit.Umbraco.Site\uSeoToolkit.Umbraco.Site.csproj", "{A4EB9D2A-1468-4238-A235-AEC2BEECD184}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.MetaFields.Core", "uSeoToolkit.Umbraco.MetaFields.Core\uSeoToolkit.Umbraco.MetaFields.Core.csproj", "{2892DB26-648F-47F0-955D-E6870C61C3F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.MetaFields", "uSeoToolkit.Umbraco.MetaFields\uSeoToolkit.Umbraco.MetaFields.csproj", "{3085E565-CBC0-420E-B77E-D1324571A93F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{A4EB9D2A-1468-4238-A235-AEC2BEECD184}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4EB9D2A-1468-4238-A235-AEC2BEECD184}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4EB9D2A-1468-4238-A235-AEC2BEECD184}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2892DB26-648F-47F0-955D-E6870C61C3F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2892DB26-648F-47F0-955D-E6870C61C3F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2892DB26-648F-47F0-955D-E6870C61C3F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2892DB26-648F-47F0-955D-E6870C61C3F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3085E565-CBC0-420E-B77E-D1324571A93F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3085E565-CBC0-420E-B77E-D1324571A93F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3085E565-CBC0-420E-B77E-D1324571A93F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3085E565-CBC0-420E-B77E-D1324571A93F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
