@@ -3,6 +3,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Services;
+using uSeoToolkit.Umbraco.MetaFields.Core.Collections;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using uSeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
 using uSeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Database;
@@ -13,9 +14,9 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Mappers
     public class DocumentTypeSettingsMapper : IMapDefinition
     {
         private readonly IContentTypeService _contentTypeService;
-        private readonly ISeoFieldCollection _seoFieldCollection;
+        private readonly SeoFieldCollection _seoFieldCollection;
 
-        public DocumentTypeSettingsMapper(IContentTypeService contentTypeService, ISeoFieldCollection seoFieldCollection)
+        public DocumentTypeSettingsMapper(IContentTypeService contentTypeService, SeoFieldCollection seoFieldCollection)
         {
             _contentTypeService = contentTypeService;
             _seoFieldCollection = seoFieldCollection;

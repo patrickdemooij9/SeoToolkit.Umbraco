@@ -10,13 +10,26 @@
         vm.customBaseFields = [];
 
         function init() {
+            var selectedFields = [];
             getAllContentFields(vm.field.editor.config.dataTypes).forEach(function (d) {
                 if (vm.field.value && vm.field.value.includes(d.value)) {
-                    vm.customSelectedFields.push(d);
+                    selectedFields.push(d);
                 } else {
                     vm.customBaseFields.push(d);
                 }
             });
+
+            if (vm.field.value) {
+                //Make sure ordering is correct
+                vm.field.value.forEach(function (v) {
+                    var value = selectedFields.find(function(s) {
+                        return s.value === v;
+                    });
+                    if (value) {
+                        vm.customSelectedFields.push(value);
+                    }
+                });
+            }
 
             $scope.$on('uSeoToolkit.SaveField', beforeSaveEventHandler);
         }

@@ -14,9 +14,9 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Repositories.DocumentTypeSettingsR
     {
         private readonly IScopeProvider _scopeProvider;
         private readonly ServiceContext _services;
-        private readonly Lazy<UmbracoMapper> _mapper;
+        private readonly Lazy<IUmbracoMapper> _mapper;
 
-        public DocumentTypeSettingsRepository(IScopeProvider scopeProvider, ServiceContext services, Lazy<UmbracoMapper> mapper)
+        public DocumentTypeSettingsRepository(IScopeProvider scopeProvider, ServiceContext services, Lazy<IUmbracoMapper> mapper)
         {
             _scopeProvider = scopeProvider;
             _services = services;

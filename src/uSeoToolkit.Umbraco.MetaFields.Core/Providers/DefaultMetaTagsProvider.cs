@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
+using uSeoToolkit.Umbraco.MetaFields.Core.Collections;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
@@ -14,17 +15,17 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Providers
     public class DefaultMetaTagsProvider : IMetaTagsProvider
     {
         private readonly IDocumentTypeSettingsService _documentTypeSettingsService;
-        private readonly ISeoFieldCollection _seoFieldCollection;
+        private readonly SeoFieldCollection _seoFieldCollection;
         private readonly ISeoValueService _seoValueService;
-        private readonly ISeoConverterCollection _seoConverterCollection;
+        private readonly SeoConverterCollection _seoConverterCollection;
         private readonly ILogger<DefaultMetaTagsProvider> _logger;
 
         public event EventHandler<MetaTagsModel> BeforeMetaTagsGet;
 
         public DefaultMetaTagsProvider(IDocumentTypeSettingsService documentTypeSettingsService,
-            ISeoFieldCollection seoFieldCollection,
+            SeoFieldCollection seoFieldCollection,
             ISeoValueService seoValueService,
-            ISeoConverterCollection seoConverterCollection,
+            SeoConverterCollection seoConverterCollection,
             ILogger<DefaultMetaTagsProvider> logger)
         {
             _documentTypeSettingsService = documentTypeSettingsService;
@@ -61,7 +62,8 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Providers
 
                 if (intermediateObject is null)
                 {
-                    intermediateObject = settings.Get(it.Alias);
+                    //TODO: Probably do somethign with the useInheritedValue here
+                    intermediateObject = settings.Get(it.Alias)?.Value;
                 }
 
                 if (intermediateObject is null)

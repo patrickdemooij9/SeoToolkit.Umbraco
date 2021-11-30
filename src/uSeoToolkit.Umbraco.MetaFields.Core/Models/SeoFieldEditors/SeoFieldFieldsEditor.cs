@@ -42,7 +42,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors
 
         public string GetValue(IPublishedContent content, object value)
         {
-            var aliases = value?.ToString().Split(',');
+            var aliases = value?.ToString()?.Split(',');
             if (aliases is null) return null;
             foreach (var alias in aliases)
             {

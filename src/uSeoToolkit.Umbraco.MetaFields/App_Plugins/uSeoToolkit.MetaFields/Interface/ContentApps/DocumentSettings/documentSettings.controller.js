@@ -33,7 +33,7 @@
                             id: item.id,
                             name: item.name
                         };
-                        vm.model.values.forEach(function (propItem) {
+                        vm.model.fields.forEach(function (propItem) {
                             propItem.useInheritedValue = true;
                         });
                     } else {
@@ -75,7 +75,7 @@
         }
 
         vm.removeInheritance = function () {
-            vm.model.values.forEach(function (item) {
+            vm.model.fields.forEach(function (item) {
                 item.useInheritedValue = false;
             });
             vm.model.inheritance = null;
@@ -103,7 +103,7 @@
                 nodeId: vm.model.nodeId,
                 enableSeoSettings: vm.model.enableSeoSettings,
                 fields: Object.assign({},
-                    ...vm.model.values.map(function (v) {
+                    ...vm.model.fields.map(function (v) {
                         return ({
                             [v.alias]: {
                                 useInheritedValue: v.useInheritedValue,

@@ -28,7 +28,7 @@
             }
 
             function removeField(val) {
-                if (field.disabled)
+                if (vm.field.disabled)
                     return;
 
                 var index = vm.selectedList.indexOf(val);

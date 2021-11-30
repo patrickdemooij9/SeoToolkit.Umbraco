@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
+using uSeoToolkit.Umbraco.MetaFields.Core.Collections;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels;
@@ -19,57 +21,61 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
     {
         private readonly ISeoService _seoService;
         private readonly IDocumentTypeSettingsService _documentTypeSettingsService;
-        private readonly ISeoFieldCollection _fieldCollection;
+        private readonly SeoFieldCollection _fieldCollection;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISeoValueService _seoValueService;
+        private readonly ILogger<SeoSettingsController> _logger;
 
         public SeoSettingsController(ISeoService seoService,
             IDocumentTypeSettingsService documentTypeSettingsService,
-            ISeoFieldCollection fieldCollection,
+            SeoFieldCollection fieldCollection,
             IUmbracoContextFactory umbracoContextFactory,
-            ISeoValueService seoValueService)
+            ISeoValueService seoValueService,
+            ILogger<SeoSettingsController> logger)
         {
             _seoService = seoService;
             _documentTypeSettingsService = documentTypeSettingsService;
             _fieldCollection = fieldCollection;
             _umbracoContextFactory = umbracoContextFactory;
             _seoValueService = seoValueService;
+            _logger = logger;
         }
 
         [HttpGet]
         public IActionResult Get(int nodeId, int contentTypeId)
         {
-            using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
+            using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
+            var content = ctx.UmbracoContext.Content.GetById(true, nodeId);
+            if (content is null)
             {
-                var content = ctx.UmbracoContext.Content.GetById(true, nodeId);
-                if (content is null)
-                    return NotFound();
-
-                var metaTags = _seoService.Get(content);
-                var userValues = _seoValueService.GetUserValues(nodeId);
-
-                return new JsonResult(new SeoSettingsViewModel
-                {
-                    Fields = metaTags.Fields.Select(it =>
-                    {
-                        var (key, value) = it;
-                        var userValue = userValues.ContainsKey(key.Alias)
-                            ? key.EditEditor.ValueConverter.ConvertObjectToEditorValue(key.EditEditor.ValueConverter.ConvertDatabaseToObject(userValues[key.Alias]))
-                            : null;
-                        return new SeoSettingsFieldViewModel
-                        {
-                            Alias = key.Alias,
-                            Title = key.Title,
-                            Description = key.Description,
-                            Value = value?.ToString(),
-                            UserValue = userValue,
-                            EditView = key.EditEditor.View,
-                            EditConfig = key.EditEditor.Config
-                        };
-                    }).ToArray(),
-                    Previewers = new[] { new FieldPreviewerViewModel(new BaseTagsFieldPreviewer()) }
-                });
+                _logger.LogInformation("Could not find content by id {0}", nodeId);
+                return NotFound();
             }
+
+            var metaTags = _seoService.Get(content);
+            var userValues = _seoValueService.GetUserValues(nodeId);
+
+            return new JsonResult(new SeoSettingsViewModel
+            {
+                Fields = metaTags.Fields.Select(it =>
+                {
+                    var (key, value) = it;
+                    var userValue = userValues.ContainsKey(key.Alias)
+                        ? key.EditEditor.ValueConverter.ConvertObjectToEditorValue(key.EditEditor.ValueConverter.ConvertDatabaseToObject(userValues[key.Alias]))
+                        : null;
+                    return new SeoSettingsFieldViewModel
+                    {
+                        Alias = key.Alias,
+                        Title = key.Title,
+                        Description = key.Description,
+                        Value = value?.ToString(),
+                        UserValue = userValue,
+                        EditView = key.EditEditor.View,
+                        EditConfig = key.EditEditor.Config
+                    };
+                }).ToArray(),
+                Previewers = new[] { new FieldPreviewerViewModel(new BaseTagsFieldPreviewer()) }
+            });
         }
 
         [HttpPost]

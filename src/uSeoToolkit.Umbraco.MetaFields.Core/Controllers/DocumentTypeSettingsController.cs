@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
+using uSeoToolkit.Umbraco.MetaFields.Core.Collections;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using uSeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
 using uSeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.PostModels;
@@ -16,10 +17,10 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
     public class DocumentTypeSettingsController : UmbracoAuthorizedApiController
     {
         private readonly IDocumentTypeSettingsService _documentTypeSettingsService;
-        private readonly ISeoFieldCollection _seoFieldCollection;
+        private readonly SeoFieldCollection _seoFieldCollection;
         private readonly IUmbracoMapper _umbracoMapper;
 
-        public DocumentTypeSettingsController(IDocumentTypeSettingsService documentTypeSettingsService, ISeoFieldCollection seoFieldCollection, IUmbracoMapper umbracoMapper)
+        public DocumentTypeSettingsController(IDocumentTypeSettingsService documentTypeSettingsService, SeoFieldCollection seoFieldCollection, IUmbracoMapper umbracoMapper)
         {
             _documentTypeSettingsService = documentTypeSettingsService;
             _seoFieldCollection = seoFieldCollection;

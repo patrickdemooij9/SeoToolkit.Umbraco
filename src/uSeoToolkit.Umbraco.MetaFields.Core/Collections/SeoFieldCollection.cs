@@ -8,9 +8,9 @@ using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Collections
 {
-    public class SeoFieldCollection : BuilderCollectionBase<ISeoField>, ISeoFieldCollection
+    public class SeoFieldCollection : BuilderCollectionBase<ISeoField>
     {
-        public SeoFieldCollection(IEnumerable<ISeoField> items) : base(() => items)
+        public SeoFieldCollection(Func<IEnumerable<ISeoField>> items) : base(items)
         {
         }
 

@@ -1,0 +1,47 @@
+﻿.siteaudit-results .result {
+    padding: 30px 100px;
+    border-radius: 5px;
+}
+
+.result-error {
+    background-color: red;
+}
+
+.result-warning {
+    background-color: yellow;
+}
+
+.result-pages {
+    background-color: gray;
+}
+
+.error-status {
+    color: red;
+}
+
+.siteaudit-progress.umb-progress-bar {
+    height: 5px;
+    border-radius: 0;
+}
+
+.siteaudit-progress .umb-progress-bar__progress {
+    border-radius: 0;
+}
+
+.siteaudit-results li {
+    color: red;
+}
+
+.siteaudit-result:before {
+    content: "\e1a4";
+}
+
+.siteaudit-pagination {
+    display: flex;
+    justify-content: space-around; 
+}
+
+.siteaudit-actions{
+    top: unset;
+    left: 90%;
+}

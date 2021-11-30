@@ -13,6 +13,6 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField
         IEditorValueConverter ValueConverter { get; }
 
         object Inherit(object currentValue, object inheritedValue);
-        string GetValue(IPublishedContent content, object value);
+        string GetValue(IPublishedContent content, object value); //TODO: Check why we have this
     }
 }

@@ -8,9 +8,9 @@ using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Collections
 {
-    public class SeoConverterCollection : BuilderCollectionBase<ISeoValueConverter>, ISeoConverterCollection
+    public class SeoConverterCollection : BuilderCollectionBase<ISeoValueConverter>
     {
-        public SeoConverterCollection(IEnumerable<ISeoValueConverter> items) : base(() => items)
+        public SeoConverterCollection(Func<IEnumerable<ISeoValueConverter>> items) : base(items)
         {
         }
 
