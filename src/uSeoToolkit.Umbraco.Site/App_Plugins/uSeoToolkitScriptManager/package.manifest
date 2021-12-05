@@ -1,0 +1,6 @@
+﻿{
+  "javascript": [
+    "~/App_Plugins/uSeoToolkitScriptManager/backoffice/ScriptManager/list.controller.js",
+    "~/App_Plugins/uSeoToolkitScriptManager/backoffice/ScriptManager/create.controller.js"
+  ]
+}

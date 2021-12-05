@@ -33,9 +33,23 @@
 
 
     <ItemGroup>
+      <Content Remove="App_Plugins\uSeoToolkitScriptManager\package.manifest" />
+    </ItemGroup>
+
+
+
+    <ItemGroup>
+      <None Include="App_Plugins\uSeoToolkitScriptManager\package.manifest" />
+    </ItemGroup>
+
+
+
+    <ItemGroup>
       <ProjectReference Include="..\uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields.Core\uSeoToolkit.Umbraco.MetaFields.Core.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields\uSeoToolkit.Umbraco.MetaFields.csproj" />
+      <ProjectReference Include="..\uSeoToolkit.Umbraco.ScriptManager.Core\uSeoToolkit.Umbraco.ScriptManager.Core.csproj" />
+      <ProjectReference Include="..\uSeoToolkit.Umbraco.ScriptManager\uSeoToolkit.Umbraco.ScriptManager.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco.SiteAudit.Core\uSeoToolkit.Umbraco.SiteAudit.Core.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco.SiteAudit\uSeoToolkit.Umbraco.SiteAudit.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />

@@ -1,0 +1,23 @@
+﻿<div ng-controller="uSeoToolkit.ScriptManager.CreateController as vm">
+    <form name="contentForm" novalidate val-form-manager ng-submit="vm.save()">
+        <umb-editor-view ng-if="!vm.page.loading">
+            <umb-editor-header name="vm.content.name"
+                               hide-icon="true"
+                               hide-description="true"
+                               hide-alias="true">
+            </umb-editor-header>
+
+            <umb-editor-footer>
+                <umb-editor-footer-content-right>
+                    <umb-button type="submit"
+                                button-style="success"
+                                state="vm.page.saveButtonState"
+                                shortcut="ctrl+s"
+                                label="Save"
+                                label-key="buttons_save">
+                    </umb-button>
+                </umb-editor-footer-content-right>
+            </umb-editor-footer>
+        </umb-editor-view>
+    </form>
+</div>

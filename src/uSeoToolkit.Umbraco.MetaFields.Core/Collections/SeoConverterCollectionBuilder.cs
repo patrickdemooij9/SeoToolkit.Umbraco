@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Umbraco.Cms.Core.Composing;
+﻿using Umbraco.Cms.Core.Composing;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Collections
