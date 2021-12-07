@@ -1,4 +1,6 @@
-﻿using Umbraco.Cms.Core.PropertyEditors;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Umbraco.Cms.Core.PropertyEditors;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
 
 namespace uSeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels

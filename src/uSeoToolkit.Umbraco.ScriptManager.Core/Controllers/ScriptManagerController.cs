@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Collections;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
+using uSeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
+using uSeoToolkit.Umbraco.ScriptManager.Core.Models.PostModels;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels;
 
 namespace uSeoToolkit.Umbraco.ScriptManager.Core.Controllers
@@ -18,6 +21,21 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Controllers
         {
             _scriptDefinitionCollection = scriptDefinitionCollection;
             _scriptManagerService = scriptManagerService;
+        }
+
+        public IActionResult Create(CreateScriptPostModel postModel)
+        {
+            var definition = _scriptDefinitionCollection.FirstOrDefault(it => it.Alias == postModel.DefinitionAlias);
+            if (definition is null)
+                return NotFound();
+            var script = new Script
+            {
+                Name = postModel.Name,
+                Definition = definition,
+                Config = postModel.Fields.ToDictionary(it => it.Key, it => it.Value)
+            };
+            _scriptManagerService.Save(script);
+            return Ok();
         }
 
         [HttpGet]

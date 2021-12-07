@@ -14,6 +14,18 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Services
             _scriptRepository = scriptRepository;
         }
 
+        public void Save(Script script)
+        {
+            if (script.Id == 0)
+            {
+                _scriptRepository.Add(script);
+            }
+            else
+            {
+                _scriptRepository.Update(script);
+            }
+        }
+
         public IEnumerable<Script> GetAll()
         {
             return _scriptRepository.GetAll();

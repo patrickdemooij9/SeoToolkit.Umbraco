@@ -1,11 +1,34 @@
 ﻿<div ng-controller="uSeoToolkit.ScriptManager.CreateController as vm">
-    <form name="contentForm" novalidate val-form-manager ng-submit="vm.save()">
+    <form name="contentForm" novalidate val-form-manager ng-submit="vm.save()" class="form-horizontal">
         <umb-editor-view ng-if="!vm.page.loading">
             <umb-editor-header name="vm.content.name"
                                hide-icon="true"
                                hide-description="true"
                                hide-alias="true">
             </umb-editor-header>
+
+            <umb-editor-container>
+                <umb-box>
+                    <umb-box-content>
+                        <umb-property property="vm.selectedDefinitionProperty">
+                            <div>
+                                <select name="selectedEditor"
+                                        ng-model="vm.content.selectedDefinition"
+                                        required
+                                        ng-options="d.alias as d.name for d in vm.definitions"></select>
+                                <span ng-messages="contentForm.selectedEditor.$error" show-validation-on-submit>
+                                    <span class="help-inline" ng-message="required"><localize key="general_required">Required</localize></span>
+                                </span>
+                            </div>
+
+                        </umb-property>
+                        <umb-property property="preValue"
+                                      ng-repeat="preValue in vm.preValues">
+                            <umb-property-editor model="preValue" is-pre-value="true"></umb-property-editor>
+                        </umb-property>
+                    </umb-box-content>
+                </umb-box>
+            </umb-editor-container>
 
             <umb-editor-footer>
                 <umb-editor-footer-content-right>

@@ -1,4 +1,5 @@
-﻿using uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
+﻿using System.Collections.Generic;
+using uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
 
 namespace uSeoToolkit.Umbraco.ScriptManager.Core.Models.Business
 {
@@ -8,6 +9,6 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Models.Business
         public string Name { get; set; }
         public IScriptDefinition Definition { get; set; }
         public int[] DocumentTypeIds { get; set; }
-        public ScriptConfig Config { get; set; }
+        public Dictionary<string, object> Config { get; set; }
     }
 }

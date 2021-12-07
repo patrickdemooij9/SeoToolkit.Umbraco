@@ -78,8 +78,8 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Repositories
                 Id = script.Id,
                 Name = script.Name,
                 DefinitionAlias = script.Definition.Alias,
-                DocumentTypes = string.Join(",", script.DocumentTypeIds),
-                Config = JsonSerializer.Serialize(script.Config.Values)
+                DocumentTypes = string.Join(",", script.DocumentTypeIds ?? Array.Empty<int>()),
+                Config = JsonSerializer.Serialize(script.Config)
             };
         }
 
@@ -91,7 +91,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Repositories
                 Name = entity.Name,
                 Definition = _scriptDefinitionCollection.FirstOrDefault(it => it.Alias == entity.DefinitionAlias),
                 DocumentTypeIds = entity.DocumentTypes.Split(',').Select(int.Parse).ToArray(),
-                Config = new ScriptConfig(JsonSerializer.Deserialize<Dictionary<string, string>>(entity.Config))
+                Config = JsonSerializer.Deserialize<Dictionary<string, object>>(entity.Config)
             };
         }
     }

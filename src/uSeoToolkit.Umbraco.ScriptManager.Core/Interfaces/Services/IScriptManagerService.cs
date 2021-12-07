@@ -5,6 +5,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services
 {
     public interface IScriptManagerService
     {
+        void Save(Script script);
         IEnumerable<Script> GetAll();
     }
 }
