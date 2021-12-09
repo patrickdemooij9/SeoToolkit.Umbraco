@@ -57,7 +57,7 @@
         }
 
         function create() {
-            $location.path("uSeoToolkit/ScriptManager/create");
+            $location.path("uSeoToolkit/ScriptManager/edit");
         }
 
         function deleteSelection() {
@@ -81,7 +81,7 @@
                     "icon": "icon-document",
                     "name": i.name,
                     "published": true,
-                    "editPath": "uSeoToolkit/ScriptManager/detail?id=" + i.id
+                    "editPath": "uSeoToolkit/ScriptManager/edit?id=" + i.id
                 }
             });
         }

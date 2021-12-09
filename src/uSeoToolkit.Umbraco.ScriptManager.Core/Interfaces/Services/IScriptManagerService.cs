@@ -7,5 +7,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services
     {
         void Save(Script script);
         IEnumerable<Script> GetAll();
+        Script Get(int id);
+        ScriptRenderModel GetRender();
     }
 }

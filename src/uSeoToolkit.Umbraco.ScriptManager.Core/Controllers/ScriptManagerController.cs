@@ -23,13 +23,23 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Controllers
             _scriptManagerService = scriptManagerService;
         }
 
-        public IActionResult Create(CreateScriptPostModel postModel)
+        public IActionResult Get(int id)
+        {
+            var script = _scriptManagerService.Get(id);
+            if (script is null)
+                return NotFound();
+
+            return new JsonResult(new ScriptDetailViewModel(script));
+        }
+
+        public IActionResult Save(CreateScriptPostModel postModel)
         {
             var definition = _scriptDefinitionCollection.FirstOrDefault(it => it.Alias == postModel.DefinitionAlias);
             if (definition is null)
                 return NotFound();
             var script = new Script
             {
+                Id = postModel.Id,
                 Name = postModel.Name,
                 Definition = definition,
                 Config = postModel.Fields.ToDictionary(it => it.Key, it => it.Value)

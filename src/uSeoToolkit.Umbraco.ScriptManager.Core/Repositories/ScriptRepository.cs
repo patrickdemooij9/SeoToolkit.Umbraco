@@ -90,7 +90,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Repositories
                 Id = entity.Id,
                 Name = entity.Name,
                 Definition = _scriptDefinitionCollection.FirstOrDefault(it => it.Alias == entity.DefinitionAlias),
-                DocumentTypeIds = entity.DocumentTypes.Split(',').Select(int.Parse).ToArray(),
+                DocumentTypeIds = entity.DocumentTypes?.Split(',').Where(it => int.TryParse(it, out _)).Select(int.Parse).ToArray() ?? Array.Empty<int>(),
                 Config = JsonSerializer.Deserialize<Dictionary<string, object>>(entity.Config)
             };
         }

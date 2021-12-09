@@ -1,8 +1,11 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+﻿@using uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services
+@using uSeoToolkit.Umbraco.ScriptManager.Core.Enums
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inject IScriptManagerService _scriptManagerService
 
-@{
-    Layout = null;
-}
+@{ Layout = null;
+
+    var renderModel = _scriptManagerService.GetRender(); }
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,8 +17,16 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet">
     <link href="/clean-assets/css/clean-blog.css" rel="stylesheet">
     <link href="/clean-assets/css/prettify.css" rel="stylesheet">
+
+    @foreach (var script in renderModel.Get(ScriptPositionType.HeadBottom))
+    {
+@script}
 </head>
 <body>
+    @foreach (var script in renderModel.Get(ScriptPositionType.BodyTop))
+    {
+@script}
+
     @await Html.CachedPartialAsync("~/Views/Partials/mainNavigation.cshtml", model: Model, cacheTimeout: TimeSpan.FromMinutes(60))
     @RenderBody()
     @await Html.CachedPartialAsync("~/Views/Partials/footer.cshtml", model: Model, cacheTimeout: TimeSpan.FromMinutes(60))
@@ -23,5 +34,9 @@
     <script type="text/javascript" src="/clean-assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="/clean-assets/scripts/run_prettify.js?skin=sunburst"></script>
     <script type="text/javascript" src="/clean-assets/scripts/clean-blog.js"></script>
+
+    @foreach (var script in renderModel.Get(ScriptPositionType.BodyBottom))
+    {
+@script}
 </body>
 </html>
