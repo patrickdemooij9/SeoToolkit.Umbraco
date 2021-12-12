@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    function scriptManagerListController($scope, $http, $location, listViewHelper) {
+    function scriptManagerListController($scope, $http, $location, listViewHelper, notificationsService) {
         var vm = this;
 
         vm.items = [];
@@ -11,7 +11,10 @@
             filter: '',
             orderBy: "name",
             orderDirection: "asc",
-            bulkActionsAllowed: true
+            bulkActionsAllowed: true,
+            includeProperties: [
+                { alias: "definitionName", header: "Definition" }
+            ]
         };
 
         vm.selectItem = selectItem;
@@ -57,7 +60,7 @@
         }
 
         function create() {
-            $location.path("uSeoToolkit/ScriptManager/edit");
+            $location.path("uSeoToolkit/ScriptManager/edit").search("id", null);;
         }
 
         function deleteSelection() {
@@ -70,6 +73,13 @@
                 }).then(function (response) {
                     setItems(response.data);
                     clearSelection();
+
+                    if (response.status === 200) {
+                        notificationsService.success("Selection deleted", "Your selection has successfully been deleted!");
+                    } else {
+                        notificationsService.error("Error", "Something went wrong while deleting your selection!");
+                    }
+
                     vm.loading = false;
                 });
         }
@@ -80,6 +90,7 @@
                     "id": i.id,
                     "icon": "icon-document",
                     "name": i.name,
+                    "definitionName": i.definitionName,
                     "published": true,
                     "editPath": "uSeoToolkit/ScriptManager/edit?id=" + i.id
                 }

@@ -17,7 +17,10 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Composers
         public void Compose(IUmbracoBuilder builder)
         {
             builder.WithCollectionBuilder<ScriptDefinitionCollectionBuilder>()
-                .Add<GoogleTagManagerDefinition>();
+                .Add<GoogleTagManagerDefinition>()
+                .Add<GoogleAnalyticsDefinition>()
+                .Add<HotjarDefinition>()
+                .Add<CustomScriptDefinition>();
 
             builder.Components().Append<ScriptManagerDatabaseComponent>();
 

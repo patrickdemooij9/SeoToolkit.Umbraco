@@ -1,11 +1,12 @@
 ﻿(function () {
     "use strict";
 
-    function siteManagerEditController($scope, $http, $routeParams, formHelper) {
+    function siteManagerEditController($scope, $http, $routeParams, $location, formHelper, notificationsService) {
 
         var vm = this;
 
         vm.save = save;
+        vm.back = back;
 
         vm.page = {};
         vm.content = {
@@ -48,7 +49,14 @@
                 }
                 $http.post("backoffice/uSeoToolkit/ScriptManager/Save", postModel).then(function (response) {
                     formHelper.resetForm({ scope: $scope });
-                    vm.page.saveButtonState = "success";
+
+                    if (response.status === 200) {
+                        vm.page.saveButtonState = "success";
+                        notificationsService.success("Script Saved", "Your script has successfully been saved!");
+                    } else {
+                        vm.page.saveButtonState = "error";
+                        notificationsService.error("Error", "Something went wrong while saving your script!");
+                    }
                 });
             }
         }
@@ -93,6 +101,10 @@
                     vm.page.isLoading = false;
                 });
             });
+        }
+
+        function back() {
+            $location.path("uSeoToolkit/ScriptManager/list").search("id", null);;
         }
 
         function createPreValueProps(preValues) {

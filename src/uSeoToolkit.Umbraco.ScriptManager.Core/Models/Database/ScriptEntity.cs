@@ -18,9 +18,6 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Models.Database
         [Column("DefinitionAlias")]
         public string DefinitionAlias { get; set; }
 
-        [Column("DocumentTypes")]
-        public string DocumentTypes { get; set; }
-
         [Column("Config")]
         [SpecialDbType(SpecialDbTypes.NVARCHARMAX)]
         public string Config { get; set; }

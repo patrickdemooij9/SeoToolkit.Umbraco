@@ -60,5 +60,12 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Controllers
         {
             return new JsonResult(_scriptDefinitionCollection.Select(it => new ScriptDefinitionViewModel(it)));
         }
+
+        [HttpPost]
+        public IActionResult Delete(DeleteScriptPostModel postModel)
+        {
+            _scriptManagerService.Delete(postModel.Ids);
+            return GetAllScripts();
+        }
     }
 }

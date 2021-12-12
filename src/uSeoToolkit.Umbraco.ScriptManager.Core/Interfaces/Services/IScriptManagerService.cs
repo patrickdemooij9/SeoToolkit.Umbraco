@@ -6,6 +6,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services
     public interface IScriptManagerService
     {
         void Save(Script script);
+        void Delete(int[] ids);
         IEnumerable<Script> GetAll();
         Script Get(int id);
         ScriptRenderModel GetRender();
