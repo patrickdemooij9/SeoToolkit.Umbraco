@@ -58,7 +58,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Controllers
         [HttpGet]
         public IActionResult GetAllDefinitions()
         {
-            return new JsonResult(_scriptDefinitionCollection.Select(it => new ScriptDefinitionViewModel(it)));
+            return new JsonResult(_scriptDefinitionCollection.GetAll().Select(it => new ScriptDefinitionViewModel(it)));
         }
 
         [HttpPost]

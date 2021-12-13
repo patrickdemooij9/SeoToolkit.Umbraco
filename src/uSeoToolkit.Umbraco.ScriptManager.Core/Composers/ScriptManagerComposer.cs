@@ -2,8 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
+using uSeoToolkit.Umbraco.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Collections;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Components;
+using uSeoToolkit.Umbraco.ScriptManager.Core.Config;
+using uSeoToolkit.Umbraco.ScriptManager.Core.Config.Models;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Repositories;
@@ -26,6 +29,9 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Composers
 
             builder.Services.AddScoped<IScriptRepository, ScriptRepository>();
             builder.Services.AddScoped<IScriptManagerService, ScriptManagerService>();
+            builder.Services.AddSingleton(typeof(ISettingsService<ScriptManagerConfigModel>), typeof(ScriptManagerConfigurationService));
+
+            builder.Services.Configure<ScriptManagerAppSettingsModel>(builder.Config.GetSection("uSeoToolkit:ScriptManager"));
         }
     }
 }

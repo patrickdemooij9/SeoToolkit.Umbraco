@@ -77,7 +77,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Repositories
             {
                 Id = script.Id,
                 Name = script.Name,
-                DefinitionAlias = script.Definition.Alias,
+                DefinitionAlias = script.Definition?.Alias,
                 Config = JsonSerializer.Serialize(script.Config)
             };
         }
@@ -88,7 +88,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Repositories
             {
                 Id = entity.Id,
                 Name = entity.Name,
-                Definition = _scriptDefinitionCollection.FirstOrDefault(it => it.Alias == entity.DefinitionAlias),
+                Definition = _scriptDefinitionCollection.Get(entity.DefinitionAlias),
                 Config = JsonSerializer.Deserialize<Dictionary<string, object>>(entity.Config)
             };
         }
