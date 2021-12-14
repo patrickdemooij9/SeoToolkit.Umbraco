@@ -53,7 +53,7 @@
         vm.openSettingDialog = function (field) {
             const editor = {
                 title: "Field",
-                view: "/App_Plugins/uSeoToolkit/Interface/ContentApps/DocumentSettings/Dialog/settingDialog.html",
+                view: "/App_Plugins/uSeoToolkitMetaFields/Interface/ContentApps/DocumentSettings/Dialog/settingDialog.html",
                 size: "small",
                 field: field,
                 groups: $scope.model.groups,
@@ -80,9 +80,6 @@
             });
             vm.model.inheritance = null;
         }
-
-        console.log($scope.model);
-        console.log($scope.model.groups);
 
         $scope.$on("formSubmitting",
             function () {

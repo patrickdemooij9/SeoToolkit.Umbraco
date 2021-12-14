@@ -62,8 +62,22 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Providers
 
                 if (intermediateObject is null)
                 {
-                    //TODO: Probably do somethign with the useInheritedValue here
-                    intermediateObject = settings.Get(it.Alias)?.Value;
+                    //TODO: Probably do something with the useInheritedValue here
+                    var documentTypeValue = settings.Get(it.Alias);
+                    if (documentTypeValue != null && documentTypeValue.UseInheritedValue)
+                    {
+                        var inheritance = settings.Inheritance;
+                        while (inheritance != null)
+                        {
+                            var inheritedSettings = _documentTypeSettingsService.Get(inheritance.Id);
+                            documentTypeValue = inheritedSettings.Get(it.Alias);
+                            if (documentTypeValue != null && documentTypeValue.UseInheritedValue)
+                                inheritance = inheritedSettings.Inheritance;
+                            else
+                                break;
+                        }
+                    }
+                    intermediateObject = documentTypeValue?.Value;
                 }
 
                 if (intermediateObject is null)

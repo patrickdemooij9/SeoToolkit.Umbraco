@@ -12,7 +12,6 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField
         Dictionary<string, object> Config { get; }
         IEditorValueConverter ValueConverter { get; }
 
-        object Inherit(object currentValue, object inheritedValue);
         string GetValue(IPublishedContent content, object value); //TODO: Check why we have this
     }
 }

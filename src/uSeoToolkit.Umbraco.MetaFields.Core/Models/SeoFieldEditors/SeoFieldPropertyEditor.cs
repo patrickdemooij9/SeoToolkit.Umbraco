@@ -11,7 +11,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors
     {
         private readonly string _propertyView;
         private readonly Func<IPublishedContent, object, string> _getValueTransformation;
-        public string View => "/App_Plugins/uSeoToolkit/Interface/SeoFieldEditors/PropertyEditor/propertyEditor.html";
+        public string View => "/App_Plugins/uSeoToolkitMetaFields/Interface/SeoFieldEditors/PropertyEditor/propertyEditor.html";
 
         public Dictionary<string, object> Config => new Dictionary<string, object>
         {
@@ -26,11 +26,6 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors
             _getValueTransformation = getValueTransformation;
 
             ValueConverter = valueConverter ?? new TextValueConverter();
-        }
-
-        public object Inherit(object currentValue, object inheritedValue)
-        {
-            return currentValue?.ToString().Length > 0 ? currentValue : inheritedValue;
         }
 
         public string GetValue(IPublishedContent content, object value)

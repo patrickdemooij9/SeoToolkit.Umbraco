@@ -1,6 +1,6 @@
 ﻿angular.module("umbraco").component("dynamicSelectBox",
     {
-        templateUrl: "/App_Plugins/uSeoToolkit/Interface/Components/DynamicSelectBox/dynamicSelectBox.html",
+        templateUrl: "/App_Plugins/uSeoToolkitMetaFields/Interface/Components/DynamicSelectBox/dynamicSelectBox.html",
         bindings: {
             baseList: "<",
             selectedList: "=",

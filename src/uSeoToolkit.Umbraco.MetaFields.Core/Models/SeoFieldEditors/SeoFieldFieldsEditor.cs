@@ -11,7 +11,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors
     public class SeoFieldFieldsEditor : ISeoFieldEditor
     {
         private readonly string[] _fieldTypes;
-        public string View => "/App_Plugins/uSeoToolkit/Interface/SeoFieldEditors/FieldsEditor/fieldsEditor.html";
+        public string View => "/App_Plugins/uSeoToolkitMetaFields/Interface/SeoFieldEditors/FieldsEditor/fieldsEditor.html";
         public Dictionary<string, object> Config => new Dictionary<string, object>
         {
             {"dataTypes", _fieldTypes}
@@ -24,20 +24,6 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors
             _fieldTypes = fieldTypes;
 
             ValueConverter = new FieldValueConverter();
-        }
-
-        public object Inherit(object currentValue, object inheritedValue)
-        {
-            var currentValueString = currentValue?.ToString();
-            var inheritedValueString = inheritedValue?.ToString();
-            if (string.IsNullOrWhiteSpace(currentValueString))
-                return inheritedValueString;
-            if (string.IsNullOrWhiteSpace(inheritedValueString))
-                return currentValueString;
-
-            var inheritedFieldValues = inheritedValueString.Split(',').ToList();
-            inheritedFieldValues.AddRange(currentValueString.Split(','));
-            return string.Join(",", inheritedFieldValues);
         }
 
         public string GetValue(IPublishedContent content, object value)

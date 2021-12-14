@@ -9,7 +9,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.ContentApps
     {
         public ContentApp GetContentAppFor(object source, IEnumerable<IReadOnlyUserGroup> userGroups)
         {
-            if (!(source is IContentType))
+            if (!(source is IContentType contentType))
             {
                 return null;
             }
@@ -20,7 +20,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.ContentApps
                 Alias = "seoSettings",
                 Icon = "icon-globe-alt",
                 Weight = 100,
-                View = "/App_Plugins/uSeoToolkit.MetaFields/Interface/ContentApps/DocumentSettings/documentSettings.html"
+                View = "/App_Plugins/uSeoToolkitMetaFields/Interface/ContentApps/DocumentSettings/documentSettings.html"
             };
         }
     }
