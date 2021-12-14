@@ -1,25 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<ContentTargetFolders>.</ContentTargetFolders>
+		<Product>uSeoToolkit.Umbraco.ScriptManager</Product>
+		<PackageId>uSeoToolkit.Umbraco.ScriptManager</PackageId>
+		<Title>uSeoToolkit.Umbraco.ScriptManager</Title>
+		<Description>...</Description>
+		<Product>...</Product>
+		<PackageTags>umbraco plugin package</PackageTags>
+		<RootNamespace>uSeoToolkit.Umbraco.ScriptManager</RootNamespace>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="App_Plugins\uSeoToolkit.ScriptManager\backoffice\ScriptManager\list.controller.js" />
-    <None Remove="App_Plugins\uSeoToolkit.ScriptManager\backoffice\ScriptManager\list.html" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\uSeoToolkit.Umbraco.ScriptManager.Core\uSeoToolkit.Umbraco.ScriptManager.Core.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="App_Plugins\uSeoToolkit.ScriptManager\backoffice\ScriptManager\list.controller.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkit.ScriptManager\backoffice\ScriptManager\list.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\uSeoToolkit.Umbraco.ScriptManager.Core\uSeoToolkit.Umbraco.ScriptManager.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="App_Plugins\uSeoToolkitScriptManager\**\*.*">
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
+		</Content>
+		<None Include="build\**\*.*">
+			<Pack>True</Pack>
+			<PackagePath>build</PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>
