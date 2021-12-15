@@ -18,14 +18,10 @@
     <link href="/clean-assets/css/clean-blog.css" rel="stylesheet">
     <link href="/clean-assets/css/prettify.css" rel="stylesheet">
 
-    @foreach (var script in renderModel.Get(ScriptPositionType.HeadBottom))
-    {
-@script}
+    <render-script position="HeadBottom"></render-script>
 </head>
 <body>
-    @foreach (var script in renderModel.Get(ScriptPositionType.BodyTop))
-    {
-@script}
+    <render-script position="BodyTop"></render-script>
 
     @await Html.CachedPartialAsync("~/Views/Partials/mainNavigation.cshtml", model: Model, cacheTimeout: TimeSpan.FromMinutes(60))
     @RenderBody()
@@ -35,8 +31,6 @@
     <script type="text/javascript" src="/clean-assets/scripts/run_prettify.js?skin=sunburst"></script>
     <script type="text/javascript" src="/clean-assets/scripts/clean-blog.js"></script>
 
-    @foreach (var script in renderModel.Get(ScriptPositionType.BodyBottom))
-    {
-@script}
+    <render-script position="BodyBottom"></render-script>
 </body>
 </html>

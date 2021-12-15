@@ -44,8 +44,8 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Controllers
                 Definition = definition,
                 Config = postModel.Fields.ToDictionary(it => it.Key, it => it.Value)
             };
-            _scriptManagerService.Save(script);
-            return Ok();
+            script = _scriptManagerService.Save(script);
+            return new JsonResult(new ScriptDetailViewModel(script));
         }
 
         [HttpGet]

@@ -21,18 +21,19 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Services
             _cache = appCaches.RuntimeCache;
         }
 
-        public void Save(Script script)
+        public Script Save(Script script)
         {
             if (script.Id == 0)
             {
-                _scriptRepository.Add(script);
+                script = _scriptRepository.Add(script);
             }
             else
             {
-                _scriptRepository.Update(script);
+                script = _scriptRepository.Update(script);
             }
 
             ClearCache();
+            return script;
         }
 
         public void Delete(int[] ids)
@@ -63,13 +64,16 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Services
 
         public ScriptRenderModel GetRender()
         {
-            var renderModel = new ScriptRenderModel();
-            foreach (var script in GetAll())
+            return _cache.GetCacheItem($"{BaseCacheKey}GetRender", () =>
             {
-                script.Definition.Render(renderModel, script.Config);
-            }
+                var renderModel = new ScriptRenderModel();
+                foreach (var script in GetAll())
+                {
+                    script.Definition.Render(renderModel, script.Config);
+                }
 
-            return renderModel;
+                return renderModel;
+            });
         }
 
         private void ClearCache()

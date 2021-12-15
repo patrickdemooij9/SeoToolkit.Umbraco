@@ -22,21 +22,27 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Repositories
             _scriptDefinitionCollection = scriptDefinitionCollection;
         }
 
-        public void Add(Script script)
+        public Script Add(Script script)
         {
             using (var scope = _scopeProvider.CreateScope())
             {
-                scope.Database.Insert(ToEntity(script));
+                var entity = ToEntity(script);
+                scope.Database.Insert(entity);
                 scope.Complete();
+
+                return Get(entity.Id);
             }
         }
 
-        public void Update(Script script)
+        public Script Update(Script script)
         {
             using (var scope = _scopeProvider.CreateScope())
             {
-                scope.Database.Update(ToEntity(script));
+                var entity = ToEntity(script);
+                scope.Database.Update(entity);
                 scope.Complete();
+
+                return Get(entity.Id);
             }
         }
 

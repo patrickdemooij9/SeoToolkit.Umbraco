@@ -51,6 +51,8 @@
                     formHelper.resetForm({ scope: $scope });
 
                     if (response.status === 200) {
+                        vm.content.id = response.data.id;
+
                         vm.page.saveButtonState = "success";
                         notificationsService.success("Script Saved", "Your script has successfully been saved!");
                     } else {

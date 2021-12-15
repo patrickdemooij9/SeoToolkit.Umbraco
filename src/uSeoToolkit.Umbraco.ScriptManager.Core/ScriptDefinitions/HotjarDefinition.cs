@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Html;
 using Umbraco.Cms.Core.PropertyEditors;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Enums;
+using uSeoToolkit.Umbraco.ScriptManager.Core.Helpers;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 
@@ -9,6 +10,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions
 {
     public class HotjarDefinition : IScriptDefinition
     {
+        private readonly ViewRenderHelper _viewRenderHelper;
         private const string TrackingIdProperty = "trackingId";
 
         public string Name => "Hotjar";
@@ -23,6 +25,12 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions
                 View = "textstring"
             },
         };
+
+        public HotjarDefinition(ViewRenderHelper viewRenderHelper)
+        {
+            _viewRenderHelper = viewRenderHelper;
+        }
+
         public void Render(ScriptRenderModel model, Dictionary<string, object> config)
         {
             if (!config.ContainsKey(TrackingIdProperty) ||
@@ -30,17 +38,8 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions
                 return;
 
             var trackingId = config[TrackingIdProperty].ToString();
-            model.AddScript(ScriptPositionType.HeadBottom, new HtmlString("<!-- Hotjar Tracking Code -->" +
-                                                                          "<script>" +
-                                                                          "(function(h, o, t, j, a, r){" +
-                                                                          "h.hj = h.hj || function(){ (h.hj.q=h.hj.q ||[]).push(arguments)};" +
-                                                                          "h._hjSettings={hjid:" + trackingId + ",hjsv:6};" +
-                                                                          "a=o.getElementsByTagName('head')[0];" +
-                                                                          "r=o.createElement('script'); r.async = 1;" +
-                                                                          "r.src=t + h._hjSettings.hjid + j + h._hjSettings.hjsv;" +
-                                                                          "a.appendChild(r);" +
-                                                                          "})(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');" +
-                                                                          "</script>"));
+            model.AddScript(ScriptPositionType.HeadBottom,
+                _viewRenderHelper.RenderView("~/Views/ScriptManager/Hotjar/Script.cshtml", trackingId));
         }
     }
 }

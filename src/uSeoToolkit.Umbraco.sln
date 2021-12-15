@@ -17,9 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.MetaFie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.MetaFields", "uSeoToolkit.Umbraco.MetaFields\uSeoToolkit.Umbraco.MetaFields.csproj", "{3085E565-CBC0-420E-B77E-D1324571A93F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.ScriptManager", "uSeoToolkit.Umbraco.ScriptManager\uSeoToolkit.Umbraco.ScriptManager.csproj", "{0B88922A-0D30-461F-A381-5F97AB6059F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.ScriptManager", "uSeoToolkit.Umbraco.ScriptManager\uSeoToolkit.Umbraco.ScriptManager.csproj", "{0B88922A-0D30-461F-A381-5F97AB6059F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.ScriptManager.Core", "uSeoToolkit.Umbraco.ScriptManager.Core\uSeoToolkit.Umbraco.ScriptManager.Core.csproj", "{00B26B15-B32A-46D6-A686-B01EF5CA202B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.ScriptManager.Core", "uSeoToolkit.Umbraco.ScriptManager.Core\uSeoToolkit.Umbraco.ScriptManager.Core.csproj", "{00B26B15-B32A-46D6-A686-B01EF5CA202B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

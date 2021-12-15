@@ -5,8 +5,8 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces
 {
     public interface IScriptRepository
     {
-        void Add(Script script);
-        void Update(Script script);
+        Script Add(Script script);
+        Script Update(Script script);
         void Delete(Script script);
 
         Script Get(int id);
