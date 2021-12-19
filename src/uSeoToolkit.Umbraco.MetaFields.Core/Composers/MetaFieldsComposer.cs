@@ -4,6 +4,7 @@ using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Mapping;
 using uSeoToolkit.Umbraco.Core.Interfaces;
 using uSeoToolkit.Umbraco.MetaFields.Core.Collections;
+using uSeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using uSeoToolkit.Umbraco.MetaFields.Core.Components;
 using uSeoToolkit.Umbraco.MetaFields.Core.ContentApps;
 using uSeoToolkit.Umbraco.MetaFields.Core.Converters.SeoValueConverters;
@@ -53,6 +54,9 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Composers
 
             builder.WithCollectionBuilder<MapDefinitionCollectionBuilder>()
                 .Add<DocumentTypeSettingsMapper>();
+
+            builder.WithCollectionBuilder<FieldProviderCollectionBuilder>()
+                .Add<InheritedValueFieldProvider>();
         }
     }
 }

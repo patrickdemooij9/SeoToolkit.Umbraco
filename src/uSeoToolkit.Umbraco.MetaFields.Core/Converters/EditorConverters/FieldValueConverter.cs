@@ -15,7 +15,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Converters.EditorConverters
 
             return new FieldsModel
             {
-                Fields = fields.ToObject<string[]>()
+                Fields = fields.ToObject<FieldsItem[]>()
             };
         }
 
@@ -24,7 +24,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Converters.EditorConverters
             if (value is null || !(value is FieldsModel fieldModel))
                 return Array.Empty<string>();
 
-            return fieldModel.Fields ?? Array.Empty<string>();
+            return fieldModel.Fields ?? Array.Empty<FieldsItem>();
         }
 
         public object ConvertDatabaseToObject(object value)

@@ -10,6 +10,6 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters
         Type FromValue { get; }
         Type ToValue { get; }
 
-        object Convert(object value, IPublishedContent currentContent);
+        object Convert(object value, IPublishedContent currentContent, string fieldAlias);
     }
 }

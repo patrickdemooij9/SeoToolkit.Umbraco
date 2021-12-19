@@ -2,6 +2,6 @@
 {
     public class FieldsModel
     {
-        public string[] Fields { get; set; }
+        public FieldsItem[] Fields { get; set; }
     }
 }

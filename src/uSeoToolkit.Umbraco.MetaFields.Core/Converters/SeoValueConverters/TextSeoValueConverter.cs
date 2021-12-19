@@ -8,7 +8,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Converters.SeoValueConverters
     {
         public Type FromValue => typeof(string);
         public Type ToValue => typeof(string);
-        public object Convert(object value, IPublishedContent currentContent)
+        public object Convert(object value, IPublishedContent currentContent, string fieldAlias)
         {
             return value?.ToString();
         }

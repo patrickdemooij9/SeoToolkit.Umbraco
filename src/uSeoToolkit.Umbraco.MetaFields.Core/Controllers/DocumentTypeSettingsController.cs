@@ -20,7 +20,9 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
         private readonly SeoFieldCollection _seoFieldCollection;
         private readonly IUmbracoMapper _umbracoMapper;
 
-        public DocumentTypeSettingsController(IDocumentTypeSettingsService documentTypeSettingsService, SeoFieldCollection seoFieldCollection, IUmbracoMapper umbracoMapper)
+        public DocumentTypeSettingsController(IDocumentTypeSettingsService documentTypeSettingsService,
+            SeoFieldCollection seoFieldCollection,
+            IUmbracoMapper umbracoMapper)
         {
             _documentTypeSettingsService = documentTypeSettingsService;
             _seoFieldCollection = seoFieldCollection;
@@ -36,8 +38,14 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
                 new DocumentTypeSettingsContentViewModel(_seoFieldCollection.GetAll().Select(it => new SeoFieldViewModel(it)).ToArray());
             return new JsonResult(new DocumentTypeSettingsViewModel
             {
-                ContentModel = content
+                ContentModel = content,
             });
+        }
+
+        [HttpGet]
+        public IActionResult GetAdditionalFields()
+        {
+            return new JsonResult(_documentTypeSettingsService.GetAdditionalFieldItems());
         }
 
         [HttpPost]

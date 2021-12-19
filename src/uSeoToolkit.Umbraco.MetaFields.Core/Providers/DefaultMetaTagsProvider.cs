@@ -62,7 +62,6 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Providers
 
                 if (intermediateObject is null)
                 {
-                    //TODO: Probably do something with the useInheritedValue here
                     var documentTypeValue = settings.Get(it.Alias);
                     if (documentTypeValue != null && documentTypeValue.UseInheritedValue)
                     {
@@ -84,31 +83,11 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Providers
                     return new SeoValue(it, null);
                 var converter = _seoConverterCollection.GetConverter(intermediateObject.GetType(), it.FieldType);
                 if (!(converter is null))
-                    return new SeoValue(it, converter.Convert(intermediateObject, content));
+                    return new SeoValue(it, converter.Convert(intermediateObject, content, it.Alias));
 
                 _logger.LogWarning("No converter found for conversion {0} to {1}", intermediateObject.GetType(), it.FieldType);
                 return new SeoValue(it, intermediateObject);
             }).WhereNotNull().ToArray();
-
-            //TODO: Redo inheritance
-            /*if (settings.Inheritance != null)
-            {
-                var inheritance = settings.Inheritance;
-                while (inheritance != null)
-                {
-                    var inheritedSettings = _documentTypeSettingsService.Get(inheritance.Id);
-                    foreach (var (key, _) in inheritedSettings.Fields)
-                    {
-                        var field = fields.FirstOrDefault(it => it.Field == key);
-                        if (field is null || field.IsUserValue)
-                            continue;
-
-                        field.Value = key.Editor.Inherit(field.Value, inheritedSettings.Get(key.Alias));
-                    }
-
-                    inheritance = settings.Inheritance;
-                }
-            }*/
 
             foreach (var fieldValue in fields)
             {

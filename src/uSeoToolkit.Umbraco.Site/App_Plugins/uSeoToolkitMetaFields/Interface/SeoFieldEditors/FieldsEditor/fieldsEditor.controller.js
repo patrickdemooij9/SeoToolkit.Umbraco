@@ -1,37 +1,70 @@
 ﻿(function () {
     "use strict";
 
-    function fieldsEditorController($scope) {
+    function fieldsEditorController($scope, $http, notificationsService) {
 
         var vm = this;
 
         vm.field = $scope.field;
+        vm.hasInheritance = $scope.hasInheritance;
         vm.customSelectedFields = [];
         vm.customBaseFields = [];
+        vm.loading = true;
 
         function init() {
-            var selectedFields = [];
-            getAllContentFields(vm.field.editor.config.dataTypes).forEach(function (d) {
-                if (vm.field.value && vm.field.value.includes(d.value)) {
-                    selectedFields.push(d);
-                } else {
-                    vm.customBaseFields.push(d);
+
+            $http.get("backoffice/uSeoToolkit/DocumentTypeSettings/GetAdditionalFields").then(function (response) {
+
+                if (response.status !== 200) {
+                    vm.loading = false;
+                    notificationsService.error(
+                        "Error",
+                        "Something went wrong! Please try again later!");
+                    return;
                 }
-            });
 
-            if (vm.field.value) {
-                //Make sure ordering is correct
-                vm.field.value.forEach(function (v) {
-                    var value = selectedFields.find(function(s) {
-                        return s.value === v;
+                var selectedFields = [];
+                var fields = getAllContentFields(vm.field.editor.config.dataTypes);
+                response.data.forEach(function (field) {
+                    if (!vm.hasInheritance && field.onlyShowIfInherited)
+                        return;
+
+                    fields.push({
+                        name: field.name,
+                        value: field.value,
+                        onlyShowIfInherited: field.onlyShowIfInherited,
+                        source: 2
                     });
-                    if (value) {
-                        vm.customSelectedFields.push(value);
-                    }
                 });
-            }
+                fields.forEach(function (d) {
+                    if (vm.field.value) {
+                        const currentField = vm.field.value.find(function(v) {
+                            return d.value === v.value;
+                        });
+                        if (currentField) {
+                            selectedFields.push(d);
+                            return;
+                        }
+                    }
+                    vm.customBaseFields.push(d);
+                });
 
-            $scope.$on('uSeoToolkit.SaveField', beforeSaveEventHandler);
+                if (vm.field.value) {
+                    //Make sure ordering is correct
+                    vm.field.value.forEach(function (v) {
+                        var value = selectedFields.find(function (s) {
+                            return s.value === v.value;
+                        });
+                        if (value) {
+                            vm.customSelectedFields.push(value);
+                        }
+                    });
+                }
+
+                $scope.$on('uSeoToolkit.SaveField', beforeSaveEventHandler);
+
+                vm.loading = false;
+            });
         }
 
         function getAllContentFields(fields) {
@@ -40,14 +73,21 @@
             }).filter(function (g) {
                 return fields.includes(g.editor);
             }).map(function (g) {
-                return { name: g.label, value: g.alias };
+                return { name: g.label, value: g.alias, source: 1 };
             });
         }
 
         function beforeSaveEventHandler($event, $args) {
             vm.field.value = vm.customSelectedFields.map(function (v) {
-                return v.value;
+                return {
+                    name: v.name,
+                    value: v.value,
+                    source: v.source
+                };
             });
+            vm.field.onInheritanceUpdate = function() {
+                console.log(this);
+            }
         }
 
         init();
