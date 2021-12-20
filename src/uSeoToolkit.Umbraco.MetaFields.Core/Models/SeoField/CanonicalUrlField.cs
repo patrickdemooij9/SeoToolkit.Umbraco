@@ -4,9 +4,9 @@ using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Strings;
 using Umbraco.Extensions;
+using uSeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors;
 using uSeoToolkit.Umbraco.MetaFields.Core.Constants;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
-using uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditEditors;
 using uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoField

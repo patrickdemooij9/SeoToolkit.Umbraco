@@ -6,7 +6,7 @@ using uSeoToolkit.Umbraco.MetaFields.Core.Enums;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using uSeoToolkit.Umbraco.MetaFields.Core.Models.Converters;
 
-namespace uSeoToolkit.Umbraco.MetaFields.Core.Converters.SeoValueConverters
+namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters
 {
     public class FieldSeoValueConverter : ISeoValueConverter
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Html;
 using Umbraco.Cms.Core.Composing;
+using uSeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors;
 using uSeoToolkit.Umbraco.MetaFields.Core.Constants;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
-using uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditEditors;
 using uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoField

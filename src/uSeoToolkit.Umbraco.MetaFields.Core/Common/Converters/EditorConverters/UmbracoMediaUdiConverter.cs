@@ -1,7 +1,7 @@
 ﻿using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Web;
 
-namespace uSeoToolkit.Umbraco.MetaFields.Core.Converters.EditorConverters
+namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
 {
     public class UmbracoMediaUdiConverter : UmbracoUdiConverter
     {

@@ -1,6 +1,6 @@
 ﻿using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 
-namespace uSeoToolkit.Umbraco.MetaFields.Core.Converters.EditorConverters
+namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
 {
     public class TextValueConverter : IEditorValueConverter
     {

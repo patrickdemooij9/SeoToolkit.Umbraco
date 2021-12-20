@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using uSeoToolkit.Umbraco.MetaFields.Core.Models.Converters;
 
-namespace uSeoToolkit.Umbraco.MetaFields.Core.Converters.EditorConverters
+namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
 {
     public class FieldValueConverter : IEditorValueConverter
     {

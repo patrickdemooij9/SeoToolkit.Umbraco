@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using uSeoToolkit.Umbraco.MetaFields.Core.Converters.EditorConverters;
+using uSeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 

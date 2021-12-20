@@ -3,7 +3,7 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 
-namespace uSeoToolkit.Umbraco.MetaFields.Core.Converters.SeoValueConverters
+namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters
 {
     public class PublishedContentSeoValueConverter : ISeoValueConverter
     {
