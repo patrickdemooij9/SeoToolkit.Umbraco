@@ -16,7 +16,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders
 
         public IEnumerable<FieldItemViewModel> GetFieldItems()
         {
-            return new[] {new FieldItemViewModel("Inherited value", "inheritedValue", true)};
+            return new[] {new FieldItemViewModel("Inherited value", "custom-inheritedValue", true)};
         }
 
         public object HandleFieldItem(FieldsItem fieldsItem, IPublishedContent content, string fieldAlias)

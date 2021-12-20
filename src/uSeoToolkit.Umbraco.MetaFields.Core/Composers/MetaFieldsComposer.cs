@@ -56,7 +56,8 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<DocumentTypeSettingsMapper>();
 
             builder.WithCollectionBuilder<FieldProviderCollectionBuilder>()
-                .Add<InheritedValueFieldProvider>();
+                .Add<InheritedValueFieldProvider>()
+                .Add<PageNameFieldProvider>();
         }
     }
 }
