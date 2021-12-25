@@ -23,6 +23,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public CanonicalUrlField()
         {
             var propertyEditor = new SeoFieldPropertyEditor("textbox");
+            propertyEditor.SetExtraInformation("You can use %CurrentUrl% to display the URL of the current item");
 
             Editor = propertyEditor;
         }

@@ -8,5 +8,8 @@
     <div class="controls">
         <umb-property-editor model="vm.model">
         </umb-property-editor>
+        <small class="control-description" ng-if="vm.field.editor.config.extraInformation">
+            {{vm.field.editor.config.extraInformation}}
+        </small>
     </div>
 </div>

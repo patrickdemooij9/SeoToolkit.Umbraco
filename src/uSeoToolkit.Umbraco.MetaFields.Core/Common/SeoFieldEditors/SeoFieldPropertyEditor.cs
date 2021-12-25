@@ -12,18 +12,30 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors
         private readonly string _propertyView;
         public string View => "/App_Plugins/uSeoToolkitMetaFields/Interface/SeoFieldEditors/PropertyEditor/propertyEditor.html";
 
-        public Dictionary<string, object> Config => new Dictionary<string, object>
-        {
-            {"view", _propertyView}
-        };
+        private Dictionary<string, object> _config;
+
+        public Dictionary<string, object> Config => _config;
 
         public IEditorValueConverter ValueConverter { get; }
 
-        public SeoFieldPropertyEditor(string propertyView, IEditorValueConverter valueConverter = null)
+        public SeoFieldPropertyEditor(string propertyView) : this(propertyView, new TextValueConverter())
+        {
+        }
+
+        public SeoFieldPropertyEditor(string propertyView, IEditorValueConverter valueConverter)
         {
             _propertyView = propertyView;
+            ValueConverter = valueConverter;
 
-            ValueConverter = valueConverter ?? new TextValueConverter();
+            _config = new Dictionary<string, object>
+            {
+                {"view", _propertyView}
+            };
+        }
+
+        public void SetExtraInformation(string information)
+        {
+            _config["extraInformation"] = information;
         }
     }
 }
