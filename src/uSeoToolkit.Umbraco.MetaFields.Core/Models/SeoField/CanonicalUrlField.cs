@@ -12,34 +12,24 @@ using uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
     [Weight(600)]
-    public class CanonicalUrlField : ISeoField
+    public class CanonicalUrlField : SeoField<string>
     {
-        public string Title => "Canonical Url";
-        public string Alias => SeoFieldAliasConstants.CanonicalUrl;
-        public string Description => "Canonical Url for the content";
-        public Type FieldType => typeof(string);
-        public ISeoFieldEditor Editor { get; }
-        public ISeoFieldEditEditor EditEditor => new SeoTextBoxEditEditor();
+        public override string Title => "Canonical Url";
+        public override string Alias => SeoFieldAliasConstants.CanonicalUrl;
+        public override string Description => "Canonical Url for the content";
+        public override ISeoFieldEditor Editor { get; }
+        public override ISeoFieldEditEditor EditEditor => new SeoTextBoxEditEditor();
 
         public CanonicalUrlField()
         {
-            var propertyEditor = new SeoFieldPropertyEditor("textbox", GetEditorValueTransformation);
+            var propertyEditor = new SeoFieldPropertyEditor("textbox");
 
             Editor = propertyEditor;
         }
 
-        private static string GetEditorValueTransformation(IPublishedContent content, object value)
+        protected override HtmlString Render(string value)
         {
-            var valueString = value?.ToString();
-            if (string.IsNullOrWhiteSpace(valueString))
-                return string.Empty;
-
-            return valueString.Replace("%CurrentUrl%", content.Url(mode: UrlMode.Absolute));
-        }
-
-        public HtmlString Render(object value)
-        {
-            return new HtmlString($"<link rel='canonical' href='{value}'/>");
+            return string.IsNullOrWhiteSpace(value) ? null : new HtmlString($"<link rel='canonical' href='{value}'/>");
         }
     }
 }

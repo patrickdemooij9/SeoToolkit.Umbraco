@@ -63,6 +63,8 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
                     var userValue = userValues.ContainsKey(key.Alias)
                         ? key.EditEditor.ValueConverter.ConvertObjectToEditorValue(key.EditEditor.ValueConverter.ConvertDatabaseToObject(userValues[key.Alias]))
                         : null;
+                    //TODO: Check if we need an UserValue and Value here or if a simple boolean would be good enough
+                    //And introduce a displayValue that is used for displaying. We can then use that for additional changes like replacements
                     return new SeoSettingsFieldViewModel
                     {
                         Alias = key.Alias,

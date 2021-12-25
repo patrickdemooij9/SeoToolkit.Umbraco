@@ -15,7 +15,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
         {
             if (value is IPublishedContent content)
             {
-                return new GuidUdi(content.ItemType.ToString(), content.Key);
+                return new GuidUdi(content.ItemType.ToString(), content.Key).ToString();
             }
 
             return null;

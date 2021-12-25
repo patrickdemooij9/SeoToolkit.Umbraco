@@ -25,23 +25,5 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors
 
             ValueConverter = new FieldValueConverter();
         }
-
-        public string GetValue(IPublishedContent content, object value)
-        {
-            var aliases = value?.ToString()?.Split(',');
-            if (aliases is null) return null;
-            foreach (var alias in aliases)
-            {
-                var returnValue = content.Value(alias);
-                if (returnValue is string stringValue && !string.IsNullOrWhiteSpace(stringValue))
-                    return stringValue;
-                if (returnValue is IPublishedContent publishedContent)
-                    return publishedContent.Url(mode: UrlMode.Absolute);
-                if (returnValue is IEnumerable<IPublishedContent> publishedContents)
-                    return publishedContents.FirstOrDefault().Url(mode: UrlMode.Absolute);
-            }
-
-            return null;
-        }
     }
 }
