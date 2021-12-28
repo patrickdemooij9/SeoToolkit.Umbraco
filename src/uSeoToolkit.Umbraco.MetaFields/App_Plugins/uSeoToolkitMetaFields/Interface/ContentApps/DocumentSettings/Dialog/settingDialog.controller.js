@@ -5,6 +5,7 @@
         var vm = this;
 
         $scope.field = $scope.model.field;
+        $scope.hasInheritance = $scope.model.hasInheritance;
 
         vm.close = close;
         vm.submit = submit;

@@ -2,6 +2,8 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
@@ -25,13 +27,17 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISeoValueService _seoValueService;
         private readonly ILogger<SeoSettingsController> _logger;
+        private readonly IVariationContextAccessor _variationContextAccessor;
+        private readonly ILocalizationService _localizationService;
 
         public SeoSettingsController(ISeoService seoService,
             IDocumentTypeSettingsService documentTypeSettingsService,
             SeoFieldCollection fieldCollection,
             IUmbracoContextFactory umbracoContextFactory,
             ISeoValueService seoValueService,
-            ILogger<SeoSettingsController> logger)
+            ILogger<SeoSettingsController> logger,
+            IVariationContextAccessor variationContextAccessor,
+            ILocalizationService localizationService)
         {
             _seoService = seoService;
             _documentTypeSettingsService = documentTypeSettingsService;
@@ -39,11 +45,15 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
             _umbracoContextFactory = umbracoContextFactory;
             _seoValueService = seoValueService;
             _logger = logger;
+            _variationContextAccessor = variationContextAccessor;
+            _localizationService = localizationService;
         }
 
         [HttpGet]
-        public IActionResult Get(int nodeId, int contentTypeId)
+        public IActionResult Get(int nodeId, string culture)
         {
+            EnsureLanguage(culture);
+
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             var content = ctx.UmbracoContext.Content.GetById(true, nodeId);
             if (content is null)
@@ -63,8 +73,6 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
                     var userValue = userValues.ContainsKey(key.Alias)
                         ? key.EditEditor.ValueConverter.ConvertObjectToEditorValue(key.EditEditor.ValueConverter.ConvertDatabaseToObject(userValues[key.Alias]))
                         : null;
-                    //TODO: Check if we need an UserValue and Value here or if a simple boolean would be good enough
-                    //And introduce a displayValue that is used for displaying. We can then use that for additional changes like replacements
                     return new SeoSettingsFieldViewModel
                     {
                         Alias = key.Alias,
@@ -87,6 +95,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
             if (!settings.EnableSeoSettings)
                 return BadRequest("Seo settings are turned off for this node!");
 
+            EnsureLanguage(postModel.Culture);
             var isDirty = false;
             var values = new Dictionary<string, object>();
             foreach (var (seoField, _) in settings.Fields)
@@ -105,7 +114,15 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
             if (isDirty)
                 _seoValueService.AddValues(postModel.NodeId, values);
 
-            return Get(postModel.NodeId, postModel.ContentTypeId);
+            return Get(postModel.NodeId, postModel.Culture);
+        }
+
+        private void EnsureLanguage(string culture)
+        {
+            if (!string.IsNullOrWhiteSpace(culture))
+                _variationContextAccessor.VariationContext = new VariationContext(culture);
+            else
+                _variationContextAccessor.VariationContext = new VariationContext(_localizationService.GetDefaultLanguageIsoCode());
         }
     }
 }

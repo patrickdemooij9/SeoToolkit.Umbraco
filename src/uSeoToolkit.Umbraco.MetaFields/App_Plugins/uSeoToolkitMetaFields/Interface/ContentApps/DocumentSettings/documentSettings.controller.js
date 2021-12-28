@@ -53,9 +53,10 @@
         vm.openSettingDialog = function (field) {
             const editor = {
                 title: "Field",
-                view: "/App_Plugins/uSeoToolkit/Interface/ContentApps/DocumentSettings/Dialog/settingDialog.html",
+                view: "/App_Plugins/uSeoToolkitMetaFields/Interface/ContentApps/DocumentSettings/Dialog/settingDialog.html",
                 size: "small",
                 field: field,
+                hasInheritance: vm.model.inheritance != null,
                 groups: $scope.model.groups,
                 submit: function (model) {
                     field = model.field;
@@ -80,9 +81,6 @@
             });
             vm.model.inheritance = null;
         }
-
-        console.log($scope.model);
-        console.log($scope.model.groups);
 
         $scope.$on("formSubmitting",
             function () {
@@ -125,7 +123,15 @@
 
         function formatFieldValue(field) {
             if (Array.isArray(field.value)) {
-                return field.value.join(', ');
+                var values = [];
+                field.value.forEach(function(v) {
+                    if (v.name) {
+                        values.push(v.name);
+                    } else {
+                        values.push(v);
+                    }
+                });
+                return values.join(', ');
             }
             return field.value;
         }

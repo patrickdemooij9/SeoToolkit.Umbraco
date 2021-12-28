@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    function SeoSettingsController($scope, $rootScope, $http, editorState) {
+    function SeoSettingsController($scope, $routeParams, $rootScope, $http, editorState) {
 
         var vm = this;
         vm.loading = true;
@@ -12,9 +12,14 @@
         vm.startEdit = startEdit;
         vm.finishEdit = finishEdit;
         vm.isUrl = isUrl;
+        vm.culture = $routeParams.cculture ? $routeParams.cculture : $routeParams.mculture;
 
         function init() {
-            $http.get("backoffice/uSeoToolkit/SeoSettings/Get?nodeId=" + editorState.current.id + "&contentTypeId=" + editorState.current.contentTypeId).then(
+            var url = "backoffice/uSeoToolkit/SeoSettings/Get?nodeId=" + editorState.current.id;
+            if (vm.culture) {
+                url += "&culture=" + vm.culture;
+            }
+            $http.get(url).then(
                 function (response) {
                     vm.fields = response.data.fields;
                     vm.loading = false;
@@ -44,6 +49,7 @@
                 {
                     nodeId: editorState.current.id,
                     contentTypeId: editorState.current.contentTypeId,
+                    culture: vm.culture,
                     userValues: userValues
                 }).then(function (response) {
                     vm.edit = false;
