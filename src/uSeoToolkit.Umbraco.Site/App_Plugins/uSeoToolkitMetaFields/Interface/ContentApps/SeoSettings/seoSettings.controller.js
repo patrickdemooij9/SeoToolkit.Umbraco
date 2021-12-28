@@ -14,6 +14,17 @@
         vm.isUrl = isUrl;
         vm.culture = $routeParams.cculture ? $routeParams.cculture : $routeParams.mculture;
 
+        vm.isContentDirty = function () {
+            var currentEditorItem = editorState.getCurrent();
+            var isDirty = false;
+            currentEditorItem.variants.forEach(function(variant) {
+                if (variant.isDirty) {
+                    isDirty = true;
+                }
+            });
+            return isDirty;
+        }
+
         function init() {
             var url = "backoffice/uSeoToolkit/SeoSettings/Get?nodeId=" + editorState.current.id;
             if (vm.culture) {
@@ -69,9 +80,9 @@
                 if (data.alias !== "seoSettings") {
                     return;
                 }
-            });
 
-        init();
+                init();
+            });
     }
 
     angular.module("umbraco").controller("uSeoToolkit.ContentApps.SeoSettingsController", SeoSettingsController);

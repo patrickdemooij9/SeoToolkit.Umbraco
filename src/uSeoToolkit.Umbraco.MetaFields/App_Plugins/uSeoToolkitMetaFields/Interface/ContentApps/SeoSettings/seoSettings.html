@@ -1,4 +1,9 @@
 ﻿<div ng-controller="uSeoToolkit.ContentApps.SeoSettingsController as vm" class="form-horizontal">
+    
+    <div class="alert-box" ng-if="vm.isContentDirty()">
+        Make sure to save/publish your changes to see the updated values here!
+    </div>
+
     <umb-editor-sub-header>
         <umb-editor-sub-header-content-right>
             <umb-button action="vm.startEdit()"
