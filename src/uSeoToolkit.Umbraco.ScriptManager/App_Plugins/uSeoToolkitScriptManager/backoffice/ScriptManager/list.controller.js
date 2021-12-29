@@ -88,7 +88,7 @@
             vm.items = items.map(function (i) {
                 return {
                     "id": i.id,
-                    "icon": "icon-document",
+                    "icon": "icon-script",
                     "name": i.name,
                     "definitionName": i.definitionName,
                     "published": true,

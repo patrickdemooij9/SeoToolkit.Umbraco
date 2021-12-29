@@ -35,7 +35,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Controllers
 
         protected override ActionResult<TreeNode> CreateRootNode(FormCollection queryStrings)
         {
-            var node = CreateTreeNode("siteManager", "-1", queryStrings, "Script Manager", "icon-document", false,
+            var node = CreateTreeNode("siteManager", "-1", queryStrings, "Script Manager", "icon-script", false,
                 $"{SectionAlias}/{TreeAlias}/list");
 
             return node;

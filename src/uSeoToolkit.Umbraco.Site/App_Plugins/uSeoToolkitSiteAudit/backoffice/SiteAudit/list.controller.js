@@ -82,7 +82,7 @@
             vm.items = items.map(function (i) {
                 return {
                     "id": i.id,
-                    "icon": "icon-document",
+                    "icon": "icon-notepad-alt",
                     "name": i.name,
                     "createdDate": i.createdDate,
                     "status": i.status,

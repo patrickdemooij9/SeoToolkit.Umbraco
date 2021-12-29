@@ -13,7 +13,7 @@ using uSeoToolkit.Umbraco.Core.Constants;
 namespace uSeoToolkit.Umbraco.SiteAudit.Core.Controllers
 {
     [Tree("uSeoToolkit", "SiteAudit", TreeTitle = "uSeoToolkit", TreeGroup = "uSeoToolkit", SortOrder = 1)]
-    [PluginController("uSeoToolkit")]
+    [PluginController("uSeoToolkitSiteAudit")]
     public class SeoToolkitTreeController : TreeController
     {
         public IMenuItemCollectionFactory MenuItemCollectionFactory { get; }
@@ -33,7 +33,7 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Controllers
 
         protected override ActionResult<TreeNode> CreateRootNode(FormCollection queryStrings)
         {
-            var node = CreateTreeNode("siteAudit", "-1", queryStrings, "Site Audits", "icon-document", false,
+            var node = CreateTreeNode("siteAudit", "-1", queryStrings, "Site Audits", "icon-diagnostics", false,
                 $"{SectionAlias}/{TreeAlias}/list");
 
             return node;

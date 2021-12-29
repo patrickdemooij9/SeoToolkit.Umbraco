@@ -27,6 +27,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Composers
         public void Compose(IUmbracoBuilder builder)
         {
             builder.Components().Append<MetaFieldsDatabaseComponent>();
+            builder.Components().Append<EnableModuleComponent>();
 
             builder.ContentApps().Append<MetaFieldsDocumentSettingsContentAppFactory>();
             builder.ContentApps().Append<MetaFieldsSeoSettingsAppFactory>();

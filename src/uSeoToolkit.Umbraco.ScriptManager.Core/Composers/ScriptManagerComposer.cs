@@ -27,6 +27,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Composers
                 .Add<CustomScriptDefinition>();
 
             builder.Components().Append<ScriptManagerDatabaseComponent>();
+            builder.Components().Append<EnableModuleComponent>();
 
             builder.Services.AddScoped<IScriptRepository, ScriptRepository>();
             builder.Services.AddScoped<IScriptManagerService, ScriptManagerService>();

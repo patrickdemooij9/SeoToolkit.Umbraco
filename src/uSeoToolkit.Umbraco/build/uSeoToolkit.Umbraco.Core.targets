@@ -1,26 +1,26 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <PropertyGroup>
-        <uSeoToolkitUmbracoCoreContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\uSeoToolkit.Umbraco.Core\**\*.*</uSeoToolkitUmbracoCoreContentFilesPath>
+        <uSeoToolkitUmbracoCoreContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\uSeoToolkit\**\*.*</uSeoToolkitUmbracoCoreContentFilesPath>
     </PropertyGroup>
 
     <Target Name="CopyuSeoToolkitUmbracoCoreAssets" BeforeTargets="Build">
         <ItemGroup>
             <uSeoToolkitUmbracoCoreContentFiles Include="$(uSeoToolkitUmbracoCoreContentFilesPath)" />
         </ItemGroup>
-        <Message Text="Copying uSeoToolkit.Umbraco.Core files: $(uSeoToolkitUmbracoCoreContentFilesPath) - #@(uSeoToolkitUmbracoCoreContentFiles->Count()) files"  Importance="high" />
+        <Message Text="Copying uSeoToolkit files: $(uSeoToolkitUmbracoCoreContentFilesPath) - #@(uSeoToolkitUmbracoCoreContentFiles->Count()) files"  Importance="high" />
         <Copy
             SourceFiles="@(uSeoToolkitUmbracoCoreContentFiles)"
-            DestinationFiles="@(uSeoToolkitUmbracoCoreContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit.Umbraco.Core\%(RecursiveDir)%(Filename)%(Extension)')"
+            DestinationFiles="@(uSeoToolkitUmbracoCoreContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit\%(RecursiveDir)%(Filename)%(Extension)')"
             SkipUnchangedFiles="true" />
 
     </Target>
 
     <Target Name="ClearuSeoToolkitUmbracoCoreAssets" BeforeTargets="Clean">
         <ItemGroup>
-            <uSeoToolkitUmbracoCoreDir Include="$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit.Umbraco.Core\" />
+            <uSeoToolkitUmbracoCoreDir Include="$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit\" />
         </ItemGroup>
-        <Message Text="Clear old uSeoToolkit.Umbraco.Core data"  Importance="high" />
+        <Message Text="Clear old uSeoToolkit data"  Importance="high" />
         <RemoveDir Directories="@(uSeoToolkitUmbracoCoreDir)"  />
     </Target>
 

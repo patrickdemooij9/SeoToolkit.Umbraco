@@ -1,0 +1,10 @@
+﻿{
+  "javascript": [
+    "~/App_Plugins/uSeoToolkitSiteAudit/js/siteAuditHub.js",
+    "~/App_Plugins/uSeoToolkitSiteAudit/backoffice/SiteAudit/list.controller.js",
+    "~/App_Plugins/uSeoToolkitSiteAudit/backoffice/SiteAudit/detail.controller.js",
+    "~/App_Plugins/uSeoToolkitSiteAudit/backoffice/SiteAudit/create.controller.js",
+    "~/App_Plugins/uSeoToolkitSiteAudit/libs/chart.min.js"
+  ],
+  "css": [ "~/App_Plugins/uSeoToolkitSiteAudit/css/siteAudit.css" ]
+}
