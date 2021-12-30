@@ -1,6 +1,6 @@
 ﻿(function () {
 
-    function siteAuditDetailController($timeout, $routeParams, $http, siteAuditHub) {
+    function siteAuditDetailController($timeout, $routeParams, $http, $location, siteAuditHub, localizationService, overlayService) {
 
         var vm = this;
 
@@ -26,6 +26,7 @@
         vm.setOverviewPage = setOverviewPage;
         vm.filterResultsOnCheck = filterResultsOnCheck;
         vm.deleteAudit = deleteAudit;
+        vm.stopAudit = stopAudit
         //vm.initChart = initChart;
 
         //Pagination
@@ -41,7 +42,12 @@
 
         vm.dropdownOpen = false;
         vm.items = [
-            { "name": "Delete", "function": deleteAudit, "icon": "icon-delete" }
+            { "name": "Delete", "function": deleteAudit, "icon": "icon-delete" },
+            {
+                "name": "Stop audit", "function": stopAudit, "icon": "icon-delete", "visibleFunc": function () {
+                    return vm.audit.status === "Running";
+                }
+            }
         ];
 
         function init() {
@@ -62,7 +68,7 @@
 
                 vm.hub.start();
 
-                $timeout(function() {
+                $timeout(function () {
                     loadCurrentAudit(auditId);
                 }, 1000);
             });
@@ -98,48 +104,73 @@
             vm.errors = 0;
             vm.warnings = 0;
             vm.checkResults = {};
-            vm.audit.PagesCrawled.forEach(function (p) {
-                p.Errors = 0;
-                p.Warnings = 0;
-                p.Show = hideShow ? false : p.Show;
-                p.Results.forEach(function (r) {
+            vm.audit.pagesCrawled.forEach(function (p) {
+                p.errors = 0;
+                p.warnings = 0;
+                p.show = hideShow ? false : p.show;
+                p.results.forEach(function (r) {
                     var addToResults = false;
-                    if (r.IsError) {
+                    if (r.isError) {
                         vm.errors++;
-                        p.Errors++;
+                        p.errors++;
                         addToResults = true;
                     }
-                    if (r.IsWarning) {
+                    if (r.isWarning) {
                         vm.warnings++;
-                        p.Warnings++;
+                        p.warnings++;
                         addToResults = true;
                     }
 
                     if (addToResults) {
-                        if (!vm.checkResults[r.CheckId]) {
-                            vm.checkResults[r.CheckId] = { count: 0 };
-                            if (r.IsError) {
-                                vm.checkResults[r.CheckId].isError = true;
+                        if (!vm.checkResults[r.checkId]) {
+                            vm.checkResults[r.checkId] = { count: 0 };
+                            if (r.isError) {
+                                vm.checkResults[r.checkId].isError = true;
                             } else {
-                                vm.checkResults[r.CheckId].isWarning = true;
+                                vm.checkResults[r.checkId].isWarning = true;
                             }
                         }
-                        vm.checkResults[r.CheckId].count++;
+                        vm.checkResults[r.checkId].count++;
                     }
                 });
             });
         }
 
         function deleteAudit() {
-            console.log("Ouch");
+            const dialog = {
+                view: "views/propertyeditors/listview/overlays/delete.html",
+                submitButtonLabelKey: "contentTypeEditor_yesDelete",
+                submitButtonStyle: "danger",
+                submit: function (model) {
+                    $http.post("backoffice/uSeoToolkit/SiteAudit/Delete",
+                        {
+                            ids: [vm.audit.id]
+                        }).then(function (response) {
+                            overlayService.close();
+                            $location.path("uSeoToolkit/SiteAudit/list");
+                        });
+                },
+                close: function () {
+                    overlayService.close();
+                }
+            };
+
+            localizationService.localize("general_delete").then(value => {
+                dialog.title = value;
+                overlayService.open(dialog);
+            });
+        }
+
+        function stopAudit() {
+            console.log("Trying to stop!");
         }
 
         function openPage(page) {
-            page.Show = true;
+            page.show = true;
         };
 
         function closePage(page) {
-            page.Show = false;
+            page.show = false;
         };
 
         function setOverviewPage(overviewPage) {
@@ -165,7 +196,7 @@
                 return true;
             }
 
-            return result.CheckId === vm.filterCheck.Id;
+            return result.checkId === vm.filterCheck.id;
         }
 
         function nextPage(pageNumber) {
@@ -186,24 +217,24 @@
 
         function loadPage(pageNumber) {
             var pageIndex = pageNumber - 1;
-            var pages = vm.audit.PagesCrawled
-                .filter(function(item) {
+            var pages = vm.audit.pagesCrawled
+                .filter(function (item) {
                     if (!vm.onlyShowIssues && !vm.filterCheck) {
                         return true;
                     }
 
                     var result = true;
                     if (vm.onlyShowIssues) {
-                        result = item.Errors > 0 || item.Warnings > 0;
+                        result = item.errors > 0 || item.warnings > 0;
                     }
                     if (result && vm.filterCheck) {
-                        result = item.Results.some(function(item) {
-                            return item.CheckId === vm.filterCheck.Id;
+                        result = item.results.some(function (item) {
+                            return item.checkId === vm.filterCheck.id;
                         });
                     }
                     return result;
                 });
-            console.log(pages);
+            console.log(vm.audit);
             vm.pagination.pageNumber = pageNumber;
             vm.pagination.totalPages = pages.length / vm.pagination.itemsPerPage;
             vm.pages = pages.slice(pageIndex * vm.pagination.itemsPerPage, pageIndex * vm.pagination.itemsPerPage + vm.pagination.itemsPerPage);
@@ -223,14 +254,14 @@
         }
 
         function getCheckById(id) {
-            return vm.audit.Checks.find(function (item) {
-                return item.Id === id;
+            return vm.audit.checks.find(function (item) {
+                return item.id == id;
             });
         }
 
         function getClientId() {
-            if ($.connection !== undefined && $.connection.hub !== undefined) {
-                return $.connection.hub.id;
+            if ($.connection !== undefined) {
+                return $.connection.connectionId;
             }
             return "";
         }

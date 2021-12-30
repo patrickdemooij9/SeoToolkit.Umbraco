@@ -1,0 +1,27 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup>
+		<uSeoToolkitUmbracoMetaFieldsContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\uSeoToolkitMetaFields\**\*.*</uSeoToolkitUmbracoMetaFieldsContentFilesPath>
+    </PropertyGroup>
+
+    <Target Name="CopyuSeoToolkitUmbracoMetaFieldsAssets" BeforeTargets="Build">
+        <ItemGroup>
+			<uSeoToolkitUmbracoMetaFieldsContentFiles Include="$(uSeoToolkitUmbracoMetaFieldsContentFilesPath)" />
+        </ItemGroup>
+        <Message Text="Copying uSeoToolkit files: $(uSeoToolkitUmbracoMetaFieldsContentFilesPath) - #@(uSeoToolkitUmbracoMetaFieldsContentFiles->Count()) files"  Importance="high" />
+        <Copy
+            SourceFiles="@(uSeoToolkitUmbracoMetaFieldsContentFiles)"
+            DestinationFiles="@(uSeoToolkitUmbracoMetaFieldsContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkitMetaFields\%(RecursiveDir)%(Filename)%(Extension)')"
+            SkipUnchangedFiles="true" />
+
+    </Target>
+
+    <Target Name="ClearuSeoToolkitUmbracoMetaFieldsAssets" BeforeTargets="Clean">
+        <ItemGroup>
+			<uSeoToolkitUmbracoMetaFieldsDir Include="$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkitMetaFields\" />
+        </ItemGroup>
+        <Message Text="Clear old uSeoToolkit MetaFields data"  Importance="high" />
+        <RemoveDir Directories="@(uSeoToolkitUmbracoMetaFieldsDir)"  />
+    </Target>
+
+</Project>

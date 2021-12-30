@@ -73,6 +73,7 @@
                     })
                 }).then(function (response) {
                     setItems(response.data);
+                    clearSelection();
                     vm.loading = false;
                 });
         }
@@ -80,13 +81,13 @@
         function setItems(items) {
             vm.items = items.map(function (i) {
                 return {
-                    "id": i.Id,
-                    "icon": "icon-document",
-                    "name": i.Name,
-                    "createdDate": i.CreatedDate,
-                    "status": i.Status,
+                    "id": i.id,
+                    "icon": "icon-notepad-alt",
+                    "name": i.name,
+                    "createdDate": i.createdDate,
+                    "status": i.status,
                     "published": true,
-                    "editPath": "uSeoToolkit/SiteAudit/detail?id=" + i.Id
+                    "editPath": "uSeoToolkit/SiteAudit/detail?id=" + i.id
                 }
             });
         }

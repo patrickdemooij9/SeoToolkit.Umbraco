@@ -14,6 +14,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\uSeoToolkit.Umbraco.ScriptManager.Core\uSeoToolkit.Umbraco.ScriptManager.Core.csproj" />
+		<ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

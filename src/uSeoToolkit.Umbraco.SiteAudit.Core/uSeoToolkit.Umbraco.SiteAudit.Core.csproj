@@ -18,6 +18,5 @@
 
     <ItemGroup>
       <ProjectReference Include="..\uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj" />
-      <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />
     </ItemGroup>
 </Project>

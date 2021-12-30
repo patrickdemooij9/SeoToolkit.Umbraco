@@ -16,7 +16,7 @@
                             </umb-button>
                             <umb-dropdown ng-if="vm.dropdownOpen" on-close="vm.close()" umb-keyboard-list class="siteaudit-actions umb-actions">
                                 <umb-dropdown-item ng-repeat="item in vm.items">
-                                    <button type="button" class="btn-reset" ng-click="vm.select(item)">
+                                    <button type="button" class="btn-reset" ng-click="vm.select(item)" ng-show="!item.visibleFunc || item.visibleFunc()">
                                         <i class="icon {{item.icon}}"></i>
                                         <span class="menu-label">{{ item.name }}</span>
                                     </button>
@@ -28,7 +28,7 @@
 
                 <umb-box>
                     <div class="umb-box-header">
-                        {{vm.audit.Name}}
+                        {{vm.audit.name}}
                         <div>
                             <div class="umb-healthcheck-message" style="margin: 0;">
                                 <i class="icon-delete color-red" aria-hidden="true"></i>
@@ -40,21 +40,22 @@
                             </div>
                             <div class="umb-healthcheck-message" style="margin: 0;">
                                 <i class="icon-document" aria-hidden="true"></i>
-                                {{vm.audit.PagesCrawled.length}}/{{vm.audit.MaxPagesToCrawl ? vm.audit.MaxPagesToCrawl : vm.audit.TotalPagesFound}}
+                                {{vm.audit.pagesCrawled.length}}/{{vm.audit.maxPagesToCrawl ? vm.audit.maxPagesToCrawl : vm.audit.totalPagesFound}}
                             </div>
                         </div>
                     </div>
-                    <umb-progress-bar class="siteaudit-progress" percentage="{{vm.audit.Progress}}" data-test="{{vm.audit.Progress}}">
+                    <umb-progress-bar class="siteaudit-progress" percentage="{{vm.audit.progress}}" data-test="{{vm.audit.progress}}">
                     </umb-progress-bar>
                     <div class="umb-box-content">
-                        <h4>Status: {{vm.audit.Status}}</h4>
+                        <h4>Status: {{vm.audit.status}}</h4>
+                        <p ng-if="vm.audit.status === 'Scheduled'">Your site audit will begin within a minute</p>
                         <hr />
                         <h4>Summary</h4>
                         <div class="siteaudit-results">
                             <div ng-repeat="(checkResultKey, checkResultValue) in vm.checkResults">
                                 <i class="icon-delete color-red" ng-if="checkResultValue.isError"></i>
                                 <i class="icon-info color-orange" ng-if="checkResultValue.isWarning"></i>
-                                <a ng-click="vm.filterResultsOnCheck(checkResultKey)">{{vm.getCheckById(checkResultKey).ErrorMessage}} ({{checkResultValue.count}} times)</a>
+                                <a ng-click="vm.filterResultsOnCheck(checkResultKey)">{{vm.getCheckById(checkResultKey).errorMessage}} ({{checkResultValue.count}} times)</a>
                             </div>
                         </div>
                         <!--<canvas id="myChart" ng-init="vm.initChart()" width="400" height="400"></canvas>-->
@@ -86,30 +87,30 @@
                         <div class="umb-panel-group__details-check">
                             <div ng-repeat="page in vm.pages">
                                 <div class="umb-panel-group__details-status" style="justify-content: space-between; padding-left: 20px; padding-right: 20px;">
-                                    <div style="flex: 1;">{{page.Url}}</div>
-                                    <div style="flex: 1;">Status: <span ng-class="{'error-status': page.StatusCode < 200 || page.StatusCode > 299}">{{page.StatusCode}}</span></div>
+                                    <div style="flex: 1;">{{page.url}}</div>
+                                    <div style="flex: 1;">Status: <span ng-class="{'error-status': page.statusCode < 200 || page.statusCode > 299}">{{page.statusCode}}</span></div>
                                     <div class="umb-healthcheck-messages" style="margin: 0; flex: 1;">
-                                        <div class="umb-healthcheck-message" ng-show="page.Errors > 0" style="margin: 0;">
+                                        <div class="umb-healthcheck-message" ng-show="page.errors > 0" style="margin: 0;">
                                             <i class="icon-delete color-red" aria-hidden="true"></i>
-                                            {{page.Errors}}
+                                            {{page.errors}}
                                         </div>
-                                        <div class="umb-healthcheck-message" ng-show="page.Warnings > 0" style="margin: 0;">
+                                        <div class="umb-healthcheck-message" ng-show="page.warnings > 0" style="margin: 0;">
                                             <i class="icon-info color-orange" aria-hidden="true"></i>
-                                            {{page.Warnings}}
+                                            {{page.warnings}}
                                         </div>
                                     </div>
-                                    <a ng-click="vm.openPage(page)" ng-show="!page.Show">
+                                    <a ng-click="vm.openPage(page)" ng-show="!page.show">
                                         Open
                                     </a>
-                                    <a ng-click="vm.closePage(page)" ng-show="page.Show">
+                                    <a ng-click="vm.closePage(page)" ng-show="page.show">
                                         Close
                                     </a>
                                 </div>
-                                <div class="umb-panel-group__details-status" ng-show="page.Show" style="padding: 0 20px 15px 40px; border-top: none; display: block;">
-                                    <div ng-repeat="result in page.Results" ng-show="page.Results.length > 0">
-                                        {{result.Message}}
+                                <div class="umb-panel-group__details-status" ng-show="page.show" style="padding: 0 20px 15px 40px; border-top: none; display: block;">
+                                    <div ng-repeat="result in page.results" ng-show="page.results.length > 0">
+                                        {{result.message}}
                                     </div>
-                                    <div ng-show="page.Results.length == 0">
+                                    <div ng-show="page.results.length == 0">
                                         No results for this page!
                                     </div>
                                 </div>
@@ -135,20 +136,20 @@
                     </div>
                     <div class="umb-panel-group__details-checks">
                         <div class="umb-panel-group__details-check">
-                            <div ng-repeat="check in vm.audit.Checks">
+                            <div ng-repeat="check in vm.audit.checks">
                                 <div class="umb-panel-group__details-status" style="justify-content: space-between; padding-left: 20px; padding-right: 20px;">
-                                    <div style="flex: 1;">{{check.Name}}</div>
-                                    <div class="umb-healthcheck-messages" style="margin: 0; flex: 1;" ng-show="vm.checkResults[check.Id]">
-                                        <div class="umb-healthcheck-message" ng-show="vm.checkResults[check.Id].isError" style="margin: 0;">
+                                    <div style="flex: 1;">{{check.name}}</div>
+                                    <div class="umb-healthcheck-messages" style="margin: 0; flex: 1;" ng-show="vm.checkResults[check.id]">
+                                        <div class="umb-healthcheck-message" ng-show="vm.checkResults[check.id].isError" style="margin: 0;">
                                             <i class="icon-delete color-red" aria-hidden="true"></i>
-                                            {{vm.checkResults[check.Id].count}}
+                                            {{vm.checkResults[check.id].count}}
                                         </div>
-                                        <div class="umb-healthcheck-message" ng-show="vm.checkResults[check.Id].isWarning" style="margin: 0;">
+                                        <div class="umb-healthcheck-message" ng-show="vm.checkResults[check.id].isWarning" style="margin: 0;">
                                             <i class="icon-info color-orange" aria-hidden="true"></i>
-                                            {{vm.checkResults[check.Id].count}}
+                                            {{vm.checkResults[check.id].count}}
                                         </div>
                                     </div>
-                                    <a ng-click="vm.filterResultsOnCheck(check.Id)">
+                                    <a ng-click="vm.filterResultsOnCheck(check.id)">
                                         Show occurrences
                                     </a>
                                 </div>
@@ -159,21 +160,21 @@
 
                 <div class="umb-panel-group__details-group" ng-if="vm.overviewPage == 'filteredCheck'">
                     <div class="umb-panel-group__details-group-title">
-                        <div class="umb-panel-group__details-group-name">{{vm.filterCheck.Name}}</div>
+                        <div class="umb-panel-group__details-group-name">{{vm.filterCheck.name}}</div>
                     </div>
                     <div class="umb-panel-group__details-checks">
                         <div class="umb-panel-group__details-check">
                             <div ng-repeat="page in vm.pages">
                                 <div class="umb-panel-group__details-status" style="justify-content: space-between; padding-left: 20px; padding-right: 20px;">
-                                    <div style="flex: 1;">{{page.Url}}</div>
+                                    <div style="flex: 1;">{{page.url}}</div>
                                     <div class="umb-healthcheck-messages" style="margin: 0; flex: 1;">
-                                        <div class="umb-healthcheck-message" ng-show="page.Errors > 0" style="margin: 0;">
+                                        <div class="umb-healthcheck-message" ng-show="page.errors > 0" style="margin: 0;">
                                             <i class="icon-delete color-red" aria-hidden="true"></i>
-                                            {{page.Errors}}
+                                            {{page.errors}}
                                         </div>
-                                        <div class="umb-healthcheck-message" ng-show="page.Warnings > 0" style="margin: 0;">
+                                        <div class="umb-healthcheck-message" ng-show="page.warnings > 0" style="margin: 0;">
                                             <i class="icon-info color-orange" aria-hidden="true"></i>
-                                            {{page.Warnings}}
+                                            {{page.warnings}}
                                         </div>
                                     </div>
                                     <a ng-click="vm.openPage(page)" ng-show="!page.Show">
@@ -184,10 +185,10 @@
                                     </a>
                                 </div>
                                 <div class="umb-panel-group__details-status" ng-show="page.Show" style="padding: 0 20px 15px 40px; border-top: none; display: block;">
-                                    <div ng-repeat="result in page.Results | filter:vm.resultFilter" ng-show="page.Results.length > 0">
-                                        {{result.Message}}
+                                    <div ng-repeat="result in page.results | filter:vm.resultFilter" ng-show="page.results.length > 0">
+                                        {{result.message}}
                                     </div>
-                                    <div ng-show="page.Results.length == 0">
+                                    <div ng-show="page.results.length == 0">
                                         No results for this page!
                                     </div>
                                 </div>

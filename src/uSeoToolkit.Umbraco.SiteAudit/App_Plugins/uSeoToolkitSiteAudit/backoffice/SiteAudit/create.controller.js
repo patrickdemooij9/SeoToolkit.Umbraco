@@ -16,11 +16,11 @@
 
         function toggleCheck(check) {
             if (vm.selectedAudit) {
-                if (vm.selectedAudit.checks.includes(check.Id)) {
-                    const index = vm.selectedAudit.checks.indexOf(check.Id);
+                if (vm.selectedAudit.checks.includes(check.id)) {
+                    const index = vm.selectedAudit.checks.indexOf(check.id);
                     vm.selectedAudit.checks.splice(index, 1);
                 } else {
-                    vm.selectedAudit.checks.push(check.Id);
+                    vm.selectedAudit.checks.push(check.id);
                 }
             }
         }
@@ -64,7 +64,7 @@
                 vm.selectedAudit = {
                     isEdit: true,
                     name: "",
-                    checks: vm.checks.map(it => it.Id)
+                    checks: vm.checks.map(it => it.id)
                 };
                 vm.isLoading = false;
             });

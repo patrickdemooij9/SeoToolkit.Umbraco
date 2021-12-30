@@ -1,81 +1,94 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<ContentTargetFolders>.</ContentTargetFolders>
+		<Product>uSeoToolkit.Umbraco.MetaFields</Product>
+		<PackageId>uSeoToolkit.Umbraco.MetaFields</PackageId>
+		<Title>uSeoToolkit MetaFields</Title>
+		<Description>...</Description>
+		<Product>...</Product>
+		<PackageTags>umbraco plugin package</PackageTags>
+		<RootNamespace>uSeoToolkit.Umbraco.MetaFields</RootNamespace>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\css\main.css" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\css\siteAudit.css" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\Components\DynamicSelectBox\dynamicSelectBox.controller.js" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\Components\DynamicSelectBox\dynamicSelectBox.html" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.controller.js" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.html" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\documentSettings.controller.js" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\documentSettings.html" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\SeoSettings\seoSettings.controller.js" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\SeoSettings\seoSettings.html" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.controller.js" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.html" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.controller.js" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.html" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.controller.js" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.html" />
-    <None Remove="App_Plugins\uSeoToolkitMetaFields\package.manifest" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\css\main.css" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\css\siteAudit.css" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\Components\DynamicSelectBox\dynamicSelectBox.controller.js" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\Components\DynamicSelectBox\dynamicSelectBox.html" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.controller.js" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.html" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\documentSettings.controller.js" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\documentSettings.html" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\SeoSettings\seoSettings.controller.js" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\SeoSettings\seoSettings.html" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.controller.js" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.html" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.controller.js" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.html" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.controller.js" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.html" />
+		<None Remove="App_Plugins\uSeoToolkitMetaFields\package.manifest" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\css\main.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\css\siteAudit.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\Components\DynamicSelectBox\dynamicSelectBox.controller.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\Components\DynamicSelectBox\dynamicSelectBox.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.controller.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\documentSettings.controller.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\documentSettings.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\SeoSettings\seoSettings.controller.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\SeoSettings\seoSettings.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.controller.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.controller.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.controller.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitMetaFields\package.manifest">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\css\main.css">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\css\siteAudit.css">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\Components\DynamicSelectBox\dynamicSelectBox.controller.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\Components\DynamicSelectBox\dynamicSelectBox.html">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.controller.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\Dialog\settingDialog.html">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\documentSettings.controller.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\DocumentSettings\documentSettings.html">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\SeoSettings\seoSettings.controller.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\ContentApps\SeoSettings\seoSettings.html">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.controller.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\Previewers\BaseTags\baseTagsFieldPreviewer.html">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.controller.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\FieldsEditor\fieldsEditor.html">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.controller.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\Interface\SeoFieldEditors\PropertyEditor\propertyEditor.html">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Plugins\uSeoToolkitMetaFields\package.manifest">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields.Core\uSeoToolkit.Umbraco.MetaFields.Core.csproj" />
+	  <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -32,12 +32,11 @@
 
 
     <Import Project="..\uSeoToolkit.Umbraco.ScriptManager\build\uSeoToolkit.Umbraco.ScriptManager.targets" />
+    <Import Project="..\uSeoToolkit.Umbraco\build\uSeoToolkit.Umbraco.Core.targets" />
+    <Import Project="..\uSeoToolkit.Umbraco.MetaFields\build\uSeoToolkit.Umbraco.MetaFields.targets" />
     <ItemGroup>
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj" />
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields.Core\uSeoToolkit.Umbraco.MetaFields.Core.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields\uSeoToolkit.Umbraco.MetaFields.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco.ScriptManager\uSeoToolkit.Umbraco.ScriptManager.csproj" />
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.SiteAudit.Core\uSeoToolkit.Umbraco.SiteAudit.Core.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco.SiteAudit\uSeoToolkit.Umbraco.SiteAudit.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />
     </ItemGroup>
