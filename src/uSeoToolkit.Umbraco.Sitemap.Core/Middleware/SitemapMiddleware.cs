@@ -10,29 +10,32 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
+using uSeoToolkit.Umbraco.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators;
+using uSeoToolkit.Umbraco.Sitemap.Core.Config.Models;
+using uSeoToolkit.Umbraco.Sitemap.Core.Models.Business;
+using uSeoToolkit.Umbraco.Sitemap.Core.Utils;
 
 namespace uSeoToolkit.Umbraco.Sitemap.Core.Middleware
 {
     public class SitemapMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IUmbracoContextAccessor _umbracoContextAccessor;
         private readonly ISitemapGenerator _sitemapGenerator;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
-        private readonly IDomainService _domainService;
+        private readonly ISettingsService<SitemapConfig> _settingsService;
 
         public SitemapMiddleware(RequestDelegate next,
             IUmbracoContextAccessor umbracoContextAccessor,
             ISitemapGenerator sitemapGenerator,
             IUmbracoContextFactory umbracoContextFactory,
-            IDomainService domainService)
+            IDomainService domainService,
+            ISettingsService<SitemapConfig> settingsService)
         {
             _next = next;
-            _umbracoContextAccessor = umbracoContextAccessor;
             _sitemapGenerator = sitemapGenerator;
             _umbracoContextFactory = umbracoContextFactory;
-            _domainService = domainService;
+            _settingsService = settingsService;
         }
 
         public async Task Invoke(HttpContext context)
@@ -50,31 +53,35 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Middleware
                 var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
                 if (domains.Length == 0)
                 {
-                    doc = _sitemapGenerator.Generate(ctx.UmbracoContext.Domains.DefaultCulture);
+                    doc = _sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture, false));
                 }
                 else
                 {
                     var domain = DomainUtilities.SelectDomain(domains, new Uri(context.Request.GetEncodedUrl()));
                     if (domain is null)
                     {
+                        //TODO: Return sitemap index here with all the sitemaps
                         await _next.Invoke(context);
                         return;
                     }
-                    var rootNode = ctx.UmbracoContext.Content.GetById(domain.ContentId);
-                    if (rootNode is null)
+                    else
                     {
-                        await _next.Invoke(context);
-                        return;
-                    }
+                        var rootNode = ctx.UmbracoContext.Content.GetById(domain.ContentId);
+                        if (rootNode is null)
+                        {
+                            await _next.Invoke(context);
+                            return;
+                        }
 
-                    doc = _sitemapGenerator.Generate(rootNode, domain.Culture);
+                        doc = _sitemapGenerator.Generate(new SitemapGeneratorOptions(rootNode, domain.Culture, _settingsService.GetSettings().ShowAlternatePages));
+                    }
                 }
             }
 
             context.Response.StatusCode = 200;
             context.Response.ContentType = "text/xml";
 
-            using (var writer = new StringWriter())
+            using (var writer = new UTF8StringWriter())
             {
                 await doc.SaveAsync(writer, SaveOptions.None, CancellationToken.None);
                 await context.Response.WriteAsync(writer.ToString());

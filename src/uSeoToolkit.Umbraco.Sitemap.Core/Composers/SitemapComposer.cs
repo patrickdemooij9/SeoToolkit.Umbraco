@@ -4,9 +4,10 @@ using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
+using uSeoToolkit.Umbraco.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators;
-using uSeoToolkit.Umbraco.Sitemap.Core.Components;
-using uSeoToolkit.Umbraco.Sitemap.Core.Controllers;
+using uSeoToolkit.Umbraco.Sitemap.Core.Config;
+using uSeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using uSeoToolkit.Umbraco.Sitemap.Core.Middleware;
 
 namespace uSeoToolkit.Umbraco.Sitemap.Core.Composers
@@ -18,6 +19,7 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Composers
             //builder.Services.AddUnique<SitemapRegistrationComponent>();
 
             builder.Services.AddUnique<ISitemapGenerator, SitemapGenerator>();
+            builder.Services.AddSingleton(typeof(ISettingsService<SitemapConfig>), typeof(SitemapConfigurationService));
 
             builder.Services.Configure<UmbracoPipelineOptions>(options => {
                 options.AddFilter(new UmbracoPipelineFilter(
@@ -27,6 +29,8 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Composers
                     applicationBuilder => { }
                 ));
             });
+
+            builder.Services.Configure<SitemapAppSettingsModel>(builder.Config.GetSection("uSeoToolkit:Sitemap"));
         }
     }
 }
