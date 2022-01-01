@@ -12,6 +12,7 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using uSeoToolkit.Umbraco.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators;
+using uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator;
 using uSeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using uSeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using uSeoToolkit.Umbraco.Sitemap.Core.Utils;
@@ -22,18 +23,19 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ISitemapGenerator _sitemapGenerator;
+        private readonly ISitemapIndexGenerator _sitemapIndexGenerator;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISettingsService<SitemapConfig> _settingsService;
 
         public SitemapMiddleware(RequestDelegate next,
-            IUmbracoContextAccessor umbracoContextAccessor,
             ISitemapGenerator sitemapGenerator,
+            ISitemapIndexGenerator sitemapIndexGenerator,
             IUmbracoContextFactory umbracoContextFactory,
-            IDomainService domainService,
             ISettingsService<SitemapConfig> settingsService)
         {
             _next = next;
             _sitemapGenerator = sitemapGenerator;
+            _sitemapIndexGenerator = sitemapIndexGenerator;
             _umbracoContextFactory = umbracoContextFactory;
             _settingsService = settingsService;
         }
@@ -60,9 +62,7 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Middleware
                     var domain = DomainUtilities.SelectDomain(domains, new Uri(context.Request.GetEncodedUrl()));
                     if (domain is null)
                     {
-                        //TODO: Return sitemap index here with all the sitemaps
-                        await _next.Invoke(context);
-                        return;
+                        doc = _sitemapIndexGenerator.Generate();
                     }
                     else
                     {

@@ -52,7 +52,7 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                 selfItem.Add(new XElement(_namespace + "loc", content.Url(culture, UrlMode.Absolute)));
                 if (showAlternatePages)
                 {
-                    //TODO: We need to check if the domain exists, because now it just returns the english domain
+                    //TODO: We need to check if the domain exists, because now it just returns the english domain if it doesn't exist
                     var cultures = content.Cultures.Where(it => content.IsPublished(it.Key)).ToArray();
                     if (cultures.Length > 1)
                     {
