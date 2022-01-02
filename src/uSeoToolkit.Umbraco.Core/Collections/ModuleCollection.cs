@@ -13,7 +13,8 @@ namespace uSeoToolkit.Umbraco.Core.Collections
             _items = new List<SeoToolkitModule>
             {
                 new SeoToolkitModule{Title = "Meta Fields", Alias = "metaFields", Icon = "icon-thumbnail-list", Link = "https://github.com/patrickdemooij9/uSeoToolkit.Umbraco"},
-                new SeoToolkitModule{Title = "Script Manager", Alias = "scriptManager", Icon = "icon-script", Link = "https://github.com/patrickdemooij9/uSeoToolkit.Umbraco"}
+                new SeoToolkitModule{Title = "Script Manager", Alias = "scriptManager", Icon = "icon-script", Link = "https://github.com/patrickdemooij9/uSeoToolkit.Umbraco"},
+                new SeoToolkitModule{Title = "Sitemap", Alias = "sitemap", Icon = "icon-map", Link = "https://github.com/patrickdemooij9/uSeoToolkit.Umbraco"}
             };
         }
 

@@ -7,6 +7,7 @@ using Umbraco.Extensions;
 using uSeoToolkit.Umbraco.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators;
 using uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator;
+using uSeoToolkit.Umbraco.Sitemap.Core.Components;
 using uSeoToolkit.Umbraco.Sitemap.Core.Config;
 using uSeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using uSeoToolkit.Umbraco.Sitemap.Core.Middleware;
@@ -17,7 +18,7 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            //builder.Services.AddUnique<SitemapRegistrationComponent>();
+            builder.Components().Append<EnableModuleComponent>();
 
             builder.Services.AddUnique<ISitemapGenerator, SitemapGenerator>();
             builder.Services.AddUnique<ISitemapIndexGenerator, SitemapIndexGenerator>();
