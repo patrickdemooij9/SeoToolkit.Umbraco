@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30907.101
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco", "uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj", "{A12A74F9-52BA-4A0D-840B-E3CABB7A5CB0}"
 EndProject
@@ -21,9 +21,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.ScriptM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.ScriptManager.Core", "uSeoToolkit.Umbraco.ScriptManager.Core\uSeoToolkit.Umbraco.ScriptManager.Core.csproj", "{00B26B15-B32A-46D6-A686-B01EF5CA202B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.Sitemap", "uSeoToolkit.Umbraco.Sitemap\uSeoToolkit.Umbraco.Sitemap.csproj", "{D8FE0D8A-F4AF-4EEC-B3EB-F51AE2061581}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.Sitemap", "uSeoToolkit.Umbraco.Sitemap\uSeoToolkit.Umbraco.Sitemap.csproj", "{D8FE0D8A-F4AF-4EEC-B3EB-F51AE2061581}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.Sitemap.Core", "uSeoToolkit.Umbraco.Sitemap.Core\uSeoToolkit.Umbraco.Sitemap.Core.csproj", "{7E8C0005-AEC2-454C-9E22-C23463A558A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.Sitemap.Core", "uSeoToolkit.Umbraco.Sitemap.Core\uSeoToolkit.Umbraco.Sitemap.Core.csproj", "{7E8C0005-AEC2-454C-9E22-C23463A558A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MetaFields", "MetaFields", "{5958F62C-2812-46E2-82B7-222F850ACD24}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScriptManager", "ScriptManager", "{87009485-22C2-4074-85CA-73AD89C3AACB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SiteAudit", "SiteAudit", "{98CE25D9-4BB4-41C7-A8DC-9BD113039766}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sitemap", "Sitemap", "{DAF3B729-F075-4FB0-958A-BA500BF88FD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +86,16 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{76F603E6-2FD0-4F35-A72A-7BEEE79772FF} = {98CE25D9-4BB4-41C7-A8DC-9BD113039766}
+		{84E61339-2196-414A-8907-E4D4BEA19FF4} = {98CE25D9-4BB4-41C7-A8DC-9BD113039766}
+		{2892DB26-648F-47F0-955D-E6870C61C3F4} = {5958F62C-2812-46E2-82B7-222F850ACD24}
+		{3085E565-CBC0-420E-B77E-D1324571A93F} = {5958F62C-2812-46E2-82B7-222F850ACD24}
+		{0B88922A-0D30-461F-A381-5F97AB6059F4} = {87009485-22C2-4074-85CA-73AD89C3AACB}
+		{00B26B15-B32A-46D6-A686-B01EF5CA202B} = {87009485-22C2-4074-85CA-73AD89C3AACB}
+		{D8FE0D8A-F4AF-4EEC-B3EB-F51AE2061581} = {DAF3B729-F075-4FB0-958A-BA500BF88FD7}
+		{7E8C0005-AEC2-454C-9E22-C23463A558A9} = {DAF3B729-F075-4FB0-958A-BA500BF88FD7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {551ADBA5-3DFB-4300-929C-2BE0DB346636}
