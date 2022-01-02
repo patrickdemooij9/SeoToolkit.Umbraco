@@ -26,8 +26,8 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Composers
             builder.Services.Configure<UmbracoPipelineOptions>(options => {
                 options.AddFilter(new UmbracoPipelineFilter(
                     "uSeoToolkit Sitemap",
-                    applicationBuilder => {},
                     applicationBuilder => { applicationBuilder.UseMiddleware<SitemapMiddleware>(); },
+                    applicationBuilder => { },
                     applicationBuilder => { }
                 ));
             });
