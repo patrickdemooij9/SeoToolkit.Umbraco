@@ -25,19 +25,16 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Middleware
         private readonly ISitemapGenerator _sitemapGenerator;
         private readonly ISitemapIndexGenerator _sitemapIndexGenerator;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
-        private readonly ISettingsService<SitemapConfig> _settingsService;
 
         public SitemapMiddleware(RequestDelegate next,
             ISitemapGenerator sitemapGenerator,
             ISitemapIndexGenerator sitemapIndexGenerator,
-            IUmbracoContextFactory umbracoContextFactory,
-            ISettingsService<SitemapConfig> settingsService)
+            IUmbracoContextFactory umbracoContextFactory)
         {
             _next = next;
             _sitemapGenerator = sitemapGenerator;
             _sitemapIndexGenerator = sitemapIndexGenerator;
             _umbracoContextFactory = umbracoContextFactory;
-            _settingsService = settingsService;
         }
 
         public async Task Invoke(HttpContext context)
@@ -55,7 +52,7 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Middleware
                 var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
                 if (domains.Length == 0)
                 {
-                    doc = _sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture, false));
+                    doc = _sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture));
                 }
                 else
                 {
@@ -73,7 +70,7 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Middleware
                             return;
                         }
 
-                        doc = _sitemapGenerator.Generate(new SitemapGeneratorOptions(rootNode, domain.Culture, _settingsService.GetSettings().ShowAlternatePages));
+                        doc = _sitemapGenerator.Generate(new SitemapGeneratorOptions(rootNode, domain.Culture));
                     }
                 }
             }

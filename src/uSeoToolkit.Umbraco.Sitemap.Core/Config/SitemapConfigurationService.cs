@@ -18,7 +18,10 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Config
             var settings = _config.Value;
             return new SitemapConfig
             {
-                ShowAlternatePages = settings.ShowAlternatePages
+                ShowAlternatePages = settings.ShowAlternatePages,
+                LastModifiedFieldAlias = settings.LastModifiedFieldAlias,
+                ChangeFrequencyFieldAlias = settings.ChangeFrequencyFieldAlias,
+                PriorityFieldAlias = settings.PriorityFieldAlias
             };
         }
     }

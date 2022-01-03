@@ -14,16 +14,10 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Models.Business
         /// </summary>
         public string Culture { get; }
 
-        /// <summary>
-        /// Indicates if the sitemap should include alternate language pages
-        /// </summary>
-        public bool IncludeAlternatePages { get; }
-
-        public SitemapGeneratorOptions(IPublishedContent startingNode, string culture, bool includeAlternatePages)
+        public SitemapGeneratorOptions(IPublishedContent startingNode, string culture)
         {
             StartingNode = startingNode;
             Culture = culture;
-            IncludeAlternatePages = includeAlternatePages;
         }
     }
 }
