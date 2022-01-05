@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Migrations;
 using Umbraco.Cms.Core.Scoping;
@@ -14,16 +15,20 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Components
         private readonly IMigrationPlanExecutor _planExecutor;
         private readonly IScopeProvider _scopeProvider;
         private readonly IKeyValueService _keyValueService;
+        private readonly IRuntimeState _runtimeState;
 
-        public SiteAuditDatabaseComponent(IMigrationPlanExecutor planExecutor, IScopeProvider scopeProvider, IMigrationBuilder migrationBuilder, IKeyValueService keyValueService, ILogger<SiteAuditDatabaseComponent> logger)
+        public SiteAuditDatabaseComponent(IMigrationPlanExecutor planExecutor, IScopeProvider scopeProvider, IKeyValueService keyValueService, IRuntimeState runtimeState)
         {
             _planExecutor = planExecutor;
             _scopeProvider = scopeProvider;
             _keyValueService = keyValueService;
+            _runtimeState = runtimeState;
         }
 
         public void Initialize()
         {
+            if (_runtimeState.Level != RuntimeLevel.Run) return;
+
             var plan = new MigrationPlan("uSeoToolkit_SiteAudit_Migration");
             plan.From(string.Empty)
                 .To<SiteAuditInitialMigration>("state-1");
