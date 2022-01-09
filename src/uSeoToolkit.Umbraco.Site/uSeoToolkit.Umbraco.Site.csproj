@@ -36,6 +36,7 @@
     <Import Project="..\uSeoToolkit.Umbraco.MetaFields\build\uSeoToolkit.Umbraco.MetaFields.targets" />
     <ItemGroup>
       <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields\uSeoToolkit.Umbraco.MetaFields.csproj" />
+      <ProjectReference Include="..\uSeoToolkit.Umbraco.RobotsTxt\uSeoToolkit.Umbraco.RobotsTxt.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco.ScriptManager\uSeoToolkit.Umbraco.ScriptManager.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco.SiteAudit\uSeoToolkit.Umbraco.SiteAudit.csproj" />
       <ProjectReference Include="..\uSeoToolkit.Umbraco.Sitemap\uSeoToolkit.Umbraco.Sitemap.csproj" />
