@@ -16,12 +16,7 @@ jobs:
 
     runs-on: windows-latest
 
-    steps:
-    - name: Get Version 
-      id: get_version
-      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/release\//}
-      shell: bash
-      
+    steps:      
     - uses: actions/checkout@v2  
       
     - name: Setup .net core
@@ -40,10 +35,10 @@ jobs:
       run: dotnet build ./src/uSeoToolkit.Umbraco.Sitemap/uSeoToolkit.Umbraco.Sitemap.csproj --configuration ${{ env.CONFIG }} --no-restore
       
     - name: Create NuGet package file for Core
-      run: dotnet pack ./src/uSeoToolkit.Umbraco.Sitemap.Core/uSeoToolkit.Umbraco.Sitemap.Core.csproj -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }} /p:version=${{ github.event.inputs.name }}
+      run: dotnet pack ./src/uSeoToolkit.Umbraco.Sitemap.Core/uSeoToolkit.Umbraco.Sitemap.Core.csproj -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }} /p:version=${{ github.event.inputs.package_version }}
     
     - name: Create NuGet package file for Backoffice
-      run: dotnet pack ./src/uSeoToolkit.Umbraco.Sitemap/uSeoToolkit.Umbraco.Sitemap.csproj -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }} /p:version=${{ github.event.inputs.name }}
+      run: dotnet pack ./src/uSeoToolkit.Umbraco.Sitemap/uSeoToolkit.Umbraco.Sitemap.csproj -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }} /p:version=${{ github.event.inputs.package_version }}
    
 #    - name: Push packages to NuGet
 #      run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_DEPLOY_KEY }} -s https://api.nuget.org/v3/index.json
