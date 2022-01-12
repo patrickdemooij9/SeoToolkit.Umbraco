@@ -33,9 +33,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SiteAudit", "SiteAudit", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sitemap", "Sitemap", "{DAF3B729-F075-4FB0-958A-BA500BF88FD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.RobotsTxt.Core", "uSeoToolkit.Umbaco.RobotsTxt.Core\uSeoToolkit.Umbraco.RobotsTxt.Core.csproj", "{9CB7AA3C-B4C2-414D-A61E-E00EEE292049}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.RobotsTxt.Core", "uSeoToolkit.Umbaco.RobotsTxt.Core\uSeoToolkit.Umbraco.RobotsTxt.Core.csproj", "{9CB7AA3C-B4C2-414D-A61E-E00EEE292049}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.RobotsTxt", "uSeoToolkit.Umbraco.RobotsTxt\uSeoToolkit.Umbraco.RobotsTxt.csproj", "{5B460335-8786-4FA9-911B-AEC5A752B88C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.RobotsTxt", "uSeoToolkit.Umbraco.RobotsTxt\uSeoToolkit.Umbraco.RobotsTxt.csproj", "{5B460335-8786-4FA9-911B-AEC5A752B88C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RobotsTxt", "RobotsTxt", "{5641B436-FCCB-4D1A-9D25-6A39B95031CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -108,6 +110,8 @@ Global
 		{00B26B15-B32A-46D6-A686-B01EF5CA202B} = {87009485-22C2-4074-85CA-73AD89C3AACB}
 		{D8FE0D8A-F4AF-4EEC-B3EB-F51AE2061581} = {DAF3B729-F075-4FB0-958A-BA500BF88FD7}
 		{7E8C0005-AEC2-454C-9E22-C23463A558A9} = {DAF3B729-F075-4FB0-958A-BA500BF88FD7}
+		{9CB7AA3C-B4C2-414D-A61E-E00EEE292049} = {5641B436-FCCB-4D1A-9D25-6A39B95031CB}
+		{5B460335-8786-4FA9-911B-AEC5A752B88C} = {5641B436-FCCB-4D1A-9D25-6A39B95031CB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {551ADBA5-3DFB-4300-929C-2BE0DB346636}

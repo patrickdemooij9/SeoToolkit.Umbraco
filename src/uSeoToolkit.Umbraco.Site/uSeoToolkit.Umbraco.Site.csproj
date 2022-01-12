@@ -1,59 +1,60 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-    <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-        <DefaultItemExcludes>$(DefaultItemExcludes);App_Plugins/**;</DefaultItemExcludes>
-        <DefaultItemExcludes>$(DefaultItemExcludes);umbraco/**;</DefaultItemExcludes>
-        <DefaultItemExcludes>$(DefaultItemExcludes);wwwroot/media/**;</DefaultItemExcludes>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <DefaultItemExcludes>$(DefaultItemExcludes);App_Plugins/**;</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);umbraco/**;</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);wwwroot/media/**;</DefaultItemExcludes>
+  </PropertyGroup>
 
-    <!-- Force windows to use ICU. Otherwise Windows 10 2019H1+ will do it, but older windows 10 and most if not all winodws servers will run NLS -->
-    <ItemGroup>
-        <PackageReference Include="clean" Version="2.0.0-beta002" />
-        <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="68.2.0.6" />
-        <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="68.2" />
-    </ItemGroup>
+  <!-- Force windows to use ICU. Otherwise Windows 10 2019H1+ will do it, but older windows 10 and most if not all winodws servers will run NLS -->
+  <ItemGroup>
+    <PackageReference Include="clean" Version="2.0.0-beta002" />
+    <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="68.2.0.6" />
+    <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="68.2" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Umbraco.Cms" Version="9.0.1" />
-    </ItemGroup>
-
-
-
-    <ItemGroup>
-        <Content Include="App_Plugins/**" CopyToOutputDirectory="Always" />
-        <Content Include="umbraco/**" CopyToOutputDirectory="Always" />
-        <Content Remove="umbraco/Data/**" />
-        <Content Remove="umbraco/Logs/**" />
-        <Content Remove="umbraco/mediacache/**" />
-        <Content Remove="umbraco/models/**" />
-        <Compile Include="umbraco/models/**" Exclude="**/*.flag" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms" Version="9.0.1" />
+  </ItemGroup>
 
 
-    <Import Project="..\uSeoToolkit.Umbraco.ScriptManager\build\uSeoToolkit.Umbraco.ScriptManager.targets" />
-    <Import Project="..\uSeoToolkit.Umbraco\build\uSeoToolkit.Umbraco.Core.targets" />
-    <Import Project="..\uSeoToolkit.Umbraco.MetaFields\build\uSeoToolkit.Umbraco.MetaFields.targets" />
-    <ItemGroup>
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields\uSeoToolkit.Umbraco.MetaFields.csproj" />
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.RobotsTxt\uSeoToolkit.Umbraco.RobotsTxt.csproj" />
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.ScriptManager\uSeoToolkit.Umbraco.ScriptManager.csproj" />
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.SiteAudit\uSeoToolkit.Umbraco.SiteAudit.csproj" />
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.Sitemap\uSeoToolkit.Umbraco.Sitemap.csproj" />
-      <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="umbraco\models\" />
-    </ItemGroup>
 
-    <PropertyGroup>
-        <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
-    </PropertyGroup>
+  <ItemGroup>
+    <Content Include="App_Plugins/**" CopyToOutputDirectory="Always" />
+    <Content Include="umbraco/**" CopyToOutputDirectory="Always" />
+    <Content Remove="umbraco/Data/**" />
+    <Content Remove="umbraco/Logs/**" />
+    <Content Remove="umbraco/mediacache/**" />
+    <Content Remove="umbraco/models/**" />
+    <Compile Include="umbraco/models/**" Exclude="**/*.flag" />
+  </ItemGroup>
 
-    <!-- Set this to true if ModelsBuilder mode is not InMemoryAuto-->
-    <PropertyGroup>
-        <RazorCompileOnBuild>false</RazorCompileOnBuild>
-        <RazorCompileOnPublish>false</RazorCompileOnPublish>
-    </PropertyGroup>
+
+  <Import Project="..\uSeoToolkit.Umbraco.ScriptManager\build\uSeoToolkit.Umbraco.ScriptManager.targets" />
+  <Import Project="..\uSeoToolkit.Umbraco\build\uSeoToolkit.Umbraco.Core.targets" />
+  <Import Project="..\uSeoToolkit.Umbraco.MetaFields\build\uSeoToolkit.Umbraco.MetaFields.targets" />
+  <Import Project="..\uSeoToolkit.Umbraco.RobotsTxt\build\uSeoToolkit.Umbraco.RobotsTxt.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields\uSeoToolkit.Umbraco.MetaFields.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.RobotsTxt\uSeoToolkit.Umbraco.RobotsTxt.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.ScriptManager\uSeoToolkit.Umbraco.ScriptManager.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.SiteAudit\uSeoToolkit.Umbraco.SiteAudit.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.Sitemap\uSeoToolkit.Umbraco.Sitemap.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="umbraco\models\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
+  </PropertyGroup>
+
+  <!-- Set this to true if ModelsBuilder mode is not InMemoryAuto-->
+  <PropertyGroup>
+    <RazorCompileOnBuild>false</RazorCompileOnBuild>
+    <RazorCompileOnPublish>false</RazorCompileOnPublish>
+  </PropertyGroup>
 
 </Project>

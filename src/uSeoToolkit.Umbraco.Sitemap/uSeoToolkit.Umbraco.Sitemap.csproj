@@ -2,8 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Product>uSeoToolkit.Umbraco.Sitemap</Product>
+    <PackageId>uSeoToolkit.Umbraco.Sitemap</PackageId>
+    <Title>uSeoToolkit.Umbraco.Sitemap</Title>
+    <Description>...</Description>
+    <Product>...</Product>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>uSeoToolkit.Umbraco.Sitemap</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="build\**\*.*">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
+  </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\uSeoToolkit.Umbraco.Sitemap.Core\uSeoToolkit.Umbraco.Sitemap.Core.csproj" />
     <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />

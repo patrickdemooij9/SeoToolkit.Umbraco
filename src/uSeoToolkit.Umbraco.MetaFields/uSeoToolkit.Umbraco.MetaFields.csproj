@@ -2,7 +2,6 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<ContentTargetFolders>.</ContentTargetFolders>
 		<Product>uSeoToolkit.Umbraco.MetaFields</Product>
 		<PackageId>uSeoToolkit.Umbraco.MetaFields</PackageId>
 		<Title>uSeoToolkit MetaFields</Title>
@@ -84,6 +83,10 @@
 		<Content Include="App_Plugins\uSeoToolkitMetaFields\package.manifest">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+    <None Include="build\**\*.*">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
 	</ItemGroup>
 
 	<ItemGroup>

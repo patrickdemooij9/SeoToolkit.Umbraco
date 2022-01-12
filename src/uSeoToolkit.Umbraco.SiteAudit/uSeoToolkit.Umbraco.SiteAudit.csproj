@@ -1,7 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <ContentTargetFolders>.</ContentTargetFolders>
         <Product>uSeoToolkit.Umbraco.SiteAudit</Product>
         <PackageId>uSeoToolkit.Umbraco.SiteAudit</PackageId>
         <Title>uSeoToolkit.Umbraco.SiteAudit</Title>
@@ -93,6 +92,10 @@
       <Content Include="App_Plugins\uSeoToolkitSiteAudit\package.manifest">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <None Include="build\**\*.*">
+        <Pack>True</Pack>
+        <PackagePath>build</PackagePath>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

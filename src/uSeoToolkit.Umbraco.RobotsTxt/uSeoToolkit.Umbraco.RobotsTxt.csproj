@@ -1,8 +1,37 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Product>uSeoToolkit.Umbraco.RobotsTxt</Product>
+    <PackageId>uSeoToolkit.Umbraco.RobotsTxt</PackageId>
+    <Title>uSeoToolkit.Umbraco.RobotsTxt</Title>
+    <Description>...</Description>
+    <Product>...</Product>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>uSeoToolkit.Umbraco.RobotsTxt</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="App_Plugins\uSeoToolkitRobotsTxt\backoffice\RobotsTxt\detail.controller.js" />
+    <None Remove="App_Plugins\uSeoToolkitRobotsTxt\backoffice\RobotsTxt\detail.html" />
+    <None Remove="App_Plugins\uSeoToolkitRobotsTxt\package.manifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="App_Plugins\uSeoToolkitRobotsTxt\backoffice\RobotsTxt\detail.controller.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Plugins\uSeoToolkitRobotsTxt\backoffice\RobotsTxt\detail.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Plugins\uSeoToolkitRobotsTxt\package.manifest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="build\**\*.*">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\uSeoToolkit.Umbaco.RobotsTxt.Core\uSeoToolkit.Umbraco.RobotsTxt.Core.csproj" />

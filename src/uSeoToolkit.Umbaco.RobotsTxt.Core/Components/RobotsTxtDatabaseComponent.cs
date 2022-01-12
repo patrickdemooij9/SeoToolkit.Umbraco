@@ -5,17 +5,17 @@ using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Infrastructure.Migrations.Upgrade;
-using uSeoToolkit.Umbraco.ScriptManager.Core.Migrations;
+using uSeoToolkit.Umbraco.RobotsTxt.Core.Migrations;
 
-namespace uSeoToolkit.Umbraco.ScriptManager.Core.Components
+namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Components
 {
-    public class ScriptManagerDatabaseComponent : IComponent
+    public class RobotsTxtDatabaseComponent : IComponent
     {
         private readonly IMigrationPlanExecutor _planExecutor;
         private readonly IScopeProvider _scopeProvider;
         private readonly IKeyValueService _keyValueService;
 
-        public ScriptManagerDatabaseComponent(IMigrationPlanExecutor planExecutor, IScopeProvider scopeProvider, IMigrationBuilder migrationBuilder, IKeyValueService keyValueService, ILogger<ScriptManagerDatabaseComponent> logger)
+        public RobotsTxtDatabaseComponent(IMigrationPlanExecutor planExecutor, IScopeProvider scopeProvider, IMigrationBuilder migrationBuilder, IKeyValueService keyValueService, ILogger<RobotsTxtDatabaseComponent> logger)
         {
             _planExecutor = planExecutor;
             _scopeProvider = scopeProvider;
@@ -24,9 +24,9 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Components
 
         public void Initialize()
         {
-            var plan = new MigrationPlan("uSeoToolkit_ScriptManager_Migration");
+            var plan = new MigrationPlan("uSeoToolkit_RobotsTxt_Migration");
             plan.From(string.Empty)
-                .To<ScriptManagerInitialMigration>("state-1");
+                .To<InitialRobotsTxtMigration>("state-1");
 
             var upgrader = new Upgrader(plan);
             upgrader.Execute(_planExecutor, _scopeProvider, _keyValueService);
