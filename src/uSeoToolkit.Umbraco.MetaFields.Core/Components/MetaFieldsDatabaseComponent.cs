@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Migrations;
 using Umbraco.Cms.Core.Scoping;
@@ -15,16 +16,20 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Components
         private readonly IMigrationPlanExecutor _planExecutor;
         private readonly IScopeProvider _scopeProvider;
         private readonly IKeyValueService _keyValueService;
+        private readonly IRuntimeState _runtimeState;
 
-        public MetaFieldsDatabaseComponent(IMigrationPlanExecutor planExecutor, IScopeProvider scopeProvider, IKeyValueService keyValueService)
+        public MetaFieldsDatabaseComponent(IMigrationPlanExecutor planExecutor, IScopeProvider scopeProvider, IKeyValueService keyValueService, IRuntimeState runtimeState)
         {
             _planExecutor = planExecutor;
             _scopeProvider = scopeProvider;
             _keyValueService = keyValueService;
+            _runtimeState = runtimeState;
         }
 
         public void Initialize()
         {
+            if (_runtimeState.Level != RuntimeLevel.Run) return;
+
             var plan = new MigrationPlan("uSeoToolkit_MetaFields_Migration");
             plan.From(string.Empty)
                 .To<MetaFieldsInitialMigration>("state-1");
