@@ -7,6 +7,7 @@ using uSeoToolkit.Umbraco.ScriptManager.Core.Collections;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Components;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Config;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Config.Models;
+using uSeoToolkit.Umbraco.ScriptManager.Core.Extensions;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Helpers;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
@@ -20,7 +21,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            builder.WithCollectionBuilder<ScriptDefinitionCollectionBuilder>()
+            builder.ScriptDefinitions()
                 .Add<GoogleTagManagerDefinition>()
                 .Add<GoogleAnalyticsDefinition>()
                 .Add<HotjarDefinition>()
