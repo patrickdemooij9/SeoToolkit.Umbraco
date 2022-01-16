@@ -20,7 +20,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\uSeoToolkit.Umbraco.Sitemap.Core\uSeoToolkit.Umbraco.Sitemap.Core.csproj" />
-    <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.Common.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.Common\uSeoToolkit.Umbraco.Common.csproj" />
   </ItemGroup>
 
 </Project>

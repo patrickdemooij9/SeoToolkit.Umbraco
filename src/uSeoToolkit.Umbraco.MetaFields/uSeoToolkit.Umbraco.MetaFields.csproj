@@ -91,7 +91,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields.Core\uSeoToolkit.Umbraco.MetaFields.Core.csproj" />
-	  <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.Common.csproj" />
+	  <ProjectReference Include="..\uSeoToolkit.Umbraco.Common\uSeoToolkit.Umbraco.Common.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -13,7 +13,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\uSeoToolkit.Umbraco.ScriptManager.Core\uSeoToolkit.Umbraco.ScriptManager.Core.csproj" />
-		<ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.Common.csproj" />
+		<ProjectReference Include="..\uSeoToolkit.Umbraco.Common\uSeoToolkit.Umbraco.Common.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
