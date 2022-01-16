@@ -1,0 +1,50 @@
+name: Script Manager Package Release
+
+env:
+  OUTPUT: ./Output
+  CONFIG: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_version:
+        description: 'Package version'
+        required: true
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:      
+    - uses: actions/checkout@v2  
+      
+    - name: Setup .net core
+      uses: actions/setup-dotnet@v1.4.0
+      
+    - name: Restore dependencies
+      run: dotnet restore ./src/uSeoToolkit.Umbraco.ScriptManager/uSeoToolkit.Umbraco.ScriptManager.csproj
+      
+    - name: Restore dependencies
+      run: dotnet restore ./src/uSeoToolkit.Umbraco.ScriptManager.Core/uSeoToolkit.Umbraco.ScriptManager.Core.csproj
+      
+    - name: Build
+      run: dotnet build ./src/uSeoToolkit.Umbraco.ScriptManager.Core/uSeoToolkit.Umbraco.ScriptManager.Core.csproj --configuration ${{ env.CONFIG }} --no-restore
+      
+    - name: Build
+      run: dotnet build ./src/uSeoToolkit.Umbraco.ScriptManager/uSeoToolkit.Umbraco.ScriptManager.csproj --configuration ${{ env.CONFIG }} --no-restore
+      
+    - name: Create NuGet package file for Core
+      run: dotnet pack ./src/uSeoToolkit.Umbraco.ScriptManager.Core/uSeoToolkit.Umbraco.ScriptManager.Core.csproj -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }} /p:version=${{ github.event.inputs.package_version }}
+    
+    - name: Create NuGet package file for Backoffice
+      run: dotnet pack ./src/uSeoToolkit.Umbraco.ScriptManager/uSeoToolkit.Umbraco.ScriptManager.csproj -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }} /p:version=${{ github.event.inputs.package_version }}
+   
+#    - name: Push packages to NuGet
+#      run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_DEPLOY_KEY }} -s https://api.nuget.org/v3/index.json
+
+    - name: upload-artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: Build-Results-${{ github.event.inputs.package_version }}
+        path: ${{ env.OUTPUT }}/**/*
