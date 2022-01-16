@@ -12,20 +12,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="App_Plugins\uSeoToolkitRobotsTxt\backoffice\RobotsTxt\detail.controller.js" />
-    <None Remove="App_Plugins\uSeoToolkitRobotsTxt\backoffice\RobotsTxt\detail.html" />
-    <None Remove="App_Plugins\uSeoToolkitRobotsTxt\package.manifest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="App_Plugins\uSeoToolkitRobotsTxt\backoffice\RobotsTxt\detail.controller.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitRobotsTxt\backoffice\RobotsTxt\detail.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkitRobotsTxt\package.manifest">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="App_Plugins\uSeoToolkitRobotsTxt\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
     </Content>
     <None Include="build\**\*.*">
       <Pack>True</Pack>

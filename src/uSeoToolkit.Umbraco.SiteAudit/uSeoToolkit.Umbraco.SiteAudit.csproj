@@ -10,88 +10,10 @@
         <RootNamespace>uSeoToolkit.Umbraco.SiteAudit</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\create.controller.js" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\create.html" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\detail.controller.js" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\detail.html" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\list.controller.js" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\list.html" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\package.manifest" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\css\siteAudit.css" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\Interface\Dashboards\SiteAudit\siteAuditDashboard.controller.js" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\Interface\Dashboards\SiteAudit\siteAuditDashboard.html" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\create.controller.js" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\create.html" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\detail.controller.js" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\detail.html" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\overview.controller.js" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\overview.html" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\js\siteAuditHub.js" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\lang\en-us.xml" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\libs\chart.min.js" />
-      <None Remove="App_Plugins\uSeoToolkitSiteAudit\package.manifest" />
-    </ItemGroup>
-    <ItemGroup>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\create.controller.js">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\create.html">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\detail.controller.js">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\detail.html">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\list.controller.js">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\list.html">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\backoffice\SiteAudit\package.manifest">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\css\siteAudit.css">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\Interface\Dashboards\SiteAudit\siteAuditDashboard.controller.js">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\Interface\Dashboards\SiteAudit\siteAuditDashboard.html">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\create.controller.js">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\create.html">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\detail.controller.js">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\detail.html">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\overview.controller.js">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\Interface\SiteAudit\overview.html">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\js\siteAuditHub.js">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\lang\en-us.xml">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\libs\chart.min.js">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\package.manifest">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+      <Content Include="App_Plugins\uSeoToolkitSiteAudit\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
       <None Include="build\**\*.*">
         <Pack>True</Pack>
         <PackagePath>build</PackagePath>
