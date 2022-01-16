@@ -5,7 +5,7 @@ using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
-using uSeoToolkit.Umbraco.Core.Services.SettingsService;
+using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.SiteAudit.Core.BackgroundTasks;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Checks;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Collections;

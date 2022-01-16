@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.Extensions.Options;
-using uSeoToolkit.Umbraco.Core.Services.SettingsService;
+using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Config.Models;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Models.Config;
 

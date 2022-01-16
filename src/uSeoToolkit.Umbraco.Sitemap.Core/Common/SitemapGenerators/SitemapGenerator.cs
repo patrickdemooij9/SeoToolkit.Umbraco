@@ -5,7 +5,7 @@ using System.Xml.Linq;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
-using uSeoToolkit.Umbraco.Core.Services.SettingsService;
+using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using uSeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 

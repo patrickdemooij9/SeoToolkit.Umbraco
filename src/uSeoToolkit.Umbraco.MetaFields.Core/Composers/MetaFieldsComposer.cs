@@ -2,7 +2,7 @@
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Mapping;
-using uSeoToolkit.Umbraco.Core.Interfaces;
+using uSeoToolkit.Umbraco.Common.Core.Interfaces;
 using uSeoToolkit.Umbraco.MetaFields.Core.Collections;
 using uSeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
 using uSeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;

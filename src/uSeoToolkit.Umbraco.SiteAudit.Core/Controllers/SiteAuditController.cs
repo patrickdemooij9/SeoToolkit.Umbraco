@@ -9,7 +9,7 @@ using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Extensions;
-using uSeoToolkit.Umbraco.Core.Services.SettingsService;
+using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Collections;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Common.Scheduler;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Enums;

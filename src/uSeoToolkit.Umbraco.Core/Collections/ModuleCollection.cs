@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using uSeoToolkit.Umbraco.Core.Models;
+using uSeoToolkit.Umbraco.Common.Core.Models;
 
-namespace uSeoToolkit.Umbraco.Core.Collections
+namespace uSeoToolkit.Umbraco.Common.Core.Collections
 {
     public class ModuleCollection
     {

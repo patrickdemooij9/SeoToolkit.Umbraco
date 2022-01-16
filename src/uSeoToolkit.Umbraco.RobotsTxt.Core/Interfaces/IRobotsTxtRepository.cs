@@ -1,4 +1,4 @@
-﻿using uSeoToolkit.Umbraco.Core.Interfaces;
+﻿using uSeoToolkit.Umbraco.Common.Core.Interfaces;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Models.Business;
 
 namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Interfaces

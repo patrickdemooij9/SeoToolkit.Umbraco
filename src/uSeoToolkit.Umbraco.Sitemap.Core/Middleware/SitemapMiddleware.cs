@@ -1,19 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Umbraco.Cms.Core.Routing;
-using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
-using uSeoToolkit.Umbraco.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators;
 using uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator;
-using uSeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using uSeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using uSeoToolkit.Umbraco.Sitemap.Core.Utils;
 

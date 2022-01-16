@@ -4,7 +4,7 @@ using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
-using uSeoToolkit.Umbraco.Core.Services.SettingsService;
+using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators;
 using uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator;
 using uSeoToolkit.Umbraco.Sitemap.Core.Components;

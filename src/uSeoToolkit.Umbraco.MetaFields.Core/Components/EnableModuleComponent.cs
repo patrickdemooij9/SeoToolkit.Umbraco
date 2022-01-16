@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Composing;
-using uSeoToolkit.Umbraco.Core.Collections;
+using uSeoToolkit.Umbraco.Common.Core.Collections;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Components
 {

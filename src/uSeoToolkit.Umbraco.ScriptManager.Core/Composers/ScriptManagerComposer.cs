@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using uSeoToolkit.Umbraco.Core.Services.SettingsService;
+using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Collections;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Components;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Config;

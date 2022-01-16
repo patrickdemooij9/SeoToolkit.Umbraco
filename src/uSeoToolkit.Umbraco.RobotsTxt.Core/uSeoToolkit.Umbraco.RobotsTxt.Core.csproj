@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Common.Core.csproj" />
   </ItemGroup>
 
 </Project>

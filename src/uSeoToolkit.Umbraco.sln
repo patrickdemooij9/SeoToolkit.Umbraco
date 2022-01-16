@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco", "uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj", "{A12A74F9-52BA-4A0D-840B-E3CABB7A5CB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.Common", "uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.Common.csproj", "{A12A74F9-52BA-4A0D-840B-E3CABB7A5CB0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.Core", "uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj", "{DBC240F4-D43A-4A02-94F4-1D31DC0A008F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.Common.Core", "uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Common.Core.csproj", "{DBC240F4-D43A-4A02-94F4-1D31DC0A008F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.SiteAudit", "uSeoToolkit.Umbraco.SiteAudit\uSeoToolkit.Umbraco.SiteAudit.csproj", "{76F603E6-2FD0-4F35-A72A-7BEEE79772FF}"
 EndProject

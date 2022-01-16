@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using uSeoToolkit.Umbraco.Core.Services.SettingsService;
+using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Collections;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Models.Business;

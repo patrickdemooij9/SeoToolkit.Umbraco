@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
-using uSeoToolkit.Umbraco.Core.Collections;
+using uSeoToolkit.Umbraco.Common.Core.Collections;
 
-namespace uSeoToolkit.Umbraco.Core.Controllers
+namespace uSeoToolkit.Umbraco.Common.Core.Controllers
 {
     [PluginController("uSeoToolkit")]
     public class ModuleController : UmbracoAuthorizedApiController

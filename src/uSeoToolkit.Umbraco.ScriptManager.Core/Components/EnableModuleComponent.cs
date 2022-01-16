@@ -1,5 +1,5 @@
 ﻿using Umbraco.Cms.Core.Composing;
-using uSeoToolkit.Umbraco.Core.Collections;
+using uSeoToolkit.Umbraco.Common.Core.Collections;
 
 namespace uSeoToolkit.Umbraco.ScriptManager.Core.Components
 {

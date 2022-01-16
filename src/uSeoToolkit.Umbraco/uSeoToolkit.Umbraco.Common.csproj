@@ -2,13 +2,13 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <ContentTargetFolders>.</ContentTargetFolders>
-        <Product>uSeoToolkit.Umbraco</Product>
-        <PackageId>uSeoToolkit.Umbraco</PackageId>
-        <Title>uSeoToolkit.Umbraco</Title>
+        <Product>uSeoToolkit.Umbraco.Common</Product>
+        <PackageId>uSeoToolkit.Umbraco.Common</PackageId>
+        <Title>uSeoToolkit.Umbraco.Common</Title>
         <Description>...</Description>
         <Product>...</Product>
         <PackageTags>umbraco plugin package</PackageTags>
-        <RootNamespace>uSeoToolkit.Umbraco</RootNamespace>
+        <RootNamespace>uSeoToolkit.Umbraco.Common</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
       <None Remove="App_Plugins\uSeoToolkit\css\main.css" />
@@ -41,6 +41,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj" />
+      <ProjectReference Include="..\uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Common.Core.csproj" />
     </ItemGroup>
 </Project>

@@ -105,6 +105,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\uSeoToolkit.Umbraco.SiteAudit.Core\uSeoToolkit.Umbraco.SiteAudit.Core.csproj" />
-      <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />
+      <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.Common.csproj" />
     </ItemGroup>
 </Project>

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using uSeoToolkit.Umbraco.Core.Collections;
-using uSeoToolkit.Umbraco.Core.Dashboards;
-using uSeoToolkit.Umbraco.Core.Sections;
+using uSeoToolkit.Umbraco.Common.Core.Collections;
+using uSeoToolkit.Umbraco.Common.Core.Dashboards;
+using uSeoToolkit.Umbraco.Common.Core.Sections;
 
-namespace uSeoToolkit.Umbraco.Core.Composers
+namespace uSeoToolkit.Umbraco.Common.Core.Composers
 {
     public class USeoToolkitComposer : IComposer
     {

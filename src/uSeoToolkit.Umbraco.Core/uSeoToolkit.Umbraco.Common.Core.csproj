@@ -2,13 +2,13 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <ContentTargetFolders>.</ContentTargetFolders>
-        <Product>uSeoToolkit.Umbraco.Core</Product>
-        <PackageId>uSeoToolkit.Umbraco.Core</PackageId>
-        <Title>uSeoToolkit.Umbraco.Core</Title>
+        <Product>uSeoToolkit.Umbraco.Common.Core</Product>
+        <PackageId>uSeoToolkit.Umbraco.Common.Core</PackageId>
+        <Title>uSeoToolkit.Umbraco.Common.Core</Title>
         <Description>...</Description>
         <Product>...</Product>
         <PackageTags>umbraco plugin package</PackageTags>
-        <RootNamespace>uSeoToolkit.Umbraco.Core</RootNamespace>
+        <RootNamespace>uSeoToolkit.Umbraco.Common.Core</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

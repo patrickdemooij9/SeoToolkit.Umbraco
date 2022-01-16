@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace uSeoToolkit.Umbraco.Core.Interfaces
+namespace uSeoToolkit.Umbraco.Common.Core.Interfaces
 {
     public interface IRepository<T>
     {

@@ -1,6 +1,6 @@
 ﻿using Umbraco.Cms.Core.Sections;
 
-namespace uSeoToolkit.Umbraco.Core.Sections
+namespace uSeoToolkit.Umbraco.Common.Core.Sections
 {
     public class USeoToolkitSection : ISection
     {

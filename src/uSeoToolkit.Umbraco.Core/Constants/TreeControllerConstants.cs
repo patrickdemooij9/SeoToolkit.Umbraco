@@ -1,4 +1,4 @@
-﻿namespace uSeoToolkit.Umbraco.Core.Constants
+﻿namespace uSeoToolkit.Umbraco.Common.Core.Constants
 {
     public class TreeControllerConstants
     {

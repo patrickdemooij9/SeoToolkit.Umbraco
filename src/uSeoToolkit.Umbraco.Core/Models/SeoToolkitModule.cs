@@ -1,4 +1,4 @@
-﻿namespace uSeoToolkit.Umbraco.Core.Models
+﻿namespace uSeoToolkit.Umbraco.Common.Core.Models
 {
     public class SeoToolkitModule
     {

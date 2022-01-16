@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using uSeoToolkit.Umbraco.Core.Services.SettingsService;
+using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 
 namespace uSeoToolkit.Umbraco.Sitemap.Core.Config

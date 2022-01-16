@@ -34,8 +34,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\uSeoToolkit.Umbaco.RobotsTxt.Core\uSeoToolkit.Umbraco.RobotsTxt.Core.csproj" />
-    <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.RobotsTxt.Core\uSeoToolkit.Umbraco.RobotsTxt.Core.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.Common.csproj" />
   </ItemGroup>
 
 </Project>

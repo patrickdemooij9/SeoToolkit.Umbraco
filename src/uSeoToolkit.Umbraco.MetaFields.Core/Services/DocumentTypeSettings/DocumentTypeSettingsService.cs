@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Extensions;
-using uSeoToolkit.Umbraco.Core.Interfaces;
+using uSeoToolkit.Umbraco.Common.Core.Interfaces;
 using uSeoToolkit.Umbraco.MetaFields.Core.Collections;
 using uSeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using uSeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;

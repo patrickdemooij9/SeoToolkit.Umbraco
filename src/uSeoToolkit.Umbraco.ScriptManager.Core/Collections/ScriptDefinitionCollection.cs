@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Cms.Core.Composing;
-using uSeoToolkit.Umbraco.Core.Services.SettingsService;
+using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Config.Models;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
 

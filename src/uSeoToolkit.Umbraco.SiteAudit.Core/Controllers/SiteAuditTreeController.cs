@@ -8,7 +8,6 @@ using Umbraco.Cms.Core.Trees;
 using Umbraco.Cms.Web.BackOffice.Trees;
 using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Extensions;
-using uSeoToolkit.Umbraco.Core.Constants;
 
 namespace uSeoToolkit.Umbraco.SiteAudit.Core.Controllers
 {

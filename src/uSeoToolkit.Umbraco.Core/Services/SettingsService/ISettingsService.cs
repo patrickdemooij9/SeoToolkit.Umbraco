@@ -1,4 +1,4 @@
-﻿namespace uSeoToolkit.Umbraco.Core.Services.SettingsService
+﻿namespace uSeoToolkit.Umbraco.Common.Core.Services.SettingsService
 {
     public interface ISettingsService<T> where T : class, new()
     {
