@@ -1,46 +1,53 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-        <ContentTargetFolders>.</ContentTargetFolders>
-        <Product>uSeoToolkit.Umbraco.Common</Product>
-        <PackageId>uSeoToolkit.Umbraco.Common</PackageId>
-        <Title>uSeoToolkit.Umbraco.Common</Title>
-        <Description>...</Description>
-        <Product>...</Product>
-        <PackageTags>umbraco plugin package</PackageTags>
-        <RootNamespace>uSeoToolkit.Umbraco.Common</RootNamespace>
-    </PropertyGroup>
-    <ItemGroup>
-      <None Remove="App_Plugins\uSeoToolkit\css\main.css" />
-      <None Remove="App_Plugins\uSeoToolkit\Dashboards\welcomeDashboard.controller.js" />
-      <None Remove="App_Plugins\uSeoToolkit\Dashboards\welcomeDashboard.html" />
-      <None Remove="App_Plugins\uSeoToolkit\lang\en-us.xml" />
-      <None Remove="App_Plugins\uSeoToolkit\package.manifest" />
-    </ItemGroup>
-    <ItemGroup>
-      <Content Include="App_Plugins\uSeoToolkit\css\main.css">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkit\Dashboards\welcomeDashboard.controller.js">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkit\Dashboards\welcomeDashboard.html">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkit\lang\en-us.xml">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="App_Plugins\uSeoToolkit\package.manifest">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
+    <Product>uSeoToolkit.Umbraco.Common</Product>
+    <PackageId>uSeoToolkit.Umbraco.Common</PackageId>
+    <Title>uSeoToolkit.Umbraco.Common</Title>
+    <Description>...</Description>
+    <Product>...</Product>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>uSeoToolkit.Umbraco.Common</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="App_Plugins\uSeoToolkit\css\main.css" />
+    <None Remove="App_Plugins\uSeoToolkit\Dashboards\welcomeDashboard.controller.js" />
+    <None Remove="App_Plugins\uSeoToolkit\Dashboards\welcomeDashboard.html" />
+    <None Remove="App_Plugins\uSeoToolkit\lang\en-us.xml" />
+    <None Remove="App_Plugins\uSeoToolkit\package.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Plugins\uSeoToolkit\css\main.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Plugins\uSeoToolkit\Dashboards\welcomeDashboard.controller.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Plugins\uSeoToolkit\Dashboards\welcomeDashboard.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Plugins\uSeoToolkit\lang\en-us.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Plugins\uSeoToolkit\package.manifest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.0.1" />
-        <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.1" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.0.1" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.1" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.Common.Core\uSeoToolkit.Umbraco.Common.Core.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.Common.Core\uSeoToolkit.Umbraco.Common.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build\**\*.*">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
+  </ItemGroup>
 </Project>

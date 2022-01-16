@@ -10,13 +10,6 @@
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>uSeoToolkit.Umbraco.Sitemap</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="build\**\*.*">
-      <Pack>True</Pack>
-      <PackagePath>build</PackagePath>
-    </None>
-  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\uSeoToolkit.Umbraco.Sitemap.Core\uSeoToolkit.Umbraco.Sitemap.Core.csproj" />
