@@ -45,6 +45,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="App_Plugins\uSeoToolkit\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
     <None Include="build\**\*.*">
       <Pack>True</Pack>
       <PackagePath>build</PackagePath>
