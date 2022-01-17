@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
 		<Product>uSeoToolkit.Umbraco.MetaFields</Product>
 		<PackageId>uSeoToolkit.Umbraco.MetaFields</PackageId>
 		<Title>uSeoToolkit MetaFields</Title>

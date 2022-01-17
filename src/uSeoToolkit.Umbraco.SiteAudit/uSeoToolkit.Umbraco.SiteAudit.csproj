@@ -1,32 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-        <Product>uSeoToolkit.Umbraco.SiteAudit</Product>
-        <PackageId>uSeoToolkit.Umbraco.SiteAudit</PackageId>
-        <Title>uSeoToolkit.Umbraco.SiteAudit</Title>
-        <Description>...</Description>
-        <Product>...</Product>
-        <PackageTags>umbraco plugin package</PackageTags>
-        <RootNamespace>uSeoToolkit.Umbraco.SiteAudit</RootNamespace>
-    </PropertyGroup>
-    <ItemGroup>
-      <Content Include="App_Plugins\uSeoToolkitSiteAudit\**\*.*">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
+    <Product>uSeoToolkit.Umbraco.SiteAudit</Product>
+    <PackageId>uSeoToolkit.Umbraco.SiteAudit</PackageId>
+    <Title>uSeoToolkit.Umbraco.SiteAudit</Title>
+    <Description>...</Description>
+    <Product>...</Product>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>uSeoToolkit.Umbraco.SiteAudit</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="App_Plugins\uSeoToolkitSiteAudit\**\*.*">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
     </Content>
-      <None Include="build\**\*.*">
-        <Pack>True</Pack>
-        <PackagePath>build</PackagePath>
-      </None>
-    </ItemGroup>
+    <None Include="build\**\*.*">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.0.1" />
-        <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.1" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.0.1" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.1" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.SiteAudit.Core\uSeoToolkit.Umbraco.SiteAudit.Core.csproj" />
-      <ProjectReference Include="..\uSeoToolkit.Umbraco.Common\uSeoToolkit.Umbraco.Common.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.SiteAudit.Core\uSeoToolkit.Umbraco.SiteAudit.Core.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.Common\uSeoToolkit.Umbraco.Common.csproj" />
+  </ItemGroup>
 </Project>

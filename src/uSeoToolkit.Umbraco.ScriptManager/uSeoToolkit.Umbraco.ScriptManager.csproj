@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
 		<Product>uSeoToolkit.Umbraco.ScriptManager</Product>
 		<PackageId>uSeoToolkit.Umbraco.ScriptManager</PackageId>
 		<Title>uSeoToolkit.Umbraco.ScriptManager</Title>

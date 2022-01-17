@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
     <Product>uSeoToolkit.Umbraco.RobotsTxt</Product>
     <PackageId>uSeoToolkit.Umbraco.RobotsTxt</PackageId>
     <Title>uSeoToolkit.Umbraco.RobotsTxt</Title>
