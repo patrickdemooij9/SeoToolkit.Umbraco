@@ -8,9 +8,9 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.ContentApps
 {
     public class MetaFieldsSeoSettingsAppFactory : IContentAppFactory
     {
-        private readonly IDocumentTypeSettingsService _documentTypeSettingsService;
+        private readonly IMetaFieldsSettingsService _documentTypeSettingsService;
 
-        public MetaFieldsSeoSettingsAppFactory(IDocumentTypeSettingsService documentTypeSettingsService)
+        public MetaFieldsSeoSettingsAppFactory(IMetaFieldsSettingsService documentTypeSettingsService)
         {
             _documentTypeSettingsService = documentTypeSettingsService;
         }

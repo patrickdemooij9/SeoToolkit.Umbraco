@@ -13,7 +13,7 @@
 
         function init() {
 
-            $http.get("backoffice/uSeoToolkit/DocumentTypeSettings/GetAdditionalFields").then(function (response) {
+            $http.get("backoffice/uSeoToolkit/MetaFieldsSettings/GetAdditionalFields").then(function (response) {
 
                 if (response.status !== 200) {
                     vm.loading = false;

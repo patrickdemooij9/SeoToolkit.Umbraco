@@ -5,7 +5,7 @@ using uSeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 {
-    public interface IDocumentTypeSettingsService
+    public interface IMetaFieldsSettingsService
     {
         void Set(DocumentTypeSettingsDto model);
         DocumentTypeSettingsDto Get(int id);

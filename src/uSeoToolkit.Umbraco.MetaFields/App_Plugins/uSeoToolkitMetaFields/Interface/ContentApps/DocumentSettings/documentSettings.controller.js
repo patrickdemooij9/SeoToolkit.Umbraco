@@ -88,7 +88,7 @@
             });
 
         function init() {
-            $http.get("backoffice/uSeoToolkit/DocumentTypeSettings/Get?nodeId=" + $scope.model.id).then(function (response) {
+            $http.get("backoffice/uSeoToolkit/MetaFieldsSettings/Get?nodeId=" + $scope.model.id).then(function (response) {
                 vm.model = response.data.contentModel;
                 vm.model.nodeId = $scope.model.id;
 
@@ -112,7 +112,7 @@
                 inheritanceId: vm.model.inheritance != null ? vm.model.inheritance.id : null
             };
 
-            $http.post("backoffice/uSeoToolkit/DocumentTypeSettings/Save", postModel).then(function (response) {
+            $http.post("backoffice/uSeoToolkit/MetaFieldsSettings/Save", postModel).then(function (response) {
                 if (response.status !== 200) {
                     notificationsService.error("Something went wrong while saving Seo Settings");
                 } else {

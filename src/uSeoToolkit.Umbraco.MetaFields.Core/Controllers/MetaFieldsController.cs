@@ -19,23 +19,23 @@ using uSeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
 {
     [PluginController("uSeoToolkit")]
-    public class SeoSettingsController : UmbracoAuthorizedApiController
+    public class MetaFieldsController : UmbracoAuthorizedApiController
     {
-        private readonly ISeoService _seoService;
-        private readonly IDocumentTypeSettingsService _documentTypeSettingsService;
+        private readonly IMetaFieldsService _seoService;
+        private readonly IMetaFieldsSettingsService _documentTypeSettingsService;
         private readonly SeoFieldCollection _fieldCollection;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
-        private readonly ISeoValueService _seoValueService;
-        private readonly ILogger<SeoSettingsController> _logger;
+        private readonly IMetaFieldsValueService _seoValueService;
+        private readonly ILogger<MetaFieldsController> _logger;
         private readonly IVariationContextAccessor _variationContextAccessor;
         private readonly ILocalizationService _localizationService;
 
-        public SeoSettingsController(ISeoService seoService,
-            IDocumentTypeSettingsService documentTypeSettingsService,
+        public MetaFieldsController(IMetaFieldsService seoService,
+            IMetaFieldsSettingsService documentTypeSettingsService,
             SeoFieldCollection fieldCollection,
             IUmbracoContextFactory umbracoContextFactory,
-            ISeoValueService seoValueService,
-            ILogger<SeoSettingsController> logger,
+            IMetaFieldsValueService seoValueService,
+            ILogger<MetaFieldsController> logger,
             IVariationContextAccessor variationContextAccessor,
             ILocalizationService localizationService)
         {

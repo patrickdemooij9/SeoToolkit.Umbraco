@@ -14,13 +14,13 @@ using uSeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
 {
     [PluginController("uSeoToolkit")]
-    public class DocumentTypeSettingsController : UmbracoAuthorizedApiController
+    public class MetaFieldsSettingsController : UmbracoAuthorizedApiController
     {
-        private readonly IDocumentTypeSettingsService _documentTypeSettingsService;
+        private readonly IMetaFieldsSettingsService _documentTypeSettingsService;
         private readonly SeoFieldCollection _seoFieldCollection;
         private readonly IUmbracoMapper _umbracoMapper;
 
-        public DocumentTypeSettingsController(IDocumentTypeSettingsService documentTypeSettingsService,
+        public MetaFieldsSettingsController(IMetaFieldsSettingsService documentTypeSettingsService,
             SeoFieldCollection seoFieldCollection,
             IUmbracoMapper umbracoMapper)
         {

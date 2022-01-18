@@ -8,10 +8,10 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.TagHelpers
 {
     public class MetaFieldsTagHelper : TagHelper
     {
-        private readonly ISeoService _seoService;
+        private readonly IMetaFieldsService _seoService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
 
-        public MetaFieldsTagHelper(ISeoService seoService, IUmbracoContextFactory umbracoContextFactory)
+        public MetaFieldsTagHelper(IMetaFieldsService seoService, IUmbracoContextFactory umbracoContextFactory)
         {
             _seoService = seoService;
             _umbracoContextFactory = umbracoContextFactory;

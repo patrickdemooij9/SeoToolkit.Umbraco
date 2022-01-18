@@ -32,7 +32,7 @@
 
 
   <Import Project="..\uSeoToolkit.Umbraco.ScriptManager\build\uSeoToolkit.Umbraco.ScriptManager.targets" />
-  <Import Project="..\uSeoToolkit.Umbraco.Common\build\uSeoToolkit.Umbraco.Common.Core.targets" />
+  <Import Project="..\uSeoToolkit.Umbraco.Common\build\uSeoToolkit.Umbraco.Common.targets" />
   <Import Project="..\uSeoToolkit.Umbraco.MetaFields\build\uSeoToolkit.Umbraco.MetaFields.targets" />
   <Import Project="..\uSeoToolkit.Umbraco.RobotsTxt\build\uSeoToolkit.Umbraco.RobotsTxt.targets" />
   <ItemGroup>

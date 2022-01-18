@@ -10,7 +10,7 @@ using uSeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 {
-    public class DocumentTypeSettingsService : IDocumentTypeSettingsService
+    public class MetaFieldsSettingsService : IMetaFieldsSettingsService
     {
         private const string BaseCacheKey = "DocumentTypeSettings_";
 
@@ -18,7 +18,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
         private readonly FieldProviderCollection _fieldProviders;
         private readonly IAppPolicyCache _cache;
 
-        public DocumentTypeSettingsService(IRepository<DocumentTypeSettingsDto> repository,
+        public MetaFieldsSettingsService(IRepository<DocumentTypeSettingsDto> repository,
             FieldProviderCollection fieldProviders,
             AppCaches appCaches)
         {

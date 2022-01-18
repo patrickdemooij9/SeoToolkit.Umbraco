@@ -7,9 +7,9 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders
 {
     public class InheritedValueFieldProvider : IFieldProvider
     {
-        private readonly IDocumentTypeSettingsService _documentTypeSettingsService;
+        private readonly IMetaFieldsSettingsService _documentTypeSettingsService;
 
-        public InheritedValueFieldProvider(IDocumentTypeSettingsService documentTypeSettingsService)
+        public InheritedValueFieldProvider(IMetaFieldsSettingsService documentTypeSettingsService)
         {
             _documentTypeSettingsService = documentTypeSettingsService;
         }

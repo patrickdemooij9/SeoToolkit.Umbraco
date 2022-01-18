@@ -6,7 +6,7 @@ using uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoService;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services
 {
-    public interface ISeoService
+    public interface IMetaFieldsService
     {
         MetaTagsModel Get(IPublishedContent content);
     }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services
 {
-    public interface ISeoValueService
+    public interface IMetaFieldsValueService
     {
         Dictionary<string, object> GetUserValues(int nodeId);
         void AddValues(int nodeId, Dictionary<string, object> values);

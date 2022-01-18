@@ -5,11 +5,11 @@ using uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoService;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Services.SeoService
 {
-    public class SeoService : ISeoService
+    public class MetaFieldsService : IMetaFieldsService
     {
         private readonly IMetaTagsProvider _metaTagsProvider;
 
-        public SeoService(IMetaTagsProvider metaTagsProvider)
+        public MetaFieldsService(IMetaTagsProvider metaTagsProvider)
         {
             _metaTagsProvider = metaTagsProvider;
         }

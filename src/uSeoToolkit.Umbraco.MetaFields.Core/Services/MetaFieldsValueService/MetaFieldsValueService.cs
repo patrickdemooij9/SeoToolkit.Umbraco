@@ -8,7 +8,7 @@ using uSeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 
 namespace uSeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
 {
-    public class SeoValueService : ISeoValueService
+    public class MetaFieldsValueService : IMetaFieldsValueService
     {
         private const string BaseCacheKey = "SeoValueService_";
 
@@ -16,7 +16,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
         private readonly IVariationContextAccessor _variationContextAccessor;
         private readonly IAppPolicyCache _cache;
 
-        public SeoValueService(ISeoValueRepository repository, IVariationContextAccessor variationContextAccessor, AppCaches appCaches)
+        public MetaFieldsValueService(ISeoValueRepository repository, IVariationContextAccessor variationContextAccessor, AppCaches appCaches)
         {
             _repository = repository;
             _variationContextAccessor = variationContextAccessor;

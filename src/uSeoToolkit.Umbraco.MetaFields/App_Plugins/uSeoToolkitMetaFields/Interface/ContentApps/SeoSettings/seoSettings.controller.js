@@ -26,7 +26,7 @@
         }
 
         function init() {
-            var url = "backoffice/uSeoToolkit/SeoSettings/Get?nodeId=" + editorState.current.id;
+            var url = "backoffice/uSeoToolkit/MetaFields/Get?nodeId=" + editorState.current.id;
             if (vm.culture) {
                 url += "&culture=" + vm.culture;
             }
@@ -56,7 +56,7 @@
                     return ({ [field.alias]: field.editModel.value });
                 }));
 
-            $http.post("backoffice/uSeoToolkit/SeoSettings/Save",
+            $http.post("backoffice/uSeoToolkit/MetaFields/Save",
                 {
                     nodeId: editorState.current.id,
                     contentTypeId: editorState.current.contentTypeId,

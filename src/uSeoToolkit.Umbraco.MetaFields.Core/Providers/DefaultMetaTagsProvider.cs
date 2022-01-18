@@ -15,18 +15,18 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Providers
 {
     public class DefaultMetaTagsProvider : IMetaTagsProvider
     {
-        private readonly IDocumentTypeSettingsService _documentTypeSettingsService;
+        private readonly IMetaFieldsSettingsService _documentTypeSettingsService;
         private readonly SeoFieldCollection _seoFieldCollection;
-        private readonly ISeoValueService _seoValueService;
+        private readonly IMetaFieldsValueService _seoValueService;
         private readonly SeoConverterCollection _seoConverterCollection;
         private readonly ILogger<DefaultMetaTagsProvider> _logger;
         private readonly IProfiler _profiler;
 
         public event EventHandler<MetaTagsModel> BeforeMetaTagsGet;
 
-        public DefaultMetaTagsProvider(IDocumentTypeSettingsService documentTypeSettingsService,
+        public DefaultMetaTagsProvider(IMetaFieldsSettingsService documentTypeSettingsService,
             SeoFieldCollection seoFieldCollection,
-            ISeoValueService seoValueService,
+            IMetaFieldsValueService seoValueService,
             SeoConverterCollection seoConverterCollection,
             ILogger<DefaultMetaTagsProvider> logger,
             IProfiler profiler)
