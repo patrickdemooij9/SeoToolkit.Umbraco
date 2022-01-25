@@ -17,7 +17,9 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.ContentApps
 
         public ContentApp GetContentAppFor(object source, IEnumerable<IReadOnlyUserGroup> userGroups)
         {
-            if (!(source is IContent content) || !content.HasIdentity || !_documentTypeSettingsService.IsEnabled(content)) return null;
+            //TODO: Remove
+            return null;
+            if (!(source is IContent content) || !content.HasIdentity) return null;
 
             return new ContentApp
             {

@@ -11,6 +11,5 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
         DocumentTypeSettingsDto Get(int id);
 
         IEnumerable<FieldItemViewModel> GetAdditionalFieldItems();
-        bool IsEnabled(IContent content);
     }
 }

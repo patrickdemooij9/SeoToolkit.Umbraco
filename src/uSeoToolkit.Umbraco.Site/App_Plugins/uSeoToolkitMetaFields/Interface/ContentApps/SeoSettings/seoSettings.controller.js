@@ -85,5 +85,5 @@
             });
     }
 
-    angular.module("umbraco").controller("uSeoToolkit.ContentApps.SeoSettingsController", SeoSettingsController);
+    angular.module("umbraco").controller("uSeoToolkit.ContentApps.MetaFieldsController", SeoSettingsController);
 })();

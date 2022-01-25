@@ -50,8 +50,11 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Providers
                 BeforeMetaTagsGet?.Invoke(this, metaTags);
 
                 var settings = _documentTypeSettingsService.Get(content.ContentType.Id);
-                if (settings?.EnableSeoSettings != true)
+                if (settings is null)
                     return null;
+                //TODO: Check with the seo settings service
+                /*if (settings?.EnableSeoSettings != true)
+                    return null;*/
                 var userValues = _seoValueService.GetUserValues(content.Id);
                 var fields = allFields.Select(it =>
                 {

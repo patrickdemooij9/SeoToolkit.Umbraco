@@ -12,11 +12,11 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
     {
         private const string BaseCacheKey = "SeoValueService_";
 
-        private readonly ISeoValueRepository _repository;
+        private readonly IMetaFieldsValueRepository _repository;
         private readonly IVariationContextAccessor _variationContextAccessor;
         private readonly IAppPolicyCache _cache;
 
-        public MetaFieldsValueService(ISeoValueRepository repository, IVariationContextAccessor variationContextAccessor, AppCaches appCaches)
+        public MetaFieldsValueService(IMetaFieldsValueRepository repository, IVariationContextAccessor variationContextAccessor, AppCaches appCaches)
         {
             _repository = repository;
             _variationContextAccessor = variationContextAccessor;

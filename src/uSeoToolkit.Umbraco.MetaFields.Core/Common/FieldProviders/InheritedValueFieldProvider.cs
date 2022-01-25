@@ -24,7 +24,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders
             var currentDocumentTypeSettings = _documentTypeSettingsService.Get(content.ContentType.Id);
             
             //Should be fine, but always good to check
-            if (currentDocumentTypeSettings?.EnableSeoSettings is not true || currentDocumentTypeSettings.Inheritance is null)
+            if (currentDocumentTypeSettings?.Inheritance is null)
                 return null;
 
             var inheritance = currentDocumentTypeSettings.Inheritance;

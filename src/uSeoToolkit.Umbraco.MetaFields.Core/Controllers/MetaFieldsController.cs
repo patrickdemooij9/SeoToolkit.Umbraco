@@ -65,7 +65,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
             var metaTags = _seoService.Get(content);
             var userValues = _seoValueService.GetUserValues(nodeId);
 
-            return new JsonResult(new SeoSettingsViewModel
+            return new JsonResult(new MetaFieldsSettingsViewModel
             {
                 Fields = metaTags.Fields.Select(it =>
                 {
@@ -89,11 +89,13 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
         }
 
         [HttpPost]
-        public IActionResult Save(SeoSettingsPostViewModel postModel)
+        public IActionResult Save(MetaFieldsSettingsPostViewModel postModel)
         {
             var settings = _documentTypeSettingsService.Get(postModel.ContentTypeId);
-            if (!settings.EnableSeoSettings)
-                return BadRequest("Seo settings are turned off for this node!");
+
+            //TODO: Replace with check on seo settings
+            /*if (!settings.EnableSeoSettings)
+                return BadRequest("Seo settings are turned off for this node!");*/
 
             EnsureLanguage(postModel.Culture);
             var isDirty = false;

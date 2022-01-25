@@ -11,6 +11,22 @@
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>uSeoToolkit.Umbraco.Sitemap</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="App_Plugins\uSeoToolkitSitemap\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <None Include="build\**\*.*">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="App_Plugins\uSeoToolkitSitemap\Displays\DocumentType\sitemapSettings.controller.js" />
+    <None Remove="App_Plugins\uSeoToolkitSitemap\package.manifest" />
+  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\uSeoToolkit.Umbraco.Sitemap.Core\uSeoToolkit.Umbraco.Sitemap.Core.csproj" />

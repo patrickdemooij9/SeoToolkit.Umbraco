@@ -49,11 +49,6 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
             return _fieldProviders.GetAllItems();
         }
 
-        public bool IsEnabled(IContent content)
-        {
-            return Get(content.ContentTypeId)?.EnableSeoSettings is true;
-        }
-
         private void ClearCache(int id)
         {
             _cache.ClearByKey($"{BaseCacheKey}{id}");

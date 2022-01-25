@@ -35,6 +35,7 @@
   <Import Project="..\uSeoToolkit.Umbraco.Common\build\uSeoToolkit.Umbraco.Common.targets" />
   <Import Project="..\uSeoToolkit.Umbraco.MetaFields\build\uSeoToolkit.Umbraco.MetaFields.targets" />
   <Import Project="..\uSeoToolkit.Umbraco.RobotsTxt\build\uSeoToolkit.Umbraco.RobotsTxt.targets" />
+  <Import Project="..\uSeoToolkit.Umbraco.Sitemap\build\uSeoToolkit.Umbraco.Sitemap.targets" />
   <ItemGroup>
     <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields\uSeoToolkit.Umbraco.MetaFields.csproj" />
     <ProjectReference Include="..\uSeoToolkit.Umbraco.RobotsTxt\uSeoToolkit.Umbraco.RobotsTxt.csproj" />
@@ -45,6 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="umbraco\models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- extends watching group to include *.js files -->
+    <Watch Include="**\*.js" Exclude="node_modules\**\*;**\*.js.map;obj\**\*;bin\**\*" />
   </ItemGroup>
 
   <PropertyGroup>

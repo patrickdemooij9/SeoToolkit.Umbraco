@@ -32,12 +32,12 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.ContentApps().Append<MetaFieldsDocumentSettingsContentAppFactory>();
             builder.ContentApps().Append<MetaFieldsSeoSettingsAppFactory>();
 
-            builder.Services.AddTransient(typeof(IRepository<DocumentTypeSettingsDto>), typeof(DocumentTypeSettingsRepository));
+            builder.Services.AddTransient(typeof(IRepository<DocumentTypeSettingsDto>), typeof(MetaFieldsSettingsDatabaseRepository));
             builder.Services.AddTransient(typeof(IMetaFieldsSettingsService), typeof(MetaFieldsSettingsService));
             builder.Services.AddTransient(typeof(IMetaFieldsService), typeof(MetaFieldsService));
             builder.Services.AddTransient(typeof(IMetaTagsProvider), typeof(DefaultMetaTagsProvider));
             builder.Services.AddTransient(typeof(IMetaFieldsValueService), typeof(MetaFieldsValueService));
-            builder.Services.AddTransient(typeof(ISeoValueRepository), typeof(SeoValueDatabaseRepository));
+            builder.Services.AddTransient(typeof(IMetaFieldsValueRepository), typeof(MetaFieldsDatabaseRepository));
             builder.Services.AddTransient(typeof(IMetaFieldsSettingsService), typeof(MetaFieldsSettingsService));
 
             builder.WithCollectionBuilder<SeoFieldCollectionBuilder>()

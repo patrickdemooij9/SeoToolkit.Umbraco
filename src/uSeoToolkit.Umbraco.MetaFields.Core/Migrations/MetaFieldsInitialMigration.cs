@@ -12,14 +12,14 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Migrations
 
         protected override void Migrate()
         {
-            if (!TableExists("uSeoToolkitDocumentTypeSettings"))
+            if (!TableExists("uSeoToolkitMetaFieldsSettings"))
             {
-                Create.Table<DocumentTypeSettingsEntity>().Do();
+                Create.Table<MetaFieldsSettingsEntity>().Do();
             }
 
-            if (!TableExists("uSeoToolkitSeoValue"))
+            if (!TableExists("uSeoToolkitMetaFieldsValue"))
             {
-                Create.Table<SeoValueEntity>().Do();
+                Create.Table<MetaFieldsValueEntity>().Do();
             }
         }
     }

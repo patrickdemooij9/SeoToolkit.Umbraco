@@ -9,6 +9,8 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.ContentApps
     {
         public ContentApp GetContentAppFor(object source, IEnumerable<IReadOnlyUserGroup> userGroups)
         {
+            //TODO: Remove
+            return null;
             if (!(source is IContentType contentType))
             {
                 return null;

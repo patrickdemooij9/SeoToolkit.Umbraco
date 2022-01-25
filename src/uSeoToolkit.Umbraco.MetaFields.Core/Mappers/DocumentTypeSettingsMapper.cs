@@ -29,7 +29,6 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Mappers
                 (source, target, context) =>
                 {
                     target.Content = _contentTypeService.Get(source.NodeId);
-                    target.EnableSeoSettings = source.EnableSeoSettings;
                     foreach (var item in source.Fields)
                     {
                         var field = _seoFieldCollection.Get(item.Key);
@@ -45,15 +44,14 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Mappers
                     target.Inheritance = source.InheritanceId is null ? null : _contentTypeService.Get(source.InheritanceId.Value);
                 });
 
-            mapper.Define<DocumentTypeSettingsEntity, DocumentTypeSettingsDto>(
+            mapper.Define<MetaFieldsSettingsEntity, DocumentTypeSettingsDto>(
                 (source, context) => new DocumentTypeSettingsDto(),
                 (source, target, context) =>
                 {
                     target.Content = _contentTypeService.Get(source.NodeId);
-                    target.EnableSeoSettings = source.EnableSeoSettings;
                     if (!string.IsNullOrWhiteSpace(source.Fields))
                     {
-                        var fields = JsonConvert.DeserializeObject<DocumentTypeFieldEntity[]>(source.Fields);
+                        var fields = JsonConvert.DeserializeObject<MetaFieldsFieldEntity[]>(source.Fields);
                         foreach (var item in fields)
                         {
                             var field = _seoFieldCollection.Get(item.Alias);
@@ -71,18 +69,17 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Mappers
                     target.Inheritance = source.InheritanceId is null ? null : _contentTypeService.Get(source.InheritanceId.Value);
                 });
 
-            mapper.Define<DocumentTypeSettingsDto, DocumentTypeSettingsEntity>(
-                (source, context) => new DocumentTypeSettingsEntity(),
+            mapper.Define<DocumentTypeSettingsDto, MetaFieldsSettingsEntity>(
+                (source, context) => new MetaFieldsSettingsEntity(),
                 (source, target, context) =>
                 {
                     target.NodeId = source.Content.Id;
-                    target.EnableSeoSettings = source.EnableSeoSettings;
-                    target.Fields = JsonConvert.SerializeObject(source.Fields?.Select(it => new DocumentTypeFieldEntity
+                    target.Fields = JsonConvert.SerializeObject(source.Fields?.Select(it => new MetaFieldsFieldEntity
                     {
                         Alias = it.Key.Alias,
                         Value = it.Value.Value,
                         UseInheritedValue = it.Value.UseInheritedValue
-                    }).ToArray() ?? Array.Empty<DocumentTypeFieldEntity>());
+                    }).ToArray() ?? Array.Empty<MetaFieldsFieldEntity>());
                     target.InheritanceId = source.Inheritance?.Id;
                 });
         }
