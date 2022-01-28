@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    function ContentAppDocumentSettings($scope, $http, notificationsService, editorService) {
+    function ContentAppDocumentSettings($scope, $http, notificationsService, editorService, editorState) {
 
         var vm = this;
 
@@ -12,10 +12,6 @@
 
         vm.formatFieldValue = formatFieldValue;
 
-        vm.toggleSeoSettings = function () {
-            vm.model.enableSeoSettings = !vm.model.enableSeoSettings;
-        }
-
         vm.openContentTypeDialog = function () {
             var editor = {
                 multiPicker: false,
@@ -23,7 +19,7 @@
                 filter: function (item) {
                     return item.nodeType === "container" ||
                         (vm.model.inheritance != null && vm.model.inheritance.id === item.id) ||
-                        $scope.model.id === item.id ||
+                        editorState.getCurrent().id === item.id ||
                         !$scope.model.compositeContentTypes.includes(item.alias);
                 },
                 submit: function (model) {
@@ -82,15 +78,15 @@
             vm.model.inheritance = null;
         }
 
-        $scope.$on("formSubmitting",
+        $scope.$on("seoSettingsSubmitting",
             function () {
                 save();
             });
 
         function init() {
-            $http.get("backoffice/uSeoToolkit/MetaFieldsSettings/Get?nodeId=" + $scope.model.id).then(function (response) {
+            $http.get("backoffice/uSeoToolkit/MetaFieldsSettings/Get?nodeId=" + editorState.getCurrent().id).then(function (response) {
                 vm.model = response.data.contentModel;
-                vm.model.nodeId = $scope.model.id;
+                vm.model.nodeId = editorState.getCurrent().id;
 
                 vm.loading = false;
             });
@@ -99,7 +95,6 @@
         function save() {
             var postModel = {
                 nodeId: vm.model.nodeId,
-                enableSeoSettings: vm.model.enableSeoSettings,
                 fields: Object.assign({},
                     ...vm.model.fields.map(function (v) {
                         return ({
@@ -114,9 +109,7 @@
 
             $http.post("backoffice/uSeoToolkit/MetaFieldsSettings/Save", postModel).then(function (response) {
                 if (response.status !== 200) {
-                    notificationsService.error("Something went wrong while saving Seo Settings");
-                } else {
-                    notificationsService.success("Seo Settings saved!");
+                    notificationsService.error("Something went wrong while saving the document type settings");
                 }
             });
         }
@@ -124,7 +117,7 @@
         function formatFieldValue(field) {
             if (Array.isArray(field.value)) {
                 var values = [];
-                field.value.forEach(function(v) {
+                field.value.forEach(function (v) {
                     if (v.name) {
                         values.push(v.name);
                     } else {

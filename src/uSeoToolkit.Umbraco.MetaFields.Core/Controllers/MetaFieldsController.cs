@@ -7,6 +7,7 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
+using uSeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
 using uSeoToolkit.Umbraco.MetaFields.Core.Collections;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
@@ -29,6 +30,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
         private readonly ILogger<MetaFieldsController> _logger;
         private readonly IVariationContextAccessor _variationContextAccessor;
         private readonly ILocalizationService _localizationService;
+        private readonly ISeoSettingsService _seoSettingsService;
 
         public MetaFieldsController(IMetaFieldsService seoService,
             IMetaFieldsSettingsService documentTypeSettingsService,
@@ -37,7 +39,8 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
             IMetaFieldsValueService seoValueService,
             ILogger<MetaFieldsController> logger,
             IVariationContextAccessor variationContextAccessor,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            ISeoSettingsService seoSettingsService)
         {
             _seoService = seoService;
             _documentTypeSettingsService = documentTypeSettingsService;
@@ -47,6 +50,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
             _logger = logger;
             _variationContextAccessor = variationContextAccessor;
             _localizationService = localizationService;
+            _seoSettingsService = seoSettingsService;
         }
 
         [HttpGet]
@@ -92,10 +96,9 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
         public IActionResult Save(MetaFieldsSettingsPostViewModel postModel)
         {
             var settings = _documentTypeSettingsService.Get(postModel.ContentTypeId);
-
-            //TODO: Replace with check on seo settings
-            /*if (!settings.EnableSeoSettings)
-                return BadRequest("Seo settings are turned off for this node!");*/
+            
+            if (!_seoSettingsService.IsEnabled(postModel.ContentTypeId))
+                return BadRequest("Seo settings are turned off for this node!");
 
             EnsureLanguage(postModel.Culture);
             var isDirty = false;

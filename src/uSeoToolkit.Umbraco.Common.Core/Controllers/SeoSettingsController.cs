@@ -4,6 +4,7 @@ using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Extensions;
 using uSeoToolkit.Umbraco.Common.Core.Collections;
+using uSeoToolkit.Umbraco.Common.Core.Models.PostModels;
 using uSeoToolkit.Umbraco.Common.Core.Models.ViewModels;
 using uSeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
 
@@ -28,6 +29,12 @@ namespace uSeoToolkit.Umbraco.Common.Core.Controllers
                 IsEnabled = _seoSettingsService.IsEnabled(contentTypeId),
                 Displays = _displayCollection.Select(it => it.Get(contentTypeId)).WhereNotNull().ToArray()
             });
+        }
+
+        public IActionResult Set(SeoSettingsPostModel postModel)
+        {
+            _seoSettingsService.ToggleSeoSettings(postModel.ContentTypeId, postModel.Enabled);
+            return Ok();
         }
     }
 }

@@ -2,9 +2,11 @@
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Mapping;
+using uSeoToolkit.Umbraco.Common.Core.Collections;
 using uSeoToolkit.Umbraco.Common.Core.Interfaces;
 using uSeoToolkit.Umbraco.MetaFields.Core.Collections;
 using uSeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
+using uSeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders;
 using uSeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using uSeoToolkit.Umbraco.MetaFields.Core.Components;
 using uSeoToolkit.Umbraco.MetaFields.Core.ContentApps;
@@ -28,8 +30,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Composers
         {
             builder.Components().Append<MetaFieldsDatabaseComponent>();
             builder.Components().Append<EnableModuleComponent>();
-
-            builder.ContentApps().Append<MetaFieldsDocumentSettingsContentAppFactory>();
+            
             builder.ContentApps().Append<MetaFieldsSeoSettingsAppFactory>();
 
             builder.Services.AddTransient(typeof(IRepository<DocumentTypeSettingsDto>), typeof(MetaFieldsSettingsDatabaseRepository));
@@ -59,6 +60,9 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.WithCollectionBuilder<FieldProviderCollectionBuilder>()
                 .Add<InheritedValueFieldProvider>()
                 .Add<PageNameFieldProvider>();
+
+            builder.WithCollectionBuilder<DisplayCollectionBuilder>()
+                .Add<MetaFieldsDocumentSettingsDisplayProvider>();
         }
     }
 }

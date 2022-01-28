@@ -18,22 +18,18 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Middleware
     public class SitemapMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ISitemapGenerator _sitemapGenerator;
-        private readonly ISitemapIndexGenerator _sitemapIndexGenerator;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
 
         public SitemapMiddleware(RequestDelegate next,
-            ISitemapGenerator sitemapGenerator,
-            ISitemapIndexGenerator sitemapIndexGenerator,
             IUmbracoContextFactory umbracoContextFactory)
         {
             _next = next;
-            _sitemapGenerator = sitemapGenerator;
-            _sitemapIndexGenerator = sitemapIndexGenerator;
             _umbracoContextFactory = umbracoContextFactory;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context,
+            ISitemapGenerator sitemapGenerator,
+            ISitemapIndexGenerator sitemapIndexGenerator)
         {
             if (context.Request.Path.Value?.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase) != true)
             {
@@ -48,14 +44,14 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Middleware
                 var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
                 if (domains.Length == 0)
                 {
-                    doc = _sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture));
+                    doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture));
                 }
                 else
                 {
                     var domain = DomainUtilities.SelectDomain(domains, new Uri(context.Request.GetEncodedUrl()));
                     if (domain is null)
                     {
-                        doc = _sitemapIndexGenerator.Generate();
+                        doc = sitemapIndexGenerator.Generate();
                     }
                     else
                     {
@@ -66,7 +62,7 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Middleware
                             return;
                         }
 
-                        doc = _sitemapGenerator.Generate(new SitemapGeneratorOptions(rootNode, domain.Culture));
+                        doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(rootNode, domain.Culture));
                     }
                 }
             }

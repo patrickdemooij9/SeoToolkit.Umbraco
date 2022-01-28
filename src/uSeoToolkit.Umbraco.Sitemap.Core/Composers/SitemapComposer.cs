@@ -29,8 +29,8 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Composers
             builder.WithCollectionBuilder<DisplayCollectionBuilder>()
                 .Add<SitemapDocumentTypeDisplayProvider>();
 
-            builder.Services.AddUnique<ISitemapGenerator, SitemapGenerator>();
-            builder.Services.AddUnique<ISitemapIndexGenerator, SitemapIndexGenerator>();
+            builder.Services.AddScoped<ISitemapGenerator, SitemapGenerator>();
+            builder.Services.AddScoped<ISitemapIndexGenerator, SitemapIndexGenerator>();
             builder.Services.AddUnique<ISitemapService, SitemapService>();
             builder.Services.AddUnique<ISitemapPageTypeRepository, SitemapPageTypeRepository>();
             builder.Services.AddSingleton(typeof(ISettingsService<SitemapConfig>), typeof(SitemapConfigurationService));

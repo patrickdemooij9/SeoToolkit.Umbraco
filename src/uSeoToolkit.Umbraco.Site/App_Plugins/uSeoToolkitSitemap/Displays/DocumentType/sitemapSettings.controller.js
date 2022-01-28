@@ -57,7 +57,7 @@
                 });
         }
 
-        $scope.$on("formSubmitting",
+        $scope.$on("seoSettingsSubmitting",
             function () {
                 save();
             });

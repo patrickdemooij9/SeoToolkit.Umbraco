@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Xml.Linq;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Web;
@@ -30,9 +31,8 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator
                         continue;
 
                     var sitemapElement = new XElement(_namespace + "sitemap");
-
-                    var baseUri = new Uri(rootNode.Url(domain.Culture, UrlMode.Absolute));
-                    sitemapElement.Add(new XElement(_namespace + "loc", new Uri(baseUri, "sitemap.xml").AbsoluteUri));
+                    
+                    sitemapElement.Add(new XElement(_namespace + "loc", new Uri(Path.Join(rootNode.Url(domain.Culture, UrlMode.Absolute), "sitemap.xml")).AbsoluteUri));
 
                     rootNamespace.Add(sitemapElement);
                 }

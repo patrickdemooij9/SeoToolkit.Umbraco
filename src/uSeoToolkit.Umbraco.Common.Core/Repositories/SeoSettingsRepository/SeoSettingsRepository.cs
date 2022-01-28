@@ -22,8 +22,10 @@ namespace uSeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
                     .From<SeoSettingsEntity>()
                     .Where<SeoSettingsEntity>(it => it.ContentTypeId == contentTypeId));
 
-                //Default is enabled.
-                return entity is null || entity.Enabled;
+                //Default is disabled.
+                if (entity is null)
+                    return false;
+                return entity.Enabled;
             }
         }
 
