@@ -3,13 +3,15 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <ContentTargetFolders>.</ContentTargetFolders>
-    <Product>uSeoToolkit.Umbraco.Sitemap</Product>
+    <Product>uSeoToolkit Sitemap</Product>
     <PackageId>uSeoToolkit.Umbraco.Sitemap</PackageId>
-    <Title>uSeoToolkit.Umbraco.Sitemap</Title>
-    <Description>...</Description>
-    <Product>...</Product>
+    <Title>uSeoToolkit Sitemap</Title>
+    <Description>An Umbraco plugin to easily set your sitemap up</Description>
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>uSeoToolkit.Umbraco.Sitemap</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/uSeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/uSeoToolkit.Umbraco</RepositoryUrl>
+    <Version>1.0.0-alpha</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,7 +29,7 @@
     <None Remove="App_Plugins\uSeoToolkitSitemap\Displays\DocumentType\sitemapSettings.controller.js" />
     <None Remove="App_Plugins\uSeoToolkitSitemap\package.manifest" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\uSeoToolkit.Umbraco.Sitemap.Core\uSeoToolkit.Umbraco.Sitemap.Core.csproj" />
     <ProjectReference Include="..\uSeoToolkit.Umbraco.Common\uSeoToolkit.Umbraco.Common.csproj" />

@@ -3,13 +3,15 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <ContentTargetFolders>.</ContentTargetFolders>
-    <Product>uSeoToolkit.Umbraco.RobotsTxt</Product>
+    <Product>uSeoToolkit Robots.txt</Product>
     <PackageId>uSeoToolkit.Umbraco.RobotsTxt</PackageId>
-    <Title>uSeoToolkit.Umbraco.RobotsTxt</Title>
-    <Description>...</Description>
-    <Product>...</Product>
+    <Title>uSeoToolkit Robots.txt</Title>
+    <Description>An Umbraco plugin to help you to easily setup a robots.txt for your website</Description>
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>uSeoToolkit.Umbraco.RobotsTxt</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/uSeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/uSeoToolkit.Umbraco</RepositoryUrl>
+    <Version>1.0.0-alpha</Version>
   </PropertyGroup>
 
   <ItemGroup>

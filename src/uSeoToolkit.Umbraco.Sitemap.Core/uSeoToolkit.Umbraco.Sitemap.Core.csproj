@@ -2,14 +2,15 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<ContentTargetFolders>.</ContentTargetFolders>
-		<Product>uSeoToolkit.Umbraco.Sitemap.Core</Product>
-		<PackageId>uSeoToolkit.Umbraco.Sitemap.Core</PackageId>
-		<Title>uSeoToolkit.Umbraco.Sitemap.Core</Title>
-		<Description>...</Description>
-		<Product>...</Product>
-		<PackageTags>umbraco plugin package</PackageTags>
-		<RootNamespace>uSeoToolkit.Umbraco.Sitemap.Core</RootNamespace>
+    <Product>uSeoToolkit Sitemap Core</Product>
+    <PackageId>uSeoToolkit.Umbraco.Sitemap.Core</PackageId>
+    <Title>uSeoToolkit Sitemap Core</Title>
+    <Description>Assemblies for the sitemap package</Description>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>uSeoToolkit.Umbraco.Sitemap.Core</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/uSeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/uSeoToolkit.Umbraco</RepositoryUrl>
+    <Version>1.0.0-alpha</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

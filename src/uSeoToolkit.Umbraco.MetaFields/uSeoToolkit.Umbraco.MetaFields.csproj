@@ -3,13 +3,15 @@
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
     <ContentTargetFolders>.</ContentTargetFolders>
-		<Product>uSeoToolkit.Umbraco.MetaFields</Product>
+		<Product>uSeoToolkit MetaFields</Product>
 		<PackageId>uSeoToolkit.Umbraco.MetaFields</PackageId>
 		<Title>uSeoToolkit MetaFields</Title>
-		<Description>...</Description>
-		<Product>...</Product>
+		<Description>An Umbraco plugin to help you with your SEO meta fields.</Description>
 		<PackageTags>umbraco plugin package</PackageTags>
 		<RootNamespace>uSeoToolkit.Umbraco.MetaFields</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/uSeoToolkit.Umbraco</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/patrickdemooij9/uSeoToolkit.Umbraco</RepositoryUrl>
+		<Version>1.0.0-alpha</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
