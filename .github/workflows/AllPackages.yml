@@ -1,4 +1,4 @@
-name: Common Package Release
+name: All Packages Release
 
 env:
   OUTPUT: ./Output
