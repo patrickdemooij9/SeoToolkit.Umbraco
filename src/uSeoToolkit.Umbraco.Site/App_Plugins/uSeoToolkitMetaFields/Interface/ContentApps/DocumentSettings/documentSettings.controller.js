@@ -53,7 +53,7 @@
                 size: "small",
                 field: field,
                 hasInheritance: vm.model.inheritance != null,
-                groups: $scope.model.groups,
+                groups: editorState.getCurrent().groups,
                 submit: function (model) {
                     field = model.field;
 
