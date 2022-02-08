@@ -32,4 +32,4 @@ Robots.txt gives you an easy interface to edit your robots.txt. After installing
 Script manager easily allows your users to add new scripts to the website. They are able to quickly add Google Tag Manager or Hotjar with just a few clicks. It also gives them the ability for adding custom scripts if their script definition is not yet available.
 
 ## Documentation
-All documentation about the package can be found here: https://app.gitbook.com/s/fcrAqnWRQs0h6U4YJ9yD/
+All documentation about the package can be found here: https://useotoolkit.gitbook.io/useotoolkit/
