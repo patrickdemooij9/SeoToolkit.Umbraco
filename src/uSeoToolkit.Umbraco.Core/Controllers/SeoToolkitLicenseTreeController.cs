@@ -9,7 +9,7 @@ using Umbraco.Cms.Web.Common.Attributes;
 
 namespace uSeoToolkit.Umbraco.Core.Controllers
 {
-    [Tree("uSeoToolkit", "License", TreeTitle = "uSeoToolkit", TreeGroup = "uSeoToolkit", SortOrder = 2)]
+    [Tree("uSeoToolkit", "License", TreeTitle = "uSeoToolkit", TreeGroup = "uSeoToolkit", SortOrder = 20)]
     [PluginController("uSeoToolkit")]
     public class SeoToolkitLicenseTreeController : TreeController
     {
@@ -24,7 +24,7 @@ namespace uSeoToolkit.Umbraco.Core.Controllers
 
         protected override ActionResult<TreeNode> CreateRootNode(FormCollection queryStrings)
         {
-            var node = CreateTreeNode("license", "-1", queryStrings, "License", "icon-script", false,
+            var node = CreateTreeNode("license", "-1", queryStrings, "License", "icon-pushpin color-green", false,
                 $"{SectionAlias}/{TreeAlias}/licenseDashboard");
 
             return node;
