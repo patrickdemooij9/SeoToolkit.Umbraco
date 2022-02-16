@@ -36,6 +36,7 @@
   <Import Project="..\uSeoToolkit.Umbraco.MetaFields\build\uSeoToolkit.Umbraco.MetaFields.targets" />
   <Import Project="..\uSeoToolkit.Umbraco.RobotsTxt\build\uSeoToolkit.Umbraco.RobotsTxt.targets" />
   <Import Project="..\uSeoToolkit.Umbraco.Sitemap\build\uSeoToolkit.Umbraco.Sitemap.targets" />
+  <Import Project="..\uSeoToolkit.Umbraco\build\uSeoToolkit.Umbraco.targets" />
   <ItemGroup>
     <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields\uSeoToolkit.Umbraco.MetaFields.csproj" />
     <ProjectReference Include="..\uSeoToolkit.Umbraco.RobotsTxt\uSeoToolkit.Umbraco.RobotsTxt.csproj" />
@@ -43,6 +44,7 @@
     <ProjectReference Include="..\uSeoToolkit.Umbraco.SiteAudit\uSeoToolkit.Umbraco.SiteAudit.csproj" />
     <ProjectReference Include="..\uSeoToolkit.Umbraco.Sitemap\uSeoToolkit.Umbraco.Sitemap.csproj" />
     <ProjectReference Include="..\uSeoToolkit.Umbraco.Common\uSeoToolkit.Umbraco.Common.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="umbraco\models\" />

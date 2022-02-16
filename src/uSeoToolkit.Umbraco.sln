@@ -39,6 +39,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.RobotsT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RobotsTxt", "RobotsTxt", "{5641B436-FCCB-4D1A-9D25-6A39B95031CB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco", "uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj", "{6E9806BA-566A-4C04-AD99-C69138620DED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.Core", "uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj", "{D3302F9B-E53E-471F-B716-666708F0538E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +101,14 @@ Global
 		{5B460335-8786-4FA9-911B-AEC5A752B88C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B460335-8786-4FA9-911B-AEC5A752B88C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B460335-8786-4FA9-911B-AEC5A752B88C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E9806BA-566A-4C04-AD99-C69138620DED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E9806BA-566A-4C04-AD99-C69138620DED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E9806BA-566A-4C04-AD99-C69138620DED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E9806BA-566A-4C04-AD99-C69138620DED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3302F9B-E53E-471F-B716-666708F0538E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3302F9B-E53E-471F-B716-666708F0538E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3302F9B-E53E-471F-B716-666708F0538E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3302F9B-E53E-471F-B716-666708F0538E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

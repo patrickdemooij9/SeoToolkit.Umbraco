@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="App_Plugins\uSeoToolkit\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <None Include="build\**\*.*">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.Common\uSeoToolkit.Umbraco.Common.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields\uSeoToolkit.Umbraco.MetaFields.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.RobotsTxt\uSeoToolkit.Umbraco.RobotsTxt.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.ScriptManager\uSeoToolkit.Umbraco.ScriptManager.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.Sitemap\uSeoToolkit.Umbraco.Sitemap.csproj" />
+  </ItemGroup>
+
+</Project>
