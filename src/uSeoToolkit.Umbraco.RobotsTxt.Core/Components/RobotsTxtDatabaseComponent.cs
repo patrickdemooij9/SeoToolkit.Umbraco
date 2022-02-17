@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Migrations;
 using Umbraco.Cms.Core.Scoping;
@@ -14,16 +15,20 @@ namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Components
         private readonly IMigrationPlanExecutor _planExecutor;
         private readonly IScopeProvider _scopeProvider;
         private readonly IKeyValueService _keyValueService;
+        private readonly IRuntimeState _runtimeState;
 
-        public RobotsTxtDatabaseComponent(IMigrationPlanExecutor planExecutor, IScopeProvider scopeProvider, IMigrationBuilder migrationBuilder, IKeyValueService keyValueService, ILogger<RobotsTxtDatabaseComponent> logger)
+        public RobotsTxtDatabaseComponent(IMigrationPlanExecutor planExecutor, IScopeProvider scopeProvider, IMigrationBuilder migrationBuilder, IKeyValueService keyValueService, ILogger<RobotsTxtDatabaseComponent> logger, IRuntimeState runtimeState)
         {
             _planExecutor = planExecutor;
             _scopeProvider = scopeProvider;
             _keyValueService = keyValueService;
+            _runtimeState = runtimeState;
         }
 
         public void Initialize()
         {
+            if (_runtimeState.Level != RuntimeLevel.Run) return;
+
             var plan = new MigrationPlan("uSeoToolkit_RobotsTxt_Migration");
             plan.From(string.Empty)
                 .To<InitialRobotsTxtMigration>("state-1");
