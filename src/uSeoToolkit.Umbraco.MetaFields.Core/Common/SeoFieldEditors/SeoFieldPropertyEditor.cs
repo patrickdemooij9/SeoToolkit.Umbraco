@@ -10,7 +10,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors
     public class SeoFieldPropertyEditor : ISeoFieldEditor
     {
         private readonly string _propertyView;
-        public string View => "/App_Plugins/uSeoToolkitMetaFields/Interface/SeoFieldEditors/PropertyEditor/propertyEditor.html";
+        public string View => "/App_Plugins/uSeoToolkit/MetaFields/Interface/SeoFieldEditors/PropertyEditor/propertyEditor.html";
 
         private Dictionary<string, object> _config;
 

@@ -25,7 +25,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.ContentApps
                 Alias = "seoSettings",
                 Icon = "icon-globe-alt",
                 Weight = 100,
-                View = "/App_Plugins/uSeoToolkitMetaFields/Interface/ContentApps/SeoSettings/seoSettings.html"
+                View = "/App_Plugins/uSeoToolkit/MetaFields/Interface/ContentApps/SeoSettings/seoSettings.html"
             };
         }
     }

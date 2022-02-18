@@ -49,7 +49,7 @@
         vm.openSettingDialog = function (field) {
             const editor = {
                 title: "Field",
-                view: "/App_Plugins/uSeoToolkitMetaFields/Interface/ContentApps/DocumentSettings/Dialog/settingDialog.html",
+                view: "/App_Plugins/uSeoToolkit/MetaFields/Interface/ContentApps/DocumentSettings/Dialog/settingDialog.html",
                 size: "small",
                 field: field,
                 hasInheritance: vm.model.inheritance != null,

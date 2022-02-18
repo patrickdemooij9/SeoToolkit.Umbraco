@@ -11,7 +11,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors
     public class SeoFieldFieldsEditor : ISeoFieldEditor
     {
         private readonly string[] _fieldTypes;
-        public string View => "/App_Plugins/uSeoToolkitMetaFields/Interface/SeoFieldEditors/FieldsEditor/fieldsEditor.html";
+        public string View => "/App_Plugins/uSeoToolkit/MetaFields/Interface/SeoFieldEditors/FieldsEditor/fieldsEditor.html";
         public Dictionary<string, object> Config => new Dictionary<string, object>
         {
             {"dataTypes", _fieldTypes}

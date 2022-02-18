@@ -13,7 +13,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders
             {
                 Alias = "metaFields",
                 Name = "Meta Fields",
-                View = "/App_Plugins/uSeoToolkitMetaFields/Interface/ContentApps/DocumentSettings/documentSettings.html"
+                View = "/App_Plugins/uSeoToolkit/MetaFields/Interface/ContentApps/DocumentSettings/documentSettings.html"
             };
         }
     }
