@@ -6,7 +6,7 @@
     <Product>uSeoToolkit</Product>
     <PackageId>uSeoToolkit.Umbraco</PackageId>
     <Title>uSeoToolkit</Title>
-    <Description>Package containing common logic for uSeoToolkit</Description>
+    <Description>SEO package for Umbraco</Description>
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>uSeoToolkit.Umbraco</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/uSeoToolkit.Umbraco</PackageProjectUrl>
@@ -25,6 +25,12 @@
     </None>
   </ItemGroup>
 
+  <Import Project="..\uSeoToolkit.Umbraco.ScriptManager\build\uSeoToolkit.Umbraco.ScriptManager.targets" Condition="'$(Configuration)'=='Release'" />
+  <Import Project="..\uSeoToolkit.Umbraco.Common\build\uSeoToolkit.Umbraco.Common.targets" Condition="'$(Configuration)'=='Release'"/>
+  <Import Project="..\uSeoToolkit.Umbraco.MetaFields\build\uSeoToolkit.Umbraco.MetaFields.targets" Condition="'$(Configuration)'=='Release'"/>
+  <Import Project="..\uSeoToolkit.Umbraco.RobotsTxt\build\uSeoToolkit.Umbraco.RobotsTxt.targets" Condition="'$(Configuration)'=='Release'"/>
+  <Import Project="..\uSeoToolkit.Umbraco.Sitemap\build\uSeoToolkit.Umbraco.Sitemap.targets" Condition="'$(Configuration)'=='Release'"/>
+  <Import Project="..\uSeoToolkit.Umbraco\build\uSeoToolkit.Umbraco.targets" Condition="'$(Configuration)'=='Release'"/>
   <ItemGroup>
     <ProjectReference Include="..\uSeoToolkit.Umbraco.Common\uSeoToolkit.Umbraco.Common.csproj" />
     <ProjectReference Include="..\uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj" />
