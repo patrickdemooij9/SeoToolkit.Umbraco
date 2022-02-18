@@ -15,7 +15,7 @@ using Umbraco.Cms.Web.Common.Attributes;
 namespace uSeoToolkit.Umbraco.ScriptManager.Core.Controllers
 {
     [Tree("uSeoToolkit", "ScriptManager", TreeTitle = "uSeoToolkit", TreeGroup = "uSeoToolkit", SortOrder = 2)]
-    [PluginController("uSeoToolkitScriptManager")]
+    [PluginController("uSeoToolkit")]
     public class ScriptManagerTreeController : TreeController
     {
         private readonly IMenuItemCollectionFactory _menuItemCollectionFactory;

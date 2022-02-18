@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <PropertyGroup>
-        <uSeoToolkitScriptManagerFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\uSeoToolkitScriptManager\**\*.*</uSeoToolkitScriptManagerFilesPath>
+        <uSeoToolkitScriptManagerFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\uSeoToolkit\**\*.*</uSeoToolkitScriptManagerFilesPath>
 	    <uSeoToolkitScriptManagerViewsPath>$(MSBuildThisFileDirectory)..\Views\ScriptManager\**\*.*</uSeoToolkitScriptManagerViewsPath>
     </PropertyGroup>
 
@@ -12,7 +12,7 @@
         <Message Text="Copying uSeoToolkit.ScriptManager files: $(uSeoToolkitScriptManagerFilesPath) - #@(uSeoToolkitScriptManagerContentFiles->Count()) files"  Importance="high" />
         <Copy
             SourceFiles="@(uSeoToolkitScriptManagerContentFiles)"
-            DestinationFiles="@(uSeoToolkitScriptManagerContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkitScriptManager\%(RecursiveDir)%(Filename)%(Extension)')"
+            DestinationFiles="@(uSeoToolkitScriptManagerContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit\%(RecursiveDir)%(Filename)%(Extension)')"
             SkipUnchangedFiles="true" />
     </Target>
 
@@ -29,7 +29,7 @@
 
     <Target Name="ClearuSeoToolkitScriptManagerAssets" BeforeTargets="Clean">
         <ItemGroup>
-            <uSeoToolkitScriptManagerDir Include="$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkitScriptManager\" />
+            <uSeoToolkitScriptManagerDir Include="$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit\" />
         </ItemGroup>
         <Message Text="Clear old uSeoToolkit.ScriptManager data"  Importance="high" />
         <RemoveDir Directories="@(uSeoToolkitScriptManagerDir)"  />

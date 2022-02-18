@@ -1,6 +1,0 @@
-﻿{
-  "javascript": [
-    "~/App_Plugins/uSeoToolkitScriptManager/backoffice/ScriptManager/list.controller.js",
-    "~/App_Plugins/uSeoToolkitScriptManager/backoffice/ScriptManager/edit.controller.js"
-  ]
-}
