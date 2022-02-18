@@ -15,14 +15,31 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="App_Plugins\uSeoToolkitRobotsTxt\**\*.*">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </Content>
     <None Include="build\**\*.*">
       <Pack>True</Pack>
       <PackagePath>build</PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="App_Plugins\uSeoToolkit\backoffice\RobotsTxt\detail.controller.js" />
+    <None Remove="App_Plugins\uSeoToolkit\backoffice\RobotsTxt\detail.html" />
+    <None Remove="App_Plugins\uSeoToolkit\backoffice\RobotsTxt\package.manifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="App_Plugins\uSeoToolkit\backoffice\RobotsTxt\detail.controller.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <Content Include="App_Plugins\uSeoToolkit\backoffice\RobotsTxt\detail.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <Content Include="App_Plugins\uSeoToolkit\backoffice\RobotsTxt\package.manifest">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

@@ -12,7 +12,7 @@ using Umbraco.Cms.Web.Common.ModelBinders;
 namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Controllers
 {
     [Tree("uSeoToolkit", "RobotsTxt", TreeTitle = "uSeoToolkit", TreeGroup = "uSeoToolkit", SortOrder = 3)]
-    [PluginController("uSeoToolkitRobotsTxt")]
+    [PluginController("uSeoToolkit")]
     public class RobotsTxtTreeController : TreeController
     {
         public RobotsTxtTreeController(ILocalizedTextService localizedTextService, UmbracoApiControllerTypeCollection umbracoApiControllerTypeCollection, IEventAggregator eventAggregator,

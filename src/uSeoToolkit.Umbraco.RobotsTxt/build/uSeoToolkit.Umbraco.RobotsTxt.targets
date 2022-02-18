@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <uSeoToolkitRobotsTxtFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\uSeoToolkitRobotsTxt\**\*.*</uSeoToolkitRobotsTxtFilesPath>
+    <uSeoToolkitRobotsTxtFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\uSeoToolkit\**\*.*</uSeoToolkitRobotsTxtFilesPath>
   </PropertyGroup>
 
   <Target Name="CopyuSeoToolkitRobotsTxtAssets" BeforeTargets="Build">
@@ -11,13 +11,13 @@
     <Message Text="Copying uSeoToolkit.RobotsTxt files: $(uSeoToolkitRobotsTxtFilesPath) - #@(uSeoToolkitRobotsTxtContentFiles->Count()) files"  Importance="high" />
     <Copy
         SourceFiles="@(uSeoToolkitRobotsTxtContentFiles)"
-        DestinationFiles="@(uSeoToolkitRobotsTxtContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkitRobotsTxt\%(RecursiveDir)%(Filename)%(Extension)')"
+        DestinationFiles="@(uSeoToolkitRobotsTxtContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit\%(RecursiveDir)%(Filename)%(Extension)')"
         SkipUnchangedFiles="true" />
   </Target>
 
   <Target Name="ClearuSeoToolkitRobotsTxtAssets" BeforeTargets="Clean">
     <ItemGroup>
-      <uSeoToolkitRobotsTxtDir Include="$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkitRobotsTxt\" />
+      <uSeoToolkitRobotsTxtDir Include="$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit\" />
     </ItemGroup>
     <Message Text="Clear old uSeoToolkit.RobotsTxt data"  Importance="high" />
     <RemoveDir Directories="@(uSeoToolkitRobotsTxtDir)"  />
