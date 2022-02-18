@@ -13,7 +13,7 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Common.DisplayProviders
             {
                 Alias = "sitemap",
                 Name = "Sitemap",
-                View = "/App_Plugins/uSeoToolkitSitemap/Displays/DocumentType/sitemapSettings.html"
+                View = "/App_Plugins/uSeoToolkit/Sitemap/Displays/DocumentType/sitemapSettings.html"
             };
         }
     }

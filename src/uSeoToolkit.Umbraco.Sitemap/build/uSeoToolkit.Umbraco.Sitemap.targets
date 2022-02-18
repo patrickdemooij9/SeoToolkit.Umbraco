@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <uSeoToolkitUmbracoSitemapContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\uSeoToolkitSitemap\**\*.*</uSeoToolkitUmbracoSitemapContentFilesPath>
+    <uSeoToolkitUmbracoSitemapContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\uSeoToolkit\Sitemap\**\*.*</uSeoToolkitUmbracoSitemapContentFilesPath>
   </PropertyGroup>
 
   <Target Name="CopyuSeoToolkitUmbracoSitemapAssets" BeforeTargets="Build">
@@ -11,14 +11,14 @@
     <Message Text="Copying uSeoToolkit files: $(uSeoToolkitUmbracoSitemapContentFilesPath) - #@(uSeoToolkitUmbracoSitemapContentFiles->Count()) files"  Importance="high" />
     <Copy
         SourceFiles="@(uSeoToolkitUmbracoSitemapContentFiles)"
-        DestinationFiles="@(uSeoToolkitUmbracoSitemapContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkitSitemap\%(RecursiveDir)%(Filename)%(Extension)')"
+        DestinationFiles="@(uSeoToolkitUmbracoSitemapContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit\Sitemap\%(RecursiveDir)%(Filename)%(Extension)')"
         SkipUnchangedFiles="true" />
 
   </Target>
 
   <Target Name="ClearuSeoToolkitUmbracoSitemapAssets" BeforeTargets="Clean">
     <ItemGroup>
-      <uSeoToolkitUmbracoSitemapDir Include="$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkitSitemap\" />
+      <uSeoToolkitUmbracoSitemapDir Include="$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit\Sitemap\" />
     </ItemGroup>
     <Message Text="Clear old uSeoToolkit Sitemap data"  Importance="high" />
     <RemoveDir Directories="@(uSeoToolkitUmbracoSitemapDir)"  />
