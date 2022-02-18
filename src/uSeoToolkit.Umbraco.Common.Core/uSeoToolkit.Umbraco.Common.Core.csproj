@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <ContentTargetFolders>.</ContentTargetFolders>
     <Product>uSeoToolkit Common Core</Product>
     <PackageId>uSeoToolkit.Umbraco.Common.Core</PackageId>
     <Title>uSeoToolkit Common Core</Title>
