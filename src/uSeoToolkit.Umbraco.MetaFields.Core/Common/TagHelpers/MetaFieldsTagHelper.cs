@@ -28,6 +28,9 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Common.TagHelpers
                 return;
             foreach (var (key, value) in metaTags.Fields)
             {
+                //TODO: We should probably have a special IsEmpty check here?
+                if (string.IsNullOrWhiteSpace(value?.ToString()))
+                    continue;
                 stringBuilder.AppendLine(key.Render(value).ToString());
             }
 

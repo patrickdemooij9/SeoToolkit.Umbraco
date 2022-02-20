@@ -27,7 +27,7 @@ namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Controllers
         public IActionResult Save(RobotsTxtSavePostModel model)
         {
             _robotsTxtService.SetContent(model.Content ?? string.Empty);
-            return Ok();
+            return Get();
         }
     }
 }

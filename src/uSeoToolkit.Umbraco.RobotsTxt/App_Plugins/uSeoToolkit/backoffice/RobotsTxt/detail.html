@@ -1,5 +1,5 @@
 ﻿<div ng-controller="uSeoToolkit.RobosTxt.DetailController as vm">
-    <form name="contentForm" novalidate val-form-manager ng-submit="vm.save()" class="form-horizontal">
+    <form name="contentForm" novalidate val-form-manager class="form-horizontal">
         <umb-editor-view ng-if="!vm.loading">
             <umb-pane>
                 <umb-box>
@@ -13,12 +13,13 @@
             </umb-pane>
             <umb-editor-footer>
                 <umb-editor-footer-content-right>
-                    <umb-button type="submit"
+                    <umb-button type="button"
                                 button-style="success"
                                 state="vm.page.saveButtonState"
                                 shortcut="ctrl+s"
                                 label="Save"
-                                label-key="buttons_save">
+                                label-key="buttons_save"
+                                action="vm.save()">
                     </umb-button>
                 </umb-editor-footer-content-right>
             </umb-editor-footer>

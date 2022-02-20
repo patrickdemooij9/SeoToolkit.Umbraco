@@ -77,9 +77,11 @@
 
         $rootScope.$on("app.tabChange",
             (e, data) => {
-                if (data.alias !== "seoSettings") {
+                if (data.alias !== "metaFieldsSeoSettings") {
                     return;
                 }
+
+                console.log(data);
 
                 init();
             });

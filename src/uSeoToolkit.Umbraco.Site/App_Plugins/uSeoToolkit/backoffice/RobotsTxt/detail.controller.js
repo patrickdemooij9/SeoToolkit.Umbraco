@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    function robotsTxtDetailController($scope, $http, notificationsService) {
+    function robotsTxtDetailController($scope, $http, notificationsService, formHelper) {
 
         var vm = this;
 
@@ -22,16 +22,18 @@
                     notificationsService.error("Something went wrong while saving Robots.txt");
                 } else {
                     notificationsService.success("Robots.txt saved!");
+                    vm.editProperty.value = response.data;
+                    formHelper.resetForm({ scope: $scope });
                 }
             });
         }
 
         function init() {
             vm.loading = true;
-            $http.get("backoffice/uSeoToolkit/RobotsTxt/Get").then(function (response) {
+            $http.get("backoffice/uSeoToolkit/RobotsTxt/Get").then(function(response) {
                 vm.editProperty.value = response.data;
                 vm.loading = false;
-            })
+            });
         }
 
         init();

@@ -17,12 +17,12 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.ContentApps
 
         public ContentApp GetContentAppFor(object source, IEnumerable<IReadOnlyUserGroup> userGroups)
         {
-            if (!(source is IContent content) || !content.HasIdentity) return null;
+            if (!(source is IContent content) || !content.HasIdentity || _documentTypeSettingsService.Get(content.ContentType.Id) is null) return null;
 
             return new ContentApp
             {
                 Name = "Seo",
-                Alias = "seoSettings",
+                Alias = "metaFieldsSeoSettings",
                 Icon = "icon-globe-alt",
                 Weight = 100,
                 View = "/App_Plugins/uSeoToolkit/MetaFields/Interface/ContentApps/SeoSettings/seoSettings.html"
