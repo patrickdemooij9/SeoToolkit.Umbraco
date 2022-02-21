@@ -10,7 +10,7 @@
     <RootNamespace>uSeoToolkit.Umbraco.Common</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/uSeoToolkit.Umbraco</PackageProjectUrl>
     <RepositoryUrl>https://github.com/patrickdemooij9/uSeoToolkit.Umbraco</RepositoryUrl>
-    <Version>1.0.0-alpha</Version>
+    <Version>1.0.0-beta</Version>
   </PropertyGroup>
 
   <ItemGroup>
