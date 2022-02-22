@@ -15,31 +15,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="App_Plugins\uSeoToolkit\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
     <None Include="build\**\*.*">
       <Pack>True</Pack>
       <PackagePath>build</PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="App_Plugins\uSeoToolkit\Sitemap\Displays\DocumentType\sitemapSettings.controller.js" />
-    <None Remove="App_Plugins\uSeoToolkit\Sitemap\Displays\DocumentType\sitemapSettings.html" />
-    <None Remove="App_Plugins\uSeoToolkit\Sitemap\package.manifest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="App_Plugins\uSeoToolkit\Sitemap\Displays\DocumentType\sitemapSettings.controller.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkit\Sitemap\Displays\DocumentType\sitemapSettings.html">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </Content>
-    <Content Include="App_Plugins\uSeoToolkit\Sitemap\package.manifest">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>

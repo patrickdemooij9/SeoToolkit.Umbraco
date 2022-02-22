@@ -20,7 +20,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="Views\**\*.*">
+    <Content Include="App_Plugins\uSeoToolkit\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Views\**\*.*">
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
 		</Content>
@@ -28,41 +32,5 @@
 			<Pack>True</Pack>
 			<PackagePath>build</PackagePath>
 		</None>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="App_Plugins\uSeoToolkit\backoffice\ScriptManager\edit.controller.js" />
-	  <None Remove="App_Plugins\uSeoToolkit\backoffice\ScriptManager\edit.html" />
-	  <None Remove="App_Plugins\uSeoToolkit\backoffice\ScriptManager\list.controller.js" />
-	  <None Remove="App_Plugins\uSeoToolkit\backoffice\ScriptManager\list.html" />
-	  <None Remove="App_Plugins\uSeoToolkit\ScriptManager\lang\en-us.xml" />
-	  <None Remove="App_Plugins\uSeoToolkit\package.manifest" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Include="App_Plugins\uSeoToolkit\backoffice\ScriptManager\edit.controller.js">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="App_Plugins\uSeoToolkit\backoffice\ScriptManager\edit.html">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="App_Plugins\uSeoToolkit\backoffice\ScriptManager\list.controller.js">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="App_Plugins\uSeoToolkit\backoffice\ScriptManager\list.html">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="App_Plugins\uSeoToolkit\ScriptManager\lang\en-us.xml">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-	  </Content>
-	  <Content Include="App_Plugins\uSeoToolkit\ScriptManager\package.manifest">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-	  </Content>
 	</ItemGroup>
 </Project>
