@@ -20,7 +20,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Description => "Image for Open Graph";
         public Type FieldType => typeof(string);
 
-        public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.MediaPicker" });
+        public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.MediaPicker", "Umbraco.MediaPicker3" });
         public ISeoFieldEditEditor EditEditor => new SeoImageEditEditor(_umbracoContextFactory);
 
         public OpenGraphImageField(IUmbracoContextFactory umbracoContextFactory)
