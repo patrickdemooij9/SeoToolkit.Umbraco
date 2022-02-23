@@ -4,6 +4,7 @@ using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
+using uSeoToolkit.Umbraco.RobotsTxt.Core.Common.Validators;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Components;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Middleware;
@@ -18,6 +19,7 @@ namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Composers
         {
             builder.Services.AddUnique<IRobotsTxtRepository, RobotsTxtRepository>();
             builder.Services.AddUnique<IRobotsTxtService, RobotsTxtService>();
+            builder.Services.AddUnique<IRobotsTxtValidator, DefaultRobotsTxtValidator>();
 
             builder.Components().Append<EnableModuleComponent>();
             builder.Components().Append<RobotsTxtDatabaseComponent>();

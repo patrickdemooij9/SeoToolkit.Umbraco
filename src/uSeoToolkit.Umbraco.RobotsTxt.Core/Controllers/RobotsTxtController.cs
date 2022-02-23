@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
+using Umbraco.Cms.Web.Common.ActionsResults;
 using Umbraco.Cms.Web.Common.Attributes;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Models.PostModel;
+using uSeoToolkit.Umbraco.RobotsTxt.Core.Models.ViewModels;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Services;
 
 namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Controllers
@@ -26,7 +30,14 @@ namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Controllers
         [HttpPost]
         public IActionResult Save(RobotsTxtSavePostModel model)
         {
-            _robotsTxtService.SetContent(model.Content ?? string.Empty);
+            var content = model.Content ?? string.Empty;
+            var validationErrors = _robotsTxtService.Validate(content).ToArray();
+            if (validationErrors.Length > 0)
+            {
+                return BadRequest(validationErrors.Select(it => new RobotsTxtValidationViewModel(it)));
+            }
+
+            _robotsTxtService.SetContent(model.Content);
             return Get();
         }
     }

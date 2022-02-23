@@ -4,6 +4,7 @@
     function robotsTxtDetailController($scope, $http, notificationsService, formHelper) {
 
         var vm = this;
+        vm.validationErrors = [];
 
         vm.loading = false;
         vm.editProperty = {
@@ -15,16 +16,16 @@
         vm.save = save;
 
         function save() {
+            vm.validationErrors = [];
             $http.post("backoffice/uSeoToolkit/RobotsTxt/Save", {
                 content: vm.editProperty.value
             }).then(function (response) {
-                if (response.status !== 200) {
-                    notificationsService.error("Something went wrong while saving Robots.txt");
-                } else {
-                    notificationsService.success("Robots.txt saved!");
-                    vm.editProperty.value = response.data;
-                    formHelper.resetForm({ scope: $scope });
-                }
+                notificationsService.success("Robots.txt saved!");
+                vm.editProperty.value = response.data;
+                formHelper.resetForm({ scope: $scope });
+            }, function (response) {
+                vm.validationErrors = response.data;
+                notificationsService.error("Something went wrong while saving Robots.txt");
             });
         }
 

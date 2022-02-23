@@ -8,6 +8,13 @@
                         <umb-property property="vm.editProperty">
                             <umb-property-editor model="vm.editProperty" is-pre-value="true"></umb-property-editor>
                         </umb-property>
+                        <div ng-if="vm.validationErrors.length > 0">
+                            <h5>Validation Errors</h5>
+                            <p class="error" ng-repeat="error in vm.validationErrors">
+                                <umb-icon icon="icon-delete" class="red"></umb-icon>
+                                Line {{error.lineNumber}} - {{error.error}}
+                            </p>
+                        </div>
                     </umb-box-content>
                 </umb-box>
             </umb-pane>

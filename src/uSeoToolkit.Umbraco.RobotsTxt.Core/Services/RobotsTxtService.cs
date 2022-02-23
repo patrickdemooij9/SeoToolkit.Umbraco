@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Models.Business;
 
@@ -7,10 +8,13 @@ namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Services
     public class RobotsTxtService : IRobotsTxtService
     {
         private IRobotsTxtRepository _robotsTxtRepository;
+        private readonly IRobotsTxtValidator _robotsTxtValidator;
 
-        public RobotsTxtService(IRobotsTxtRepository robotsTxtRepository)
+        public RobotsTxtService(IRobotsTxtRepository robotsTxtRepository,
+            IRobotsTxtValidator robotsTxtValidator)
         {
             _robotsTxtRepository = robotsTxtRepository;
+            _robotsTxtValidator = robotsTxtValidator;
         }
 
         public string GetContent()
@@ -27,6 +31,11 @@ namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Services
 
             model.Content = content;
             _robotsTxtRepository.Update(model);
+        }
+
+        public IEnumerable<RobotsTxtValidation> Validate(string content)
+        {
+            return _robotsTxtValidator.Validate(content);
         }
     }
 }

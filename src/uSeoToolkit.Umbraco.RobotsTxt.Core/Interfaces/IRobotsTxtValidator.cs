@@ -3,11 +3,8 @@ using uSeoToolkit.Umbraco.RobotsTxt.Core.Models.Business;
 
 namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Interfaces
 {
-    public interface IRobotsTxtService
+    public interface IRobotsTxtValidator
     {
-        string GetContent();
-        void SetContent(string content);
-
         IEnumerable<RobotsTxtValidation> Validate(string content);
     }
 }
