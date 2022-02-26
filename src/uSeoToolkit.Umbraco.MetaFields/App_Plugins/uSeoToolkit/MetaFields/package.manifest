@@ -4,7 +4,7 @@
     "~/App_Plugins/uSeoToolkit/MetaFields/Interface/ContentApps/DocumentSettings/Dialog/settingDialog.controller.js",
     "~/App_Plugins/uSeoToolkit/MetaFields/Interface/ContentApps/SeoSettings/seoSettings.controller.js",
     "~/App_Plugins/uSeoToolkit/MetaFields/Interface/Components/DynamicSelectBox/dynamicSelectBox.controller.js",
-    "~/App_Plugins/uSeoToolkit/MetaFields/Interface/Previewers/BaseTags/baseTagsPreviewer.controller.js",
+    "~/App_Plugins/uSeoToolkit/MetaFields/Interface/Previewers/BaseTags/baseTagsFieldPreviewer.controller.js",
     "~/App_Plugins/uSeoToolkit/MetaFields/Interface/SeoFieldEditors/FieldsEditor/fieldsEditor.controller.js",
     "~/App_Plugins/uSeoToolkit/MetaFields/Interface/SeoFieldEditors/PropertyEditor/propertyEditor.controller.js"
   ],
