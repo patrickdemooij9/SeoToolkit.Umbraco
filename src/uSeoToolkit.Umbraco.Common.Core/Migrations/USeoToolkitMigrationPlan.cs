@@ -11,6 +11,8 @@ namespace uSeoToolkit.Umbraco.Common.Core.Migrations
         protected override void DefinePlan()
         {
             To<SeoSettingsInitialMigration>("state-1");
+            To<AddSeoToolkitSectionToAdminUserGroupMigration>("state-2");
+            To<CreateSeoToolkitUserGroupMigration>("state-3");
         }
     }
 }
