@@ -28,9 +28,8 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            builder.Components().Append<MetaFieldsDatabaseComponent>();
             builder.Components().Append<EnableModuleComponent>();
-            
+
             builder.ContentApps().Append<MetaFieldsSeoSettingsAppFactory>();
 
             builder.Services.AddTransient(typeof(IRepository<DocumentTypeSettingsDto>), typeof(MetaFieldsSettingsDatabaseRepository));
