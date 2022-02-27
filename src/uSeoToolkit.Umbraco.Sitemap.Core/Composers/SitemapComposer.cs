@@ -24,7 +24,6 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Composers
         public void Compose(IUmbracoBuilder builder)
         {
             builder.Components().Append<EnableModuleComponent>();
-            builder.Components().Append<SitemapDatabaseComponent>();
 
             builder.WithCollectionBuilder<DisplayCollectionBuilder>()
                 .Add<SitemapDocumentTypeDisplayProvider>();
@@ -35,7 +34,8 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Composers
             builder.Services.AddUnique<ISitemapPageTypeRepository, SitemapPageTypeRepository>();
             builder.Services.AddSingleton(typeof(ISettingsService<SitemapConfig>), typeof(SitemapConfigurationService));
 
-            builder.Services.Configure<UmbracoPipelineOptions>(options => {
+            builder.Services.Configure<UmbracoPipelineOptions>(options =>
+            {
                 options.AddFilter(new UmbracoPipelineFilter(
                     "uSeoToolkit Sitemap",
                     applicationBuilder => { applicationBuilder.UseMiddleware<SitemapMiddleware>(); },
