@@ -14,7 +14,7 @@ namespace uSeoToolkit.Umbraco.Common.Core.ContentApps
 
             return new ContentApp
             {
-                Name = "Seo Settings",
+                Name = "SEO",
                 Alias = "seoSettings",
                 Icon = "icon-globe-alt",
                 Weight = 100,

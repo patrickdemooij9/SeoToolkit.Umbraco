@@ -21,7 +21,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.ContentApps
 
             return new ContentApp
             {
-                Name = "Seo",
+                Name = "SEO",
                 Alias = "metaFieldsSeoSettings",
                 Icon = "icon-globe-alt",
                 Weight = 100,
