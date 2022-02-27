@@ -12,10 +12,34 @@ namespace uSeoToolkit.Umbraco.Common.Core.Collections
         {
             _items = new List<SeoToolkitModule>
             {
-                new SeoToolkitModule{Title = "Meta Fields", Alias = "metaFields", Icon = "icon-thumbnail-list", Link = "https://github.com/patrickdemooij9/uSeoToolkit.Umbraco"},
-                new SeoToolkitModule{Title = "Script Manager", Alias = "scriptManager", Icon = "icon-script", Link = "https://github.com/patrickdemooij9/uSeoToolkit.Umbraco"},
-                new SeoToolkitModule{Title = "Sitemap", Alias = "sitemap", Icon = "icon-sitemap", Link = "https://github.com/patrickdemooij9/uSeoToolkit.Umbraco"},
-                new SeoToolkitModule{Title = "Robots.txt", Alias = "robotsTxt", Icon = "icon-cloud", Link = "https://github.com/patrickdemooij9/uSeoToolkit.Umbraco"}
+                new SeoToolkitModule
+                {
+                    Title = "Meta Fields",
+                    Alias = "metaFields",
+                    Icon = "icon-thumbnail-list",
+                    Link = "https://useotoolkit.gitbook.io/useotoolkit/getting-started/meta-fields"
+                },
+                new SeoToolkitModule
+                {
+                    Title = "Script Manager",
+                    Alias = "scriptManager",
+                    Icon = "icon-script",
+                    Link = "https://useotoolkit.gitbook.io/useotoolkit/getting-started/script-manager"
+                },
+                new SeoToolkitModule
+                {
+                    Title = "Sitemap",
+                    Alias = "sitemap",
+                    Icon = "icon-sitemap",
+                    Link = "https://useotoolkit.gitbook.io/useotoolkit/getting-started/sitemap"
+                },
+                new SeoToolkitModule
+                {
+                    Title = "Robots.txt",
+                    Alias = "robotsTxt",
+                    Icon = "icon-cloud",
+                    Link = "https://useotoolkit.gitbook.io/useotoolkit/getting-started/robots.txt"
+                }
             };
         }
 
