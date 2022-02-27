@@ -9,28 +9,35 @@ using Umbraco.Cms.Web.Common.Attributes;
 
 namespace uSeoToolkit.Umbraco.Core.Controllers
 {
-    [Tree("uSeoToolkit", "License", TreeTitle = "uSeoToolkit", TreeGroup = "uSeoToolkit", SortOrder = 20)]
+    [Tree("uSeoToolkit", "License", TreeTitle = "License", TreeGroup = "uSeoToolkit", SortOrder = 20)]
     [PluginController("uSeoToolkit")]
     public class SeoToolkitLicenseTreeController : TreeController
     {
-        public SeoToolkitLicenseTreeController(ILocalizedTextService localizedTextService, UmbracoApiControllerTypeCollection umbracoApiControllerTypeCollection, IEventAggregator eventAggregator) : base(localizedTextService, umbracoApiControllerTypeCollection, eventAggregator)
-        {
-        }
-
-        protected override ActionResult<TreeNodeCollection> GetTreeNodes(string id, FormCollection queryStrings)
-        {
-            return new TreeNodeCollection();
-        }
+        public SeoToolkitLicenseTreeController(
+            ILocalizedTextService localizedTextService,
+            UmbracoApiControllerTypeCollection umbracoApiControllerTypeCollection,
+            IEventAggregator eventAggregator)
+            : base(localizedTextService, umbracoApiControllerTypeCollection, eventAggregator)
+        { }
 
         protected override ActionResult<TreeNode> CreateRootNode(FormCollection queryStrings)
         {
-            var node = CreateTreeNode("license", "-1", queryStrings, "License", "icon-pushpin color-green", false,
-                $"{SectionAlias}/{TreeAlias}/licenseDashboard");
+            var root = base.CreateRootNode(queryStrings);
 
-            return node;
+            root.Value.Icon = "icon-pushpin color-green";
+            root.Value.HasChildren = false;
+            root.Value.RoutePath = $"{SectionAlias}/{TreeAlias}/licenseDashboard";
+            root.Value.MenuUrl = null;
+
+            return root.Value;
         }
 
         protected override ActionResult<MenuItemCollection> GetMenuForNode(string id, FormCollection queryStrings)
+        {
+            return null;
+        }
+
+        protected override ActionResult<TreeNodeCollection> GetTreeNodes(string id, FormCollection queryStrings)
         {
             return null;
         }
