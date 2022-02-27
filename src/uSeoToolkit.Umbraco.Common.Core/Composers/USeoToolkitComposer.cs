@@ -3,7 +3,6 @@ using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
 using uSeoToolkit.Umbraco.Common.Core.Collections;
-using uSeoToolkit.Umbraco.Common.Core.Components;
 using uSeoToolkit.Umbraco.Common.Core.ContentApps;
 using uSeoToolkit.Umbraco.Common.Core.Dashboards;
 using uSeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository;
@@ -19,8 +18,6 @@ namespace uSeoToolkit.Umbraco.Common.Core.Composers
             builder.Sections().Append<USeoToolkitSection>();
             builder.Dashboards().Add<WelcomeDashboard>();
             builder.ContentApps().Append<SeoSettingsContentAppFactory>();
-
-            builder.Components().Append<SeoSettingsDatabaseComponent>();
 
             builder.Services.AddSingleton<ModuleCollection>();
 
