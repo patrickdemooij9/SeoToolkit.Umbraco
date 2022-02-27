@@ -8,6 +8,8 @@ namespace uSeoToolkit.Umbraco.Common.Core.Migrations
 {
     public class CreateSeoToolkitUserGroupMigration : MigrationBase
     {
+        private const string UserGroupAlias = "uSeoToolkit";
+
         private readonly IShortStringHelper _shortStringHelper;
         private readonly IUserService _userService;
 
@@ -23,9 +25,12 @@ namespace uSeoToolkit.Umbraco.Common.Core.Migrations
 
         protected override void Migrate()
         {
+            if (_userService.GetUserGroupByAlias(UserGroupAlias) != null)
+                return;
+
             var userGroup = new UserGroup(_shortStringHelper)
             {
-                Alias = "uSeoToolkit",
+                Alias = UserGroupAlias,
                 Name = "SEO Toolkit",
                 Icon = "icon-globe-alt",
             };
