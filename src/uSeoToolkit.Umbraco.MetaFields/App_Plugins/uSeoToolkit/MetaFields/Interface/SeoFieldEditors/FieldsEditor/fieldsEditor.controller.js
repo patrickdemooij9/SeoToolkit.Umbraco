@@ -85,9 +85,6 @@
                     source: v.source
                 };
             });
-            vm.field.onInheritanceUpdate = function() {
-                console.log(this);
-            }
         }
 
         init();

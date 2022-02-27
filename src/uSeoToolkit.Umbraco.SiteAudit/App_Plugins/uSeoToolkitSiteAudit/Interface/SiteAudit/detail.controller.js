@@ -17,7 +17,6 @@
                 if (!clientId) {
                     state.hub.on("update",
                         function (update) {
-                            console.log(update);
                             state.audit = update;
                             fn.loadAudit(false);
                         });

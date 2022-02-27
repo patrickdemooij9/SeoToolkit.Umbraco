@@ -54,7 +54,6 @@
                         DelayBetweenRequests: state.selectedAudit.delayBetweenRequests
                     }
                 ).then(function (response) {
-                    console.log(response);
                     $routeParams.id = response.data.Id;
                     eventsService.emit("uSeoToolkit.ViewUpdate", "SiteAuditDetail");
                 });

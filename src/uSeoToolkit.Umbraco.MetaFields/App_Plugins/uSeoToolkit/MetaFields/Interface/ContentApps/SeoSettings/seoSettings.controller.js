@@ -81,8 +81,6 @@
                     return;
                 }
 
-                console.log(data);
-
                 init();
             });
     }

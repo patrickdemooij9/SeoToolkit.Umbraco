@@ -60,7 +60,6 @@
                 const clientId = getClientId();
                 vm.hub.on("update",
                     function (update) {
-                        console.log(update);
                         vm.audit = update;
                         loadPage(vm.pagination.pageNumber);
                         loadAudit(false);
@@ -90,7 +89,6 @@
 
         function loadCurrentAudit(id) {
             $http.get("backoffice/uSeoToolkit/SiteAudit/Connect?auditId=" + id + "&clientId=" + getClientId()).then(function (response) {
-                console.log(response);
                 vm.audit = response.data;
 
                 loadPage(vm.pagination.pageNumber);
@@ -162,6 +160,7 @@
         }
 
         function stopAudit() {
+            //TODO: Actually stop
             console.log("Trying to stop!");
         }
 
@@ -234,7 +233,6 @@
                     }
                     return result;
                 });
-            console.log(vm.audit);
             vm.pagination.pageNumber = pageNumber;
             vm.pagination.totalPages = pages.length / vm.pagination.itemsPerPage;
             vm.pages = pages.slice(pageIndex * vm.pagination.itemsPerPage, pageIndex * vm.pagination.itemsPerPage + vm.pagination.itemsPerPage);
