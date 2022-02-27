@@ -1,16 +1,13 @@
 ﻿using System.Net.Http;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
 using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.SiteAudit.Core.BackgroundTasks;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Checks;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Collections;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Common.Scheduler;
-using uSeoToolkit.Umbraco.SiteAudit.Core.Components;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Config;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Config.Models;
 using uSeoToolkit.Umbraco.SiteAudit.Core.Extensions;
@@ -46,8 +43,6 @@ namespace uSeoToolkit.Umbraco.SiteAudit.Core.Composers
                 .Append<MissingDescriptionCheck>()
                 .Append<BrokenImageCheck>()
                 .Append<MissingImageAltCheck>();
-
-            builder.Components().Append<SiteAuditDatabaseComponent>();
 
             builder.AddNotificationHandler<SiteAuditUpdatedNotification, SiteAuditUpdateNotificationHandler>();
 

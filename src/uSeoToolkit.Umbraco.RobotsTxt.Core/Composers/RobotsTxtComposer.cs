@@ -22,9 +22,9 @@ namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Composers
             builder.Services.AddUnique<IRobotsTxtValidator, DefaultRobotsTxtValidator>();
 
             builder.Components().Append<EnableModuleComponent>();
-            builder.Components().Append<RobotsTxtDatabaseComponent>();
 
-            builder.Services.Configure<UmbracoPipelineOptions>(options => {
+            builder.Services.Configure<UmbracoPipelineOptions>(options =>
+            {
                 options.AddFilter(new UmbracoPipelineFilter(
                     "uSeoToolkit Robots.txt",
                     applicationBuilder => { applicationBuilder.UseMiddleware<RobotsTxtMiddleware>(); },

@@ -1,9 +1,7 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
-using uSeoToolkit.Umbraco.ScriptManager.Core.Collections;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Components;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Config;
 using uSeoToolkit.Umbraco.ScriptManager.Core.Config.Models;
@@ -27,7 +25,6 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Composers
                 .Add<HotjarDefinition>()
                 .Add<CustomScriptDefinition>();
 
-            builder.Components().Append<ScriptManagerDatabaseComponent>();
             builder.Components().Append<EnableModuleComponent>();
 
             builder.Services.AddScoped<IScriptRepository, ScriptRepository>();
