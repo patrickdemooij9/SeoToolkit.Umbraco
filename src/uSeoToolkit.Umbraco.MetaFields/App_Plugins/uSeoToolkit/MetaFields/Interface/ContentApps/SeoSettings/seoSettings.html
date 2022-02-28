@@ -32,7 +32,7 @@
                         </div>
                         <div class="controls">
                             <div class="umb-property-editor" ng-if="!vm.edit">
-                                <a href="{{field.value}}" ng-if="vm.isUrl(field.value)">
+                                <a href="#" ng-href="{{field.value}}" target="_blank" ng-if="vm.isUrl(field.value)">
                                     {{field.value}}
                                 </a>
                                 <div ng-if="!vm.isUrl(field.value)">
