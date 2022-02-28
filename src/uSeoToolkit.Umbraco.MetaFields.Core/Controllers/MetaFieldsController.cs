@@ -98,7 +98,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Controllers
             var settings = _documentTypeSettingsService.Get(postModel.ContentTypeId);
             
             if (!_seoSettingsService.IsEnabled(postModel.ContentTypeId))
-                return BadRequest("Seo settings are turned off for this node!");
+                return BadRequest("SEO settings are turned off for this node!");
 
             EnsureLanguage(postModel.Culture);
             var isDirty = false;
