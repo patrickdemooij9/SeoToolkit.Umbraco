@@ -32,20 +32,40 @@
             }
             $http.get(url).then(
                 function (response) {
-                    vm.fields = response.data.fields;
+                    if (vm.edit) {
+                        continueEdit(response.data.fields);
+                    } else {
+                        vm.fields = response.data.fields;
+                    }
                     vm.loading = false;
                 });
         }
 
         function startEdit() {
             vm.fields.forEach(function (field) {
+                var value = vm.edit ? field.editModel.userValue : field.userValue;
                 field.editModel = {
                     view: field.editView,
-                    value: field.userValue,
+                    value: value,
                     config: field.editConfig
                 }
             });
             vm.edit = true;
+        }
+
+        function continueEdit(newFields) {
+            var oldFields = vm.fields;
+            vm.fields = newFields;
+            vm.fields.forEach(function(field) {
+                const oldField = oldFields.find(function(f) {
+                    return f.alias === field.alias;
+                });
+                if (!oldField) {
+                    return;
+                }
+
+                field.editModel = oldField.editModel;
+            });
         }
 
         function finishEdit() {
