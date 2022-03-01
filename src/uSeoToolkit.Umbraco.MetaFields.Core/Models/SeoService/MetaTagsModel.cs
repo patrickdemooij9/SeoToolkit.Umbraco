@@ -26,7 +26,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Models.SeoService
             var (key, _) = Fields.FirstOrDefault(it => it.Key.Alias.Equals(alias));
             if (key is null)
             {
-                throw new ArgumentException($"No seo field with alias {alias} found!");
+                throw new ArgumentException($"No SEO field with alias {alias} found!");
             }
 
             Fields[key] = value;
