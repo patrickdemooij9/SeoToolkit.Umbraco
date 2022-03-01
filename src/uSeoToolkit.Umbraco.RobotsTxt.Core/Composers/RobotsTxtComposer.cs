@@ -4,8 +4,10 @@ using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
+using uSeoToolkit.Umbraco.RobotsTxt.Core.Common.Shortcuts;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Common.Validators;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Components;
+using uSeoToolkit.Umbraco.RobotsTxt.Core.Extensions;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Middleware;
 using uSeoToolkit.Umbraco.RobotsTxt.Core.Repositories;
@@ -17,6 +19,9 @@ namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
+            builder.RobotsTxtShortcuts()
+                .Append<DisallowAllShortcut>();
+
             builder.Services.AddUnique<IRobotsTxtRepository, RobotsTxtRepository>();
             builder.Services.AddUnique<IRobotsTxtService, RobotsTxtService>();
             builder.Services.AddUnique<IRobotsTxtValidator, DefaultRobotsTxtValidator>();
