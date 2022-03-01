@@ -1,7 +1,8 @@
 ﻿<div ng-controller="uSeoToolkit.ContentApps.MetaFieldsController as vm" class="form-horizontal">
-    
-    <div class="alert-box" ng-if="vm.isContentDirty()">
-        Make sure to save/publish your changes to see the updated values here!
+
+    <div class="alert alert-warning flex items-center" role="alert" ng-if="vm.isContentDirty()">
+        <umb-icon icon="icon-alert" class="medium mr2"></umb-icon>
+        <span>Make sure to save/publish your changes to see the updated values here.</span>
     </div>
 
     <umb-editor-sub-header>
