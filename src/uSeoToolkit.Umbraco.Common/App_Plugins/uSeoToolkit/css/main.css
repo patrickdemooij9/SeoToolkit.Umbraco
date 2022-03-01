@@ -37,3 +37,7 @@
 .welcomeDashboard .module-status-installed {
     color: green;
 }
+
+.form-horizontal .umb-control-group .control-header .control-description.full-width-description {
+    max-width: 100%;
+}
