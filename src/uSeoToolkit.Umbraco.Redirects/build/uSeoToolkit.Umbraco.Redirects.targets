@@ -1,0 +1,26 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <uSeoToolkitRedirectsFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\uSeoToolkit\**\*.*</uSeoToolkitRedirectsFilesPath>
+  </PropertyGroup>
+
+  <Target Name="CopyuSeoToolkitRedirectsAssets" BeforeTargets="Build">
+    <ItemGroup>
+      <uSeoToolkitRedirectsContentFiles Include="$(uSeoToolkitRedirectsFilesPath)" />
+    </ItemGroup>
+    <Message Text="Copying uSeoToolkit.Redirects files: $(uSeoToolkitRedirectsFilesPath) - #@(uSeoToolkitRedirectsContentFiles->Count()) files"  Importance="high" />
+    <Copy
+        SourceFiles="@(uSeoToolkitRedirectsContentFiles)"
+        DestinationFiles="@(uSeoToolkitRedirectsContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit\%(RecursiveDir)%(Filename)%(Extension)')"
+        SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="ClearuSeoToolkitRedirectsAssets" BeforeTargets="Clean">
+    <ItemGroup>
+      <uSeoToolkitRedirectsDir Include="$(MSBuildProjectDirectory)\App_Plugins\uSeoToolkit\" />
+    </ItemGroup>
+    <Message Text="Clear old uSeoToolkit.Redirects data"  Importance="high" />
+    <RemoveDir Directories="@(uSeoToolkitRedirectsDir)"  />
+  </Target>
+
+</Project>

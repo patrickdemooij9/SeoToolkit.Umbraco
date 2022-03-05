@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="App_Plugins\uSeoToolkit\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <None Include="build\**\*.*">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.Common\uSeoToolkit.Umbraco.Common.csproj" />
+    <ProjectReference Include="..\uSeoToolkit.Umbraco.Redirects.Core\uSeoToolkit.Umbraco.Redirects.Core.csproj" />
+  </ItemGroup>
+
+</Project>
