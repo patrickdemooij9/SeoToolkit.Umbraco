@@ -14,7 +14,7 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Models.Database
 
         [Column("Domain")]
         [NullSetting(NullSetting = NullSettings.Null)]
-        public Guid? Domain { get; set; }
+        public int? Domain { get; set; }
 
         [Column("CustomDomain")]
         [NullSetting(NullSetting = NullSettings.Null)]

@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    function scriptManagerListController($http, listViewHelper, notificationsService) {
+    function redirectListController($http, listViewHelper, notificationsService, editorService) {
         var vm = this;
 
         vm.items = [];
@@ -62,7 +62,18 @@
         }
 
         function create() {
-            
+            var redirectDialogOptions = {
+                title: "Create redirect",
+                view: "/App_Plugins/uSeoToolkit/Redirects/Dialogs/createRedirect.html",
+                size: "small",
+                submit: function (model) {
+                    editorService.close();
+                },
+                close: function () {
+                    editorService.close();
+                }
+            };
+            editorService.open(redirectDialogOptions);
         }
 
         function deleteSelection() {
@@ -111,5 +122,5 @@
         init();
     }
 
-    angular.module("umbraco").controller("uSeoToolkit.Redirects.ListController", scriptManagerListController);
+    angular.module("umbraco").controller("uSeoToolkit.Redirects.ListController", redirectListController);
 })();

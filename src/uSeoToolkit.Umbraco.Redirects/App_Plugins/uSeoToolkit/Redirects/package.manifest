@@ -1,0 +1,6 @@
+﻿{
+  "javascript": [
+    "/App_Plugins/uSeoToolkit/backoffice/Redirects/list.controller.js",
+    "/App_Plugins/uSeoToolkit/Redirects/Dialogs/createRedirect.controller.js"
+  ]
+}
