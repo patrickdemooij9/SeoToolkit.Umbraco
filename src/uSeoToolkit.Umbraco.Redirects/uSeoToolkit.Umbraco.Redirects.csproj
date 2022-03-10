@@ -16,8 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="App_Plugins\uSeoToolkit\Redirects\css\main.css" />
     <None Remove="App_Plugins\uSeoToolkit\Redirects\Dialogs\createRedirect.controller.js" />
     <None Remove="App_Plugins\uSeoToolkit\Redirects\Dialogs\CreateRedirect.html" />
+    <None Remove="App_Plugins\uSeoToolkit\Redirects\Dialogs\linkPicker.controller.js" />
+    <None Remove="App_Plugins\uSeoToolkit\Redirects\Dialogs\linkPicker.html" />
+    <None Remove="App_Plugins\uSeoToolkit\Redirects\lang\en-us.xml" />
   </ItemGroup>
 
   <ItemGroup>
