@@ -34,11 +34,12 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Models.Database
         [NullSetting(NullSetting = NullSettings.Null)]
         public int? NewNodeId { get; set; }
 
+        [Column("NewNodeCultureId")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public int? NewNodeCultureId { get; set; }
+
         [Column("RedirectCode")]
         public int RedirectCode { get; set; }
-
-        [Column("Notes")]
-        public string Notes { get; set; }
 
         [Column("LastUpdated")]
         public DateTime LastUpdated { get; set; }

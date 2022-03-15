@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    function createRedirectController($scope, $http, editorService) {
+    function createRedirectController($scope, $http, editorService, contentResource, mediaResource, languageResource) {
 
         var vm = this;
 
@@ -12,6 +12,7 @@
         vm.domains = [];
         vm.urlTypes = [{ name: "Url", value: 1 }, { name: "Regex", value: 2 }];
         vm.oldUrlType = 1;
+        vm.newUrlData = null;
 
         vm.domainProperty = {
             alias: "domain",
@@ -49,7 +50,6 @@
             label: "New Url",
             description: "The url where the redirect is going to",
             value: "",
-            view: "textbox",
             validation: {
                 mandatory: true
             }
@@ -85,6 +85,31 @@
                 view: "/App_Plugins/uSeoToolkit/Redirects/Dialogs/linkPicker.html",
                 size: "small",
                 submit: function (model) {
+                    vm.newUrlData = model;
+                    if (model.linkType === '1') {
+                        vm.newUrlProperty.value = model.value;
+                    } else if (model.linkType === '2') {
+                        contentResource.getById(model.value).then(function (content) {
+                            languageResource.getById(model.culture).then(function (language) {
+                                const url = content.urls.find(function(url) {
+                                    return url.culture === language.culture;
+                                });
+                                if (url) {
+                                    vm.newUrlProperty.value = url.text;
+                                } else {
+                                    vm.newUrlProperty.value = "No URL found!";
+                                }
+                            });
+                        });
+                    } else if (model.linkType === '3') {
+                        mediaResource.getById(model.value).then(function (media) {
+                            if (media.mediaLink !== '') {
+                                vm.newUrlProperty.value = media.mediaLink;
+                            } else {
+                                vm.newUrlProperty.value = "No URL found!";
+                            }
+                        });
+                    }
                     editorService.close();
                 },
                 close: function () {
@@ -95,7 +120,18 @@
         }
 
         function submit() {
-
+            if ($scope.model.submit) {
+                $scope.model.submit({
+                    domain: vm.domainProperty.value > 0 ? vm.domainProperty.value : null,
+                    customDomain: vm.domainProperty.value === -1 ? vm.customDomainProperty.value : null,
+                    urlType: vm.oldUrlType,
+                    oldUrl: vm.oldUrlProperty.value,
+                    newUrl: vm.newUrlData.linkType === '1' ? vm.newUrlData.value : null,
+                    newNodeId: vm.newUrlData.linkType !== '1' ? vm.newUrlData.value : null,
+                    newCultureId: vm.newUrlData.linkType === '2' ? vm.newUrlData.culture : null,
+                    redirectCode: vm.statusCodeProperty.value
+                });
+            }
         }
 
         function close() {

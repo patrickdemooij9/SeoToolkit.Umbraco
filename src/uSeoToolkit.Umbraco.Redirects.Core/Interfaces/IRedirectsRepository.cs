@@ -6,8 +6,10 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Interfaces
     public interface IRedirectsRepository
     {
         void Save(Redirect redirect);
+        void Delete(Redirect redirect);
+
+        Redirect Get(int id);
         IEnumerable<Redirect> GetAll();
-        IEnumerable<Redirect> GetByUrls(int domainId, params string[] paths);
-        IEnumerable<Redirect> GetByUrls(string customDomain, params string[] paths);
+        IEnumerable<Redirect> GetByUrls(params string[] paths);
     }
 }

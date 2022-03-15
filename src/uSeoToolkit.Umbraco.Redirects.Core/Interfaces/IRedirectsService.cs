@@ -8,6 +8,7 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Interfaces
     {
         IEnumerable<Redirect> GetAll();
         void Save(Redirect redirect);
+        void Delete(int[] ids);
 
         Redirect GetByUrl(Uri url);
     }

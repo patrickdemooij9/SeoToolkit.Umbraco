@@ -1,5 +1,5 @@
 ﻿<div ng-controller="uSeoToolkit.Redirects.LinkPicker as vm">
-    <div val-form-manager class="form-horizontal">
+    <form val-form-manager class="form-horizontal">
         <umb-editor-view>
             <umb-editor-header name="vm.model.title"
                                name-locked="true"
@@ -30,7 +30,7 @@
                         </umb-property>
                         
                         <div ng-show="vm.linkTypeProperty.value === '2' || vm.linkTypeProperty.value === '3'">
-                            <umb-property property="vm.languageProperty" ng-show="vm.linkTypeProperty === '2'">
+                            <umb-property property="vm.languageProperty" ng-show="vm.linkTypeProperty.value === '2'">
                                 <div class="umb-property-editor">
                                     <select name="languageProperty"
                                             ng-model="vm.languageProperty.value"
@@ -99,7 +99,7 @@
                                 shortcut="esc"
                                 action="vm.close()">
                     </umb-button>
-                    <umb-button ng-if="vm.model.selectedNode && vm.model.selectedNode.selected"
+                    <umb-button ng-if="vm.canSubmit()"
                                 type="button"
                                 button-style="success"
                                 label-key="general_submit"
@@ -109,5 +109,5 @@
                 </umb-editor-footer-content-right>
             </umb-editor-footer>
         </umb-editor-view>
-    </div>
+    </form>
 </div>

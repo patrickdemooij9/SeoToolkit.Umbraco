@@ -32,7 +32,8 @@
                 </umb-editor-sub-header-content-right>
             </umb-editor-sub-header>
 
-            <umb-table items="vm.items"
+            <umb-table class="redirects-table"
+                       items="vm.items"
                        item-properties="vm.options.includeProperties"
                        allow-select-all="vm.options.bulkActionsAllowed"
                        on-select="vm.selectItem(item, $index, $event)"

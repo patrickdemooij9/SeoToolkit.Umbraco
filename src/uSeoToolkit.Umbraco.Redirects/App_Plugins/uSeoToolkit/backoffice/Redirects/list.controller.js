@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    function redirectListController($http, listViewHelper, notificationsService, editorService) {
+    function redirectListController($timeout, $http, listViewHelper, notificationsService, editorService) {
         var vm = this;
 
         vm.items = [];
@@ -9,13 +9,13 @@
 
         vm.options = {
             filter: '',
-            orderBy: "name",
+            orderBy: "from",
             orderDirection: "asc",
             bulkActionsAllowed: true,
             includeProperties: [
-                { alias: "domain", header: "Domain"},
-                { alias: "from", header: "From" },
-                { alias: "to", header: "To"}
+                { alias: "to", header: "To" },
+                { alias: "domain", header: "Domain" },
+                { alias: "statusCode", header: "Status Code"}
             ]
         };
 
@@ -39,7 +39,7 @@
         }
 
         function clickItem(item) {
-            listViewHelper.editItem(item, vm);
+            edit(item.id);
         }
 
         function selectItem(selectedItem, $index, $event) {
@@ -67,13 +67,34 @@
                 view: "/App_Plugins/uSeoToolkit/Redirects/Dialogs/createRedirect.html",
                 size: "small",
                 submit: function (model) {
-                    editorService.close();
+                    $http.post("backoffice/uSeoToolkit/Redirects/Create",
+                        {
+                            domain: model.domain,
+                            customDomain: model.customDomain,
+                            isRegex: model.linkType === 2,
+                            oldUrl: model.oldUrl,
+                            newUrl: model.newUrl,
+                            newNodeId: model.newNodeId,
+                            newCultureId: model.newCultureId,
+                            redirectCode: parseInt(model.redirectCode)
+                        }).then(function (response) {
+                            notificationsService.success("Created new redirect!");
+
+                            loadItems();
+                            editorService.close();
+                        }, function (response) {
+                            notificationsService.error(response.data.ExceptionMessage);
+                        });
                 },
                 close: function () {
                     editorService.close();
                 }
             };
             editorService.open(redirectDialogOptions);
+        }
+
+        function edit(id) {
+            create(); //TODO: Fix
         }
 
         function deleteSelection() {
@@ -100,22 +121,32 @@
         function setItems(items) {
             vm.items = items.map(function (i) {
                 return {
-                    "id": i.id,
+                    "id": i.Id,
                     "icon": "icon-trafic",
-                    "name": i.name,
-                    "domain": i.domain,
-                    "from": i.sourceUrl,
-                    "to": i.destinationUrl,
+                    "domain": i.Domain,
+                    "name": i.OldUrl,
+                    "to": i.NewUrl,
+                    "statusCode": i.StatusCode,
                     "published": true
                 }
             });
         }
 
         function init() {
+            loadItems();
+        }
+
+        function loadItems() {
             vm.loading = true;
             $http.get("backoffice/uSeoToolkit/Redirects/GetAll").then(function (response) {
                 setItems(response.data);
                 vm.loading = false;
+
+                //This is a very hacky way to rename the name column in the table
+                $timeout(function () {
+                        $(".redirects-table .umb-table__name localize")[0].innerText = "From";
+                    },
+                    0);
             });
         }
 

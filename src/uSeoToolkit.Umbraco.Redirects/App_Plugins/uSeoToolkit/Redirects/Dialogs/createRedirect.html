@@ -1,5 +1,5 @@
 ﻿<div ng-controller="uSeoToolkit.Redirects.CreateController as vm">
-    <form name="contentForm" novalidate val-form-manager ng-submit="vm.submit()" class="form-horizontal">
+    <form name="createRedirectForm" novalidate val-form-manager ng-submit="vm.submit()" class="form-horizontal">
         <umb-editor-view>
             <umb-editor-header name="model.title"
                                name-locked="true"
@@ -33,7 +33,14 @@
                             </div>
                         </umb-property>
                         <umb-property property="vm.newUrlProperty">
-                            <button type="button" class="btn-reset umb-nested-content__add-content" ng-click="vm.openLinkPicker()">Set Link</button>
+                            <button type="button" class="btn-reset umb-nested-content__add-content" ng-click="vm.openLinkPicker()" ng-if="vm.newUrlProperty.value === ''">Set Link</button>
+                            <div class="umb-nested-content__item" ng-click="vm.openLinkPicker()" ng-if="vm.newUrlProperty.value !== ''">
+                                <div class="umb-nested-content__header-bar">
+                                    <div class="umb-nested-content__heading">
+                                        <span class="umb-nested-content__item-name">{{vm.newUrlProperty.value}}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </umb-property>
                         <umb-property property="vm.statusCodeProperty">
                             <div class="umb-property-editor umb-radiobuttons align-together">
@@ -60,8 +67,7 @@
                                 shortcut="esc"
                                 action="vm.close()">
                     </umb-button>
-                    <umb-button ng-if="model.selectedNode && model.selectedNode.selected && model.selectedCulture"
-                                type="button"
+                    <umb-button type="submit"
                                 button-style="success"
                                 label-key="general_submit"
                                 state="saveButtonState">

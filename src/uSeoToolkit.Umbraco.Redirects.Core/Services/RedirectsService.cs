@@ -30,8 +30,8 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Services
         public void Save(Redirect redirect)
         {
             if (redirect is null) throw new ArgumentNullException(nameof(redirect));
-            if (!redirect.RedirectCode.Equals(HttpStatusCode.Redirect) &&
-                !redirect.RedirectCode.Equals(HttpStatusCode.PermanentRedirect))
+            if (!redirect.RedirectCode.Equals((int)HttpStatusCode.Redirect) &&
+                !redirect.RedirectCode.Equals((int)HttpStatusCode.MovedPermanently))
                 throw new ArgumentException("Only support for 301 & 302 redirects", nameof(redirect.RedirectCode));
 
             var oldUrl = CleanUrl(redirect.OldUrl);
@@ -40,21 +40,41 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Services
             if (!Uri.IsWellFormedUriString(redirect.OldUrl, UriKind.Relative))
                 oldUrl = redirect.OldUrl.EnsureStartsWith("/");
 
-            newUrl = Uri.IsWellFormedUriString(newUrl, UriKind.Absolute) ?
-                newUrl :
-                newUrl.EnsureEndsWith("/").ToLower();
+            if (redirect.NewNode is null)
+            {
+                newUrl = Uri.IsWellFormedUriString(newUrl, UriKind.Absolute) ?
+                    newUrl :
+                    newUrl.EnsureEndsWith("/").ToLower();
+            }
 
-            var uri = new Uri(oldUrl);
-            var existingRedirects =
-                (redirect.Domain is null
-                    ? _redirectsRepository.GetByUrls(uri.Host, oldUrl)
-                    : _redirectsRepository.GetByUrls(redirect.CustomDomain, oldUrl)).ToArray();
+            var existingRedirects = _redirectsRepository.GetByUrls(oldUrl).Where(it => it.Id != redirect.Id).ToArray();
             if (existingRedirects.Length > 0)
-                throw new ArgumentException($"An redirect already exists for {oldUrl}");
+            {
+                if (existingRedirects.Any(it => it.Domain is null && string.IsNullOrWhiteSpace(it.CustomDomain)))
+                    throw new ArgumentException($"An redirect already exists for {oldUrl}");
+
+                if (redirect.Domain != null && existingRedirects.Any(it => it.Domain?.Id == redirect.Domain.Id))
+                    throw new ArgumentException($"An redirect already exists for {oldUrl}");
+
+                if (!string.IsNullOrWhiteSpace(redirect.CustomDomain) && existingRedirects.Any(it => it.CustomDomain.Equals(redirect.CustomDomain)))
+                    throw new ArgumentException($"An redirect already exists for {oldUrl}");
+            }
 
             redirect.OldUrl = oldUrl;
             redirect.NewUrl = newUrl;
+            redirect.LastUpdated = DateTime.Now;
             _redirectsRepository.Save(redirect);
+        }
+
+        public void Delete(int[] ids)
+        {
+            foreach (var id in ids)
+            {
+                var redirect = _redirectsRepository.Get(id);
+                if (redirect is null) continue;
+
+                _redirectsRepository.Delete(redirect);
+            }
         }
 
         public Redirect GetByUrl(Uri uri)
@@ -67,8 +87,26 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Services
                 var pathAndQuery = CleanUrl(uri.PathAndQuery);
 
                 //Because we are checking both the url with and without query, we might get two urls.
-                var redirects = (domain is null ? _redirectsRepository.GetByUrls(uri.Host, path, pathAndQuery) : _redirectsRepository.GetByUrls(domain.Id, path, pathAndQuery)).ToArray();
+                var redirects = _redirectsRepository.GetByUrls(path, pathAndQuery).ToArray();
+                if (redirects.Length == 0) return null;
 
+                Redirect foundRedirect = null;
+                if (domain != null)
+                {
+                    foundRedirect = redirects.FirstOrDefault(it => it.Domain == domain);
+                    if (foundRedirect != null)
+                        return foundRedirect;
+                }
+
+                foundRedirect = redirects.FirstOrDefault(it => it.CustomDomain != null && (it.CustomDomain.Equals(uri.Host, StringComparison.InvariantCultureIgnoreCase) || it.CustomDomain.Equals($"{uri.Scheme}://{uri.Host}")));
+                if (foundRedirect != null) return foundRedirect;
+
+                foundRedirect = redirects.FirstOrDefault(it =>
+                    it.OldUrl.Equals(path, StringComparison.InvariantCultureIgnoreCase) ||
+                    it.OldUrl.Equals(pathAndQuery, StringComparison.InvariantCultureIgnoreCase));
+                if (foundRedirect != null) return foundRedirect;
+
+                return null;
                 //TODO: Regex stuff
                 return redirects.FirstOrDefault(it => it.OldUrl.Equals(pathAndQuery)) ?? redirects.FirstOrDefault();
             }

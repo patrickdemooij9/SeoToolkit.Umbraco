@@ -1,4 +1,4 @@
-﻿(function() {
+﻿(function () {
     "use strict";
 
     function linkPickerController($scope, languageResource, eventsService, contentResource) {
@@ -13,6 +13,7 @@
         vm.close = close;
         vm.changeLanguage = changeLanguage;
         vm.changeLinkType = changeLinkType;
+        vm.canSubmit = canSubmit;
 
         vm.allCultures = null;
         vm.nodeCultures = null;
@@ -38,7 +39,7 @@
                 items: [
                     { name: "Url", value: 1 },
                     { name: "Content", value: 2 },
-                    { name: "Media", value: 3}
+                    { name: "Media", value: 3 }
                 ]
             }
         };
@@ -46,6 +47,7 @@
         vm.urlProperty = {
             alias: "url",
             label: "Url",
+            description: "Relative or absolute URl to redirect to",
             value: "",
             view: "textbox",
             validation: {
@@ -60,7 +62,7 @@
         }
 
         languageResource.getAll().then(function (data) {
-            vm.languageProperty.value = data.find(function(item) { return item.isDefault }).id;
+            vm.languageProperty.value = data.find(function (item) { return item.isDefault }).id;
             vm.allCultures = data;
         });
 
@@ -144,6 +146,17 @@
             if (args.node.metaData.isContainer) {
                 openMiniListView(args.node);
             }
+
+            if (Utilities.isArray(args.children) && vm.model.selectedNode != null) {
+                args.children.forEach(child => {
+                    if (vm.model.selectedNode.id === child.id) {
+                        child.selected = true;
+
+                        vm.model.selectedNode = child;
+                        return;
+                    }
+                });
+            }
         }
 
         function openMiniListView(node) {
@@ -162,7 +175,7 @@
         }
 
         $scope.$watch("vm.linkTypeProperty.value",
-            function(oldValue, newValue) {
+            function (oldValue, newValue) {
                 changeLinkType();
             });
 
@@ -176,6 +189,20 @@
 
         function changeSection(section) {
             vm.section = section;
+            changeLanguage();
+        }
+
+        function canSubmit() {
+            if (vm.linkTypeProperty.value === '1') {//Url
+                return vm.urlProperty.value !== '';
+            }
+            if (vm.model.selectedNode == null) {
+                return false;
+            }
+            if (vm.linkTypeProperty.value === '2') {
+                return vm.model.selectedNode.nodeType === "content";
+            }
+            return vm.model.selectedNode.nodeType === "media";
         }
 
         function close() {
@@ -186,7 +213,11 @@
 
         function submit() {
             if (vm.model && vm.model.submit) {
-                vm.model.submit(vm.model);
+                vm.model.submit({
+                    linkType: vm.linkTypeProperty.value,
+                    culture: vm.languageProperty.value,
+                    value: vm.linkTypeProperty.value === '1' ? vm.urlProperty.value : vm.model.selectedNode.id
+                });
             }
         }
     }
