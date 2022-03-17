@@ -27,7 +27,7 @@
         vm.sort = sort;
         vm.clearSelection = clearSelection;
 
-        vm.create = create;
+        vm.create = openRedirectDialog;
         vm.deleteSelection = deleteSelection;
 
         function selectAll($event) {
@@ -61,14 +61,15 @@
             listViewHelper.clearSelection(vm.items, null, vm.selection);
         }
 
-        function create() {
+        function openRedirectDialog(model) {
             var redirectDialogOptions = {
                 title: "Create redirect",
                 view: "/App_Plugins/uSeoToolkit/Redirects/Dialogs/createRedirect.html",
                 size: "small",
                 submit: function (model) {
-                    $http.post("backoffice/uSeoToolkit/Redirects/Create",
+                    $http.post("backoffice/uSeoToolkit/Redirects/Save",
                         {
+                            id: model.id,
                             domain: model.domain,
                             customDomain: model.customDomain,
                             isRegex: model.linkType === 2,
@@ -90,11 +91,28 @@
                     editorService.close();
                 }
             };
+            if (model) {
+                redirectDialogOptions.redirect = model;
+            }
+
             editorService.open(redirectDialogOptions);
         }
 
         function edit(id) {
-            create(); //TODO: Fix
+            $http.get("backoffice/uSeoToolkit/Redirects/Get?id=" + id).then(function (response) {
+                const redirect = response.data;
+
+                openRedirectDialog({
+                    id: redirect.Id,
+                    domain: redirect.Domain,
+                    customDomain: redirect.CustomDomain ?? "",
+                    oldUrl: redirect.OldUrl,
+                    newUrl: redirect.NewUrl,
+                    newNodeId: redirect.NewNodeId,
+                    newCultureId: redirect.NewCultureId,
+                    statusCode: redirect.RedirectCode
+                });
+            });
         }
 
         function deleteSelection() {

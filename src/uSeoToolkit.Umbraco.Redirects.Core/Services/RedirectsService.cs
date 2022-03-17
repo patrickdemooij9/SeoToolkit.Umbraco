@@ -27,6 +27,11 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Services
             return _redirectsRepository.GetAll();
         }
 
+        public Redirect Get(int id)
+        {
+            return _redirectsRepository.Get(id);
+        }
+
         public void Save(Redirect redirect)
         {
             if (redirect is null) throw new ArgumentNullException(nameof(redirect));

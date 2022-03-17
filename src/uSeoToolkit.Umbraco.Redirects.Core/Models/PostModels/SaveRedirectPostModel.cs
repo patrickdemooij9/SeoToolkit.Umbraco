@@ -2,7 +2,7 @@
 
 namespace uSeoToolkit.Umbraco.Redirects.Core.Models.PostModels
 {
-    public class CreateRedirectPostModel
+    public class SaveRedirectPostModel
     {
         public int Id { get; set; }
         

@@ -28,12 +28,13 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateRedirectPostModel postModel)
+        public IActionResult Save(SaveRedirectPostModel postModel)
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
 
             var redirect = new Redirect
             {
+                Id = postModel.Id,
                 CustomDomain = postModel.CustomDomain,
                 IsRegex = postModel.IsRegex,
                 OldUrl = postModel.OldUrl,
@@ -76,7 +77,7 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Controllers
                 var domain = it.Domain?.Name ?? it.CustomDomain;
                 if (domain?.StartsWith("/") is true)
                     domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{domain}";
-                return new RedirectViewModel
+                return new RedirectListViewModel
                 {
                     Id = it.Id,
                     OldUrl = it.OldUrl,
@@ -85,6 +86,14 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Controllers
                     StatusCode = it.RedirectCode
                 };
             }));
+        }
+
+        public IActionResult Get(int id)
+        {
+            var redirect = _redirectsService.Get(id);
+            if (redirect is null)
+                return NotFound();
+            return Ok(new RedirectViewModel(redirect));
         }
 
         public IActionResult GetDomains()

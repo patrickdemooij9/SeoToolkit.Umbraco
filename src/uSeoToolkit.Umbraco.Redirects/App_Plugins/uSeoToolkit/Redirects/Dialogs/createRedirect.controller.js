@@ -9,6 +9,7 @@
         vm.close = close;
         vm.openLinkPicker = openLinkPicker;
 
+        vm.id = 0;
         vm.domains = [];
         vm.urlTypes = [{ name: "Url", value: 1 }, { name: "Regex", value: 2 }];
         vm.oldUrlType = 1;
@@ -77,6 +78,30 @@
                 vm.domains.splice(0, 0, { id: 0, name: "All Sites" });
                 vm.domains.push({ id: -1, name: "Custom Domain" });
             });
+
+            if ($scope.model.redirect) {
+                vm.id = $scope.model.redirect.id;
+                vm.domainProperty.value = $scope.model.redirect.domain;
+                vm.customDomainProperty.value = $scope.model.redirect.customDomain;
+                vm.oldUrlProperty.value = $scope.model.redirect.oldUrl;
+                vm.statusCodeProperty.value = $scope.model.redirect.statusCode.toString();
+
+                var urlData = {
+                    linkType: '1',
+                    value: $scope.model.redirect.newUrl,
+                    culture: null
+                };
+                if ($scope.model.redirect.newNodeId) {
+                    urlData.value = $scope.model.redirect.newNodeId;
+                    if ($scope.model.redirect.newCultureId) {
+                        urlData.linkType = '2';
+                        urlData.culture = $scope.model.redirect.newCultureId;
+                    } else {
+                        urlData.linkType = '3';
+                    }
+                }
+                handleUrlData(urlData);
+            }
         }
 
         function openLinkPicker() {
@@ -85,31 +110,7 @@
                 view: "/App_Plugins/uSeoToolkit/Redirects/Dialogs/linkPicker.html",
                 size: "small",
                 submit: function (model) {
-                    vm.newUrlData = model;
-                    if (model.linkType === '1') {
-                        vm.newUrlProperty.value = model.value;
-                    } else if (model.linkType === '2') {
-                        contentResource.getById(model.value).then(function (content) {
-                            languageResource.getById(model.culture).then(function (language) {
-                                const url = content.urls.find(function(url) {
-                                    return url.culture === language.culture;
-                                });
-                                if (url) {
-                                    vm.newUrlProperty.value = url.text;
-                                } else {
-                                    vm.newUrlProperty.value = "No URL found!";
-                                }
-                            });
-                        });
-                    } else if (model.linkType === '3') {
-                        mediaResource.getById(model.value).then(function (media) {
-                            if (media.mediaLink !== '') {
-                                vm.newUrlProperty.value = media.mediaLink;
-                            } else {
-                                vm.newUrlProperty.value = "No URL found!";
-                            }
-                        });
-                    }
+                    handleUrlData(model);
                     editorService.close();
                 },
                 close: function () {
@@ -122,6 +123,7 @@
         function submit() {
             if ($scope.model.submit) {
                 $scope.model.submit({
+                    id: vm.id,
                     domain: vm.domainProperty.value > 0 ? vm.domainProperty.value : null,
                     customDomain: vm.domainProperty.value === -1 ? vm.customDomainProperty.value : null,
                     urlType: vm.oldUrlType,
@@ -137,6 +139,34 @@
         function close() {
             if ($scope.model.close) {
                 $scope.model.close();
+            }
+        }
+
+        function handleUrlData(urlData) {
+            vm.newUrlData = urlData;
+            if (urlData.linkType === '1') {
+                vm.newUrlProperty.value = urlData.value;
+            } else if (urlData.linkType === '2') {
+                contentResource.getById(urlData.value).then(function (content) {
+                    languageResource.getById(urlData.culture).then(function (language) {
+                        const url = content.urls.find(function (url) {
+                            return url.culture === language.culture;
+                        });
+                        if (url) {
+                            vm.newUrlProperty.value = url.text;
+                        } else {
+                            vm.newUrlProperty.value = "No URL found!";
+                        }
+                    });
+                });
+            } else if (urlData.linkType === '3') {
+                mediaResource.getById(urlData.value).then(function (media) {
+                    if (media.mediaLink !== '') {
+                        vm.newUrlProperty.value = media.mediaLink;
+                    } else {
+                        vm.newUrlProperty.value = "No URL found!";
+                    }
+                });
             }
         }
 
