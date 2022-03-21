@@ -28,6 +28,7 @@
         vm.customDomainProperty = {
             alias: "customDomain",
             label: "Custom Domain",
+            description: "Choose a custom domain if it isn't present in Umbraco",
             value: "",
             view: "textbox",
             validation: {
@@ -81,9 +82,14 @@
 
             if ($scope.model.redirect) {
                 vm.id = $scope.model.redirect.id;
-                vm.domainProperty.value = $scope.model.redirect.domain;
+                if ($scope.model.redirect.domain) {
+                    vm.domainProperty.value = $scope.model.redirect.domain;
+                } else {
+                    vm.domainProperty.value = $scope.model.redirect.customDomain ? -1 : 0;
+                }
                 vm.customDomainProperty.value = $scope.model.redirect.customDomain;
                 vm.oldUrlProperty.value = $scope.model.redirect.oldUrl;
+                vm.oldUrlType = $scope.model.redirect.isRegex ? 2 : 1;
                 vm.statusCodeProperty.value = $scope.model.redirect.statusCode.toString();
 
                 var urlData = {

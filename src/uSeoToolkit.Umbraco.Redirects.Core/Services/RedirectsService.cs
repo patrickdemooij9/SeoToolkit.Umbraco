@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
+using uSeoToolkit.Umbraco.Redirects.Core.Extensions;
 using uSeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using uSeoToolkit.Umbraco.Redirects.Core.Models.Business;
 
@@ -39,10 +41,10 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Services
                 !redirect.RedirectCode.Equals((int)HttpStatusCode.MovedPermanently))
                 throw new ArgumentException("Only support for 301 & 302 redirects", nameof(redirect.RedirectCode));
 
-            var oldUrl = CleanUrl(redirect.OldUrl);
+            var oldUrl = redirect.IsRegex ? redirect.OldUrl : redirect.OldUrl.CleanUrl();
             var newUrl = redirect.NewUrl;
 
-            if (!Uri.IsWellFormedUriString(redirect.OldUrl, UriKind.Relative))
+            if (!redirect.IsRegex && !Uri.IsWellFormedUriString(redirect.OldUrl, UriKind.Relative))
                 oldUrl = redirect.OldUrl.EnsureStartsWith("/");
 
             if (redirect.NewNode is null)
@@ -82,46 +84,66 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Services
             }
         }
 
-        public Redirect GetByUrl(Uri uri)
+        public RedirectFindResult GetByUrl(Uri uri)
         {
             using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
             {
                 var domain = DomainUtilities.SelectDomain(ctx.UmbracoContext.Domains.GetAll(false), uri);
+                if (domain != null)
+                {
+                    //We do this to ensure that we support subdirectories. So if you have domain domain.com/en and relative path /test123, you don't also need to include the subdirectory /en/test123.
+                    uri = new Uri(domain.Uri, uri.AbsolutePath.TrimStart(domain.Uri.LocalPath));
+                }
 
-                var path = CleanUrl(uri.AbsolutePath);
-                var pathAndQuery = CleanUrl(uri.PathAndQuery);
+                var path = uri.AbsolutePath.CleanUrl();
+                var pathAndQuery = uri.PathAndQuery.CleanUrl();
+                var customDomainWithoutScheme = uri.Host;
+                var customDomainWithScheme = $"{uri.Scheme}://{uri.Host}";
 
                 //Because we are checking both the url with and without query, we might get two urls.
                 var redirects = _redirectsRepository.GetByUrls(path, pathAndQuery).ToArray();
-                if (redirects.Length == 0) return null;
-
-                Redirect foundRedirect = null;
-                if (domain != null)
+                if (redirects.Length > 0)
                 {
-                    foundRedirect = redirects.FirstOrDefault(it => it.Domain == domain);
-                    if (foundRedirect != null)
-                        return foundRedirect;
+                    Redirect foundRedirect = null;
+                    if (domain != null)
+                    {
+                        //See if we can find a redirect with the same domain
+                        foundRedirect = redirects.FirstOrDefault(it => it.Domain?.Id == domain.Id);
+                        if (foundRedirect != null)
+                            return new RedirectFindResult(uri, foundRedirect);
+                    }
+
+                    //Else check if we can find a redirect on the custom domain
+                    foundRedirect = redirects.FirstOrDefault(it => it.CustomDomain != null && (it.CustomDomain.Equals(customDomainWithoutScheme, StringComparison.InvariantCultureIgnoreCase) || it.CustomDomain.Equals(customDomainWithScheme)));
+                    if (foundRedirect != null) return new RedirectFindResult(uri, foundRedirect);
+
+                    //Else check if we can find a redirect on the global level
+                    foundRedirect = redirects.FirstOrDefault(it =>
+                        it.Domain is null &&
+                        (it.OldUrl.Equals(path, StringComparison.InvariantCultureIgnoreCase) ||
+                        it.OldUrl.Equals(pathAndQuery, StringComparison.InvariantCultureIgnoreCase)));
+                    if (foundRedirect != null) return new RedirectFindResult(uri, foundRedirect);
                 }
 
-                foundRedirect = redirects.FirstOrDefault(it => it.CustomDomain != null && (it.CustomDomain.Equals(uri.Host, StringComparison.InvariantCultureIgnoreCase) || it.CustomDomain.Equals($"{uri.Scheme}://{uri.Host}")));
-                if (foundRedirect != null) return foundRedirect;
+                var regexRedirects = _redirectsRepository.GetAllRegexRedirects().Where(it =>
+                {
+                    if (it.Domain?.Id == 0) return true;
+                    if (domain != null && it.Domain?.Id == domain.Id) return true;
+                    if (domain is null &&
+                        !string.IsNullOrWhiteSpace(it.CustomDomain) &&
+                        (it.CustomDomain.Equals(customDomainWithoutScheme,
+                             StringComparison.InvariantCultureIgnoreCase) ||
+                         it.CustomDomain.Equals(customDomainWithScheme))) return true;
+                    return false;
+                });
 
-                foundRedirect = redirects.FirstOrDefault(it =>
-                    it.OldUrl.Equals(path, StringComparison.InvariantCultureIgnoreCase) ||
-                    it.OldUrl.Equals(pathAndQuery, StringComparison.InvariantCultureIgnoreCase));
-                if (foundRedirect != null) return foundRedirect;
+                foreach (var regexRedirect in regexRedirects)
+                {
+                    if (Regex.IsMatch(pathAndQuery, regexRedirect.OldUrl)) return new RedirectFindResult(uri, regexRedirect);
+                }
 
                 return null;
-                //TODO: Regex stuff
-                return redirects.FirstOrDefault(it => it.OldUrl.Equals(pathAndQuery)) ?? redirects.FirstOrDefault();
             }
-        }
-
-        private string CleanUrl(string url)
-        {
-            var urlParts = url.ToLowerInvariant().Split('?');
-            var baseUrl = urlParts[0].TrimEnd('/');
-            return urlParts.Length == 1 ? baseUrl : $"{baseUrl}?{string.Join("?", urlParts.Skip(1))}";
         }
     }
 }

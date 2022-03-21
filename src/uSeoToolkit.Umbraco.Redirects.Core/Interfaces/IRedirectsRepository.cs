@@ -10,6 +10,7 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Interfaces
 
         Redirect Get(int id);
         IEnumerable<Redirect> GetAll();
+        IEnumerable<Redirect> GetAllRegexRedirects();
         IEnumerable<Redirect> GetByUrls(params string[] paths);
     }
 }

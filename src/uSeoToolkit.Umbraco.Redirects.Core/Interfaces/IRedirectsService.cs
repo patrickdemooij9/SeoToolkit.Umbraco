@@ -11,6 +11,6 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Interfaces
         void Save(Redirect redirect);
         void Delete(int[] ids);
 
-        Redirect GetByUrl(Uri url);
+        RedirectFindResult GetByUrl(Uri url);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
@@ -13,17 +14,22 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Repositories
 {
     public class RedirectsRepository : IRedirectsRepository
     {
+        private const string BaseCacheKey = "redirects_";
+
         private readonly IScopeProvider _scopeProvider;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ILocalizationService _localizationService;
+        private readonly AppCaches _appCaches;
 
         public RedirectsRepository(IScopeProvider scopeProvider,
             IUmbracoContextFactory umbracoContextFactory,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            AppCaches appCaches)
         {
             _scopeProvider = scopeProvider;
             _umbracoContextFactory = umbracoContextFactory;
             _localizationService = localizationService;
+            _appCaches = appCaches;
         }
 
         public void Save(Redirect redirect)
@@ -32,6 +38,8 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Repositories
             {
                 scope.Database.Save(ToEntity(redirect));
             }
+
+            ClearCache();
         }
 
         public void Delete(Redirect redirect)
@@ -40,6 +48,8 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Repositories
             {
                 scope.Database.Delete(ToEntity(redirect));
             }
+
+            ClearCache();
         }
 
         public Redirect Get(int id)
@@ -64,6 +74,21 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Repositories
             }
         }
 
+        public IEnumerable<Redirect> GetAllRegexRedirects()
+        {
+            return _appCaches.RuntimeCache.GetCacheItem($"{BaseCacheKey}GetRegexRedirects", () =>
+            {
+                using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+                {
+                    return scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
+                            .SelectAll()
+                            .From<RedirectEntity>()
+                            .Where<RedirectEntity>(it => it.IsRegex))
+                        .Select(ToModel).ToArray();
+                }
+            }, TimeSpan.FromMinutes(10));
+        }
+
         public IEnumerable<Redirect> GetByUrls(params string[] paths)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
@@ -71,7 +96,7 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Repositories
                 return scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
                         .SelectAll()
                         .From<RedirectEntity>()
-                        .Where<RedirectEntity>(it => paths.Contains(it.OldUrl)))
+                        .Where<RedirectEntity>(it => !it.IsRegex && paths.Contains(it.OldUrl)))
                     .Select(ToModel);
             }
         }
@@ -115,6 +140,11 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Repositories
                     RedirectCode = entity.RedirectCode
                 };
             }
+        }
+
+        private void ClearCache()
+        {
+            _appCaches.RuntimeCache.ClearByKey(BaseCacheKey);
         }
     }
 }

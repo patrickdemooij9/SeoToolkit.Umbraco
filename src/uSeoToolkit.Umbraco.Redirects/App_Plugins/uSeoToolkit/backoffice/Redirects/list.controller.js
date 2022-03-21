@@ -15,7 +15,7 @@
             includeProperties: [
                 { alias: "to", header: "To" },
                 { alias: "domain", header: "Domain" },
-                { alias: "statusCode", header: "Status Code"}
+                { alias: "statusCode", header: "Status Code" }
             ]
         };
 
@@ -72,14 +72,18 @@
                             id: model.id,
                             domain: model.domain,
                             customDomain: model.customDomain,
-                            isRegex: model.linkType === 2,
+                            isRegex: model.urlType === 2,
                             oldUrl: model.oldUrl,
                             newUrl: model.newUrl,
                             newNodeId: model.newNodeId,
                             newCultureId: model.newCultureId,
                             redirectCode: parseInt(model.redirectCode)
                         }).then(function (response) {
-                            notificationsService.success("Created new redirect!");
+                            if (model.id === 0) {
+                                notificationsService.success("Your redirect has been created!");
+                            } else {
+                                notificationsService.success("Your redirect has been updated!");
+                            }
 
                             loadItems();
                             editorService.close();
@@ -107,6 +111,7 @@
                     domain: redirect.Domain,
                     customDomain: redirect.CustomDomain ?? "",
                     oldUrl: redirect.OldUrl,
+                    isRegex: redirect.IsRegex,
                     newUrl: redirect.NewUrl,
                     newNodeId: redirect.NewNodeId,
                     newCultureId: redirect.NewCultureId,
@@ -162,8 +167,8 @@
 
                 //This is a very hacky way to rename the name column in the table
                 $timeout(function () {
-                        $(".redirects-table .umb-table__name localize")[0].innerText = "From";
-                    },
+                    $(".redirects-table .umb-table__name localize")[0].innerText = "From";
+                },
                     0);
             });
         }

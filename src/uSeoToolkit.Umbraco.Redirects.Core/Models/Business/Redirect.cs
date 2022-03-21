@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Extensions;
+using uSeoToolkit.Umbraco.Redirects.Core.Extensions;
 
 namespace uSeoToolkit.Umbraco.Redirects.Core.Models.Business
 {

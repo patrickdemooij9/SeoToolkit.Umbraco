@@ -53,15 +53,15 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Middleware
         private bool HandleRedirect(HttpContext context)
         {
             var url = new Uri(context.Request.GetEncodedUrl());
-            var matchedRedirect = _redirectsService.GetByUrl(url);
-            if (matchedRedirect == null)
+            var matchedRedirectResult = _redirectsService.GetByUrl(url);
+            if (matchedRedirectResult is null)
             {
                 return false;
-            };
+            }
 
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
-            var isPerm = matchedRedirect.RedirectCode == (int)HttpStatusCode.MovedPermanently;
-            context.Response.Redirect(matchedRedirect.GetNewUrl(), isPerm);
+            var isPerm = matchedRedirectResult.Redirect.RedirectCode == (int)HttpStatusCode.MovedPermanently;
+            context.Response.Redirect(matchedRedirectResult.GetNewUrl(), isPerm);
             return true;
         }
     }
