@@ -1,0 +1,10 @@
+﻿{
+  "javascript": [
+    "/App_Plugins/uSeoToolkit/backoffice/Redirects/list.controller.js",
+    "/App_Plugins/uSeoToolkit/Redirects/Dialogs/createRedirect.controller.js",
+    "/App_Plugins/uSeoToolkit/Redirects/Dialogs/linkPicker.controller.js"
+  ],
+  "css": [
+    "/App_Plugins/uSeoToolkit/Redirects/css/main.css"
+  ]
+}

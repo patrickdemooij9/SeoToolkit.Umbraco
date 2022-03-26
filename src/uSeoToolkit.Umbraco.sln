@@ -39,9 +39,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.RobotsT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RobotsTxt", "RobotsTxt", "{5641B436-FCCB-4D1A-9D25-6A39B95031CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco", "uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj", "{6E9806BA-566A-4C04-AD99-C69138620DED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco", "uSeoToolkit.Umbraco\uSeoToolkit.Umbraco.csproj", "{6E9806BA-566A-4C04-AD99-C69138620DED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.Core", "uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj", "{D3302F9B-E53E-471F-B716-666708F0538E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSeoToolkit.Umbraco.Core", "uSeoToolkit.Umbraco.Core\uSeoToolkit.Umbraco.Core.csproj", "{D3302F9B-E53E-471F-B716-666708F0538E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Redirects", "Redirects", "{B0B49325-8248-4DB8-889D-211D9408D7A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.Redirects", "uSeoToolkit.Umbraco.Redirects\uSeoToolkit.Umbraco.Redirects.csproj", "{7C9ABE0D-106C-48C0-B0CF-DBBCD8AF334E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSeoToolkit.Umbraco.Redirects.Core", "uSeoToolkit.Umbraco.Redirects.Core\uSeoToolkit.Umbraco.Redirects.Core.csproj", "{566D1DBF-EC21-405C-BB92-424C4A1C1B88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,6 +115,14 @@ Global
 		{D3302F9B-E53E-471F-B716-666708F0538E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3302F9B-E53E-471F-B716-666708F0538E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3302F9B-E53E-471F-B716-666708F0538E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C9ABE0D-106C-48C0-B0CF-DBBCD8AF334E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C9ABE0D-106C-48C0-B0CF-DBBCD8AF334E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C9ABE0D-106C-48C0-B0CF-DBBCD8AF334E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C9ABE0D-106C-48C0-B0CF-DBBCD8AF334E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{566D1DBF-EC21-405C-BB92-424C4A1C1B88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{566D1DBF-EC21-405C-BB92-424C4A1C1B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{566D1DBF-EC21-405C-BB92-424C4A1C1B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{566D1DBF-EC21-405C-BB92-424C4A1C1B88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +138,8 @@ Global
 		{7E8C0005-AEC2-454C-9E22-C23463A558A9} = {DAF3B729-F075-4FB0-958A-BA500BF88FD7}
 		{9CB7AA3C-B4C2-414D-A61E-E00EEE292049} = {5641B436-FCCB-4D1A-9D25-6A39B95031CB}
 		{5B460335-8786-4FA9-911B-AEC5A752B88C} = {5641B436-FCCB-4D1A-9D25-6A39B95031CB}
+		{7C9ABE0D-106C-48C0-B0CF-DBBCD8AF334E} = {B0B49325-8248-4DB8-889D-211D9408D7A5}
+		{566D1DBF-EC21-405C-BB92-424C4A1C1B88} = {B0B49325-8248-4DB8-889D-211D9408D7A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {551ADBA5-3DFB-4300-929C-2BE0DB346636}

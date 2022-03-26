@@ -39,6 +39,13 @@ namespace uSeoToolkit.Umbraco.Common.Core.Collections
                     Alias = "robotsTxt",
                     Icon = "icon-cloud",
                     Link = "https://useotoolkit.gitbook.io/useotoolkit/getting-started/robots.txt"
+                },
+                new SeoToolkitModule
+                {
+                    Title = "Redirects",
+                    Alias = "redirects",
+                    Icon = "icon-trafic",
+                    Link = "https://useotoolkit.gitbook.io/useotoolkit/getting-started/redirects"
                 }
             };
         }
