@@ -27,8 +27,17 @@
         vm.sort = sort;
         vm.clearSelection = clearSelection;
 
+        vm.nextPage = nextPage;
+        vm.prevPage = prevPage;
+        vm.changePage = changePage;
+        vm.goToPage = goToPage;
+
         vm.create = openRedirectDialog;
         vm.deleteSelection = deleteSelection;
+
+        vm.pageNumber = 1;
+        vm.pageSize = 20;
+        vm.totalPages = 1;
 
         function selectAll($event) {
             listViewHelper.selectAllItemsToggle(vm.items, vm.selection);
@@ -59,6 +68,24 @@
 
         function clearSelection() {
             listViewHelper.clearSelection(vm.items, null, vm.selection);
+        }
+
+        function nextPage(pageNumber) {
+            goToPage(pageNumber);
+        }
+
+        function prevPage(pageNumber) {
+            goToPage(pageNumber);
+        }
+
+        function changePage(pageNumber) {
+            goToPage(pageNumber);
+        }
+
+        function goToPage(pageNumber) {
+            vm.selection = [];
+            vm.pageNumber = pageNumber;
+            loadItems();
         }
 
         function openRedirectDialog(model) {
@@ -161,8 +188,10 @@
 
         function loadItems() {
             vm.loading = true;
-            $http.get("backoffice/uSeoToolkit/Redirects/GetAll").then(function (response) {
-                setItems(response.data);
+            $http.get("backoffice/uSeoToolkit/Redirects/GetAll?pageNumber=" + vm.pageNumber + "&pageSize=" + vm.pageSize).then(function (response) {
+
+                vm.totalPages = response.data.totalPages;
+                setItems(response.data.items);
                 vm.loading = false;
 
                 //This is a very hacky way to rename the name column in the table

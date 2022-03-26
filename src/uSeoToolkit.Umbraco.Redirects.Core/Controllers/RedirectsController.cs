@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.BackOffice.Controllers;
@@ -41,7 +42,7 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Controllers
                 NewUrl = postModel.NewUrl,
                 RedirectCode = postModel.RedirectCode
             };
-            
+
             if (postModel.Domain != null)
             {
                 var foundDomain = ctx.UmbracoContext.Domains.GetAll(false).FirstOrDefault(it => it.Id == postModel.Domain);
@@ -70,9 +71,10 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Controllers
             return Ok();
         }
 
-        public IActionResult GetAll()
+        public IActionResult GetAll(int pageNumber, int pageSize)
         {
-            return Ok(_redirectsService.GetAll().Select(it =>
+            var redirectsPaged = _redirectsService.GetAll(pageNumber, pageSize);
+            var viewModels = redirectsPaged.Items.Select(it =>
             {
                 var domain = it.Domain?.Name ?? it.CustomDomain;
                 if (domain?.StartsWith("/") is true)
@@ -85,7 +87,8 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Controllers
                     Domain = domain,
                     StatusCode = it.RedirectCode
                 };
-            }));
+            });
+            return Ok(new PagedResult<RedirectListViewModel>(redirectsPaged.TotalItems, pageNumber, pageSize) { Items = viewModels });
         }
 
         public IActionResult Get(int id)
@@ -110,7 +113,7 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Controllers
         public IActionResult Delete(DeleteRedirectsPostModel postModel)
         {
             _redirectsService.Delete(postModel.Ids);
-            return GetAll();
+            return GetAll(1, 20);
         }
     }
 }

@@ -63,14 +63,18 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Repositories
             }
         }
 
-        public IEnumerable<Redirect> GetAll()
+        public IEnumerable<Redirect> GetAll(int pageNumber, int pageSize, out long totalRecords)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
             {
-                return scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
-                        .SelectAll()
-                        .From<RedirectEntity>())
-                    .Select(ToModel);
+                var sql = scope.SqlContext.Sql()
+                    .SelectAll()
+                    .From<RedirectEntity>()
+                    .OrderBy<RedirectEntity>(it => it.Id);
+
+                var result = scope.Database.Page<RedirectEntity>(pageNumber, pageSize, sql);
+                totalRecords = result.TotalItems;
+                return result.Items.Select(ToModel);
             }
         }
 

@@ -4,6 +4,7 @@ using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
+using uSeoToolkit.Umbraco.Redirects.Core.Components;
 using uSeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using uSeoToolkit.Umbraco.Redirects.Core.Middleware;
 using uSeoToolkit.Umbraco.Redirects.Core.Repositories;
@@ -15,6 +16,8 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
+            builder.Components().Append<EnableModuleComponent>();
+
             builder.Services.AddUnique<IRedirectsRepository, RedirectsRepository>();
             builder.Services.AddUnique<IRedirectsService, RedirectsService>();
 

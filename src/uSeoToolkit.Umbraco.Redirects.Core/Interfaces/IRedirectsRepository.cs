@@ -9,7 +9,7 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Interfaces
         void Delete(Redirect redirect);
 
         Redirect Get(int id);
-        IEnumerable<Redirect> GetAll();
+        IEnumerable<Redirect> GetAll(int pageNumber, int pageSize, out long totalRecords);
         IEnumerable<Redirect> GetAllRegexRedirects();
         IEnumerable<Redirect> GetByUrls(params string[] paths);
     }

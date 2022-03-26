@@ -43,6 +43,16 @@
                        on-sorting-direction="vm.isSortDirection(col, direction)"
                        on-sort="vm.sort(field, allow, isSystem)">
             </umb-table>
+            
+            <div class="flex justify-center">
+                <umb-pagination page-number="vm.pageNumber"
+                                total-pages="vm.totalPages"
+                                on-next="vm.nextPage"
+                                on-prev="vm.prevPage"
+                                on-change="vm.changePage"
+                                on-go-to-page="vm.goToPage">
+                </umb-pagination>
+            </div>
         </div>
     </div>
 </div>

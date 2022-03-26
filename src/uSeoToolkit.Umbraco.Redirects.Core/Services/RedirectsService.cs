@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
@@ -24,9 +25,10 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Services
             _umbracoContextFactory = umbracoContextFactory;
         }
 
-        public IEnumerable<Redirect> GetAll()
+        public PagedResult<Redirect> GetAll(int pageNumber, int pageSize)
         {
-            return _redirectsRepository.GetAll();
+            var result = _redirectsRepository.GetAll(pageNumber, pageSize, out var totalRecords);
+            return new PagedResult<Redirect>(totalRecords, pageNumber, pageSize) { Items = result };
         }
 
         public Redirect Get(int id)
