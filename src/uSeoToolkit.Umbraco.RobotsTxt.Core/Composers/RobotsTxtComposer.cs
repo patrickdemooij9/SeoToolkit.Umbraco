@@ -34,6 +34,7 @@ namespace uSeoToolkit.Umbraco.RobotsTxt.Core.Composers
 
             if (disabledModules.Contains(DisabledModuleConstant.All))
             {
+                builder.Components().Append<DisableModuleComponent>();
                 builder.Trees().RemoveTreeController<RobotsTxtTreeController>();
                 return;
             }

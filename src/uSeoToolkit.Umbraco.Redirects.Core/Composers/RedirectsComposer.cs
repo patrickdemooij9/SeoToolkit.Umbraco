@@ -33,6 +33,7 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Composers
 
             if (disabledModules.Contains(DisabledModuleConstant.All))
             {
+                builder.Components().Append<DisableModuleComponent>();
                 builder.Trees().RemoveTreeController<RedirectsTreeController>();
                 return;
             }
@@ -41,7 +42,7 @@ namespace uSeoToolkit.Umbraco.Redirects.Core.Composers
             {
                 builder.Trees().RemoveTreeController<RedirectsTreeController>();
             }
-
+            
             builder.Components().Append<EnableModuleComponent>();
 
             builder.Services.AddUnique<IRedirectsRepository, RedirectsRepository>();

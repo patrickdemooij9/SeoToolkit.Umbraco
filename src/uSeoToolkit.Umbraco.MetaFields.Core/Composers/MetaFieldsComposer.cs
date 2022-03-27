@@ -45,6 +45,7 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Composers
 
             if (disabledModules.Contains(DisabledModuleConstant.All))
             {
+                builder.Components().Append<DisableModuleComponent>();
                 return;
             }
 

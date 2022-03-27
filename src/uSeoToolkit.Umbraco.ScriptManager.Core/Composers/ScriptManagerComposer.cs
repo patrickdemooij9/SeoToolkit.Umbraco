@@ -34,6 +34,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Composers
 
             if (disabledModules.Contains(DisabledModuleConstant.All))
             {
+                builder.Components().Append<DisableModuleComponent>();
                 builder.Trees().RemoveTreeController(typeof(ScriptManagerTreeController));
                 return;
             }

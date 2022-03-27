@@ -33,7 +33,11 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Composers
 
             var disabledModules = section?.Get<SitemapAppSettingsModel>()?.DisabledModules ?? Array.Empty<string>();
 
-            if (disabledModules.Contains(DisabledModuleConstant.All)) return;
+            if (disabledModules.Contains(DisabledModuleConstant.All))
+            {
+                builder.Components().Append<DisableModuleComponent>();
+                return;
+            }
 
             builder.Components().Append<EnableModuleComponent>();
 
