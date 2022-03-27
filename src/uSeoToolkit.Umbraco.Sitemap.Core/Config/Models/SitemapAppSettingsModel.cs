@@ -1,4 +1,6 @@
-﻿namespace uSeoToolkit.Umbraco.Sitemap.Core.Config.Models
+﻿using System;
+
+namespace uSeoToolkit.Umbraco.Sitemap.Core.Config.Models
 {
     public class SitemapAppSettingsModel
     {
@@ -8,5 +10,6 @@
         public string LastModifiedFieldAlias { get; set; } = "lastModifiedDate";
         public string ChangeFrequencyFieldAlias { get; set; } = "changeFrequency";
         public string PriorityFieldAlias { get; set; } = "priority";
+        public string[] DisabledModules { get; set; } = Array.Empty<string>();
     }
 }

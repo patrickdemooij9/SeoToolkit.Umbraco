@@ -21,7 +21,8 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Config
                 ShowAlternatePages = settings.ShowAlternatePages,
                 LastModifiedFieldAlias = settings.LastModifiedFieldAlias,
                 ChangeFrequencyFieldAlias = settings.ChangeFrequencyFieldAlias,
-                PriorityFieldAlias = settings.PriorityFieldAlias
+                PriorityFieldAlias = settings.PriorityFieldAlias,
+                DisabledModules = settings.DisabledModules
             };
         }
     }
