@@ -1,14 +1,23 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Mapping;
+using Umbraco.Extensions;
 using uSeoToolkit.Umbraco.Common.Core.Collections;
+using uSeoToolkit.Umbraco.Common.Core.Constants;
+using uSeoToolkit.Umbraco.Common.Core.Extensions;
 using uSeoToolkit.Umbraco.Common.Core.Interfaces;
+using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.MetaFields.Core.Collections;
 using uSeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
 using uSeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders;
 using uSeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using uSeoToolkit.Umbraco.MetaFields.Core.Components;
+using uSeoToolkit.Umbraco.MetaFields.Core.Config;
+using uSeoToolkit.Umbraco.MetaFields.Core.Config.Models;
 using uSeoToolkit.Umbraco.MetaFields.Core.ContentApps;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using uSeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
@@ -28,6 +37,17 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
+            var section = builder.Config.GetSection("uSeoToolkit:MetaFields");
+            builder.Services.Configure<MetaFieldsAppSettingsModel>(section);
+            builder.Services.AddSingleton(typeof(ISettingsService<MetaFieldsConfigModel>), typeof(MetaFieldsConfigurationService));
+
+            var disabledModules = section?.Get<MetaFieldsAppSettingsModel>()?.DisabledModules ?? Array.Empty<string>();
+
+            if (disabledModules.Contains(DisabledModuleConstant.All))
+            {
+                return;
+            }
+
             builder.Components().Append<EnableModuleComponent>();
 
             builder.ContentApps().Append<MetaFieldsSeoSettingsAppFactory>();
@@ -60,8 +80,11 @@ namespace uSeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<InheritedValueFieldProvider>()
                 .Add<PageNameFieldProvider>();
 
-            builder.WithCollectionBuilder<DisplayCollectionBuilder>()
-                .Add<MetaFieldsDocumentSettingsDisplayProvider>();
+            if (!disabledModules.Contains(DisabledModuleConstant.DocumentTypeContextApp))
+            {
+                builder.WithCollectionBuilder<DisplayCollectionBuilder>()
+                    .Add<MetaFieldsDocumentSettingsDisplayProvider>();
+            }
         }
     }
 }
