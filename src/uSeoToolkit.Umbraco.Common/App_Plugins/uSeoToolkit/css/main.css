@@ -38,6 +38,10 @@
     color: green;
 }
 
+.welcomeDashboard .module-status-disabled {
+    color: #f0ac00;
+}
+
 .form-horizontal .umb-control-group .control-header .control-description.full-width-description {
     max-width: 100%;
 }

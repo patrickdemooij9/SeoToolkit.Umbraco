@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using uSeoToolkit.Umbraco.Common.Core.Enums;
 using uSeoToolkit.Umbraco.Common.Core.Models;
 
 namespace uSeoToolkit.Umbraco.Common.Core.Collections
@@ -54,9 +55,14 @@ namespace uSeoToolkit.Umbraco.Common.Core.Collections
 
         public void EnableModule(string alias)
         {
+            SetStatus(alias, SeoToolkitModuleStatus.Installed);
+        }
+
+        public void SetStatus(string alias, SeoToolkitModuleStatus status)
+        {
             var module = _items.FirstOrDefault(it => it.Alias == alias);
             if (module != null)
-                module.Installed = true;
+                module.Status = status;
         }
     }
 }

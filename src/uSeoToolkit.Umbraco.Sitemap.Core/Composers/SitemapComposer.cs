@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Linq;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
 using uSeoToolkit.Umbraco.Common.Core.Collections;
+using uSeoToolkit.Umbraco.Common.Core.Constants;
 using uSeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using uSeoToolkit.Umbraco.Sitemap.Core.Common.DisplayProviders;
 using uSeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators;
@@ -23,28 +27,43 @@ namespace uSeoToolkit.Umbraco.Sitemap.Core.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
+            var section = builder.Config.GetSection("uSeoToolkit:Sitemap");
+            builder.Services.Configure<SitemapAppSettingsModel>(section);
+            builder.Services.AddSingleton(typeof(ISettingsService<SitemapConfig>), typeof(SitemapConfigurationService));
+
+            var disabledModules = section?.Get<SitemapAppSettingsModel>()?.DisabledModules ?? Array.Empty<string>();
+
+            if (disabledModules.Contains(DisabledModuleConstant.All))
+            {
+                builder.Components().Append<DisableModuleComponent>();
+                return;
+            }
+
             builder.Components().Append<EnableModuleComponent>();
 
-            builder.WithCollectionBuilder<DisplayCollectionBuilder>()
-                .Add<SitemapDocumentTypeDisplayProvider>();
+            if (!disabledModules.Contains(DisabledModuleConstant.DocumentTypeContextApp))
+            {
+                builder.WithCollectionBuilder<DisplayCollectionBuilder>()
+                    .Add<SitemapDocumentTypeDisplayProvider>();
+            }
 
             builder.Services.AddScoped<ISitemapGenerator, SitemapGenerator>();
             builder.Services.AddScoped<ISitemapIndexGenerator, SitemapIndexGenerator>();
             builder.Services.AddUnique<ISitemapService, SitemapService>();
             builder.Services.AddUnique<ISitemapPageTypeRepository, SitemapPageTypeRepository>();
-            builder.Services.AddSingleton(typeof(ISettingsService<SitemapConfig>), typeof(SitemapConfigurationService));
 
-            builder.Services.Configure<UmbracoPipelineOptions>(options =>
+            if (!disabledModules.Contains(DisabledModuleConstant.Middleware))
             {
-                options.AddFilter(new UmbracoPipelineFilter(
-                    "uSeoToolkit Sitemap",
-                    applicationBuilder => { applicationBuilder.UseMiddleware<SitemapMiddleware>(); },
-                    applicationBuilder => { },
-                    applicationBuilder => { }
-                ));
-            });
-
-            builder.Services.Configure<SitemapAppSettingsModel>(builder.Config.GetSection("uSeoToolkit:Sitemap"));
+                builder.Services.Configure<UmbracoPipelineOptions>(options =>
+                {
+                    options.AddFilter(new UmbracoPipelineFilter(
+                        "uSeoToolkit Sitemap",
+                        applicationBuilder => { applicationBuilder.UseMiddleware<SitemapMiddleware>(); },
+                        applicationBuilder => { },
+                        applicationBuilder => { }
+                    ));
+                });
+            }
         }
     }
 }

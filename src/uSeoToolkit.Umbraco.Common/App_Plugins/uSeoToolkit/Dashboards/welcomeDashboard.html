@@ -13,8 +13,9 @@
                 <umb-icon icon="{{item.icon}}"></umb-icon>
             </div>
             <p class="module-title">{{item.title}}</p>
-            <p class="module-status module-status-installed" ng-if="item.installed">Installed</p>
-            <p class="module-status" ng-if="!item.installed">Not installed</p>
+            <p class="module-status module-status-disabled" ng-if="item.status === 2">Disabled</p>
+            <p class="module-status module-status-installed" ng-if="item.status === 1">Installed</p>
+            <p class="module-status" ng-if="item.status === 0">Not installed</p>
         </a>
     </div>
 </div>

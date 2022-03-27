@@ -6,5 +6,7 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Config.Models
     {
         public ScriptManagerDefinitionConfigModel[] Definitions { get; set; } =
             Array.Empty<ScriptManagerDefinitionConfigModel>();
+
+        public string[] DisabledModules { get; set; } = Array.Empty<string>();
     }
 }
