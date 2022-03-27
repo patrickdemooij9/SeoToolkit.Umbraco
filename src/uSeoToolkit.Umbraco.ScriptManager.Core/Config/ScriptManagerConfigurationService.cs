@@ -23,7 +23,8 @@ namespace uSeoToolkit.Umbraco.ScriptManager.Core.Config
                 {
                     Alias = it.Key,
                     Enabled = it.Value.Enabled
-                }).ToArray()
+                }).ToArray(),
+                DisabledModules = settings.DisabledModules
             };
         }
     }
