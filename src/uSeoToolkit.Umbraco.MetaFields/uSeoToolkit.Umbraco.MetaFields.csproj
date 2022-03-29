@@ -25,6 +25,10 @@
     </None>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Remove="App_Plugins\uSeoToolkit\MetaFields\lang\en-us.xml" />
+	</ItemGroup>
+
   <ItemGroup>
 	  <ProjectReference Include="..\uSeoToolkit.Umbraco.MetaFields.Core\uSeoToolkit.Umbraco.MetaFields.Core.csproj" />
 	  <ProjectReference Include="..\uSeoToolkit.Umbraco.Common\uSeoToolkit.Umbraco.Common.csproj" />

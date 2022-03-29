@@ -5,8 +5,8 @@
         <span>Make sure to save/publish your changes to see the updated values here.</span>
     </div>
 
-    <umb-editor-sub-header>
-        <umb-editor-sub-header-content-right>
+    <umb-box>
+        <umb-box-header title="SEO settings">
             <umb-button action="vm.startEdit()"
                         type="button"
                         button-style="outline"
@@ -15,12 +15,9 @@
             <umb-button action="vm.finishEdit()"
                         type="button"
                         button-style="outline"
-                        label="Finish" ng-if="vm.edit">
+                        label="Finish" ng-if="vm.edit && !vm.defaultButtonScope">
             </umb-button>
-        </umb-editor-sub-header-content-right>
-    </umb-editor-sub-header>
-    <umb-box>
-        <umb-box-header title="SEO settings"></umb-box-header>
+        </umb-box-header>
         <umb-box-content>
             <div class="umb-property" ng-repeat="field in vm.fields">
                 <div class="control-group umb-control-group">

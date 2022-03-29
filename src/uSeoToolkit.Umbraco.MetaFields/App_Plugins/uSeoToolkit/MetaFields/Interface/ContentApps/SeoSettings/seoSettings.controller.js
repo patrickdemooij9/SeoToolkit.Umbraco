@@ -1,13 +1,14 @@
 ﻿(function () {
     "use strict";
 
-    function SeoSettingsController($scope, $routeParams, $rootScope, $http, editorState) {
+    function SeoSettingsController($scope, $routeParams, $rootScope, $http, editorState, notificationsService) {
 
         var vm = this;
         vm.loading = true;
         vm.edit = false;
 
         vm.metaValues = {};
+        vm.defaultButtonScope = null;
 
         vm.startEdit = startEdit;
         vm.finishEdit = finishEdit;
@@ -39,6 +40,18 @@
                     }
                     vm.loading = false;
                 });
+
+            var maxTries = 20;
+            var tries = 0;
+            var currentScope = $scope.$parent;
+            while (!currentScope.hasOwnProperty("defaultButton") && tries <= maxTries) {
+                currentScope = currentScope.$parent;
+                tries++;
+            }
+
+            if (maxTries > tries) {
+                vm.defaultButtonScope = currentScope;
+            }
         }
 
         function startEdit() {
@@ -50,6 +63,19 @@
                     config: field.editConfig
                 }
             });
+
+            if (vm.defaultButtonScope) {
+                vm.defaultButtonScope.defaultButton = {
+                    letter: 'S',
+                    labelKey: "metaFields_finish",
+                    handler: finishEdit,
+                    hotKey: "ctrl+s",
+                    hotKeyWhenHidden: true,
+                    alias: "save",
+                    addEllipsis: "true"
+                }
+            }
+
             vm.edit = true;
         }
 
@@ -85,6 +111,12 @@
                 }).then(function (response) {
                     vm.edit = false;
                     vm.fields = response.data.fields;
+
+                    if (vm.defaultButtonScope) {
+                        vm.defaultButtonScope.defaultButton = null;
+                    }
+
+                    notificationsService.success("SEO settings saved!");
                 });
         }
 
@@ -94,6 +126,7 @@
             }
             return false;
         }
+
 
         $rootScope.$on("app.tabChange",
             (e, data) => {
