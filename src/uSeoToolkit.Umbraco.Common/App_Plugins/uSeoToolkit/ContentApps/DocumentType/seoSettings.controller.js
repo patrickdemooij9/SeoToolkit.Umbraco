@@ -14,8 +14,8 @@
             enableSeoSettings: false
         }
 
-        vm.toggleSeoSettings = function () {
-            vm.model.enableSeoSettings = !vm.model.enableSeoSettings;
+        vm.setSeoSettings = function (value) {
+            vm.model.enableSeoSettings = value;
         }
 
         function setActive(display) {

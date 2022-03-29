@@ -2,21 +2,21 @@
     text-align: center;
 }
 
-.welcomeDashboard .intro{
+.welcomeDashboard .intro {
     text-align: center;
 }
 
-.welcomeDashboard .modules{
+.welcomeDashboard .modules {
     display: flex;
 }
 
-.welcomeDashboard .modules .module {
-    padding: 10px;
-    margin: 10px;
-    background-color: white;
-    border-radius: 3px;
-    width: 20%;
-}
+    .welcomeDashboard .modules .module {
+        padding: 10px;
+        margin: 10px;
+        background-color: white;
+        border-radius: 3px;
+        width: 20%;
+    }
 
 .welcomeDashboard .module-icon {
     text-align: center;
@@ -45,3 +45,12 @@
 .form-horizontal .umb-control-group .control-header .control-description.full-width-description {
     max-width: 100%;
 }
+
+.seo-settings-tab {
+    float: right;
+    padding-top: 8px;
+}
+
+    .seo-settings-tab > .btn {
+        padding: 5px 10px !important;
+    }
