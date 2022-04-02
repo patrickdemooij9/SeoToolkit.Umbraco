@@ -1,0 +1,13 @@
+﻿<div ng-controller="SeoToolkit.SiteAuditDashboard.controller as vm">
+    <div ng-if="vm.showOverview">
+        <site-audit-overview></site-audit-overview>
+    </div>
+
+    <div ng-if="vm.showCreate">
+        <site-audit-create></site-audit-create>
+    </div>
+
+    <div ng-if="vm.showDetail">
+        <site-audit-detail></site-audit-detail>
+    </div>
+</div>

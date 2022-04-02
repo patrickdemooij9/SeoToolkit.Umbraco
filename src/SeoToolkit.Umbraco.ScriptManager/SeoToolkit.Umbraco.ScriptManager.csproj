@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
+		<Product>SeoToolkit Script Manager</Product>
+		<PackageId>SeoToolkit.Umbraco.ScriptManager</PackageId>
+		<Title>SeoToolkit Script Manager</Title>
+		<Description>An Umbraco plugin to help you to include custom script on your website</Description>
+		<PackageTags>umbraco plugin package</PackageTags>
+		<RootNamespace>SeoToolkit.Umbraco.ScriptManager</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <Version>1.0.0-beta</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SeoToolkit.Umbraco.ScriptManager.Core\SeoToolkit.Umbraco.ScriptManager.Core.csproj" />
+		<ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <Content Include="App_Plugins\SeoToolkit\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Views\**\*.*">
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
+		</Content>
+		<None Include="build\**\*.*">
+			<Pack>True</Pack>
+			<PackagePath>build</PackagePath>
+		</None>
+	</ItemGroup>
+</Project>

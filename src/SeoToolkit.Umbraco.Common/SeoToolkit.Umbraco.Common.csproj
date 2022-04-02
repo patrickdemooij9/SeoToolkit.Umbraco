@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
+    <Product>SeoToolkit Common</Product>
+    <PackageId>SeoToolkit.Umbraco.Common</PackageId>
+    <Title>SeoToolkit Common</Title>
+    <Description>Package containing common logic for SeoToolkit</Description>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>SeoToolkit.Umbraco.Common</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <Version>1.0.0-beta</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.0.1" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Common.Core\SeoToolkit.Umbraco.Common.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="App_Plugins\SeoToolkit\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <None Include="build\**\*.*">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
+  </ItemGroup>
+</Project>

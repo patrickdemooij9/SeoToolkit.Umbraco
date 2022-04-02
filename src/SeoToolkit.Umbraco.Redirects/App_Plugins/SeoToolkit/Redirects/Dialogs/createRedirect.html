@@ -1,0 +1,79 @@
+﻿<div ng-controller="SeoToolkit.Redirects.CreateController as vm">
+    <form name="createRedirectForm" novalidate val-form-manager ng-submit="vm.submit()" class="form-horizontal">
+        <umb-editor-view>
+            <umb-editor-header name="model.title"
+                               name-locked="true"
+                               hide-alias="true"
+                               hide-icon="true"
+                               hide-description="true">
+            </umb-editor-header>
+            <umb-editor-container class="block-form">
+                <umb-box>
+                    <umb-box-content>
+                        <umb-property property="vm.domainProperty">
+                            <div class="umb-property-editor">
+                                <select name="domainEditor"
+                                        ng-model="vm.domainProperty.value"
+                                        required
+                                        ng-options="d.id as d.name for d in vm.domains"></select>
+                                <span ng-messages="contentForm.domainEditor.$error" show-validation-on-submit>
+                                    <span class="help-inline" ng-message="required"><localize key="general_required">Required</localize></span>
+                                </span>
+                            </div>
+                        </umb-property>
+                        <umb-property property="vm.customDomainProperty" ng-show="vm.domainProperty.value === -1">
+                            <umb-property-editor model="vm.customDomainProperty"></umb-property-editor>
+                        </umb-property>
+                        <umb-property property="vm.oldUrlProperty">
+                            <div class="flex">
+                                <umb-property-editor model="vm.oldUrlProperty"></umb-property-editor>
+                                <select ng-options="t.value as t.name for t in vm.urlTypes" ng-model="vm.oldUrlType"
+                                        required>
+                                </select>
+                            </div>
+                        </umb-property>
+                        <umb-property property="vm.newUrlProperty">
+                            <button type="button" class="btn-reset umb-nested-content__add-content" ng-click="vm.openLinkPicker()" ng-if="vm.newUrlProperty.value === ''">Set Link</button>
+                            <div class="umb-nested-content__item" ng-click="vm.openLinkPicker()" ng-if="vm.newUrlProperty.value !== ''">
+                                <div class="umb-nested-content__header-bar">
+                                    <div class="umb-nested-content__heading">
+                                        <span class="umb-nested-content__item-name">{{vm.newUrlProperty.value}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </umb-property>
+                        <umb-property property="vm.statusCodeProperty">
+                            <div class="umb-property-editor umb-radiobuttons align-together">
+                                <ul class="unstyled">
+                                    <li ng-repeat="item in vm.statusCodeProperty.config.items track by item.value">
+                                        <umb-radiobutton name="statusCode"
+                                                         value="{{item.value}}"
+                                                         model="vm.statusCodeProperty.value"
+                                                         text="{{item.name}}"
+                                                         required="model.validation.mandatory && model.value == ''">
+                                        </umb-radiobutton>
+                                    </li>
+                                </ul>
+                            </div>
+                        </umb-property>
+                    </umb-box-content>
+                </umb-box>
+            </umb-editor-container>
+            <umb-editor-footer>
+                <umb-editor-footer-content-right>
+                    <umb-button type="button"
+                                button-style="link"
+                                label-key="general_close"
+                                shortcut="esc"
+                                action="vm.close()">
+                    </umb-button>
+                    <umb-button type="submit"
+                                button-style="success"
+                                label-key="general_submit"
+                                state="saveButtonState">
+                    </umb-button>
+                </umb-editor-footer-content-right>
+            </umb-editor-footer>
+        </umb-editor-view>
+    </form>
+</div>

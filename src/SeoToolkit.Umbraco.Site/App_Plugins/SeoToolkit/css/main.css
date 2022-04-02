@@ -1,0 +1,56 @@
+﻿.welcomeDashboard h1 {
+    text-align: center;
+}
+
+.welcomeDashboard .intro {
+    text-align: center;
+}
+
+.welcomeDashboard .modules {
+    display: flex;
+}
+
+    .welcomeDashboard .modules .module {
+        padding: 10px;
+        margin: 10px;
+        background-color: white;
+        border-radius: 3px;
+        width: 20%;
+    }
+
+.welcomeDashboard .module-icon {
+    text-align: center;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.welcomeDashboard .module-title {
+    text-align: center;
+    font-weight: 600;
+}
+
+.welcomeDashboard .module-status {
+    text-align: center;
+    color: red;
+}
+
+.welcomeDashboard .module-status-installed {
+    color: green;
+}
+
+.welcomeDashboard .module-status-disabled {
+    color: #f0ac00;
+}
+
+.form-horizontal .umb-control-group .control-header .control-description.full-width-description {
+    max-width: 100%;
+}
+
+.seo-settings-tab {
+    float: right;
+    padding-top: 8px;
+}
+
+    .seo-settings-tab > .btn {
+        padding: 5px 10px !important;
+    }

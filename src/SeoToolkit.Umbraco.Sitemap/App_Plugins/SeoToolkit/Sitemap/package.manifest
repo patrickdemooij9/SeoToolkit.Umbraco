@@ -1,0 +1,5 @@
+﻿{
+  "javascript": [
+    "~/App_Plugins/SeoToolkit/Sitemap/Displays/DocumentType/sitemapSettings.controller.js"
+  ]
+}

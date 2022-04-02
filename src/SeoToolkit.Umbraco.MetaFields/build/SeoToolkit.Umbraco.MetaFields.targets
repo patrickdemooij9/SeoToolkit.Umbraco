@@ -1,0 +1,27 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup>
+		<SeoToolkitUmbracoMetaFieldsContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\SeoToolkit\MetaFields\**\*.*</SeoToolkitUmbracoMetaFieldsContentFilesPath>
+    </PropertyGroup>
+
+    <Target Name="CopySeoToolkitUmbracoMetaFieldsAssets" BeforeTargets="Build">
+        <ItemGroup>
+			<SeoToolkitUmbracoMetaFieldsContentFiles Include="$(SeoToolkitUmbracoMetaFieldsContentFilesPath)" />
+        </ItemGroup>
+        <Message Text="Copying SeoToolkit files: $(SeoToolkitUmbracoMetaFieldsContentFilesPath) - #@(SeoToolkitUmbracoMetaFieldsContentFiles->Count()) files"  Importance="high" />
+        <Copy
+            SourceFiles="@(SeoToolkitUmbracoMetaFieldsContentFiles)"
+            DestinationFiles="@(SeoToolkitUmbracoMetaFieldsContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\SeoToolkit\MetaFields\%(RecursiveDir)%(Filename)%(Extension)')"
+            SkipUnchangedFiles="true" />
+
+    </Target>
+
+    <Target Name="ClearSeoToolkitUmbracoMetaFieldsAssets" BeforeTargets="Clean">
+        <ItemGroup>
+			<SeoToolkitUmbracoMetaFieldsDir Include="$(MSBuildProjectDirectory)\App_Plugins\SeoToolkit\MetaFields\" />
+        </ItemGroup>
+        <Message Text="Clear old SeoToolkit MetaFields data"  Importance="high" />
+        <RemoveDir Directories="@(SeoToolkitUmbracoMetaFieldsDir)"  />
+    </Target>
+
+</Project>

@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
+    <Product>SeoToolkit Sitemap</Product>
+    <PackageId>SeoToolkit.Umbraco.Sitemap</PackageId>
+    <Title>SeoToolkit Sitemap</Title>
+    <Description>An Umbraco plugin to easily set your sitemap up</Description>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>SeoToolkit.Umbraco.Sitemap</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <Version>1.0.0-beta</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="App_Plugins\SeoToolkit\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <None Include="build\**\*.*">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Sitemap.Core\SeoToolkit.Umbraco.Sitemap.Core.csproj" />
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,8 @@
+Failed to build InMemory models.
+The process cannot access the file 'C:\Users\Patrick\AppData\Local\Temp\19810bf1-6c2b-453a-ab26-c593b1b5cc0a.tmp' because it is being used by another process.
+
+   at System.IO.FileSystem.DeleteFile(String fullPath)
+   at System.IO.File.Delete(String path)
+   at Umbraco.Cms.Web.Common.ModelsBuilder.InMemoryModelFactory.TryDeleteUnusedAssemblies(String dllPathFile)
+   at Umbraco.Cms.Web.Common.ModelsBuilder.InMemoryModelFactory.GetModelsAssembly(Boolean forceRebuild)
+   at Umbraco.Cms.Web.Common.ModelsBuilder.InMemoryModelFactory.EnsureModels()

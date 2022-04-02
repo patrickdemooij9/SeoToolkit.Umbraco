@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Product>SeoToolkit Robots.txt Core</Product>
+    <PackageId>SeoToolkit.Umbraco.RobotsTxt.Core</PackageId>
+    <Title>SeoToolkit Robots.txt Core</Title>
+    <Description>Assemblies for the Robots.txt package</Description>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>SeoToolkit.Umbraco.RobotsTxt.Core</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <Version>1.0.0-beta</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Common.Core\SeoToolkit.Umbraco.Common.Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,27 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup>
+        <SeoToolkitUmbracoCoreContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\SeoToolkit\**\*.*</SeoToolkitUmbracoCoreContentFilesPath>
+    </PropertyGroup>
+
+    <Target Name="CopySeoToolkitUmbracoCoreAssets" BeforeTargets="Build">
+        <ItemGroup>
+            <SeoToolkitUmbracoCoreContentFiles Include="$(SeoToolkitUmbracoCoreContentFilesPath)" />
+        </ItemGroup>
+        <Message Text="Copying SeoToolkit files: $(SeoToolkitUmbracoCoreContentFilesPath) - #@(SeoToolkitUmbracoCoreContentFiles->Count()) files"  Importance="high" />
+        <Copy
+            SourceFiles="@(SeoToolkitUmbracoCoreContentFiles)"
+            DestinationFiles="@(SeoToolkitUmbracoCoreContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\SeoToolkit\%(RecursiveDir)%(Filename)%(Extension)')"
+            SkipUnchangedFiles="true" />
+
+    </Target>
+
+    <Target Name="ClearSeoToolkitUmbracoCoreAssets" BeforeTargets="Clean">
+        <ItemGroup>
+            <SeoToolkitUmbracoCoreDir Include="$(MSBuildProjectDirectory)\App_Plugins\SeoToolkit\" />
+        </ItemGroup>
+        <Message Text="Clear old SeoToolkit data"  Importance="high" />
+        <RemoveDir Directories="@(SeoToolkitUmbracoCoreDir)"  />
+    </Target>
+
+</Project>

@@ -1,0 +1,27 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <SeoToolkitUmbracoSitemapContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\SeoToolkit\Sitemap\**\*.*</SeoToolkitUmbracoSitemapContentFilesPath>
+  </PropertyGroup>
+
+  <Target Name="CopySeoToolkitUmbracoSitemapAssets" BeforeTargets="Build">
+    <ItemGroup>
+      <SeoToolkitUmbracoSitemapContentFiles Include="$(SeoToolkitUmbracoSitemapContentFilesPath)" />
+    </ItemGroup>
+    <Message Text="Copying SeoToolkit files: $(SeoToolkitUmbracoSitemapContentFilesPath) - #@(SeoToolkitUmbracoSitemapContentFiles->Count()) files"  Importance="high" />
+    <Copy
+        SourceFiles="@(SeoToolkitUmbracoSitemapContentFiles)"
+        DestinationFiles="@(SeoToolkitUmbracoSitemapContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\SeoToolkit\Sitemap\%(RecursiveDir)%(Filename)%(Extension)')"
+        SkipUnchangedFiles="true" />
+
+  </Target>
+
+  <Target Name="ClearSeoToolkitUmbracoSitemapAssets" BeforeTargets="Clean">
+    <ItemGroup>
+      <SeoToolkitUmbracoSitemapDir Include="$(MSBuildProjectDirectory)\App_Plugins\SeoToolkit\Sitemap\" />
+    </ItemGroup>
+    <Message Text="Clear old SeoToolkit Sitemap data"  Importance="high" />
+    <RemoveDir Directories="@(SeoToolkitUmbracoSitemapDir)"  />
+  </Target>
+
+</Project>

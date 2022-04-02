@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Product>SeoToolkit Common Core</Product>
+    <PackageId>SeoToolkit.Umbraco.Common.Core</PackageId>
+    <Title>SeoToolkit Common Core</Title>
+    <Description>Package containing common logic for SeoToolkit</Description>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>SeoToolkit.Umbraco.Common.Core</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <Version>1.0.0-beta</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.0.1" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.1" />
+  </ItemGroup>
+</Project>

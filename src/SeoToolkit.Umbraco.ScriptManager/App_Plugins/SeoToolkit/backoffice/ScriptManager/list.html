@@ -1,0 +1,47 @@
+﻿<div ng-controller="SeoToolkit.ScriptManager.ListController as vm">
+
+    <umb-load-indicator ng-if="vm.loading"></umb-load-indicator>
+
+    <div class="umb-dashboard umb-scrollable row-fluid" ng-if="!vm.loading">
+        <div class="umb-dashboard__content">
+
+            <umb-editor-sub-header ng-class="{'--state-selection':(vm.selection.length > 0)}">
+                <umb-editor-sub-header-content-left ng-if="vm.selection.length == 0">
+                    <umb-button type="button"
+                                button-style="outline"
+                                size="xs"
+                                label-key="siteManager_create"
+                                action="vm.create()">Add Script</umb-button>
+                </umb-editor-sub-header-content-left>
+
+                <umb-editor-sub-header-content-left ng-if="vm.selection.length > 0">
+                    <umb-button type="button"
+                                button-style="white"
+                                size="xs"
+                                label-key="buttons_clearSelection"
+                                action="vm.clearSelection()">Clear Selection</umb-button>
+                </umb-editor-sub-header-content-left>
+
+                <umb-editor-sub-header-content-right ng-if="vm.selection.length > 0">
+                    <umb-button type="button"
+                                button-style="white"
+                                size="xs"
+                                label-key="general_delete"
+                                icon="icon-trash"
+                                action="vm.deleteSelection()">Delete</umb-button>
+                </umb-editor-sub-header-content-right>
+            </umb-editor-sub-header>
+
+            <umb-table items="vm.items"
+                       item-properties="vm.options.includeProperties"
+                       allow-select-all="vm.options.bulkActionsAllowed"
+                       on-select="vm.selectItem(item, $index, $event)"
+                       on-click="vm.clickItem(item)"
+                       on-select-all="vm.selectAll($event)"
+                       on-selected-all="vm.isSelectedAll()"
+                       on-sorting-direction="vm.isSortDirection(col, direction)"
+                       on-sort="vm.sort(field, allow, isSystem)">
+            </umb-table>
+        </div>
+    </div>
+</div>

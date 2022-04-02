@@ -1,0 +1,43 @@
+﻿<div ng-controller="SeoToolkit.RobosTxt.DetailController as vm">
+    <form name="contentForm" novalidate val-form-manager class="form-horizontal">
+        <umb-editor-view ng-if="!vm.loading">
+            <umb-pane>
+                <umb-box>
+                    <umb-box-header title="Robots.txt"></umb-box-header>
+                    <umb-box-content>
+                        <div class="umb-control-group control-group --label-on-top">
+                            <div class="umb-el-wrap">
+                                <div class="control-header">
+                                    <label class="control-label">Robots.txt</label>
+                                    <small class="control-description full-width-description">Robots.txt is used to let bots know what they are able to access. If you are looking for more information about how to configure robots.txt, then <a class="btn-link -underline" href="https://developers.google.com/search/docs/advanced/robots/intro">this guide</a> will be able to help you out.</small>
+                                </div>
+                                <div class="controls">
+                                    <textarea class="umb-property-editor" ng-model="vm.model" rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="vm.validationErrors.length > 0">
+                            <h5>Validation Errors</h5>
+                            <p class="error" ng-repeat="error in vm.validationErrors">
+                                <umb-icon icon="icon-delete" class="red"></umb-icon>
+                                Line {{error.lineNumber}} - {{error.error}}
+                            </p>
+                        </div>
+                    </umb-box-content>
+                </umb-box>
+            </umb-pane>
+            <umb-editor-footer>
+                <umb-editor-footer-content-right>
+                    <umb-button type="button"
+                                button-style="success"
+                                state="vm.page.saveButtonState"
+                                shortcut="ctrl+s"
+                                label="Save"
+                                label-key="buttons_save"
+                                action="vm.save()">
+                    </umb-button>
+                </umb-editor-footer-content-right>
+            </umb-editor-footer>
+        </umb-editor-view>
+    </form>
+</div>

@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
+    <Product>SeoToolkit Robots.txt</Product>
+    <PackageId>SeoToolkit.Umbraco.RobotsTxt</PackageId>
+    <Title>SeoToolkit Robots.txt</Title>
+    <Description>An Umbraco plugin to help you to easily setup a robots.txt for your website</Description>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>SeoToolkit.Umbraco.RobotsTxt</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <Version>1.0.0-beta</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="App_Plugins\SeoToolkit\**\*.*">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <None Include="build\**\*.*">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco.RobotsTxt.Core\SeoToolkit.Umbraco.RobotsTxt.Core.csproj" />
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
+  </ItemGroup>
+
+</Project>
