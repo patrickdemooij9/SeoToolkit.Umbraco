@@ -23,22 +23,22 @@ jobs:
       uses: actions/setup-dotnet@v1.4.0
       
     - name: Restore dependencies
-      run: dotnet restore ./src/uSeoToolkit.Umbraco.RobotsTxt/uSeoToolkit.Umbraco.RobotsTxt.csproj
+      run: dotnet restore ./src/SeoToolkit.Umbraco.RobotsTxt/SeoToolkit.Umbraco.RobotsTxt.csproj
       
     - name: Restore dependencies
-      run: dotnet restore ./src/uSeoToolkit.Umbraco.RobotsTxt.Core/uSeoToolkit.Umbraco.RobotsTxt.Core.csproj
+      run: dotnet restore ./src/SeoToolkit.Umbraco.RobotsTxt.Core/SeoToolkit.Umbraco.RobotsTxt.Core.csproj
       
     - name: Build
-      run: dotnet build ./src/uSeoToolkit.Umbraco.RobotsTxt.Core/uSeoToolkit.Umbraco.RobotsTxt.Core.csproj --configuration ${{ env.CONFIG }} --no-restore
+      run: dotnet build ./src/SeoToolkit.Umbraco.RobotsTxt.Core/SeoToolkit.Umbraco.RobotsTxt.Core.csproj --configuration ${{ env.CONFIG }} --no-restore
       
     - name: Build
-      run: dotnet build ./src/uSeoToolkit.Umbraco.RobotsTxt/uSeoToolkit.Umbraco.RobotsTxt.csproj --configuration ${{ env.CONFIG }} --no-restore
+      run: dotnet build ./src/SeoToolkit.Umbraco.RobotsTxt/SeoToolkit.Umbraco.RobotsTxt.csproj --configuration ${{ env.CONFIG }} --no-restore
       
     - name: Create NuGet package file for Core
-      run: dotnet pack ./src/uSeoToolkit.Umbraco.RobotsTxt.Core/uSeoToolkit.Umbraco.RobotsTxt.Core.csproj -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }} /p:version=${{ github.event.inputs.package_version }}
+      run: dotnet pack ./src/SeoToolkit.Umbraco.RobotsTxt.Core/SeoToolkit.Umbraco.RobotsTxt.Core.csproj -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }} /p:version=${{ github.event.inputs.package_version }}
     
     - name: Create NuGet package file for Backoffice
-      run: dotnet pack ./src/uSeoToolkit.Umbraco.RobotsTxt/uSeoToolkit.Umbraco.RobotsTxt.csproj -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }} /p:version=${{ github.event.inputs.package_version }}
+      run: dotnet pack ./src/SeoToolkit.Umbraco.RobotsTxt/SeoToolkit.Umbraco.RobotsTxt.csproj -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }} /p:version=${{ github.event.inputs.package_version }}
    
 #    - name: Push packages to NuGet
 #      run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_DEPLOY_KEY }} -s https://api.nuget.org/v3/index.json
