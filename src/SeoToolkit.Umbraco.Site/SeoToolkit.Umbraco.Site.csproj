@@ -50,6 +50,7 @@
     <ProjectReference Include="..\SeoToolkit.Umbraco\SeoToolkit.Umbraco.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Plugins\" />
     <Folder Include="umbraco\models\" />
   </ItemGroup>
 

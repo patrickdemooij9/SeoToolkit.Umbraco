@@ -24,7 +24,7 @@ namespace SeoToolkit.Umbraco.Core.Controllers
         {
             var root = base.CreateRootNode(queryStrings);
 
-            root.Value.Icon = "icon-pushpin color-green";
+            root.Value.Icon = "icon-pushpin";
             root.Value.HasChildren = false;
             root.Value.RoutePath = $"{SectionAlias}/{TreeAlias}/licenseDashboard";
             root.Value.MenuUrl = null;
