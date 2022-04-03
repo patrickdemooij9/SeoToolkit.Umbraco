@@ -1,5 +1,6 @@
 ﻿using Umbraco.Cms.Infrastructure.Migrations;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Database;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsSettings.Database;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations

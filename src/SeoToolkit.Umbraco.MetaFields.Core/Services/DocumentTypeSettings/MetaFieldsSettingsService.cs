@@ -4,6 +4,7 @@ using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Interfaces;
+using SeoToolkit.Umbraco.Common.Core.Models;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
@@ -41,7 +42,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 
         public DocumentTypeSettingsDto Get(int id)
         {
-            return _cache.GetCacheItem($"{BaseCacheKey}{id}_Get", () => _repository.Get(id), TimeSpan.FromMinutes(30));
+            return _cache.GetCacheItem($"{BaseCacheKey}{id}_Get", () =>
+            {
+                return new CachedNullableModel<DocumentTypeSettingsDto>(_repository.Get(id));
+            }, TimeSpan.FromMinutes(30)).Model;
         }
 
         public IEnumerable<FieldItemViewModel> GetAdditionalFieldItems()

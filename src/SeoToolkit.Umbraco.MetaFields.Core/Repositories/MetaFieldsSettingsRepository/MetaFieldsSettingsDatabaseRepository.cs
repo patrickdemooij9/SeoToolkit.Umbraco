@@ -7,6 +7,7 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Database;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsSettings.Database;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.DocumentTypeSettingsRepository
 {

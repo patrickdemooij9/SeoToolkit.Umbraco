@@ -8,6 +8,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Database;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.PostModels;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsSettings.Database;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Mappers
 {

@@ -1,7 +1,7 @@
 ﻿using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
-namespace SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Database
+namespace SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsSettings.Database
 {
     [TableName("SeoToolkitMetaFieldsSettings")]
     [ExplicitColumns]
