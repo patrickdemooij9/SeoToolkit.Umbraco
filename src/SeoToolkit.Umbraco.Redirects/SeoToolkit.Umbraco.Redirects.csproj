@@ -2,6 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
+    <Product>SeoToolkit Redirects</Product>
+    <PackageId>SeoToolkit.Umbraco.Redirects</PackageId>
+    <Title>SeoToolkit Redirects</Title>
+    <Description>An Umbraco plugin to help you to with your redirects on your website</Description>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>SeoToolkit.Umbraco.Redirects</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <Version>1.0.0-beta</Version>
   </PropertyGroup>
 
   <ItemGroup>
