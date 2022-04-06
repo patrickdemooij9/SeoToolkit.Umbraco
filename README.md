@@ -39,3 +39,6 @@ Redirects allow you with an easy interface to create redirects from content/medi
 
 ## Documentation
 All documentation about the package can be found here: https://seotoolkit.gitbook.io/useotoolkit/
+
+## Credits
+The logo used for SeoToolkit can be found here: https://thenounproject.com/icon/toolkit-2311174/
