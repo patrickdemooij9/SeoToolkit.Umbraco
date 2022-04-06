@@ -1,5 +1,7 @@
 ⚠️This package is currently not yet published. Make sure to follow/star this repository so that you know when the package is released!
 
+<img src="package/SeoToolkitIcon.png?raw=true" alt="Umbraco Friendly Sitemap" width="250" align="right" />
+
 # SeoToolkit
 
 SeoToolkit is a SEO package for Umbraco 9. This package features most functionalities needed for your SEO needs like meta fields, sitemap, robots.txt and much more.
@@ -16,6 +18,7 @@ SeoToolkit has many features that are very important for your SEO needs. The Seo
 - Sitemap
 - Robots.txt
 - Script Manager
+- Redirects
 
 Each of these functionalities can also be found in separate packages. So if you only want to use the sitemap functionality and the robots.txt functionality then you can do that!
 
@@ -30,6 +33,9 @@ Robots.txt gives you an easy interface to edit your robots.txt. After installing
 
 ### Script Manager
 Script manager easily allows your users to add new scripts to the website. They are able to quickly add Google Tag Manager or Hotjar with just a few clicks. It also gives them the ability for adding custom scripts if their script definition is not yet available.
+
+### Redirects
+Redirects allow you with an easy interface to create redirects from content/media to other nodes. You are also able to use regex redirects to handle a lot of redirects at once.
 
 ## Documentation
 All documentation about the package can be found here: https://seotoolkit.gitbook.io/useotoolkit/
