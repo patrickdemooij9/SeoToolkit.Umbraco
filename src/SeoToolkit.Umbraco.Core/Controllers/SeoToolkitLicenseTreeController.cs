@@ -9,7 +9,7 @@ using Umbraco.Cms.Web.Common.Attributes;
 
 namespace SeoToolkit.Umbraco.Core.Controllers
 {
-    [Tree("SeoToolkit", "License", TreeTitle = "License", TreeGroup = "SeoToolkit", SortOrder = 20)]
+    /*[Tree("SeoToolkit", "License", TreeTitle = "License", TreeGroup = "SeoToolkit", SortOrder = 20)]
     [PluginController("SeoToolkit")]
     public class SeoToolkitLicenseTreeController : TreeController
     {
@@ -41,5 +41,5 @@ namespace SeoToolkit.Umbraco.Core.Controllers
         {
             return null;
         }
-    }
+    }*/
 }
