@@ -11,7 +11,8 @@
     <RootNamespace>SeoToolkit.Umbraco</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
     <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
-    <Version>1.0.0-beta</Version>
+    <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,11 +31,11 @@
   </ItemGroup>
 
   <Import Project="..\SeoToolkit.Umbraco.ScriptManager\build\SeoToolkit.Umbraco.ScriptManager.targets" Condition="'$(Configuration)'=='Release'" />
-  <Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" Condition="'$(Configuration)'=='Release'"/>
-  <Import Project="..\SeoToolkit.Umbraco.MetaFields\build\SeoToolkit.Umbraco.MetaFields.targets" Condition="'$(Configuration)'=='Release'"/>
-  <Import Project="..\SeoToolkit.Umbraco.RobotsTxt\build\SeoToolkit.Umbraco.RobotsTxt.targets" Condition="'$(Configuration)'=='Release'"/>
-  <Import Project="..\SeoToolkit.Umbraco.Sitemap\build\SeoToolkit.Umbraco.Sitemap.targets" Condition="'$(Configuration)'=='Release'"/>
-  <Import Project="..\SeoToolkit.Umbraco\build\SeoToolkit.Umbraco.targets" Condition="'$(Configuration)'=='Release'"/>
+  <Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" Condition="'$(Configuration)'=='Release'" />
+  <Import Project="..\SeoToolkit.Umbraco.MetaFields\build\SeoToolkit.Umbraco.MetaFields.targets" Condition="'$(Configuration)'=='Release'" />
+  <Import Project="..\SeoToolkit.Umbraco.RobotsTxt\build\SeoToolkit.Umbraco.RobotsTxt.targets" Condition="'$(Configuration)'=='Release'" />
+  <Import Project="..\SeoToolkit.Umbraco.Sitemap\build\SeoToolkit.Umbraco.Sitemap.targets" Condition="'$(Configuration)'=='Release'" />
+  <Import Project="..\SeoToolkit.Umbraco\build\SeoToolkit.Umbraco.targets" Condition="'$(Configuration)'=='Release'" />
   <ItemGroup>
     <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco.Core\SeoToolkit.Umbraco.Core.csproj" />
