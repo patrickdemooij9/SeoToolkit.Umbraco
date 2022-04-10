@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SeoToolkit.Umbraco.Common.Core\SeoToolkit.Umbraco.Common.Core.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco.MetaFields.Core\SeoToolkit.Umbraco.MetaFields.Core.csproj" />
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Redirects.Core\SeoToolkit.Umbraco.Redirects.Core.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco.RobotsTxt.Core\SeoToolkit.Umbraco.RobotsTxt.Core.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco.ScriptManager.Core\SeoToolkit.Umbraco.ScriptManager.Core.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco.Sitemap.Core\SeoToolkit.Umbraco.Sitemap.Core.csproj" />
