@@ -1,5 +1,3 @@
-⚠️This package is currently not yet published. Make sure to follow/star this repository so that you know when the package is released!
-
 <img src="package/SeoToolkitIcon.png?raw=true" alt="Umbraco Friendly Sitemap" width="250" align="right" />
 
 # SeoToolkit
@@ -8,7 +6,31 @@ SeoToolkit is a SEO package for Umbraco 9. This package features most functional
 
 ## Installation
 
-This package is not yet published, so you can't install it yet.
+Installation of that package can be done through the NuGet command: 
+
+`Install-Package uSeoToolkit.Umbraco`
+
+After installing, you'll want to add the following lines to the _ViewImports.cshtml file:
+
+`@addTagHelper *, SeoToolkit.Umbraco.ScriptManager.Core`
+
+`@addTagHelper *, SeoToolkit.Umbraco.MetaFields.Core`
+
+After that, add the following tag helpers in your master template
+
+At the bottom of the head tag
+`<render-script position="HeadBottom"></render-script>`
+  
+At the top of the body tag
+`<render-script position="BodyTop"></render-script>`
+  
+At the bottom of the body tag
+`<render-script position="BodyBottom"></render-script>`
+  
+Wherever you want to render your meta fields
+`<meta-fields></meta-fields>`
+  
+After that, your installation is complete and you can get started with the package!
 
 ## Features
 
