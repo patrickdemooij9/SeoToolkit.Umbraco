@@ -7,6 +7,7 @@
     <PackageId>SeoToolkit.Umbraco.Redirects</PackageId>
     <Title>SeoToolkit Redirects</Title>
     <Description>An Umbraco plugin to help you to with your redirects on your website</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>SeoToolkit.Umbraco.Redirects</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>

@@ -6,6 +6,7 @@
     <PackageId>SeoToolkit.Umbraco.ScriptManager.Core</PackageId>
     <Title>SeoToolkit Script Manager Core</Title>
     <Description>Assemblies for the ScriptManager package</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>SeoToolkit.Umbraco.ScriptManager.Core</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>

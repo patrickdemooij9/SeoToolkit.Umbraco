@@ -7,6 +7,7 @@
 		<PackageId>SeoToolkit.Umbraco.MetaFields</PackageId>
 		<Title>SeoToolkit MetaFields</Title>
 		<Description>An Umbraco plugin to help you with your SEO meta fields.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageTags>umbraco plugin package</PackageTags>
 		<RootNamespace>SeoToolkit.Umbraco.MetaFields</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>

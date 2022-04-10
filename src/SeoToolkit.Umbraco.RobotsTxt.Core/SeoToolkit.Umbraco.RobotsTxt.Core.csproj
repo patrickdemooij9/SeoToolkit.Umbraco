@@ -6,6 +6,7 @@
     <PackageId>SeoToolkit.Umbraco.RobotsTxt.Core</PackageId>
     <Title>SeoToolkit Robots.txt Core</Title>
     <Description>Assemblies for the Robots.txt package</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>SeoToolkit.Umbraco.RobotsTxt.Core</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>

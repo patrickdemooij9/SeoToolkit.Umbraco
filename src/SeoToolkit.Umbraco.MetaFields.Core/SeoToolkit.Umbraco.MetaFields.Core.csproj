@@ -6,6 +6,7 @@
     <PackageId>SeoToolkit.Umbraco.MetaFields.Core</PackageId>
     <Title>SeoToolkit MetaFields Core</Title>
     <Description>Assemblies for the MetaField package</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>SeoToolkit.Umbraco.MetaFields.Core</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>

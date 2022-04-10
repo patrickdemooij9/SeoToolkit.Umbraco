@@ -5,6 +5,7 @@
     <PackageId>SeoToolkit.Umbraco.Common.Core</PackageId>
     <Title>SeoToolkit Common Core</Title>
     <Description>Package containing common logic for SeoToolkit</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>SeoToolkit.Umbraco.Common.Core</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>

@@ -6,6 +6,7 @@
     <PackageId>SeoToolkit.Umbraco.SiteAudit</PackageId>
     <Title>SeoToolkit SiteAudit</Title>
     <Description>An Umbraco plugin to run a site audit on your website to find any SEO issues</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>SeoToolkit.Umbraco.SiteAudit</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>

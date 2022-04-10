@@ -7,6 +7,7 @@
     <PackageId>SeoToolkit.Umbraco.Sitemap</PackageId>
     <Title>SeoToolkit Sitemap</Title>
     <Description>An Umbraco plugin to easily set your sitemap up</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>umbraco plugin package</PackageTags>
     <RootNamespace>SeoToolkit.Umbraco.Sitemap</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
