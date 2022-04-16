@@ -11,6 +11,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
         protected override void DefinePlan()
         {
             To<SitemapInitialMigration>("state-1");
+            To<SitemapChangeFrequencyOptionalMigration>("state-2");
         }
     }
 }
