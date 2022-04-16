@@ -18,35 +18,35 @@ namespace SeoToolkit.Umbraco.Common.Core.Collections
                     Title = "Meta Fields",
                     Alias = "metaFields",
                     Icon = "icon-thumbnail-list",
-                    Link = "https://SeoToolkit.gitbook.io/SeoToolkit/getting-started/meta-fields"
+                    Link = "https://seotoolkit.gitbook.io/useotoolkit/how-to-use/meta-fields"
                 },
                 new SeoToolkitModule
                 {
                     Title = "Script Manager",
                     Alias = "scriptManager",
                     Icon = "icon-script",
-                    Link = "https://SeoToolkit.gitbook.io/SeoToolkit/getting-started/script-manager"
+                    Link = "https://seotoolkit.gitbook.io/useotoolkit/how-to-use/script-manager"
                 },
                 new SeoToolkitModule
                 {
                     Title = "Sitemap",
                     Alias = "sitemap",
                     Icon = "icon-sitemap",
-                    Link = "https://SeoToolkit.gitbook.io/SeoToolkit/getting-started/sitemap"
+                    Link = "https://seotoolkit.gitbook.io/useotoolkit/how-to-use/sitemap"
                 },
                 new SeoToolkitModule
                 {
                     Title = "Robots.txt",
                     Alias = "robotsTxt",
                     Icon = "icon-cloud",
-                    Link = "https://SeoToolkit.gitbook.io/SeoToolkit/getting-started/robots.txt"
+                    Link = "https://seotoolkit.gitbook.io/useotoolkit/how-to-use/robots-txt"
                 },
                 new SeoToolkitModule
                 {
                     Title = "Redirects",
                     Alias = "redirects",
                     Icon = "icon-trafic",
-                    Link = "https://SeoToolkit.gitbook.io/SeoToolkit/getting-started/redirects"
+                    Link = "https://seotoolkit.gitbook.io/useotoolkit/how-to-use/redirects"
                 }
             };
         }
