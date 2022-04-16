@@ -15,6 +15,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Models.Database
         public bool HideFromSitemap { get; set; }
 
         [Column("ChangeFrequency")]
+        [NullSetting(NullSetting = NullSettings.Null)]
         public string ChangeFrequency { get; set; }
 
         [Column("Priority")]
