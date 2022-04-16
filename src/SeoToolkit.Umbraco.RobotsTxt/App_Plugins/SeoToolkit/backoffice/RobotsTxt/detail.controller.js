@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    function robotsTxtDetailController($scope, $http, notificationsService, formHelper) {
+    function robotsTxtDetailController($scope, $http, notificationsService, formHelper, overlayService) {
 
         var vm = this;
         vm.validationErrors = [];
@@ -11,9 +11,10 @@
 
         vm.save = save;
 
-        function save() {
+        function save(skipValidation) {
             vm.validationErrors = [];
             $http.post("backoffice/SeoToolkit/RobotsTxt/Save", {
+                skipValidation: !!skipValidation,
                 content: vm.model
             }).then(function (response) {
                 notificationsService.success("Robots.txt saved!");
@@ -22,6 +23,26 @@
             }, function (response) {
                 vm.validationErrors = response.data;
                 notificationsService.error("Something went wrong while saving Robots.txt");
+
+                // Display an overlay to allow the user to force the save action and skip validation
+                if (!skipValidation && vm.validationErrors) {
+                    overlayService.open({
+                        title: 'Robots.txt validation didn\'t pass',
+                        subtitle: 'The input submitted didn\'t pass the validation.',
+                        view: 'default',
+                        content: 'Are you sure you want to save the robots.txt? - ignoring the validation errors could result in potentially using an invalid robots.txt, which has a negative impact on SEO.',
+                        submitButtonLabel: 'Ignore and save',
+                        submitButtonStyle: 'danger',
+                        closeButtonLabel: 'Close and fix errors',
+                        submit: function() {
+                            save(true);
+                            overlayService.close();
+                        },
+                        close: function() {
+                            overlayService.close();
+                        }
+                    });
+                }
             });
         }
 
