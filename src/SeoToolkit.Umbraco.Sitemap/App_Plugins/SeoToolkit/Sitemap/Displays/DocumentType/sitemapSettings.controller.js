@@ -17,7 +17,14 @@
 
         vm.priorityProperty = {
             label: "Priority",
-            description: "The priority for this document type"
+            description: "The priority for this document type",
+            view: "slider",
+            config: {
+                initVal1: 0,
+                minVal: 0,
+                maxVal: 1,
+                step: 0.1
+            }
         }
 
         vm.changeFrequencies = [
@@ -37,7 +44,7 @@
 
                     vm.hideFromSitemapProperty.value = settings.hideFromSitemap;
                     vm.changeFrequencyProperty.value = settings.changeFrequency;
-                    vm.priorityProperty.value = settings.priority;
+                    vm.priorityProperty.value = (settings.priority || vm.priorityProperty.config.initVal1).toString();
 
                     vm.loading = false;
                 });
@@ -49,12 +56,12 @@
                     contentTypeId: editorState.getCurrent().id,
                     hideFromSitemap: vm.hideFromSitemapProperty.value === "1" ? 1 : 0,
                     changeFrequency: vm.changeFrequencyProperty.value,
-                    priority: vm.priorityProperty.value
+                    priority: vm.priorityProperty.value > 0 ? vm.priorityProperty.value : undefined
                 }).then(function (response) {
-                    if (response.status !== 200) {
-                        notificationsService.error("Something went wrong while saving sitemap settings");
-                    }
-                });
+                if (response.status !== 200) {
+                    notificationsService.error("Something went wrong while saving sitemap settings");
+                }
+            });
         }
 
         $scope.$on("seoSettingsSubmitting",
