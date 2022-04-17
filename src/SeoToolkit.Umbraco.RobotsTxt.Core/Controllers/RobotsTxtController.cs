@@ -31,13 +31,18 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
         public IActionResult Save(RobotsTxtSavePostModel model)
         {
             var content = model.Content ?? string.Empty;
-            var validationErrors = _robotsTxtService.Validate(content).ToArray();
-            if (validationErrors.Length > 0)
+            
+            // After saving the content with any validation errors, the user gets the option to save without validation.
+            if (!model.SkipValidation)
             {
-                return BadRequest(validationErrors.Select(it => new RobotsTxtValidationViewModel(it)));
+                var validationErrors = _robotsTxtService.Validate(content).ToArray();
+                if (validationErrors.Length > 0)
+                {
+                    return BadRequest(validationErrors.Select(it => new RobotsTxtValidationViewModel(it)));
+                }
             }
 
-            _robotsTxtService.SetContent(model.Content);
+            _robotsTxtService.SetContent(content);
             return Get();
         }
     }

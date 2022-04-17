@@ -64,13 +64,20 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             }
         }
 
-        public IEnumerable<Redirect> GetAll(int pageNumber, int pageSize, out long totalRecords, string orderBy = null, string orderDirection = null)
+        public IEnumerable<Redirect> GetAll(int pageNumber, int pageSize, out long totalRecords, string orderBy = null, string orderDirection = null, string search = "")
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
             {
                 var sql = scope.SqlContext.Sql()
                     .SelectAll()
                     .From<RedirectEntity>();
+
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    sql = sql.Where<RedirectEntity>(it => it.OldUrl.Contains(search) ||
+                                                          it.NewUrl.Contains(search) ||
+                                                          it.CustomDomain.Contains(search));
+                }
 
                 // Translate alternative names (from list view) to the correct columns
                 var orderingColumn = GetOrderingColumn(orderBy);

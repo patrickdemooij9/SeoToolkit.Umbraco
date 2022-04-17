@@ -6,6 +6,7 @@
 
         vm.items = [];
         vm.selection = [];
+        vm.searchFilter = "";
 
         vm.options = {
             filter: '',
@@ -31,6 +32,8 @@
         vm.prevPage = prevPage;
         vm.changePage = changePage;
         vm.goToPage = goToPage;
+
+        vm.search = search;
 
         vm.create = openRedirectDialog;
         vm.deleteSelection = deleteSelection;
@@ -87,6 +90,10 @@
         function goToPage(pageNumber) {
             vm.selection = [];
             vm.pageNumber = pageNumber;
+            loadItems();
+        }
+
+        function search() {
             loadItems();
         }
 
@@ -178,7 +185,9 @@
                     "domain": i.Domain,
                     "name": i.OldUrl,
                     "to": i.NewUrl,
-                    "statusCode": i.StatusCode,
+                    "statusCode": i.StatusCode === 301 ? 'Permanent (301)'
+                                : i.StatusCode === 302 ? 'Temporary (302)'
+                                : undefined,
                     "published": true
                 }
             });
@@ -190,7 +199,7 @@
 
         function loadItems() {
             vm.loading = true;
-            $http.get("backoffice/SeoToolkit/Redirects/GetAll?pageNumber=" + vm.pageNumber + "&pageSize=" + vm.pageSize + "&orderBy=" + vm.options.orderBy + "&orderDirection=" + vm.options.orderDirection).then(function (response) {
+            $http.get("backoffice/SeoToolkit/Redirects/GetAll?pageNumber=" + vm.pageNumber + "&pageSize=" + vm.pageSize + "&orderBy=" + vm.options.orderBy + "&orderDirection=" + vm.options.orderDirection + "&search=" + vm.searchFilter).then(function (response) {
 
                 vm.totalPages = response.data.totalPages;
                 setItems(response.data.items);

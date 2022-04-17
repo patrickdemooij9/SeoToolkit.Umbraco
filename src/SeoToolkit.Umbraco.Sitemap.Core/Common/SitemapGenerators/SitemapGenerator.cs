@@ -9,6 +9,7 @@ using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
+using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
 {
@@ -16,6 +17,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
     {
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISitemapService _sitemapService;
+        private readonly IPublicAccessService _publicAccessService;
         private readonly SitemapConfig _settings;
 
         private List<string> _validAlternateCultures;
@@ -26,10 +28,12 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
 
         public SitemapGenerator(IUmbracoContextFactory umbracoContextFactory,
             ISettingsService<SitemapConfig> settingsService,
-            ISitemapService sitemapService)
+            ISitemapService sitemapService,
+            IPublicAccessService publicAccessService)
         {
             _umbracoContextFactory = umbracoContextFactory;
             _sitemapService = sitemapService;
+            _publicAccessService = publicAccessService;
             _settings = settingsService.GetSettings();
 
             _pageTypeSettings = new Dictionary<int, SitemapPageSettings>();
@@ -69,7 +73,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             var items = new List<XElement>();
 
             //Only show item if it actually has an template, so we don't index data objects and such
-            if (content.TemplateId > 0)
+            if (content.TemplateId > 0 && !_publicAccessService.IsProtected(content.Path))
             {
                 var settings = GetPageTypeSettings(content.ContentType.Id);
                 if (settings is null || !settings.HideFromSitemap)
