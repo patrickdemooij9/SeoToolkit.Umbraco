@@ -19,6 +19,7 @@
             label: "Priority",
             description: "The priority for this document type",
             view: "slider",
+            enabled: false,
             config: {
                 initVal1: 0,
                 minVal: 0,
@@ -44,7 +45,13 @@
 
                     vm.hideFromSitemapProperty.value = settings.hideFromSitemap;
                     vm.changeFrequencyProperty.value = settings.changeFrequency;
-                    vm.priorityProperty.value = (settings.priority || vm.priorityProperty.config.initVal1).toString();
+                    
+                    if (Utilities.isString(settings.priority) || Utilities.isNumber(settings.priority)) {
+                        vm.priorityProperty.value = settings.priority.toString();
+                        vm.priorityProperty.enabled = true;
+                    } else {
+                        vm.priorityProperty.enabled = false;
+                    }
 
                     vm.loading = false;
                 });
@@ -56,7 +63,7 @@
                     contentTypeId: editorState.getCurrent().id,
                     hideFromSitemap: vm.hideFromSitemapProperty.value === "1" ? 1 : 0,
                     changeFrequency: vm.changeFrequencyProperty.value,
-                    priority: vm.priorityProperty.value > 0 ? vm.priorityProperty.value : undefined
+                    priority: vm.priorityProperty.enabled ? vm.priorityProperty.value : undefined
                 }).then(function (response) {
                 if (response.status !== 200) {
                     notificationsService.error("Something went wrong while saving sitemap settings");

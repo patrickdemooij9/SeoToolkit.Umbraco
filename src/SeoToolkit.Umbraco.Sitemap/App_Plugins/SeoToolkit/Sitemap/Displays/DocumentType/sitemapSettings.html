@@ -21,7 +21,8 @@
         </div>
     </div>
 
-    <umb-property property="vm.priorityProperty">
-        <umb-property-editor model="vm.priorityProperty"></umb-property-editor>
+    <umb-property property="vm.priorityProperty">        
+        <umb-toggle checked="vm.priorityProperty.enabled" on-click="vm.priorityProperty.enabled = !vm.priorityProperty.enabled"></umb-toggle>        
+        <umb-property-editor ng-if="vm.priorityProperty.enabled" model="vm.priorityProperty"></umb-property-editor>
     </umb-property>
 </div>
