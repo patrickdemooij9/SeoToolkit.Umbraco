@@ -6,6 +6,7 @@
 
         vm.items = [];
         vm.selection = [];
+        vm.searchFilter = "";
 
         vm.options = {
             filter: '',
@@ -31,6 +32,8 @@
         vm.prevPage = prevPage;
         vm.changePage = changePage;
         vm.goToPage = goToPage;
+
+        vm.search = search;
 
         vm.create = openRedirectDialog;
         vm.deleteSelection = deleteSelection;
@@ -85,6 +88,10 @@
         function goToPage(pageNumber) {
             vm.selection = [];
             vm.pageNumber = pageNumber;
+            loadItems();
+        }
+
+        function search() {
             loadItems();
         }
 
@@ -190,7 +197,7 @@
 
         function loadItems() {
             vm.loading = true;
-            $http.get("backoffice/SeoToolkit/Redirects/GetAll?pageNumber=" + vm.pageNumber + "&pageSize=" + vm.pageSize).then(function (response) {
+            $http.get("backoffice/SeoToolkit/Redirects/GetAll?pageNumber=" + vm.pageNumber + "&pageSize=" + vm.pageSize + "&search=" + vm.searchFilter).then(function (response) {
 
                 vm.totalPages = response.data.totalPages;
                 setItems(response.data.items);

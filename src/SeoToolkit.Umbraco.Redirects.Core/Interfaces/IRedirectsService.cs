@@ -7,7 +7,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Interfaces
 {
     public interface IRedirectsService
     {
-        PagedResult<Redirect> GetAll(int pageNumber, int pageSize);
+        PagedResult<Redirect> GetAll(int pageNumber, int pageSize, string search = "");
         Redirect Get(int id);
         void Save(Redirect redirect);
         void Delete(int[] ids);
