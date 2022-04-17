@@ -72,7 +72,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.WithCollectionBuilder<SeoConverterCollectionBuilder>()
                 .Add<TextSeoValueConverter>()
                 .Add<PublishedContentSeoValueConverter>()
-                .Add<FieldSeoValueConverter>();
+                .Add<FieldSeoValueConverter>()
+                .Add<MultiplePublishedContentSeoValueConverter>();
 
             builder.WithCollectionBuilder<MapDefinitionCollectionBuilder>()
                 .Add<DocumentTypeSettingsMapper>();

@@ -36,8 +36,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                 if (returnValue is null)
                     continue;
 
-                var convertedValue = _converterCollection.GetConverter(returnValue.GetType(), typeof(string))
-                    .Convert(returnValue, currentContent, fieldAlias) as string;
+                var returnValueConverter = _converterCollection.GetConverter(returnValue.GetType(), typeof(string));
+                if (returnValueConverter is null)
+                    continue;
+                var convertedValue = returnValueConverter.Convert(returnValue, currentContent, fieldAlias) as string;
                 if (!string.IsNullOrWhiteSpace(convertedValue))
                     return convertedValue;
             }
