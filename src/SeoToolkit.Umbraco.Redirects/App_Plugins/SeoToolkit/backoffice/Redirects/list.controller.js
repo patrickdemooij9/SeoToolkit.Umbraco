@@ -176,7 +176,9 @@
                     "domain": i.Domain,
                     "name": i.OldUrl,
                     "to": i.NewUrl,
-                    "statusCode": i.StatusCode,
+                    "statusCode": i.StatusCode === 301 ? 'Permanent (301)'
+                                : i.StatusCode === 302 ? 'Temporary (302)'
+                                : undefined,
                     "published": true
                 }
             });
