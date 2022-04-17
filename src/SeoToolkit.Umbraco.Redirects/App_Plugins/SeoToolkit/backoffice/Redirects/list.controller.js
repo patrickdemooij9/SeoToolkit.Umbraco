@@ -9,13 +9,13 @@
 
         vm.options = {
             filter: '',
-            orderBy: "from",
+            orderBy: "Name",
             orderDirection: "asc",
             bulkActionsAllowed: true,
             includeProperties: [
-                { alias: "to", header: "To" },
+                { alias: "to", header: "To", allowSorting: true },
                 { alias: "domain", header: "Domain" },
-                { alias: "statusCode", header: "Status Code" }
+                { alias: "statusCode", header: "Status Code", allowSorting: true }
             ]
         };
 
@@ -63,6 +63,8 @@
             if (allow) {
                 vm.options.orderBySystemField = isSystem;
                 listViewHelper.setSorting(field, allow, vm.options);
+
+                loadItems();
             }
         }
 
@@ -188,7 +190,7 @@
 
         function loadItems() {
             vm.loading = true;
-            $http.get("backoffice/SeoToolkit/Redirects/GetAll?pageNumber=" + vm.pageNumber + "&pageSize=" + vm.pageSize).then(function (response) {
+            $http.get("backoffice/SeoToolkit/Redirects/GetAll?pageNumber=" + vm.pageNumber + "&pageSize=" + vm.pageSize + "&orderBy=" + vm.options.orderBy + "&orderDirection=" + vm.options.orderDirection).then(function (response) {
 
                 vm.totalPages = response.data.totalPages;
                 setItems(response.data.items);

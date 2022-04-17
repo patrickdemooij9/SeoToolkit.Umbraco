@@ -25,9 +25,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             _umbracoContextFactory = umbracoContextFactory;
         }
 
-        public PagedResult<Redirect> GetAll(int pageNumber, int pageSize)
+        public PagedResult<Redirect> GetAll(int pageNumber, int pageSize, string orderBy = null, string orderDirection = null)
         {
-            var result = _redirectsRepository.GetAll(pageNumber, pageSize, out var totalRecords);
+            var result = _redirectsRepository.GetAll(pageNumber, pageSize, out var totalRecords, orderBy, orderDirection);
             return new PagedResult<Redirect>(totalRecords, pageNumber, pageSize) { Items = result };
         }
 
