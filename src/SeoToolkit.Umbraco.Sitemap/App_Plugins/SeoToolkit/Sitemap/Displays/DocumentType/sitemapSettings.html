@@ -21,25 +21,8 @@
         </div>
     </div>
 
-    <div class="control-group umb-control-group">
-        <div class="umb-el-wrap">
-            <div class="control-header">
-                <label class="control-label">{{vm.priorityProperty.label}}</label>
-                <small class="control-description">
-                    {{vm.priorityProperty.description}}
-                </small>
-            </div>
-            <div class="controls">
-                <div class="umb-property-editor">
-                    <input name="decimalField" class="umb-property-editor umb-number"
-                           type="number"
-                           ng-model="vm.priorityProperty.value"
-                           step="0.1"
-                           min="0"
-                           max="1"
-                           fix-number />
-                </div>
-            </div>
-        </div>
-    </div>
+    <umb-property property="vm.priorityProperty">        
+        <umb-toggle checked="vm.priorityProperty.enabled" on-click="vm.priorityProperty.enabled = !vm.priorityProperty.enabled"></umb-toggle>        
+        <umb-property-editor ng-show="vm.priorityProperty.enabled" model="vm.priorityProperty"></umb-property-editor>
+    </umb-property>
 </div>
