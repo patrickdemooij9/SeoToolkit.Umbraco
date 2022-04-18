@@ -3,17 +3,29 @@
     <umb-load-indicator ng-if="vm.loading"></umb-load-indicator>
     
     <div ng-show="!vm.loading">
-        <div class="control-header">
-            <label class="control-label">{{vm.field.title}}</label>
-            <small class="control-description">
-                {{vm.field.description}}
-            </small>
-        </div>
-        <div class="controls">
-            <div class="umb-property-editor">
-                <dynamic-select-box base-list="vm.customBaseFields" selected-list="vm.customSelectedFields" field="vm.field">
+        <dynamic-select-box base-list="vm.customBaseFields" selected-list="vm.customSelectedFields" field="vm.field">
 
-                </dynamic-select-box>
+        </dynamic-select-box>
+        <div class="umb-nested-content__items">
+            <div ng-repeat="field in vm.customSelectedFields">
+                <div class="umb-nested-content__item">
+                    <div class="umb-nested-content__header-bar">
+                        <div class="umb-nested-content__heading">
+                            <umb-icon icon="icon-page-down" class="icon"></umb-icon>
+                            <div class="umb-nested-content__item-name --has-icon">
+                                {{field.name}}
+                            </div>
+                        </div>
+                        <div class="umb-nested-content__icons">
+                            <button type="button" class="umb-nested-content__icon umb-nested-content__icon--delete">
+                                <umb-icon icon="icon-trash" class="icon"></umb-icon>
+                                <span class="sr-only">
+                                    <localize key="general_delete">Delete</localize>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <small class="control-description">

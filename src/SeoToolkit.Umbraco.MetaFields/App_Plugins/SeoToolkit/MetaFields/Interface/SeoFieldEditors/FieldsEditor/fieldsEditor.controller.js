@@ -1,9 +1,11 @@
 ﻿(function () {
     "use strict";
 
-    function fieldsEditorController($scope, $http, notificationsService) {
+    function fieldsEditorController($scope, $http, notificationsService, editorState) {
 
         var vm = this;
+
+        console.log($scope);
 
         vm.field = $scope.field;
         vm.hasInheritance = $scope.hasInheritance;
@@ -68,7 +70,7 @@
         }
 
         function getAllContentFields(fields) {
-            return $scope.model.groups.flatMap(function (g) {
+            return editorState.getCurrent().groups.flatMap(function (g) {
                 return g.properties;
             }).filter(function (g) {
                 return fields.includes(g.editor);

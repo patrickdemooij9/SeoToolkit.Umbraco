@@ -14,7 +14,7 @@
             </div>
         </div>
     </div>
-    <div class="control-group umb-control-group" ng-repeat="field in vm.model.fields">
+    <div class="control-group umb-control-group --label-on-top" ng-repeat="field in vm.model.fields">
         <div class="umb-el-wrap">
             <div class="control-header">
                 <label class="control-label">{{field.title}}</label>
@@ -22,7 +22,10 @@
                     {{field.description}}
                 </small>
             </div>
-            <div class="controls">
+            <div class="controls" ng-include="field.editor.view">
+
+
+                <!--
                 <span ng-if="!field.useInheritedValue">{{vm.formatFieldValue(field)}}</span>
                 <b ng-if="field.useInheritedValue">Inherited value</b>
 
@@ -31,6 +34,7 @@
                     <a class="btn" ng-click="vm.toggleUseInheritedValue(field, false)" ng-if="field.useInheritedValue">Override</a>
                     <a class="btn" ng-click="vm.toggleUseInheritedValue(field, true)" ng-if="!field.useInheritedValue && vm.model.inheritance != null">Use inherited</a>
                 </div>
+                    -->
             </div>
         </div>
     </div>
