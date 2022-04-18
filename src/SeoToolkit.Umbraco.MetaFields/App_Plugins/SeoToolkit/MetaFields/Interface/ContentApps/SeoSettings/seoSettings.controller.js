@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    function SeoSettingsController($scope, $routeParams, $rootScope, $http, editorState, notificationsService) {
+    function SeoSettingsController($scope, $routeParams, $rootScope, $http, editorState, notificationsService, eventsService) {
 
         var vm = this;
         vm.loading = true;
@@ -127,13 +127,13 @@
             return false;
         }
 
-
-        $rootScope.$on("app.tabChange",
+        eventsService.on("app.tabChange",
             (e, data) => {
-                if (data.alias !== "metaFieldsSeoSettings") {
+                if (data.alias !== "metaFieldsSeoSettings" || vm.initialized) {
                     return;
                 }
 
+                vm.initialized = true;
                 init();
             });
     }
