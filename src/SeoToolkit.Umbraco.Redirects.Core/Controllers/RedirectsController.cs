@@ -71,9 +71,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             return Ok();
         }
 
-        public IActionResult GetAll(int pageNumber, int pageSize, string search = "")
+        public IActionResult GetAll(int pageNumber, int pageSize, string orderBy = null, string orderDirection = null, string search = "")
         {
-            var redirectsPaged = _redirectsService.GetAll(pageNumber, pageSize, search);
+            var redirectsPaged = _redirectsService.GetAll(pageNumber, pageSize, orderBy, orderDirection, search);
             var viewModels = redirectsPaged.Items.Select(it =>
             {
                 var domain = it.Domain?.Name ?? it.CustomDomain;

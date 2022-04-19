@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Core.Services;
@@ -63,7 +64,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             }
         }
 
-        public IEnumerable<Redirect> GetAll(int pageNumber, int pageSize, out long totalRecords, string search = "")
+        public IEnumerable<Redirect> GetAll(int pageNumber, int pageSize, out long totalRecords, string orderBy = null, string orderDirection = null, string search = "")
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
             {
@@ -78,7 +79,13 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                                                           it.CustomDomain.Contains(search));
                 }
 
-                sql = sql.OrderBy<RedirectEntity>(it => it.Id);
+                // Translate alternative names (from list view) to the correct columns
+                var orderingColumn = GetOrderingColumn(orderBy);
+                
+                // Translate the input to the correct ordering direction. By default ascending is used.
+                sql = "desc".InvariantEquals(orderDirection)
+                    ? sql.OrderByDescending(orderingColumn)
+                    : sql.OrderBy<RedirectEntity>(orderingColumn);
 
                 var result = scope.Database.Page<RedirectEntity>(pageNumber, pageSize, sql);
                 totalRecords = result.TotalItems;
@@ -157,6 +164,20 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
         private void ClearCache()
         {
             _appCaches.RuntimeCache.ClearByKey(BaseCacheKey);
+        }
+
+        private Expression<Func<RedirectEntity, object>> GetOrderingColumn(string orderBy)
+        {
+            if ("name".InvariantEquals(orderBy) || "from".InvariantEquals(orderBy))
+                return entity => entity.OldUrl;
+            
+            if ("to".InvariantEquals(orderBy))
+                return entity => entity.NewUrl;
+            
+            if ("statusCode".InvariantEquals(orderBy))
+                return entity => entity.RedirectCode;
+
+            return entity => entity.Id;
         }
     }
 }
