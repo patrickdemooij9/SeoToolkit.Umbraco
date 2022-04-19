@@ -1,6 +1,9 @@
 (function () {
 
     function SitemapSettingsController($scope, $http, editorState, notificationsService) {
+
+        var unsubscribe = [];
+
         var vm = this;
         vm.loading = false;
 
@@ -71,10 +74,14 @@
             });
         }
 
-        $scope.$on("seoSettingsSubmitting",
+        unsubscribe.push($scope.$on("seoSettingsSubmitting",
             function () {
                 save();
-            });
+            }));
+
+        vm.$onDestroy = function () {
+            unsubscribe.forEach(x => x());
+        }
 
         init();
     }
