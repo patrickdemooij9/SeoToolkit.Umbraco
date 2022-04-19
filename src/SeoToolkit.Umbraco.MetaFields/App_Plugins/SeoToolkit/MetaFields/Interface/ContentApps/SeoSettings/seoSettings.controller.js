@@ -3,6 +3,8 @@
 
     function SeoSettingsController($scope, $routeParams, $rootScope, $http, editorState, notificationsService, eventsService) {
 
+        var unsubscribe = [];
+
         var vm = this;
         vm.loading = true;
         vm.edit = false;
@@ -127,15 +129,18 @@
             return false;
         }
 
-        eventsService.on("app.tabChange",
+        unsubscribe.push(eventsService.on("app.tabChange",
             (e, data) => {
-                if (data.alias !== "metaFieldsSeoSettings" || vm.initialized) {
+                if (data.alias !== "metaFieldsSeoSettings") {
                     return;
                 }
-
-                vm.initialized = true;
+                
                 init();
-            });
+            }));
+
+        vm.$onDestroy = function() {
+            unsubscribe.forEach(x => x());
+        }
     }
 
     angular.module("umbraco").controller("SeoToolkit.ContentApps.MetaFieldsController", SeoSettingsController);
