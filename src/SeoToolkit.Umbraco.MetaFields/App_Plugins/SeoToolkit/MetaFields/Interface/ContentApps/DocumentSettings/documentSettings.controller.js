@@ -80,6 +80,8 @@
 
         $scope.$on("seoSettingsSubmitting",
             function () {
+                $scope.$broadcast("SeoToolkit.SaveField");
+
                 save();
             });
 

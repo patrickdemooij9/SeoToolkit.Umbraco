@@ -1,17 +1,21 @@
 ﻿(function () {
     "use strict";
 
-    function fieldsEditorController($scope, $http, notificationsService, editorState) {
+    function fieldsEditorController($scope, $http, notificationsService, editorState, editorService, eventsService) {
 
         var vm = this;
 
-        console.log($scope);
+        console.log($scope.field);
 
+        //TODO: Check if inheritance works as expected
         vm.field = $scope.field;
         vm.hasInheritance = $scope.hasInheritance;
         vm.customSelectedFields = [];
         vm.customBaseFields = [];
         vm.loading = true;
+
+        vm.removeField = removeField;
+        vm.openFieldPicker = openFieldPicker;
 
         function init() {
 
@@ -45,7 +49,6 @@
                         });
                         if (currentField) {
                             selectedFields.push(d);
-                            return;
                         }
                     }
                     vm.customBaseFields.push(d);
@@ -67,6 +70,34 @@
 
                 vm.loading = false;
             });
+        }
+
+        function openFieldPicker() {
+            console.log(vm.customBaseFields);
+
+            const editor = {
+                title: "Field",
+                view: "/App_Plugins/SeoToolkit/MetaFields/Interface/Components/ItemGroupPicker/itemGroupPicker.html",
+                size: "small",
+                availableItems: vm.customBaseFields.map(function(item) { return item; }),
+                selection: vm.customSelectedFields.map(function(item) { return item; }),
+                submit: model => {
+                    vm.customSelectedFields = model.selection;
+                    editorService.close();
+                },
+                close: function () {
+                    editorService.close();
+                }
+            }
+
+            editorService.open(editor);
+        }
+
+        function removeField(field) {
+            const index = vm.customSelectedFields.indexOf(field);
+            if (index >= 0) {
+                vm.customSelectedFields.splice(index, 1);
+            }
         }
 
         function getAllContentFields(fields) {

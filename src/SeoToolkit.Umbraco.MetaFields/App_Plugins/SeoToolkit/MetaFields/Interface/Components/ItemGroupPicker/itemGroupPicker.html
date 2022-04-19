@@ -1,0 +1,46 @@
+﻿<div ng-controller="SeoToolkit.MetaFields.ItemGroupPickerController as vm">
+    <umb-editor-view>
+        <umb-editor-header name="model.title"
+                           name-locked="true"
+                           hide-alias="true"
+                           hide-icon="true"
+                           hide-description="true">
+        </umb-editor-header>
+        <umb-editor-container>
+            <umb-box>
+                <umb-box-content>
+                    <div class="umb-tree">
+                        <ul>
+                            <li class="umb-tree-item" ng-repeat="item in vm.availableItems">
+                                <div class="umb-tree-item__inner">
+                                    <umb-icon icon="icon-check" class="umb-tree-icon" ng-show="vm.model.selection.includes(item)"></umb-icon>
+                                    <umb-icon icon="icon-autofill" class="umb-tree-icon" ng-show="!vm.model.selection.includes(item)"></umb-icon>
+                                    <a class="umb-tree-item__label" ng-click="vm.selectItem(item)">
+                                        {{item.name}}
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </umb-box-content>
+            </umb-box>
+        </umb-editor-container>
+
+        <umb-editor-footer>
+            <umb-editor-footer-content-right>
+                <umb-button type="button"
+                            button-style="link"
+                            label-key="general_close"
+                            shortcut="esc"
+                            action="vm.close()">
+                </umb-button>
+                <umb-button type="button"
+                            button-style="success"
+                            label-key="general_submit"
+                            state="vm.saveButtonState"
+                            action="vm.submit(model)">
+                </umb-button>
+            </umb-editor-footer-content-right>
+        </umb-editor-footer>
+    </umb-editor-view>
+</div>
