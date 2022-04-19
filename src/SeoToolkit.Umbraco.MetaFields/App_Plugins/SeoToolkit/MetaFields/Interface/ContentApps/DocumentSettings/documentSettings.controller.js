@@ -3,6 +3,8 @@
 
     function ContentAppDocumentSettings($scope, $http, notificationsService, editorService, editorState) {
 
+        var unsubscribe = [];
+
         var vm = this;
 
         vm.loading = true;
@@ -78,10 +80,10 @@
             vm.model.inheritance = null;
         }
 
-        $scope.$on("seoSettingsSubmitting",
+        unsubscribe.push($scope.$on("seoSettingsSubmitting",
             function () {
                 save();
-            });
+            }));
 
         function init() {
             $http.get("backoffice/SeoToolkit/MetaFieldsSettings/Get?nodeId=" + editorState.getCurrent().id).then(function (response) {
@@ -127,6 +129,10 @@
                 return values.join(', ');
             }
             return field.value;
+        }
+
+        vm.$onDestroy = function () {
+            unsubscribe.forEach(x => x());
         }
 
         init();

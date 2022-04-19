@@ -1,7 +1,9 @@
 ﻿(function () {
     "use strict";
 
-    function SeoSettingsController($scope, $routeParams, $rootScope, $http, editorState, notificationsService) {
+    function SeoSettingsController($scope, $routeParams, $rootScope, $http, editorState, notificationsService, eventsService) {
+
+        var unsubscribe = [];
 
         var vm = this;
         vm.loading = true;
@@ -127,15 +129,18 @@
             return false;
         }
 
-
-        $rootScope.$on("app.tabChange",
+        unsubscribe.push(eventsService.on("app.tabChange",
             (e, data) => {
                 if (data.alias !== "metaFieldsSeoSettings") {
                     return;
                 }
-
+                
                 init();
-            });
+            }));
+
+        vm.$onDestroy = function() {
+            unsubscribe.forEach(x => x());
+        }
     }
 
     angular.module("umbraco").controller("SeoToolkit.ContentApps.MetaFieldsController", SeoSettingsController);
