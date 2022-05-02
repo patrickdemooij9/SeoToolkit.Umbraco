@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <SeoToolkitUmbracoSitemapContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\SeoToolkit\Sitemap\**\*.*</SeoToolkitUmbracoSitemapContentFilesPath>
+    <SeoToolkitUmbracoSitemapContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\SeoToolkit\**\*.*</SeoToolkitUmbracoSitemapContentFilesPath>
   </PropertyGroup>
 
   <Target Name="CopySeoToolkitUmbracoSitemapAssets" BeforeTargets="Build">

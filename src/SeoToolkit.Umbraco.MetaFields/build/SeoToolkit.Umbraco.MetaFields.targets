@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <PropertyGroup>
-		<SeoToolkitUmbracoMetaFieldsContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\SeoToolkit\MetaFields\**\*.*</SeoToolkitUmbracoMetaFieldsContentFilesPath>
+		<SeoToolkitUmbracoMetaFieldsContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\SeoToolkit\**\*.*</SeoToolkitUmbracoMetaFieldsContentFilesPath>
     </PropertyGroup>
 
     <Target Name="CopySeoToolkitUmbracoMetaFieldsAssets" BeforeTargets="Build">
