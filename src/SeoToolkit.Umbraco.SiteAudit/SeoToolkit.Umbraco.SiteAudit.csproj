@@ -30,6 +30,8 @@
     <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.1" />
   </ItemGroup>
 
+  <Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" Condition="'$(Configuration)'=='Release'" />
+
   <ItemGroup>
     <ProjectReference Include="..\SeoToolkit.Umbraco.SiteAudit.Core\SeoToolkit.Umbraco.SiteAudit.Core.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
