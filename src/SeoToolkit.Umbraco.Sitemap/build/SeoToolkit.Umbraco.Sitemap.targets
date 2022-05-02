@@ -11,14 +11,14 @@
     <Message Text="Copying SeoToolkit files: $(SeoToolkitUmbracoSitemapContentFilesPath) - #@(SeoToolkitUmbracoSitemapContentFiles->Count()) files"  Importance="high" />
     <Copy
         SourceFiles="@(SeoToolkitUmbracoSitemapContentFiles)"
-        DestinationFiles="@(SeoToolkitUmbracoSitemapContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\SeoToolkit\Sitemap\%(RecursiveDir)%(Filename)%(Extension)')"
+        DestinationFiles="@(SeoToolkitUmbracoSitemapContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\SeoToolkit\%(RecursiveDir)%(Filename)%(Extension)')"
         SkipUnchangedFiles="true" />
 
   </Target>
 
   <Target Name="ClearSeoToolkitUmbracoSitemapAssets" BeforeTargets="Clean">
     <ItemGroup>
-      <SeoToolkitUmbracoSitemapDir Include="$(MSBuildProjectDirectory)\App_Plugins\SeoToolkit\Sitemap\" />
+      <SeoToolkitUmbracoSitemapDir Include="$(MSBuildProjectDirectory)\App_Plugins\SeoToolkit\" />
     </ItemGroup>
     <Message Text="Clear old SeoToolkit Sitemap data"  Importance="high" />
     <RemoveDir Directories="@(SeoToolkitUmbracoSitemapDir)"  />
