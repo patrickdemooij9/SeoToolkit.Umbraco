@@ -1,22 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
     <ContentTargetFolders>.</ContentTargetFolders>
-		<Product>SeoToolkit MetaFields</Product>
-		<PackageId>SeoToolkit.Umbraco.MetaFields</PackageId>
-		<Title>SeoToolkit MetaFields</Title>
-		<Description>An Umbraco plugin to help you with your SEO meta fields.</Description>
+    <Product>SeoToolkit MetaFields</Product>
+    <PackageId>SeoToolkit.Umbraco.MetaFields</PackageId>
+    <Title>SeoToolkit MetaFields</Title>
+    <Description>An Umbraco plugin to help you with your SEO meta fields.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageTags>umbraco plugin package</PackageTags>
-		<RootNamespace>SeoToolkit.Umbraco.MetaFields</RootNamespace>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>SeoToolkit.Umbraco.MetaFields</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
-		<Version>1.0.1</Version>
-	</PropertyGroup>
+    <Version>1.0.2</Version>
+  </PropertyGroup>
 
-	<ItemGroup>
+  <ItemGroup>
     <Content Include="App_Plugins\SeoToolkit\MetaFields\**\*.*">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
@@ -25,11 +25,13 @@
       <Pack>True</Pack>
       <PackagePath>build</PackagePath>
     </None>
-	</ItemGroup>
+  </ItemGroup>
+
+  <Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" Condition="'$(Configuration)'=='Release'" />
 
   <ItemGroup>
-	  <ProjectReference Include="..\SeoToolkit.Umbraco.MetaFields.Core\SeoToolkit.Umbraco.MetaFields.Core.csproj" />
-	  <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
-	</ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco.MetaFields.Core\SeoToolkit.Umbraco.MetaFields.Core.csproj" />
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
+  </ItemGroup>
 
 </Project>
