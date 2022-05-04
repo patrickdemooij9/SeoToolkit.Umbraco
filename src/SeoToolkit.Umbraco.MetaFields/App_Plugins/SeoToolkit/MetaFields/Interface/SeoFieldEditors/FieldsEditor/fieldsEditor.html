@@ -3,7 +3,7 @@
     <umb-load-indicator ng-if="vm.loading"></umb-load-indicator>
     
     <div ng-show="!vm.loading">
-        <div class="umb-nested-content__items">
+        <div class="umb-nested-content__items" ui-sortable="vm.sortableOptions" ng-model="vm.customSelectedFields">
             <div ng-repeat="field in vm.customSelectedFields">
                 <div class="umb-nested-content__item">
                     <div class="umb-nested-content__header-bar">
