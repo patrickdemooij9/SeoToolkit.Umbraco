@@ -1,5 +1,7 @@
 ﻿{
   "javascript": [
     "~/App_Plugins/SeoToolkit/Sitemap/Displays/DocumentType/sitemapSettings.controller.js"
-  ]
+  ],
+  "version": "1.1.0",
+  "name": "SeoToolkit.Umbraco.Sitemap"
 }
