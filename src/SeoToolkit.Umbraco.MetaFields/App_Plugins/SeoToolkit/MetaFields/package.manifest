@@ -1,7 +1,6 @@
 ﻿{
   "javascript": [
     "~/App_Plugins/SeoToolkit/MetaFields/Interface/ContentApps/DocumentSettings/documentSettings.controller.js",
-    "~/App_Plugins/SeoToolkit/MetaFields/Interface/ContentApps/DocumentSettings/Dialog/settingDialog.controller.js",
     "~/App_Plugins/SeoToolkit/MetaFields/Interface/ContentApps/SeoSettings/seoSettings.controller.js",
     "~/App_Plugins/SeoToolkit/MetaFields/Interface/Components/DynamicSelectBox/dynamicSelectBox.controller.js",
     "~/App_Plugins/SeoToolkit/MetaFields/Interface/Previewers/BaseTags/baseTagsFieldPreviewer.controller.js",
