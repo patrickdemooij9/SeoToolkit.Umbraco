@@ -1,15 +1,28 @@
 ﻿(function () {
     "use strict";
 
-    function fieldsEditorController($scope, $http, notificationsService) {
+    function fieldsEditorController($scope, $http, notificationsService, editorState, editorService, eventsService) {
 
         var vm = this;
 
+        //TODO: Check if inheritance works as expected
         vm.field = $scope.field;
         vm.hasInheritance = $scope.hasInheritance;
         vm.customSelectedFields = [];
         vm.customBaseFields = [];
         vm.loading = true;
+        vm.sortableOptions = {
+            axis: "y",
+            containment: "parent",
+            distance: 10,
+            opacity: 0.7,
+            tolerance: "pointer",
+            scroll: true,
+            zIndex: 6000
+        };
+
+        vm.removeField = removeField;
+        vm.openFieldPicker = openFieldPicker;
 
         function init() {
 
@@ -38,12 +51,11 @@
                 });
                 fields.forEach(function (d) {
                     if (vm.field.value) {
-                        const currentField = vm.field.value.find(function(v) {
+                        const currentField = vm.field.value.find(function (v) {
                             return d.value === v.value;
                         });
                         if (currentField) {
                             selectedFields.push(d);
-                            return;
                         }
                     }
                     vm.customBaseFields.push(d);
@@ -67,8 +79,34 @@
             });
         }
 
+        function openFieldPicker() {
+            const editor = {
+                title: "Field",
+                view: "/App_Plugins/SeoToolkit/MetaFields/Interface/Components/ItemGroupPicker/itemGroupPicker.html",
+                size: "small",
+                availableItems: vm.customBaseFields.map(function (item) { return item; }),
+                selection: vm.customSelectedFields.map(function (item) { return item; }),
+                submit: model => {
+                    vm.customSelectedFields = model.selection;
+                    editorService.close();
+                },
+                close: function () {
+                    editorService.close();
+                }
+            }
+
+            editorService.open(editor);
+        }
+
+        function removeField(field) {
+            const index = vm.customSelectedFields.indexOf(field);
+            if (index >= 0) {
+                vm.customSelectedFields.splice(index, 1);
+            }
+        }
+
         function getAllContentFields(fields) {
-            return $scope.model.groups.flatMap(function (g) {
+            return editorState.getCurrent().groups.flatMap(function (g) {
                 return g.properties;
             }).filter(function (g) {
                 return fields.includes(g.editor);

@@ -1,12 +1,13 @@
 ﻿{
   "javascript": [
     "~/App_Plugins/SeoToolkit/MetaFields/Interface/ContentApps/DocumentSettings/documentSettings.controller.js",
-    "~/App_Plugins/SeoToolkit/MetaFields/Interface/ContentApps/DocumentSettings/Dialog/settingDialog.controller.js",
     "~/App_Plugins/SeoToolkit/MetaFields/Interface/ContentApps/SeoSettings/seoSettings.controller.js",
     "~/App_Plugins/SeoToolkit/MetaFields/Interface/Components/DynamicSelectBox/dynamicSelectBox.controller.js",
     "~/App_Plugins/SeoToolkit/MetaFields/Interface/Previewers/BaseTags/baseTagsFieldPreviewer.controller.js",
     "~/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/FieldsEditor/fieldsEditor.controller.js",
-    "~/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/PropertyEditor/propertyEditor.controller.js"
+    "~/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/PropertyEditor/propertyEditor.controller.js",
+    "~/App_Plugins/SeoToolkit/MetaFields/Interface/Components/ItemGroupPicker/itemGroupPicker.controller.js",
+    "~/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/seoFieldEditor.directive.js"
   ],
   "css": [
     "~/App_Plugins/SeoToolkit/MetaFields/css/main.css"

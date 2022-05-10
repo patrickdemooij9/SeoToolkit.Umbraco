@@ -48,27 +48,6 @@
             editorService.contentTypePicker(editor);
         }
 
-        vm.openSettingDialog = function (field) {
-            const editor = {
-                title: "Field",
-                view: "/App_Plugins/SeoToolkit/MetaFields/Interface/ContentApps/DocumentSettings/Dialog/settingDialog.html",
-                size: "small",
-                field: field,
-                hasInheritance: vm.model.inheritance != null,
-                groups: editorState.getCurrent().groups,
-                submit: function (model) {
-                    field = model.field;
-
-                    editorService.close();
-                },
-                close: function () {
-                    editorService.close();
-                }
-            }
-
-            editorService.open(editor);
-        }
-
         vm.toggleUseInheritedValue = function (item, value) {
             item.useInheritedValue = value;
         }
@@ -82,6 +61,8 @@
 
         unsubscribe.push($scope.$on("seoSettingsSubmitting",
             function () {
+                $scope.$broadcast("SeoToolkit.SaveField");
+
                 save();
             }));
 

@@ -1,4 +1,4 @@
-﻿<form ng-controller="SeoToolkit.DocumentSettings.SettingDialogController as vm">
+﻿<div ng-controller="SeoToolkit.MetaFields.ItemGroupPickerController as vm">
     <umb-editor-view>
         <umb-editor-header name="model.title"
                            name-locked="true"
@@ -9,10 +9,18 @@
         <umb-editor-container>
             <umb-box>
                 <umb-box-content>
-                    <div class="control-group umb-control-group">
-                        <div class="umb-el-wrap"
-                             ng-include="model.field.editor.view">
-                        </div>
+                    <div class="umb-tree">
+                        <ul>
+                            <li class="umb-tree-item" ng-repeat="item in vm.availableItems">
+                                <div class="umb-tree-item__inner">
+                                    <umb-icon icon="icon-check" class="umb-tree-icon" ng-show="vm.model.selection.includes(item)"></umb-icon>
+                                    <umb-icon icon="icon-autofill" class="umb-tree-icon" ng-show="!vm.model.selection.includes(item)"></umb-icon>
+                                    <a class="umb-tree-item__label" ng-click="vm.selectItem(item)">
+                                        {{item.name}}
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </umb-box-content>
             </umb-box>
@@ -35,4 +43,4 @@
             </umb-editor-footer-content-right>
         </umb-editor-footer>
     </umb-editor-view>
-</form>
+</div>
