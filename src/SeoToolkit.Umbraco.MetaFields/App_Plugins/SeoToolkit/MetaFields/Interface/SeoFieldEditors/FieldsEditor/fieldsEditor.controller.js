@@ -5,8 +5,6 @@
 
         var vm = this;
 
-        console.log($scope.field);
-
         //TODO: Check if inheritance works as expected
         vm.field = $scope.field;
         vm.hasInheritance = $scope.hasInheritance;

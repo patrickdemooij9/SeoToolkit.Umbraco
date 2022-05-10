@@ -30,6 +30,7 @@
 	<ItemGroup>
 	  <None Remove="App_Plugins\SeoToolkit\MetaFields\Interface\Components\ItemGroupPicker\itemGroupPicker.controller.js" />
 	  <None Remove="App_Plugins\SeoToolkit\MetaFields\Interface\Components\ItemGroupPicker\itemGroupPicker.html" />
+	  <None Remove="App_Plugins\SeoToolkit\MetaFields\Interface\SeoFieldEditors\seoFieldEditor.directive.js" />
 	</ItemGroup>
 
   <ItemGroup>
