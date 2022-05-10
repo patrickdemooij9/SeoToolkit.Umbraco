@@ -27,12 +27,6 @@
     </None>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Remove="App_Plugins\SeoToolkit\MetaFields\Interface\Components\ItemGroupPicker\itemGroupPicker.controller.js" />
-	  <None Remove="App_Plugins\SeoToolkit\MetaFields\Interface\Components\ItemGroupPicker\itemGroupPicker.html" />
-	  <None Remove="App_Plugins\SeoToolkit\MetaFields\Interface\SeoFieldEditors\seoFieldEditor.directive.js" />
-	</ItemGroup>
-
   <ItemGroup>
 	  <ProjectReference Include="..\SeoToolkit.Umbraco.MetaFields.Core\SeoToolkit.Umbraco.MetaFields.Core.csproj" />
 	  <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
