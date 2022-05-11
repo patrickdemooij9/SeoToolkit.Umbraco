@@ -1,13 +1,9 @@
-﻿using System;
-using Microsoft.AspNetCore.Html;
+﻿using Microsoft.AspNetCore.Html;
 using Umbraco.Cms.Core.Composing;
-using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Strings;
-using Umbraco.Extensions;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditors;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
-using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
@@ -24,6 +20,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         {
             var propertyEditor = new SeoFieldPropertyEditor("textbox");
             propertyEditor.SetExtraInformation("You can use %CurrentUrl% to display the URL of the current item");
+            propertyEditor.SetDefaultValue("%CurrentUrl%");
 
             Editor = propertyEditor;
         }

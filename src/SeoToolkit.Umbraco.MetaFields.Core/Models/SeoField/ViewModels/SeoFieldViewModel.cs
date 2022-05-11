@@ -19,6 +19,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels
             Title = field.Title;
             Description = field.Description;
             Editor = new SeoFieldEditorViewModel(field.Editor);
+
+            if (field.Editor is ISeoFieldEditorDefaultValue defaultValueEditor)
+            {
+                Value = defaultValueEditor.GetDefaultValue();
+            }
         }
 
         public SeoFieldViewModel(ISeoField field, object value) : this(field)

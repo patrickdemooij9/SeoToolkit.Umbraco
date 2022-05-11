@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using Umbraco.Cms.Core.Models.PublishedContent;
+﻿using System.Collections.Generic;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 
-namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors
+namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditors
 {
-    public class SeoFieldPropertyEditor : ISeoFieldEditor
+    public class SeoFieldPropertyEditor : ISeoFieldEditor, ISeoFieldEditorDefaultValue
     {
-        private readonly string _propertyView;
         public string View => "/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/PropertyEditor/propertyEditor.html";
 
-        private Dictionary<string, object> _config;
-
-        public Dictionary<string, object> Config => _config;
-
+        public Dictionary<string, object> Config { get; }
         public IEditorValueConverter ValueConverter { get; }
+
+        private object _defaultValue;
 
         public SeoFieldPropertyEditor(string propertyView) : this(propertyView, new TextValueConverter())
         {
@@ -24,18 +20,27 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors
 
         public SeoFieldPropertyEditor(string propertyView, IEditorValueConverter valueConverter)
         {
-            _propertyView = propertyView;
             ValueConverter = valueConverter;
 
-            _config = new Dictionary<string, object>
+            Config = new Dictionary<string, object>
             {
-                {"view", _propertyView}
+                {"view", propertyView}
             };
         }
 
         public void SetExtraInformation(string information)
         {
-            _config["extraInformation"] = information;
+            Config["extraInformation"] = information;
+        }
+
+        public void SetDefaultValue(object value)
+        {
+            _defaultValue = value;
+        }
+
+        public object GetDefaultValue()
+        {
+            return _defaultValue;
         }
     }
 }
