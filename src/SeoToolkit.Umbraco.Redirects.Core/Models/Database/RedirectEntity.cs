@@ -43,5 +43,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Database
 
         [Column("LastUpdated")]
         public DateTime LastUpdated { get; set; }
+        
+        [Column("CreatedBy")]
+        public int CreatedBy { get; set; }
     }
 }

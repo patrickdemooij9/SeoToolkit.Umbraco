@@ -132,6 +132,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 NewNodeId = redirect.NewNode?.Id,
                 NewUrl = redirect.NewUrl,
                 NewNodeCultureId = redirect.NewNodeCulture?.Id,
+                CreatedBy = redirect.CreatedBy,
                 LastUpdated = DateTime.Now,
                 RedirectCode = redirect.RedirectCode
             };
@@ -156,6 +157,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                     NewNodeCulture = entity.NewNodeCultureId is null ? null : _localizationService.GetLanguageById(entity.NewNodeCultureId.Value),
                     NewUrl = entity.NewUrl,
                     LastUpdated = entity.LastUpdated,
+                    CreatedBy = entity.CreatedBy,
                     RedirectCode = entity.RedirectCode
                 };
             }
@@ -176,6 +178,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             
             if ("statusCode".InvariantEquals(orderBy))
                 return entity => entity.RedirectCode;
+
+            if ("lastUpdated".InvariantEquals(orderBy))
+                return entity => entity.LastUpdated;
 
             return entity => entity.Id;
         }
