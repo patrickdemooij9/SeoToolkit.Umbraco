@@ -5,6 +5,7 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Redirects.Core.Extensions;
+using Umbraco.Cms.Core.Models.Membership;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Models.Business
 {
@@ -19,6 +20,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Business
         public IPublishedContent NewNode { get; set; }
         public ILanguage NewNodeCulture { get; set; }
         public DateTime LastUpdated { get; set; }
+        public int CreatedBy { get; set; }
         public int RedirectCode { get; set; }
 
         public string GetNewUrl()

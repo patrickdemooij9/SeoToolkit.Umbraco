@@ -16,7 +16,8 @@
             includeProperties: [
                 { alias: "to", header: "To", allowSorting: true },
                 { alias: "domain", header: "Domain" },
-                { alias: "statusCode", header: "Status Code", allowSorting: true }
+                { alias: "statusCode", header: "Status Code", allowSorting: true },
+                { alias: "lastUpdated", header: "Last Updated", allowSorting: true}
             ]
         };
 
@@ -187,7 +188,8 @@
                     "to": i.NewUrl,
                     "statusCode": i.StatusCode === 301 ? 'Permanent (301)'
                                 : i.StatusCode === 302 ? 'Temporary (302)'
-                                : undefined,
+                            : undefined,
+                    "lastUpdated": i.LastUpdated,
                     "published": true
                 }
             });

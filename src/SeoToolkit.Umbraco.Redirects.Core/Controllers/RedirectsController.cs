@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
@@ -9,6 +10,7 @@ using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using SeoToolkit.Umbraco.Redirects.Core.Models.PostModels;
 using SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels;
+using Umbraco.Cms.Core.Security;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 {
@@ -18,14 +20,17 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         private readonly IRedirectsService _redirectsService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ILocalizationService _localizationService;
+        private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
 
         public RedirectsController(IRedirectsService redirectsService,
             IUmbracoContextFactory umbracoContextFactory,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            IBackOfficeSecurityAccessor backOfficeSecurityAccessor)
         {
             _redirectsService = redirectsService;
             _umbracoContextFactory = umbracoContextFactory;
             _localizationService = localizationService;
+            _backOfficeSecurityAccessor = backOfficeSecurityAccessor;
         }
 
         [HttpPost]
@@ -67,6 +72,16 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
                     return new BadRequestResult();
             }
 
+            if (postModel.Id == 0)
+            {
+                redirect.CreatedBy = -1;
+                var getUserAttempt = _backOfficeSecurityAccessor.BackOfficeSecurity?.GetUserId();
+                if (getUserAttempt?.Success is true)
+                {
+                    redirect.CreatedBy = getUserAttempt.Value.Result;
+                }
+            }
+
             _redirectsService.Save(redirect);
             return Ok();
         }
@@ -85,7 +100,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
                     OldUrl = it.OldUrl,
                     NewUrl = it.GetNewUrl(),
                     Domain = domain,
-                    StatusCode = it.RedirectCode
+                    StatusCode = it.RedirectCode,
+                    LastUpdated = it.LastUpdated.ToShortDateString()
                 };
             });
             return Ok(new PagedResult<RedirectListViewModel>(redirectsPaged.TotalItems, pageNumber, pageSize) { Items = viewModels });

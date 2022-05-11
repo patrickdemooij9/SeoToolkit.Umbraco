@@ -11,6 +11,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
         protected override void DefinePlan()
         {
             To<InitialRedirectsMigration>("state-1");
+            To<CreatedByMigration>("state-2");
         }
     }
 }
