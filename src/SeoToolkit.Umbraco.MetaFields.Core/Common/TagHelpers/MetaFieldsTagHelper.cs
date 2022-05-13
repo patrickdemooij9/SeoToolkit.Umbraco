@@ -1,40 +1,16 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Html;
+﻿using System.ComponentModel;
+using Microsoft.AspNetCore.Mvc.Razor.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Umbraco.Cms.Core.Web;
-using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
+using Microsoft.Extensions.Logging;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.TagHelpers
 {
-    public class MetaFieldsTagHelper : TagHelper
+    [HtmlTargetElement("meta-fields")]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public class MetaFieldsTagHelper : TagHelperComponentTagHelper
     {
-        private readonly IMetaFieldsService _seoService;
-        private readonly IUmbracoContextFactory _umbracoContextFactory;
-
-        public MetaFieldsTagHelper(IMetaFieldsService seoService, IUmbracoContextFactory umbracoContextFactory)
+        public MetaFieldsTagHelper(ITagHelperComponentManager manager, ILoggerFactory loggerFactory) : base(manager, loggerFactory)
         {
-            _seoService = seoService;
-            _umbracoContextFactory = umbracoContextFactory;
-        }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
-            output.TagName = null;
-
-            var stringBuilder = new StringBuilder();
-            var metaTags = _seoService.Get(ctx.UmbracoContext.PublishedRequest.PublishedContent);
-            if (metaTags is null)
-                return;
-            foreach (var (key, value) in metaTags.Fields)
-            {
-                //TODO: We should probably have a special IsEmpty check here?
-                if (string.IsNullOrWhiteSpace(value?.ToString()))
-                    continue;
-                stringBuilder.AppendLine(key.Render(value).ToString());
-            }
-
-            output.PreContent.SetHtmlContent(new HtmlString(stringBuilder.ToString()));
         }
     }
 }

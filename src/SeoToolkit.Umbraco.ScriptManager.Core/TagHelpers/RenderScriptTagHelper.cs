@@ -1,33 +1,16 @@
-﻿using System;
-using System.Text;
-using Microsoft.AspNetCore.Html;
+﻿using System.ComponentModel;
+using Microsoft.AspNetCore.Mvc.Razor.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Umbraco.Extensions;
-using SeoToolkit.Umbraco.ScriptManager.Core.Enums;
-using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
+using Microsoft.Extensions.Logging;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.TagHelpers
 {
-    public class RenderScriptTagHelper : TagHelper
+    [HtmlTargetElement("render-script")]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public class RenderScriptTagHelper : TagHelperComponentTagHelper
     {
-        private readonly IScriptManagerService _scriptManagerService;
-        public ScriptPositionType Position { get; set; }
-
-        public RenderScriptTagHelper(IScriptManagerService scriptManagerService)
+        public RenderScriptTagHelper(ITagHelperComponentManager manager, ILoggerFactory loggerFactory) : base(manager, loggerFactory)
         {
-            _scriptManagerService = scriptManagerService;
-        }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            var stringBuilder = new StringBuilder();
-            foreach (var script in _scriptManagerService.GetRender().Get(Position))
-            {
-                stringBuilder.Append(script.ToHtmlString());
-            }
-
-            output.TagName = null;
-            output.PreContent.SetHtmlContent(new HtmlString(stringBuilder.ToString()));
         }
     }
 }

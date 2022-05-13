@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
@@ -15,6 +16,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.TagHelpers;
 using SeoToolkit.Umbraco.MetaFields.Core.Components;
 using SeoToolkit.Umbraco.MetaFields.Core.Config;
 using SeoToolkit.Umbraco.MetaFields.Core.Config.Models;
@@ -60,6 +62,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.Services.AddTransient(typeof(IMetaFieldsValueService), typeof(MetaFieldsValueService));
             builder.Services.AddTransient(typeof(IMetaFieldsValueRepository), typeof(MetaFieldsDatabaseRepository));
             builder.Services.AddTransient(typeof(IMetaFieldsSettingsService), typeof(MetaFieldsSettingsService));
+            builder.Services.AddTransient<ITagHelperComponent, MetaFieldsTagHelperComponent>();
 
             builder.WithCollectionBuilder<SeoFieldCollectionBuilder>()
                 .Add<SeoTitleField>()

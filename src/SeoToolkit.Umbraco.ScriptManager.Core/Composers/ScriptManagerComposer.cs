@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
@@ -19,6 +20,7 @@ using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.ScriptManager.Core.Repositories;
 using SeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions;
 using SeoToolkit.Umbraco.ScriptManager.Core.Services;
+using SeoToolkit.Umbraco.ScriptManager.Core.TagHelpers;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
 {
@@ -50,6 +52,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
             builder.Services.AddScoped<IScriptRepository, ScriptRepository>();
             builder.Services.AddScoped<IScriptManagerService, ScriptManagerService>();
             builder.Services.AddSingleton<ViewRenderHelper>();
+            builder.Services.AddTransient<ITagHelperComponent, RenderScriptTagHelperComponent>();
         }
     }
 }
