@@ -16,8 +16,11 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
         public void Compose(IUmbracoBuilder builder)
         {
             builder.Sections().Append<SeoToolkitSection>();
+
             builder.Dashboards().Add<WelcomeDashboard>();
+
             builder.ContentApps().Append<SeoSettingsContentAppFactory>();
+            builder.ContentApps().Append<SeoContentAppFactory>();
 
             builder.Services.AddSingleton<ModuleCollection>();
 

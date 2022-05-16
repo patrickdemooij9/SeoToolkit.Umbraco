@@ -5,10 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Mapping;
-using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
-using SeoToolkit.Umbraco.Common.Core.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Interfaces;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
@@ -18,7 +16,6 @@ using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Components;
 using SeoToolkit.Umbraco.MetaFields.Core.Config;
 using SeoToolkit.Umbraco.MetaFields.Core.Config.Models;
-using SeoToolkit.Umbraco.MetaFields.Core.ContentApps;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Mappers;
@@ -50,8 +47,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             }
 
             builder.Components().Append<EnableModuleComponent>();
-
-            builder.ContentApps().Append<MetaFieldsSeoSettingsAppFactory>();
 
             builder.Services.AddTransient(typeof(IRepository<DocumentTypeSettingsDto>), typeof(MetaFieldsSettingsDatabaseRepository));
             builder.Services.AddTransient(typeof(IMetaFieldsSettingsService), typeof(MetaFieldsSettingsService));
@@ -86,6 +81,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             {
                 builder.WithCollectionBuilder<DisplayCollectionBuilder>()
                     .Add<MetaFieldsDocumentSettingsDisplayProvider>();
+
+                builder.WithCollectionBuilder<SeoDisplayCollectionBuilder>()
+                    .Add<MetaFieldsContentDisplayProvider>();
             }
         }
     }

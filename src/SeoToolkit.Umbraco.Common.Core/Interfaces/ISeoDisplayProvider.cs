@@ -1,9 +1,10 @@
 ﻿using SeoToolkit.Umbraco.Common.Core.Models.ViewModels;
+using Umbraco.Cms.Core.Models;
 
 namespace SeoToolkit.Umbraco.Common.Core.Interfaces
 {
-    public interface IDisplayProvider
+    public interface ISeoDisplayProvider
     {
-        SeoDisplayViewModel Get(int contentTypeId);
+        SeoDisplayViewModel Get(IContent content);
     }
 }

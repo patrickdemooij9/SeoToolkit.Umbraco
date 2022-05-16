@@ -1,6 +1,5 @@
 <div ng-controller="SeoToolkit.ContentApps.SeoSettingsController as vm" class="form-horizontal seo-settings">
     <div ng-show="vm.loading === false" ng-hide="model.isElement">
-        
         <div class="umb-editor-tab-bar">
             <ul class="umb-tabs-nav">
                 <li class="umb-tab" ng-class="{'umb-tab--active' : display.active}" ng-repeat="display in vm.displays track by display.alias">

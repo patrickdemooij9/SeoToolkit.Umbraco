@@ -2,12 +2,11 @@
 
 namespace SeoToolkit.Umbraco.Common.Core.Models.ViewModels
 {
-    public class SeoSettingsViewModel
+    public class SeoContentViewModel
     {
-        public bool IsEnabled { get; set; }
         public SeoDisplayViewModel[] Displays { get; set; }
 
-        public SeoSettingsViewModel()
+        public SeoContentViewModel()
         {
             Displays = Array.Empty<SeoDisplayViewModel>();
         }
