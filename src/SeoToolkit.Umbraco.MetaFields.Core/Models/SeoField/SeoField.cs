@@ -9,6 +9,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public abstract string Title { get; }
         public abstract string Alias { get; }
         public abstract string Description { get; }
+        public abstract string GroupAlias { get; }
         public Type FieldType => typeof(T);
         public abstract ISeoFieldEditor Editor { get; }
         public abstract ISeoFieldEditEditor EditEditor { get; }

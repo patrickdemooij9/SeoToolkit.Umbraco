@@ -13,6 +13,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public override string Title => "Canonical Url";
         public override string Alias => SeoFieldAliasConstants.CanonicalUrl;
         public override string Description => "Canonical Url for the content";
+        public override string GroupAlias => SeoFieldGroupConstants.MetaFieldsGroup;
         public override ISeoFieldEditor Editor { get; }
         public override ISeoFieldEditEditor EditEditor => new SeoTextBoxEditEditor();
 

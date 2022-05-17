@@ -13,6 +13,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldGroups;
 using SeoToolkit.Umbraco.MetaFields.Core.Components;
 using SeoToolkit.Umbraco.MetaFields.Core.Config;
 using SeoToolkit.Umbraco.MetaFields.Core.Config.Models;
@@ -84,6 +85,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
 
                 builder.WithCollectionBuilder<SeoDisplayCollectionBuilder>()
                     .Add<MetaFieldsContentDisplayProvider>();
+
+                builder.WithCollectionBuilder<SeoGroupCollectionBuilder>()
+                    .Append<MetaFieldsGroup>()
+                    .Append<OpenGraphFieldsGroup>()
+                    .Append<OthersFieldGroup>();
             }
         }
     }

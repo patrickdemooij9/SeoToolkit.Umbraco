@@ -8,6 +8,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField
         string Title { get; }
         string Alias { get; }
         string Description { get; }
+        string GroupAlias { get; }
         Type FieldType { get; }
         ISeoFieldEditor Editor { get; }
         ISeoFieldEditEditor EditEditor { get; }

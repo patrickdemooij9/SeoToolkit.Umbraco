@@ -3,3 +3,68 @@
     justify-content: space-between;
     margin-left: 0;
 }
+
+.property-fallback-info {
+    color: #515054;
+}
+
+.seo-content .groups {
+    display: flex;
+}
+
+.seo-content .groups .properties{
+    width: 60%;
+    padding-right: 60px;
+}
+
+/* Previewers */
+.seo-content .groups .previews {
+    position: relative;
+}
+
+.seo-content .groups .previews > .preview {
+    position: sticky;
+    top: 60px;
+}
+
+.google-preview {
+    min-height: 120px;
+    max-width: 520px;
+    border-radius: 2px;
+    font-family: arial, sans-serif;
+    zoom: 1;
+}
+
+.google-preview p {
+    margin: 0;
+}
+
+.google-preview h3 {
+    font-size: 20px;
+    line-height: 1.3; 
+    margin: 0;
+    padding: 5px 0 3px 0;
+    font-weight: normal;
+    color: #1a0dab;
+}
+
+.google-preview .link {
+    color: #202124;
+    line-height: 1.3;
+    font-size: 14px;
+}
+
+.google-preview a:hover{
+    text-decoration: none;
+}
+
+.google-preview .description {
+    max-width: 504px;
+    color: #4d5156;
+    font-size: 14px;
+    line-height: 1.58;
+}
+
+.google-review .listing{
+    margin: 23px 0;
+}

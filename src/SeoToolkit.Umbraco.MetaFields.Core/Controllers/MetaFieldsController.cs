@@ -11,10 +11,10 @@ using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsValue.ViewModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldPreviewers;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.PostModels;
-using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.ViewModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
@@ -31,6 +31,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
         private readonly IVariationContextAccessor _variationContextAccessor;
         private readonly ILocalizationService _localizationService;
         private readonly ISeoSettingsService _seoSettingsService;
+        private readonly SeoGroupCollection _groupCollection;
 
         public MetaFieldsController(IMetaFieldsService seoService,
             IMetaFieldsSettingsService documentTypeSettingsService,
@@ -40,7 +41,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             ILogger<MetaFieldsController> logger,
             IVariationContextAccessor variationContextAccessor,
             ILocalizationService localizationService,
-            ISeoSettingsService seoSettingsService)
+            ISeoSettingsService seoSettingsService,
+            SeoGroupCollection groupCollection)
         {
             _seoService = seoService;
             _documentTypeSettingsService = documentTypeSettingsService;
@@ -51,6 +53,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             _variationContextAccessor = variationContextAccessor;
             _localizationService = localizationService;
             _seoSettingsService = seoSettingsService;
+            _groupCollection = groupCollection;
         }
 
         [HttpGet]
@@ -71,6 +74,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
             return new JsonResult(new MetaFieldsSettingsViewModel
             {
+                Groups = _groupCollection.Select(it => new SeoFieldGroupViewModel(it)).ToArray(),
                 Fields = metaTags.Fields.Select(it =>
                 {
                     var (key, value) = it;
@@ -82,6 +86,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                         Alias = key.Alias,
                         Title = key.Title,
                         Description = key.Description,
+                        GroupAlias = key.GroupAlias,
                         Value = value?.ToString(),
                         UserValue = userValue,
                         EditView = key.EditEditor.View,

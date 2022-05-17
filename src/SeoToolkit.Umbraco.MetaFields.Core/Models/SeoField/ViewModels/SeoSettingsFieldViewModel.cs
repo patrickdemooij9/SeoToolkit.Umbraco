@@ -7,6 +7,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels
         public string Alias { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public string GroupAlias { get; set; }
         public string Value { get; set; }
         public object UserValue { get; set; }
         public string EditView { get; set; }

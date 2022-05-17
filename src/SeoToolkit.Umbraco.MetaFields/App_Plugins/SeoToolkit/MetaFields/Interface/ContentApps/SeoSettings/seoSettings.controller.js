@@ -7,12 +7,14 @@
         vm.loading = true;
         vm.edit = false;
 
+        vm.groups = [];
         vm.metaValues = {};
         vm.defaultButtonScope = null;
 
         vm.startEdit = startEdit;
         vm.finishEdit = finishEdit;
         vm.isUrl = isUrl;
+        vm.getFieldsByGroup = getFieldsByGroup;
         vm.culture = $routeParams.cculture ? $routeParams.cculture : $routeParams.mculture;
 
         vm.isContentDirty = function () {
@@ -33,11 +35,8 @@
             }
             $http.get(url).then(
                 function (response) {
-                    if (vm.edit) {
-                        continueEdit(response.data.fields);
-                    } else {
-                        vm.fields = response.data.fields;
-                    }
+                    vm.groups = response.data.groups;
+                    setFields(response.data.fields);
                     vm.loading = false;
                 });
 
@@ -79,18 +78,33 @@
             vm.edit = true;
         }
 
-        function continueEdit(newFields) {
-            var oldFields = vm.fields;
-            vm.fields = newFields;
-            vm.fields.forEach(function(field) {
-                const oldField = oldFields.find(function(f) {
+        function setFields(newFields) {
+            const isInit = vm.fields == null;
+            if (isInit) {
+                vm.fields = [];
+            }
+            newFields.forEach(function(field) {
+                const existingField = vm.fields.find(function (f) {
                     return f.alias === field.alias;
                 });
-                if (!oldField) {
-                    return;
-                }
 
-                field.editModel = oldField.editModel;
+                if (existingField) {
+                    //Update existing field with newest values
+                    existingField.title = field.title;
+                    existingField.description = field.description;
+                    existingField.editConfig = field.editConfig;
+                    existingField.editView = field.editView;
+
+                    //TODO: If values are not changed by user, then use default values
+                } else {
+                    field.editModel = {
+                        view: field.editView,
+                        value: field.userValue,
+                        systemValue: field.value,
+                        config: field.editConfig
+                    };
+                    vm.fields.push(field);
+                }
             });
         }
 
@@ -118,6 +132,12 @@
 
                     notificationsService.success("SEO content saved!");
                 });
+        }
+
+        function getFieldsByGroup(group) {
+            return vm.fields.filter(function(field) {
+                return field.groupAlias === group.alias;
+            });
         }
 
         function isUrl(value) {

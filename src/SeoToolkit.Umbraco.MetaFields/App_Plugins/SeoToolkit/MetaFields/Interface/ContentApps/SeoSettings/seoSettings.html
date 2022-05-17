@@ -4,46 +4,49 @@
         <umb-icon icon="icon-alert" class="medium mr2"></umb-icon>
         <span>Make sure to save/publish your changes to see the updated values here.</span>
     </div>
-
-    <umb-box>
-        <umb-box-header title="SEO settings">
-            <umb-button action="vm.startEdit()"
-                        type="button"
-                        button-style="outline"
-                        label="Edit" ng-if="!vm.edit">
-            </umb-button>
-            <umb-button action="vm.finishEdit()"
-                        type="button"
-                        button-style="outline"
-                        label="Finish" ng-if="vm.edit && !vm.defaultButtonScope">
-            </umb-button>
-        </umb-box-header>
-        <umb-box-content>
-            <div class="umb-property" ng-repeat="field in vm.fields">
-                <div class="control-group umb-control-group">
-                    <div class="umb-el-wrap">
-                        <div class="control-header">
-                            <label class="control-label">{{field.title}}</label>
-                            <small class="control-description">
-                                {{vm.field.description}}
-                            </small>
-                        </div>
-                        <div class="controls">
-                            <div class="umb-property-editor" ng-if="!vm.edit">
-                                <a href="#" ng-href="{{field.value}}" target="_blank" ng-if="vm.isUrl(field.value)">
-                                    {{field.value}}
-                                </a>
-                                <div ng-if="!vm.isUrl(field.value)">
-                                    {{field.value}}
+    
+    <div class="seo-content">
+        <umb-box ng-repeat="group in vm.groups">
+            <umb-box-header title="{{group.name}}" description="{{group.description}}">
+            </umb-box-header>
+            <umb-box-content>
+                <div class="groups">
+                    <div class="properties">
+                        <div class="umb-property" ng-repeat="field in vm.getFieldsByGroup(group)">
+                            <div class="control-group umb-control-group">
+                                <div class="umb-el-wrap">
+                                    <div class="control-header">
+                                        <label class="control-label">{{field.title}}</label>
+                                        <small class="control-description">
+                                            {{vm.field.description}}
+                                        </small>
+                                    </div>
+                                    <div class="controls">
+                                        <umb-property-editor class="umb-property-editor" model="field.editModel">
+                                        </umb-property-editor>
+                                        <small class="property-fallback-info" ng-if="field.value">Fallback value: <strong>{{field.value}}</strong></small>
+                                        <small class="property-fallback-info" ng-if="!field.value">No fallback value found!</small>
+                                    </div>
                                 </div>
                             </div>
-                            <umb-property-editor class="umb-property-editor" model="field.editModel" ng-if="vm.edit">
-
-                            </umb-property-editor>
+                        </div>
+                    </div>
+                    <div class="previews">
+                        <div class="preview">
+                            <!--https://our.umbraco.com/packages/backoffice-extensions/seo-metadata-for-umbraco/-->
+                            <div class="google-preview">
+                                <div class="listing">
+                                    <a>
+                                        <p class="link">https://test.com</p>
+                                        <h3>Test12</h3>
+                                    </a>
+                                    <p class="description">Here some description about this page</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </umb-box-content>
-    </umb-box>
+            </umb-box-content>
+        </umb-box>
+    </div>
 </div>

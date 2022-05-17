@@ -14,6 +14,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Title => "Open Graph Description";
         public string Alias => SeoFieldAliasConstants.OpenGraphDescription;
         public string Description => "Description for Open Graph";
+        public string GroupAlias => SeoFieldGroupConstants.OpenGraphGroup;
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.TextBox", "Umbraco.TextArea" });
