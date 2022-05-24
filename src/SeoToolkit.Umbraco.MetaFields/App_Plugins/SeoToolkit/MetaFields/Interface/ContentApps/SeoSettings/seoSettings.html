@@ -6,13 +6,13 @@
     </div>
     
     <div class="seo-content">
-        <umb-box ng-repeat="group in vm.groups">
+        <umb-box ng-repeat="group in vm.groups" ng-if="group.fields.length > 0">
             <umb-box-header title="{{group.name}}" description="{{group.description}}">
             </umb-box-header>
             <umb-box-content>
                 <div class="groups">
                     <div class="properties">
-                        <div class="umb-property" ng-repeat="field in vm.getFieldsByGroup(group)">
+                        <div class="umb-property" ng-repeat="field in group.fields">
                             <div class="control-group umb-control-group">
                                 <div class="umb-el-wrap">
                                     <div class="control-header">
@@ -32,17 +32,9 @@
                         </div>
                     </div>
                     <div class="previews">
-                        <div class="preview">
-                            <!--https://our.umbraco.com/packages/backoffice-extensions/seo-metadata-for-umbraco/-->
-                            <div class="google-preview">
-                                <div class="listing">
-                                    <a>
-                                        <p class="link">https://test.com</p>
-                                        <h3>Test12</h3>
-                                    </a>
-                                    <p class="description">Here some description about this page</p>
-                                </div>
-                            </div>
+                        <div class="preview" ng-repeat="previewer in group.previewers">
+                            <seo-field-previewer previewer="previewer" fields="group.fields">
+                            </seo-field-previewer>
                         </div>
                     </div>
                 </div>

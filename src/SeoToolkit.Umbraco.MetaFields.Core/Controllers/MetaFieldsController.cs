@@ -9,11 +9,11 @@ using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldPreviewers;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsValue.ViewModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels;
-using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldPreviewers;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.PostModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 
@@ -69,7 +69,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 return NotFound();
             }
 
-            var metaTags = _seoService.Get(content);
+            var metaTags = _seoService.Get(content, false);
             var userValues = _seoValueService.GetUserValues(nodeId);
 
             return new JsonResult(new MetaFieldsSettingsViewModel
@@ -93,7 +93,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                         EditConfig = key.EditEditor.Config
                     };
                 }).ToArray(),
-                Previewers = new[] { new FieldPreviewerViewModel(new BaseTagsFieldPreviewer()) }
+                Previewers = new[] { new FieldPreviewerViewModel(new MetaFieldsPreviewer()) }
             });
         }
 

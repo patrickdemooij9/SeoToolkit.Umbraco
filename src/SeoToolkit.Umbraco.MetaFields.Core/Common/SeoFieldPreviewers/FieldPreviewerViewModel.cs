@@ -1,15 +1,15 @@
 ﻿using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 
-namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldPreviewers
+namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldPreviewers
 {
     public class FieldPreviewerViewModel
     {
-        public string Title { get; set; }
+        public string Group { get; set; }
         public string View { get; set; }
 
         public FieldPreviewerViewModel(ISeoFieldPreviewer model)
         {
-            Title = model.Title;
+            Group = model.Group;
             View = model.View;
         }
     }

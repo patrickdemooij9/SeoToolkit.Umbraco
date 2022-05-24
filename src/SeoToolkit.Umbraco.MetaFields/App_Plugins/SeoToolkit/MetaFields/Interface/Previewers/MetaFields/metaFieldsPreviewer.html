@@ -1,0 +1,12 @@
+﻿<div ng-controller="SeoToolkit.Previewers.MetaFields as vm">
+    <!--https://our.umbraco.com/packages/backoffice-extensions/seo-metadata-for-umbraco/-->
+    <div class="google-preview">
+        <div class="listing">
+            <a href="{{vm.getValue('canonicalUrl')}}">
+                <p class="link">{{vm.getValue('canonicalUrl')}}</p>
+                <h3>{{vm.getValue('title')}}</h3>
+            </a>
+            <p class="description">{{vm.getValue('metaDescription')}}</p>
+        </div>
+    </div>
+</div>

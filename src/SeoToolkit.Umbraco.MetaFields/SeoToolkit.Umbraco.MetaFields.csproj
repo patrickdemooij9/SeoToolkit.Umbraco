@@ -30,6 +30,10 @@
   <Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" Condition="'$(Configuration)'=='Release'" />
 
   <ItemGroup>
+    <None Remove="App_Plugins\SeoToolkit\MetaFields\Interface\Previewers\previewer.directive.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SeoToolkit.Umbraco.MetaFields.Core\SeoToolkit.Umbraco.MetaFields.Core.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
   </ItemGroup>

@@ -3,24 +3,21 @@
 
     function SeoSettingsController($scope, $routeParams, $rootScope, $http, editorState, notificationsService, eventsService) {
 
+        var unsubscribe = [];
+
         var vm = this;
         vm.loading = true;
-        vm.edit = false;
 
         vm.groups = [];
         vm.metaValues = {};
-        vm.defaultButtonScope = null;
 
-        vm.startEdit = startEdit;
-        vm.finishEdit = finishEdit;
         vm.isUrl = isUrl;
-        vm.getFieldsByGroup = getFieldsByGroup;
         vm.culture = $routeParams.cculture ? $routeParams.cculture : $routeParams.mculture;
 
         vm.isContentDirty = function () {
             var currentEditorItem = editorState.getCurrent();
             var isDirty = false;
-            currentEditorItem.variants.forEach(function(variant) {
+            currentEditorItem.variants.forEach(function (variant) {
                 if (variant.isDirty) {
                     isDirty = true;
                 }
@@ -35,87 +32,63 @@
             }
             $http.get(url).then(
                 function (response) {
-                    vm.groups = response.data.groups;
-                    setFields(response.data.fields);
+                    handleResponse(response);
+
                     vm.loading = false;
                 });
-
-            var maxTries = 20;
-            var tries = 0;
-            var currentScope = $scope.$parent;
-            while (!currentScope.hasOwnProperty("defaultButton") && tries <= maxTries) {
-                currentScope = currentScope.$parent;
-                tries++;
-            }
-
-            if (maxTries > tries) {
-                vm.defaultButtonScope = currentScope;
-            }
         }
 
-        function startEdit() {
-            vm.fields.forEach(function (field) {
-                var value = vm.edit ? field.editModel.userValue : field.userValue;
-                field.editModel = {
-                    view: field.editView,
-                    value: value,
-                    config: field.editConfig
-                }
+        function handleResponse(response) {
+            vm.groups = response.data.groups;
+
+            vm.groups.forEach(group => {
+                var fields = response.data.fields.filter(field => {
+                    return field.groupAlias === group.alias;
+                });
+
+                setFields(group, fields);
+                group.previewers = response.data.previewers.filter(function (previewer) {
+                    return previewer.group === group.alias;
+                });
             });
-
-            if (vm.defaultButtonScope) {
-                vm.defaultButtonScope.defaultButton = {
-                    letter: 'S',
-                    labelKey: "metaFields_finish",
-                    handler: finishEdit,
-                    hotKey: "ctrl+s",
-                    hotKeyWhenHidden: true,
-                    alias: "save",
-                    addEllipsis: "true"
-                }
-            }
-
-            vm.edit = true;
         }
 
-        function setFields(newFields) {
-            const isInit = vm.fields == null;
+        function setFields(group, newFields) {
+            const isInit = group.fields == null;
             if (isInit) {
-                vm.fields = [];
+                group.fields = [];
             }
-            newFields.forEach(function(field) {
-                const existingField = vm.fields.find(function (f) {
+            newFields.forEach(function (field) {
+                const existingField = group.fields.find(function (f) {
                     return f.alias === field.alias;
                 });
 
-                if (existingField) {
-                    //Update existing field with newest values
-                    existingField.title = field.title;
-                    existingField.description = field.description;
-                    existingField.editConfig = field.editConfig;
-                    existingField.editView = field.editView;
-
-                    //TODO: If values are not changed by user, then use default values
-                } else {
+                if (!existingField) {
                     field.editModel = {
                         view: field.editView,
                         value: field.userValue,
-                        systemValue: field.value,
                         config: field.editConfig
                     };
-                    vm.fields.push(field);
+                    field.getValue = function () {
+                        return field.editModel.value ? field.editModel.value : field.value;
+                    }
+                    group.fields.push(field);
                 }
             });
         }
 
-        function finishEdit() {
+        function save() {
             $scope.$broadcast("formSubmitting");
 
+            const fields = vm.groups.flatMap(function(group) {
+                return group.fields;
+            });
             const userValues = Object.assign({},
-                ...vm.fields.map(function (field) {
+                ...fields.map(function (field) {
                     return ({ [field.alias]: field.editModel.value });
                 }));
 
+            vm.loading = true;
             $http.post("backoffice/SeoToolkit/MetaFields/Save",
                 {
                     nodeId: editorState.current.id,
@@ -123,21 +96,9 @@
                     culture: vm.culture,
                     userValues: userValues
                 }).then(function (response) {
-                    vm.edit = false;
-                    vm.fields = response.data.fields;
-
-                    if (vm.defaultButtonScope) {
-                        vm.defaultButtonScope.defaultButton = null;
-                    }
-
-                    notificationsService.success("SEO content saved!");
+                    handleResponse(response);
+                    vm.loading = false;
                 });
-        }
-
-        function getFieldsByGroup(group) {
-            return vm.fields.filter(function(field) {
-                return field.groupAlias === group.alias;
-            });
         }
 
         function isUrl(value) {
@@ -146,6 +107,11 @@
             }
             return false;
         }
+
+        unsubscribe.push($scope.$on("seoContentSubmitting",
+            function () {
+                save();
+            }));
 
         init();
     }

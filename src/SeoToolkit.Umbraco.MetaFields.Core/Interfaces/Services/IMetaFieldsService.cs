@@ -8,6 +8,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services
 {
     public interface IMetaFieldsService
     {
-        MetaTagsModel Get(IPublishedContent content);
+        MetaTagsModel Get(IPublishedContent content, bool includeUserValues);
     }
 }

@@ -26,7 +26,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Providers;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.DocumentTypeSettingsRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
-using SeoToolkit.Umbraco.MetaFields.Core.Services.SeoService;
+using SeoToolkit.Umbraco.MetaFields.Core.Services.MetaFieldsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Composers

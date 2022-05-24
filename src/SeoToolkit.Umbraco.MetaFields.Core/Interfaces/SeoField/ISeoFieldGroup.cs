@@ -5,7 +5,5 @@
         string Alias { get; }
         string Name { get; }
         string Description { get; }
-        
-        ISeoFieldPreviewer Previewer { get; }
     }
 }
