@@ -9,6 +9,7 @@
         vm.loading = true;
 
         vm.groups = [];
+        vm.allFields = [];
         vm.metaValues = {};
 
         vm.isUrl = isUrl;
@@ -75,16 +76,17 @@
                     group.fields.push(field);
                 }
             });
+
+            vm.fields = vm.groups.flatMap(function (group) {
+                return group.fields;
+            });
         }
 
         function save() {
             $scope.$broadcast("formSubmitting");
-
-            const fields = vm.groups.flatMap(function(group) {
-                return group.fields;
-            });
+            
             const userValues = Object.assign({},
-                ...fields.map(function (field) {
+                ...vm.fields.map(function (field) {
                     return ({ [field.alias]: field.editModel.value });
                 }));
 

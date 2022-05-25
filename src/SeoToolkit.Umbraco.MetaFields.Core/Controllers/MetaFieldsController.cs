@@ -93,7 +93,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                         EditConfig = key.EditEditor.Config
                     };
                 }).ToArray(),
-                Previewers = new[] { new FieldPreviewerViewModel(new MetaFieldsPreviewer()) }
+                Previewers = new[] { new FieldPreviewerViewModel(new MetaFieldsPreviewer()), new FieldPreviewerViewModel(new OpenGraphPreviewer()) }
             });
         }
 

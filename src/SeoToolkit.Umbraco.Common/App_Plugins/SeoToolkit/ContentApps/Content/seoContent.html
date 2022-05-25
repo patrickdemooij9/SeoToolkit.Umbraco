@@ -3,7 +3,7 @@
         <div class="umb-editor-tab-bar">
             <ul class="umb-tabs-nav">
                 <li class="umb-tab" ng-class="{'umb-tab--active' : display.active}" ng-repeat="display in vm.displays track by display.alias">
-                    <button class="umb-tab-button btn-reset" ng-click="vm.setActive(display)">{{display.name}}</button>
+                    <button type="button" class="umb-tab-button btn-reset" ng-click="vm.setActive(display)">{{display.name}}</button>
                 </li>
             </ul>
         </div>

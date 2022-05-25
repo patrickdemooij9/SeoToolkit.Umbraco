@@ -68,3 +68,72 @@
 .google-review .listing{
     margin: 23px 0;
 }
+
+.open-graph-previewer .umb-editor-tab-bar {
+    box-shadow: 0px 1px 0 #e9e9eb;
+}
+
+.facebook-previewer .card {
+    width: 300px;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.facebook-previewer .card-image {
+    height: 157px;
+}
+
+.facebook-previewer .card-text {
+    padding: 10px 12px;
+    margin: 0;
+    font-size: 14px;
+    color: #4b4f56;
+    background-color: #f2f3f5;
+    border-left: 1px solid #dadde1;
+    border-right: 1px solid #dadde1;
+    border-bottom: 1px solid #dadde1;
+}
+
+.facebook-previewer .card-content {
+    max-height: 46px;
+    overflow: hidden;
+}
+
+.facebook-previewer .card-subtitle {
+    color: #606770;
+    flex-shrink: 0;
+    font-size: 12px;
+    line-height: 16px;
+    overflow: hidden;
+    padding: 0;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.facebook-previewer .card-title {
+    font-weight: 600;
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 20px;
+    margin: 3px 0 0;
+    padding-top: 2px;
+    color: #1d2129;
+}
+
+.facebook-previewer .card-description {
+    margin: 3px 0 0 0;
+    color: #606770;
+    font-size: 14px;
+    line-height: 20px;
+    word-break: break-word;
+    max-height: 80px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: normal;
+    -webkit-line-clamp: 1;
+    border-collapse: collapse;
+    display: -webkit-box;
+    overflow-wrap: break-word;
+    -webkit-box-orient: vertical;
+}

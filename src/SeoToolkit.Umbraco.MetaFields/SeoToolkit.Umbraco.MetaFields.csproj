@@ -30,6 +30,8 @@
   <Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" Condition="'$(Configuration)'=='Release'" />
 
   <ItemGroup>
+    <None Remove="App_Plugins\SeoToolkit\MetaFields\Interface\Previewers\OpenGraph\openGraphPreviewer.controller.js" />
+    <None Remove="App_Plugins\SeoToolkit\MetaFields\Interface\Previewers\OpenGraph\openGraphPreviewer.html" />
     <None Remove="App_Plugins\SeoToolkit\MetaFields\Interface\Previewers\previewer.directive.js" />
   </ItemGroup>
 
