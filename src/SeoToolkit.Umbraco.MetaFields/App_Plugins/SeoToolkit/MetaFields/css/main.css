@@ -137,3 +137,117 @@
     overflow-wrap: break-word;
     -webkit-box-orient: vertical;
 }
+
+.twitter-previewer .card {
+    width: 300px;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid #e1e8ed;
+    background: #fff;
+    font-family: TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.3em;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.twitter-previewer .card-image {
+    height: 145px;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.twitter-previewer .card-text {
+    padding: 12px;
+    margin: 0;
+    background-color: white;
+    gap: 2px;
+    -webkit-box-pack: center;
+    justify-content: center;
+    display: flex;
+    flex-basis: auto;
+    flex-direction: column;
+}
+
+.twitter-previewer .card-subtitle {
+    overflow-wrap: break-word;
+    color: rgb(83, 100, 113);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    min-width: 0px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.twitter-previewer .card-title {
+    overflow-wrap: break-word;
+    color: rgb(15, 20, 25);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    min-width: 0px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.twitter-previewer .card-description {
+    color: rgb(83, 100, 113);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 20px;
+    min-width: 0px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+}
+
+.linkedin-previewer .card {
+    width: 300px;
+    overflow: hidden;
+    margin: 0;
+    background-color: #eef3f8;
+}
+
+.linkedin-previewer .card-image {
+    height: 187px;
+}
+
+.linkedin-previewer .card-text {
+    padding: 8px 12px;
+}
+
+.linkedin-previewer .card-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    max-height: 4rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: rgba(0,0,0,0.9);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 20px;
+}
+
+.linkedin-previewer .card-subtitle {
+    margin-top: 8px;
+    max-height: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: rgba(0,0,0,0.6);
+    font-size: 0.8rem;
+    font-weight: 400;
+    margin: 0;
+    line-height: 16px;
+}
