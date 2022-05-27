@@ -1,6 +1,6 @@
 ﻿namespace SeoToolkit.Umbraco.Common.Core.Models.ViewModels
 {
-    public class SeoSettingsDisplayViewModel
+    public class SeoDisplayViewModel
     {
         public string Alias { get; set; }
         public string Name { get; set; }

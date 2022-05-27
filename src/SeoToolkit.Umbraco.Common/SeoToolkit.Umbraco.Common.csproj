@@ -34,4 +34,9 @@
       <PackagePath>build</PackagePath>
     </None>
   </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="App_Plugins\SeoToolkit\ContentApps\Content\seoContent.controller.js" />
+    <None Remove="App_Plugins\SeoToolkit\ContentApps\Content\seoContent.html" />
+  </ItemGroup>
 </Project>

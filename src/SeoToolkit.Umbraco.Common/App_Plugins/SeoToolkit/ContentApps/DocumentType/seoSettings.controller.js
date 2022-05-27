@@ -37,7 +37,7 @@
                         vm.displays = response.data.displays;
                         vm.displays[0].active = true;
 
-                        vm.loading = true;
+                        vm.loading = false;
                     }
                 });
         }

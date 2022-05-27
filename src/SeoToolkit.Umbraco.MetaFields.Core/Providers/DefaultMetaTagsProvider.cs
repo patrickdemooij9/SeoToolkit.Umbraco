@@ -43,7 +43,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
             _seoSettingsService = seoSettingsService;
         }
 
-        public MetaTagsModel Get(IPublishedContent content)
+        public MetaTagsModel Get(IPublishedContent content, bool includeUserValues)
         {
             using (_profiler.Step("Get MetaTags"))
             {
@@ -58,7 +58,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                     return null;
                 if (_seoSettingsService.IsEnabled(content.ContentType.Id) != true)
                     return null;
-                var userValues = _seoValueService.GetUserValues(content.Id);
+                var userValues = includeUserValues ? _seoValueService.GetUserValues(content.Id) : null;
                 var fields = allFields.Select(it =>
                 {
                     if (metaTags.GetValue<object>(it.Alias) != null)
@@ -94,7 +94,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                     if (intermediateObject is null)
                         return new SeoValue(it, null);
                     var converter = _seoConverterCollection.GetConverter(intermediateObject.GetType(), it.FieldType);
-                    if (!(converter is null))
+                    if (converter is not null)
                         return new SeoValue(it, converter.Convert(intermediateObject, content, it.Alias));
 
                     _logger.LogWarning("No converter found for conversion {0} to {1}", intermediateObject.GetType(), it.FieldType);

@@ -1,9 +1,9 @@
-﻿using Umbraco.Cms.Core.Models.PublishedContent;
-using SeoToolkit.Umbraco.MetaFields.Core.Interfaces;
+﻿using SeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoService;
+using Umbraco.Cms.Core.Models.PublishedContent;
 
-namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoService
+namespace SeoToolkit.Umbraco.MetaFields.Core.Services.MetaFieldsService
 {
     public class MetaFieldsService : IMetaFieldsService
     {
@@ -14,9 +14,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoService
             _metaTagsProvider = metaTagsProvider;
         }
 
-        public MetaTagsModel Get(IPublishedContent content)
+        public MetaTagsModel Get(IPublishedContent content, bool includeUserValues)
         {
-            return _metaTagsProvider.Get(content);
+            return _metaTagsProvider.Get(content, includeUserValues);
         }
     }
 }

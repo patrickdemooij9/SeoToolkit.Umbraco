@@ -7,9 +7,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders
     [Weight(100)]
     public class MetaFieldsDocumentSettingsDisplayProvider : IDisplayProvider
     {
-        public SeoSettingsDisplayViewModel Get(int contentTypeId)
+        public SeoDisplayViewModel Get(int contentTypeId)
         {
-            return new SeoSettingsDisplayViewModel
+            return new SeoDisplayViewModel
             {
                 Alias = "metaFields",
                 Name = "Meta Fields",

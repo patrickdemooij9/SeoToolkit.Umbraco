@@ -7,9 +7,9 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.DisplayProviders
     [Weight(200)]
     public class SitemapDocumentTypeDisplayProvider : IDisplayProvider
     {
-        public SeoSettingsDisplayViewModel Get(int contentTypeId)
+        public SeoDisplayViewModel Get(int contentTypeId)
         {
-            return new SeoSettingsDisplayViewModel
+            return new SeoDisplayViewModel
             {
                 Alias = "sitemap",
                 Name = "Sitemap",

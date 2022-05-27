@@ -7,20 +7,18 @@
 
         var vm = this;
         vm.loading = true;
-        vm.edit = false;
 
+        vm.groups = [];
+        vm.allFields = [];
         vm.metaValues = {};
-        vm.defaultButtonScope = null;
 
-        vm.startEdit = startEdit;
-        vm.finishEdit = finishEdit;
         vm.isUrl = isUrl;
         vm.culture = $routeParams.cculture ? $routeParams.cculture : $routeParams.mculture;
 
         vm.isContentDirty = function () {
             var currentEditorItem = editorState.getCurrent();
             var isDirty = false;
-            currentEditorItem.variants.forEach(function(variant) {
+            currentEditorItem.variants.forEach(function (variant) {
                 if (variant.isDirty) {
                     isDirty = true;
                 }
@@ -35,75 +33,64 @@
             }
             $http.get(url).then(
                 function (response) {
-                    if (vm.edit) {
-                        continueEdit(response.data.fields);
-                    } else {
-                        vm.fields = response.data.fields;
-                    }
+                    handleResponse(response);
+
                     vm.loading = false;
                 });
-
-            var maxTries = 20;
-            var tries = 0;
-            var currentScope = $scope.$parent;
-            while (!currentScope.hasOwnProperty("defaultButton") && tries <= maxTries) {
-                currentScope = currentScope.$parent;
-                tries++;
-            }
-
-            if (maxTries > tries) {
-                vm.defaultButtonScope = currentScope;
-            }
         }
 
-        function startEdit() {
-            vm.fields.forEach(function (field) {
-                var value = vm.edit ? field.editModel.userValue : field.userValue;
-                field.editModel = {
-                    view: field.editView,
-                    value: value,
-                    config: field.editConfig
-                }
+        function handleResponse(response) {
+            vm.groups = response.data.groups;
+
+            vm.groups.forEach(group => {
+                var fields = response.data.fields.filter(field => {
+                    return field.groupAlias === group.alias;
+                });
+
+                setFields(group, fields);
+                group.previewers = response.data.previewers.filter(function (previewer) {
+                    return previewer.group === group.alias;
+                });
             });
-
-            if (vm.defaultButtonScope) {
-                vm.defaultButtonScope.defaultButton = {
-                    letter: 'S',
-                    labelKey: "metaFields_finish",
-                    handler: finishEdit,
-                    hotKey: "ctrl+s",
-                    hotKeyWhenHidden: true,
-                    alias: "save",
-                    addEllipsis: "true"
-                }
-            }
-
-            vm.edit = true;
         }
 
-        function continueEdit(newFields) {
-            var oldFields = vm.fields;
-            vm.fields = newFields;
-            vm.fields.forEach(function(field) {
-                const oldField = oldFields.find(function(f) {
+        function setFields(group, newFields) {
+            const isInit = group.fields == null;
+            if (isInit) {
+                group.fields = [];
+            }
+            newFields.forEach(function (field) {
+                const existingField = group.fields.find(function (f) {
                     return f.alias === field.alias;
                 });
-                if (!oldField) {
-                    return;
-                }
 
-                field.editModel = oldField.editModel;
+                if (!existingField) {
+                    field.editModel = {
+                        view: field.editView,
+                        value: field.userValue,
+                        config: field.editConfig
+                    };
+                    field.getValue = function () {
+                        return field.editModel.value ? field.editModel.value : field.value;
+                    }
+                    group.fields.push(field);
+                }
+            });
+
+            vm.fields = vm.groups.flatMap(function (group) {
+                return group.fields;
             });
         }
 
-        function finishEdit() {
+        function save() {
             $scope.$broadcast("formSubmitting");
-
+            
             const userValues = Object.assign({},
                 ...vm.fields.map(function (field) {
                     return ({ [field.alias]: field.editModel.value });
                 }));
 
+            vm.loading = true;
             $http.post("backoffice/SeoToolkit/MetaFields/Save",
                 {
                     nodeId: editorState.current.id,
@@ -111,14 +98,8 @@
                     culture: vm.culture,
                     userValues: userValues
                 }).then(function (response) {
-                    vm.edit = false;
-                    vm.fields = response.data.fields;
-
-                    if (vm.defaultButtonScope) {
-                        vm.defaultButtonScope.defaultButton = null;
-                    }
-
-                    notificationsService.success("SEO settings saved!");
+                    handleResponse(response);
+                    vm.loading = false;
                 });
         }
 
@@ -129,18 +110,12 @@
             return false;
         }
 
-        unsubscribe.push(eventsService.on("app.tabChange",
-            (e, data) => {
-                if (data.alias !== "metaFieldsSeoSettings") {
-                    return;
-                }
-                
-                init();
+        unsubscribe.push($scope.$on("seoContentSubmitting",
+            function () {
+                save();
             }));
 
-        vm.$onDestroy = function() {
-            unsubscribe.forEach(x => x());
-        }
+        init();
     }
 
     angular.module("umbraco").controller("SeoToolkit.ContentApps.MetaFieldsController", SeoSettingsController);

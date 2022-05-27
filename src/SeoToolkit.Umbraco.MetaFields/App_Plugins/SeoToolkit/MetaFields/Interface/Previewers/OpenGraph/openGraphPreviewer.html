@@ -1,0 +1,60 @@
+﻿<div ng-controller="SeoToolkit.Previewers.OpenGraph as vm">
+    <div class="open-graph-previewer">
+        <div class="umb-editor-tab-bar">
+            <ul class="umb-tabs-nav">
+                <li class="umb-tab" ng-class="{'umb-tab--active' : vm.currentTab == 'facebook'}">
+                    <button type="button" class="umb-tab-button btn-reset" ng-click="vm.setCurrentTab('facebook')">Facebook</button>
+                </li>
+                <li class="umb-tab" ng-class="{'umb-tab--active' : vm.currentTab == 'twitter'}">
+                    <button type="button" class="umb-tab-button btn-reset" ng-click="vm.setCurrentTab('twitter')">Twitter</button>
+                </li>
+                <li class="umb-tab" ng-class="{'umb-tab--active' : vm.currentTab == 'linkedIn'}">
+                    <button type="button" class="umb-tab-button btn-reset" ng-click="vm.setCurrentTab('linkedIn')">LinkedIn</button>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="previewers">
+            <div class="facebook-previewer" ng-if="vm.currentTab == 'facebook'">
+                <div class="card">
+                    <div class="card-image" ng-style="{'background-image':'url('+vm.image+'?width=300)'}">
+                    </div>
+                    <div class="card-text">
+                        <p class="card-subtitle">{{vm.getDomain()}}</p>
+                        <div class="card-content">
+                            <div class="card-title">{{vm.title}}</div>
+                            <div class="card-description">
+                                {{vm.description}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="twitter-previewer" ng-if="vm.currentTab == 'twitter'">
+                <div class="card">
+                    <div class="card-image" ng-style="{'background-image':'url('+vm.image+'?width=300)'}">
+                    </div>
+                    <div class="card-text">
+                        <p class="card-subtitle">{{vm.getDomain()}}</p>
+                        <div class="card-content">
+                            <div class="card-title">{{vm.title}}</div>
+                            <div class="card-description">
+                                {{vm.description}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="linkedin-previewer" ng-if="vm.currentTab == 'linkedIn'">
+                <div class="card">
+                    <div class="card-image" ng-style="{'background-image':'url('+vm.image+'?width=300)'}">
+                    </div>
+                    <div class="card-text">
+                        <h2 class="card-title">{{vm.title}}</h2>
+                        <h3 class="card-subtitle">{{vm.getDomain()}}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

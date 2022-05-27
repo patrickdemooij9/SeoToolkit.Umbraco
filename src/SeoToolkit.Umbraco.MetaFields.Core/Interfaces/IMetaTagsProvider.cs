@@ -8,6 +8,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Interfaces
     {
         event EventHandler<MetaTagsModel> BeforeMetaTagsGet;
 
-        MetaTagsModel Get(IPublishedContent content);
+        MetaTagsModel Get(IPublishedContent content, bool includeUserValues);
     }
 }

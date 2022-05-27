@@ -1,0 +1,14 @@
+﻿<div ng-controller="SeoToolkit.ContentApps.SeoContentController as vm" class="form-horizontal">
+    <div ng-show="vm.loading === false">
+        <div class="umb-editor-tab-bar">
+            <ul class="umb-tabs-nav">
+                <li class="umb-tab" ng-class="{'umb-tab--active' : display.active}" ng-repeat="display in vm.displays track by display.alias">
+                    <button type="button" class="umb-tab-button btn-reset" ng-click="vm.setActive(display)">{{display.name}}</button>
+                </li>
+            </ul>
+        </div>
+
+        <umb-editor-sub-views sub-views="vm.displays">
+        </umb-editor-sub-views>
+    </div>
+</div>
