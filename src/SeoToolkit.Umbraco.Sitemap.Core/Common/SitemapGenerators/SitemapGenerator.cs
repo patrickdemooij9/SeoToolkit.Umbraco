@@ -8,7 +8,9 @@ using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
+using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
+using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
@@ -18,6 +20,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISitemapService _sitemapService;
         private readonly IPublicAccessService _publicAccessService;
+        private readonly IEventAggregator _eventAggregator;
         private readonly SitemapConfig _settings;
 
         private List<string> _validAlternateCultures;
@@ -29,11 +32,13 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
         public SitemapGenerator(IUmbracoContextFactory umbracoContextFactory,
             ISettingsService<SitemapConfig> settingsService,
             ISitemapService sitemapService,
-            IPublicAccessService publicAccessService)
+            IPublicAccessService publicAccessService,
+            IEventAggregator eventAggregator)
         {
             _umbracoContextFactory = umbracoContextFactory;
             _sitemapService = sitemapService;
             _publicAccessService = publicAccessService;
+            _eventAggregator = eventAggregator;
             _settings = settingsService.GetSettings();
 
             _pageTypeSettings = new Dictionary<int, SitemapPageSettings>();
@@ -59,7 +64,13 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                     {
                         _validAlternateCultures.AddRange(ctx.UmbracoContext.Domains.GetAssigned(node.Root().Id).Select(it => it.Culture));
                     }
-                    rootNamespace.Add(GetSelfAndChildren(node, options.Culture));
+
+                    var items = GetSelfAndChildren(node, options.Culture);
+
+                    _eventAggregator.Publish(new GenerateSitemapNotification(items));
+
+                    rootNamespace.Add(ToXmlElements(items));
+
                     if (_settings.ShowAlternatePages)
                         _validAlternateCultures.Clear();
                 }
@@ -68,54 +79,45 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             return new XDocument(rootNamespace);
         }
 
-        private IEnumerable<XElement> GetSelfAndChildren(IPublishedContent content, string culture)
+        private List<SitemapNodeItem> GetSelfAndChildren(IPublishedContent content, string culture)
         {
-            var items = new List<XElement>();
+            var items = new List<SitemapNodeItem>();
 
             //Only show item if it actually has an template, so we don't index data objects and such
             if (content.TemplateId > 0 && !_publicAccessService.IsProtected(content.Path))
             {
                 var settings = GetPageTypeSettings(content.ContentType.Id);
+
+                var item = new SitemapNodeItem(content.Url(culture, UrlMode.Absolute))
+                {
+                    HideFromSitemap = settings?.HideFromSitemap is true
+                };
+
                 if (settings is null || !settings.HideFromSitemap)
                 {
-                    var hasChangeFrequency = false;
-                    var hasPriority = false;
-
-                    var selfItem = new XElement(_namespace + "url");
-                    selfItem.Add(new XElement(_namespace + "loc", content.Url(culture, UrlMode.Absolute)));
-
-                    if (!string.IsNullOrWhiteSpace(_settings.LastModifiedFieldAlias) && HasValue(content, _settings.LastModifiedFieldAlias, culture))
-                    {
-                        selfItem.Add(new XElement(_namespace + "lastmod", Value<DateTime>(content, _settings.LastModifiedFieldAlias, culture).ToString("yyyy-MM-dd")));
-                    }
-                    else
-                    {
-                        selfItem.Add(new XElement(_namespace + "lastmod", content.UpdateDate.ToString("yyyy-MM-dd")));
-                    }
+                    if (!string.IsNullOrWhiteSpace(_settings.LastModifiedFieldAlias) && HasValue(content, _settings.LastModifiedFieldAlias, culture)) 
+                        item.LastModifiedDate = Value<DateTime>(content, _settings.LastModifiedFieldAlias, culture);
+                    else 
+                        item.LastModifiedDate = content.UpdateDate;
+                    
 
                     if (settings != null)
                     {
                         if (!string.IsNullOrWhiteSpace(settings.ChangeFrequency))
-                        {
-                            selfItem.Add(new XElement(_namespace + "changefreq", settings.ChangeFrequency));
-                            hasChangeFrequency = true;
-                        }
+                            item.ChangeFrequency = settings.ChangeFrequency;
 
                         if (settings.Priority != null)
-                        {
-                            selfItem.Add(new XElement(_namespace + "priority", settings.Priority));
-                            hasPriority = true;
-                        }
+                            item.Priority = settings.Priority;
                     }
 
-                    if (!hasChangeFrequency && !string.IsNullOrWhiteSpace(_settings.ChangeFrequencyFieldAlias) && HasValue(content, _settings.ChangeFrequencyFieldAlias, culture))
+                    if (string.IsNullOrWhiteSpace(item.ChangeFrequency) && !string.IsNullOrWhiteSpace(_settings.ChangeFrequencyFieldAlias) && HasValue(content, _settings.ChangeFrequencyFieldAlias, culture))
                     {
-                        selfItem.Add(new XElement(_namespace + "changefreq", Value<string>(content, _settings.ChangeFrequencyFieldAlias, culture)));
+                        item.ChangeFrequency = Value<string>(content, _settings.ChangeFrequencyFieldAlias, culture);
                     }
 
-                    if (!hasPriority && !string.IsNullOrWhiteSpace(_settings.PriorityFieldAlias) && HasValue(content, _settings.PriorityFieldAlias, culture))
+                    if (item.Priority is null && !string.IsNullOrWhiteSpace(_settings.PriorityFieldAlias) && HasValue(content, _settings.PriorityFieldAlias, culture))
                     {
-                        selfItem.Add(new XElement(_namespace + "priority", Value<decimal>(content, _settings.PriorityFieldAlias, culture)));
+                        item.Priority = Value<double?>(content, _settings.PriorityFieldAlias, culture);
                     }
 
                     if (_settings.ShowAlternatePages)
@@ -125,15 +127,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                         {
                             foreach (var additionalCulture in cultures)
                             {
-                                selfItem.Add(new XElement(_xHtmlNamespace + "link",
-                                    new XAttribute("rel", "alternate"),
-                                    new XAttribute("hreflang", additionalCulture.Key),
-                                    new XAttribute("href", content.Url(additionalCulture.Key, UrlMode.Absolute))));
+                                item.AlternatePages.Add(new SitemapNodeAlternatePage(content.Url(additionalCulture.Key, UrlMode.Absolute), additionalCulture.Key));
                             }
                         }
                     }
 
-                    items.Add(selfItem);
+                    _eventAggregator.Publish(new GenerateSitemapNodeNotification(item));
+
+                    items.Add(item);
                 }
             }
 
@@ -141,6 +142,37 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             {
                 items.AddRange(GetSelfAndChildren(child, culture));
             }
+            return items;
+        }
+
+        private IEnumerable<XElement> ToXmlElements(IEnumerable<SitemapNodeItem> nodes)
+        {
+            var items = new List<XElement>();
+
+            foreach (var node in nodes)
+            {
+                if (node.HideFromSitemap) continue;
+
+                var selfItem = new XElement(_namespace + "url");
+                selfItem.Add(new XElement(_namespace + "loc", node.Url));
+                if (node.LastModifiedDate != null)
+                    selfItem.Add(new XElement(_namespace + "lastmod", node.LastModifiedDate.Value.ToString("yyyy-MM-dd")));
+                if (!string.IsNullOrWhiteSpace(node.ChangeFrequency))
+                    selfItem.Add(new XElement(_namespace + "changefreq", node.ChangeFrequency));
+                if (node.Priority != null)
+                    selfItem.Add(new XElement(_namespace + "priority", node.Priority));
+
+                foreach (var alternatePage in node.AlternatePages)
+                {
+                    selfItem.Add(new XElement(_xHtmlNamespace + "link",
+                        new XAttribute("rel", "alternate"),
+                        new XAttribute("hreflang", alternatePage.Culture),
+                        new XAttribute("href", alternatePage.Url)));
+                }
+
+                items.Add(selfItem);
+            }
+
             return items;
         }
 
