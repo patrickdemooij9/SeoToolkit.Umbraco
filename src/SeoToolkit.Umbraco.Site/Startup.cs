@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SeoToolkit.Umbraco.Site.ExampleCode;
+using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
 
@@ -43,6 +45,8 @@ namespace SeoToolkit.Umbraco.Site
                 .AddBackOffice()
                 .AddWebsite()
                 .AddComposers()
+                .AddNotificationHandler<GenerateSitemapNodeNotification, ExampleSitemapNodeNotification>()
+                .AddNotificationHandler<GenerateSitemapNotification, ExampleSitemapNotification>()
                 .Build();
 #pragma warning restore IDE0022 // Use expression body for methods
 
