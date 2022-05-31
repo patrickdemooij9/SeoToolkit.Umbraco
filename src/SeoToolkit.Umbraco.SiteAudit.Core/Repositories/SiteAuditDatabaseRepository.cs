@@ -5,7 +5,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using NPoco;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Extensions;
@@ -13,6 +12,7 @@ using SeoToolkit.Umbraco.SiteAudit.Core.Enums;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.Business;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.Database;
+using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Repositories
 {

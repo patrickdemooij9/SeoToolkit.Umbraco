@@ -1,9 +1,9 @@
 ﻿using System;
-using Umbraco.Cms.Core.Scoping;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Database;
+using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Repositories
 {

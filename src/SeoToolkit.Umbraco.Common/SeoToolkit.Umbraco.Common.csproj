@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ContentTargetFolders>.</ContentTargetFolders>
     <Product>SeoToolkit Common</Product>
     <PackageId>SeoToolkit.Umbraco.Common</PackageId>
@@ -16,8 +16,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.0.1" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.1" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0-rc4" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.0.0-rc4" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <DefaultItemExcludes>$(DefaultItemExcludes);App_Plugins/**;</DefaultItemExcludes>
     <DefaultItemExcludes>$(DefaultItemExcludes);umbraco/**;</DefaultItemExcludes>
     <DefaultItemExcludes>$(DefaultItemExcludes);wwwroot/media/**;</DefaultItemExcludes>
@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms" Version="9.0.1" />
+    <PackageReference Include="Umbraco.Cms" Version="10.0.0-rc4" />
   </ItemGroup>
 
 
@@ -23,15 +23,13 @@
   <ItemGroup>
     <Content Include="App_Plugins/**" CopyToOutputDirectory="Always" />
     <Content Include="umbraco/**" CopyToOutputDirectory="Always" />
+    <Compile Remove="umbraco\**" />
     <Content Remove="umbraco/Data/**" />
     <Content Remove="umbraco/Logs/**" />
     <Content Remove="umbraco/mediacache/**" />
     <Content Remove="umbraco/models/**" />
+    <Content Remove="umbraco\**" />
     <Compile Include="umbraco/models/**" Exclude="**/*.flag" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Plugins\" />
-    <Folder Include="umbraco\models\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +44,11 @@
   <Import Project="..\SeoToolkit.Umbraco.SiteAudit\build\SeoToolkit.Umbraco.SiteAudit.targets" />
   <Import Project="..\SeoToolkit.Umbraco.Redirects\build\SeoToolkit.Umbraco.Redirects.targets" />
   <Import Project="..\SeoToolkit.Umbraco\build\SeoToolkit.Umbraco.targets" />
+  <ItemGroup>
+    <EmbeddedResource Remove="umbraco\**" />
+    <None Remove="umbraco\**" />
+    <Watch Remove="umbraco\**" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SeoToolkit.Umbraco\SeoToolkit.Umbraco.csproj" />
   </ItemGroup>
