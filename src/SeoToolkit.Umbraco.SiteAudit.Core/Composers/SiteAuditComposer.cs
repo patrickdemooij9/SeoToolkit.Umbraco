@@ -48,7 +48,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
 
             builder.Services.Configure<SiteAuditAppSettingsModel>(builder.Config.GetSection("SeoToolkit:SiteAudit"));
 
-            builder.Services.AddUnique<SiteAuditHubRoutes>();
+            builder.Services.AddSingleton<SiteAuditHubRoutes>();
             builder.Services.AddSignalR();
             builder.Services.AddHubSignalR();
 
