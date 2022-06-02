@@ -29,6 +29,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.MetaFieldsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService;
+using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
 {
@@ -49,7 +50,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             }
 
             builder.Components().Append<EnableModuleComponent>();
-
+            
             builder.Services.AddTransient(typeof(IRepository<DocumentTypeSettingsDto>), typeof(MetaFieldsSettingsDatabaseRepository));
             builder.Services.AddTransient(typeof(IMetaFieldsSettingsService), typeof(MetaFieldsSettingsService));
             builder.Services.AddTransient(typeof(IMetaFieldsService), typeof(MetaFieldsService));

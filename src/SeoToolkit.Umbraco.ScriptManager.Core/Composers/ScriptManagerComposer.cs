@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
@@ -19,6 +21,7 @@ using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.ScriptManager.Core.Repositories;
 using SeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions;
 using SeoToolkit.Umbraco.ScriptManager.Core.Services;
+using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
 {
