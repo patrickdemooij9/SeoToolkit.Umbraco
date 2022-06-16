@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Umbraco.Cms.Core.Scoping;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.Business;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.Database;
+using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Repositories
 {

@@ -1,6 +1,6 @@
-﻿using Umbraco.Cms.Core.Scoping;
-using Umbraco.Extensions;
+﻿using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Models.Database;
+using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
 {

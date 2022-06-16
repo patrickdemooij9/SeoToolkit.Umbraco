@@ -5,13 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Events;
-using Umbraco.Cms.Core.Scoping;
 using SeoToolkit.Umbraco.SiteAudit.Core.Enums;
 using SeoToolkit.Umbraco.SiteAudit.Core.Factories.SiteCrawler;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.Business;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.EventArgs;
 using SeoToolkit.Umbraco.SiteAudit.Core.Notifications;
+using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
 {

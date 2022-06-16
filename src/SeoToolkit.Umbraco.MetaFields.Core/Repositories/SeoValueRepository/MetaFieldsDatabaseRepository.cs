@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using Umbraco.Cms.Core.Scoping;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database;
+using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
 {

@@ -3,6 +3,6 @@
     "~/App_Plugins/SeoToolkit/backoffice/ScriptManager/list.controller.js",
     "~/App_Plugins/SeoToolkit/backoffice/ScriptManager/edit.controller.js"
   ],
-  "version": "1.1.0",
+  "version": "2.0.0",
   "name": "SeoToolkit.Umbraco.ScriptManager"
 }

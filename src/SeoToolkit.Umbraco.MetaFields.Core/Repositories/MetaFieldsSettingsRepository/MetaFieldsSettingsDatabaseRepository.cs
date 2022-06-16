@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Umbraco.Cms.Core.Mapping;
-using Umbraco.Cms.Core.Scoping;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Extensions;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
-using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Database;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsSettings.Database;
+using SeoToolkit.Umbraco.MetaFields.Core.Repositories.DocumentTypeSettingsRepository;
+using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Infrastructure.Scoping;
+using Umbraco.Extensions;
 
-namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.DocumentTypeSettingsRepository
+namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepository
 {
     public class MetaFieldsSettingsDatabaseRepository : IMetaFieldsSettingsRepository
     {

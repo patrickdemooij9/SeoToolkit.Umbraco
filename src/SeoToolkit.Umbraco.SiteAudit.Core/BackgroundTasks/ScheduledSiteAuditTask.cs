@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.HostedServices;
@@ -14,7 +15,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.BackgroundTasks
         private readonly ISiteAuditScheduler _siteAuditScheduler;
         private readonly SiteAuditService _siteAuditService;
 
-        public ScheduledSiteAuditTask(IRuntimeState runtimeState, ISiteAuditScheduler siteAuditScheduler, SiteAuditService siteAuditService) : base(TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1))
+        public ScheduledSiteAuditTask(IRuntimeState runtimeState, ILogger logger, ISiteAuditScheduler siteAuditScheduler, SiteAuditService siteAuditService) : base(logger, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1))
         {
             _runtimeState = runtimeState;
             _siteAuditScheduler = siteAuditScheduler;

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using Umbraco.Cms.Core.Scoping;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.ScriptManager.Core.Collections;
 using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Database;
+using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
 {
