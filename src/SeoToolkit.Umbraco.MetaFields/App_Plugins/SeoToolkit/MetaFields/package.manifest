@@ -13,6 +13,6 @@
   "css": [
     "~/App_Plugins/SeoToolkit/MetaFields/css/main.css"
   ],
-  "version": "2.0.0-alpha01",
+  "version": "2.0.0",
   "name": "SeoToolkit.Umbraco.MetaFields"
 }

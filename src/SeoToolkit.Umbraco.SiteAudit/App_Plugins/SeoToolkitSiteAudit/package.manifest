@@ -8,6 +8,6 @@
   "css": [
     "~/App_Plugins/SeoToolkitSiteAudit/css/siteAudit.css"
   ],
-  "version": "2.0.0-alpha01",
+  "version": "2.0.0",
   "name": "SeoToolkit.Umbraco.SiteAudit"
 }
