@@ -32,7 +32,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
             builder.Services.AddUnique<ISeoSettingsRepository, SeoSettingsRepository>();
             builder.Services.AddUnique<ISeoSettingsService, SeoSettingsService>();
 
-            builder.Services.AddTransient(sp =>
+            /*builder.Services.AddTransient(sp =>
             {
                 var languageFiles = new List<LocalizedTextServiceSupplementaryFileSource>();
                 var webhostEnvironment = sp.GetRequiredService<IWebHostEnvironment>();
@@ -47,7 +47,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
                 }
                 languageFiles.Add(new LocalizedTextServiceSupplementaryFileSource(new FileInfo(webhostEnvironment.ContentRootFileProvider.GetFileInfo("/App_Plugins/SeoToolkit/lang/en-us.xml").PhysicalPath), false));
                 return (IEnumerable<LocalizedTextServiceSupplementaryFileSource>)languageFiles;
-            });
+            });*/
         }
     }
 }
