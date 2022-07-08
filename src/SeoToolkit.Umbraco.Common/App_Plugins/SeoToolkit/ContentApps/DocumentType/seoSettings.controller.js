@@ -50,6 +50,8 @@
                 }).then(function (response) {
                     if (response.status !== 200) {
                         notificationsService.error("Something went wrong while saving SEO settings");
+                    } else {
+                        notificationsService.success("SEO settings saved!");
                     }
                 });
         }
