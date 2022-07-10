@@ -43,7 +43,7 @@
         }
 
         function save() {
-            $http.post("backoffice/SeoToolkit/SeoSettings/Set",
+            return $http.post("backoffice/SeoToolkit/SeoSettings/Set",
                 {
                     contentTypeId: $scope.model.id,
                     enabled: vm.model.enableSeoSettings
@@ -58,11 +58,11 @@
 
         $scope.$on("formSubmitting",
             function () {
-                save();
-
-                if (vm.model.enableSeoSettings) {
-                    $scope.$broadcast("seoSettingsSubmitting");
-                }
+                save().then(function() {
+                    if (vm.model.enableSeoSettings) {
+                        $scope.$broadcast("seoSettingsSubmitting");
+                    }
+                });
             });
 
         init();
