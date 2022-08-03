@@ -11,6 +11,8 @@ using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoService;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
+using Umbraco.Cms.Core.Events;
+using SeoToolkit.Umbraco.MetaFields.Core.Notifications;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
 {
@@ -23,7 +25,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
         private readonly ILogger<DefaultMetaTagsProvider> _logger;
         private readonly IProfiler _profiler;
         private readonly ISeoSettingsService _seoSettingsService;
+        private readonly IEventAggregator _eventAggregator;
 
+        [Obsolete("Doesn't work, use the notification variant instead! Remove in V3")]
         public event EventHandler<MetaTagsModel> BeforeMetaTagsGet;
 
         public DefaultMetaTagsProvider(IMetaFieldsSettingsService documentTypeSettingsService,
@@ -32,7 +36,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
             SeoConverterCollection seoConverterCollection,
             ILogger<DefaultMetaTagsProvider> logger,
             IProfiler profiler,
-            ISeoSettingsService seoSettingsService)
+            ISeoSettingsService seoSettingsService,
+            IEventAggregator eventAggregator)
         {
             _documentTypeSettingsService = documentTypeSettingsService;
             _seoFieldCollection = seoFieldCollection;
@@ -41,6 +46,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
             _logger = logger;
             _profiler = profiler;
             _seoSettingsService = seoSettingsService;
+            _eventAggregator = eventAggregator;
         }
 
         public MetaTagsModel Get(IPublishedContent content, bool includeUserValues)
@@ -51,7 +57,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
 
                 //Make sure that the fields are set, otherwise the values cannot be set!
                 var metaTags = new MetaTagsModel(allFields.ToDictionary(it => it, it => (object)null));
-                BeforeMetaTagsGet?.Invoke(this, metaTags);
+                _eventAggregator.Publish(new BeforeMetaTagsNotification(content.ContentType.Alias, metaTags));
 
                 var settings = _documentTypeSettingsService.Get(content.ContentType.Id);
                 if (settings is null)
@@ -61,6 +67,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                 var userValues = includeUserValues ? _seoValueService.GetUserValues(content.Id) : null;
                 var fields = allFields.Select(it =>
                 {
+                    //If set by event, make sure not to override it with the fallback value
                     if (metaTags.GetValue<object>(it.Alias) != null)
                         return null;
 
@@ -105,6 +112,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                 {
                     metaTags.SetValue(fieldValue.Field.Alias, fieldValue.Value);
                 }
+
+                _eventAggregator.Publish(new AfterMetaTagsNotification(content.ContentType.Alias, metaTags));
 
                 return metaTags;
             }
