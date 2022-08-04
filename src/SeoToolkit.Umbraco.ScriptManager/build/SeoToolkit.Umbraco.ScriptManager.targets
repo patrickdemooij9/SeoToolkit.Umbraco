@@ -16,17 +16,6 @@
             SkipUnchangedFiles="true" />
     </Target>
 
-	<Target Name="CopySeoToolkitScriptManagerViews" BeforeTargets="Build">
-		<ItemGroup>
-			<SeoToolkitScriptManagerViews Include="$(SeoToolkitScriptManagerViewsPath)" />
-		</ItemGroup>
-		<Message Text="Copying SeoToolkit.ScriptManager views: $(SeoToolkitScriptManagerViewsPath) - #@(SeoToolkitScriptManagerViews->Count()) files"  Importance="high" />
-		<Copy
-			SourceFiles="@(SeoToolkitScriptManagerViews)"
-			DestinationFiles="@(SeoToolkitScriptManagerViews->'$(MSBuildProjectDirectory)\Views\ScriptManager\%(RecursiveDir)%(Filename)%(Extension)')"
-			SkipUnchangedFiles="true" />
-	</Target>
-
     <Target Name="ClearSeoToolkitScriptManagerAssets" BeforeTargets="Clean">
         <ItemGroup>
             <SeoToolkitScriptManagerDir Include="$(MSBuildProjectDirectory)\App_Plugins\SeoToolkit\" />
@@ -34,13 +23,5 @@
         <Message Text="Clear old SeoToolkit.ScriptManager data"  Importance="high" />
         <RemoveDir Directories="@(SeoToolkitScriptManagerDir)"  />
     </Target>
-
-	<Target Name="ClearSeoToolkitScriptManagerViews" BeforeTargets="Clean">
-		<ItemGroup>
-			<SeoToolkitScriptManagerDir Include="$(MSBuildProjectDirectory)\Views\ScriptManager\" />
-		</ItemGroup>
-		<Message Text="Clear old SeoToolkit.ScriptManager views"  Importance="high" />
-		<RemoveDir Directories="@(SeoToolkitScriptManagerDir)"  />
-	</Target>
 
 </Project>
