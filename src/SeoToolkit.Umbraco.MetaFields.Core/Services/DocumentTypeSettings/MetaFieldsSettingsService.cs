@@ -32,12 +32,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
         {
             var exists = _repository.Get(model.Content.Id) != null;
             if (exists)
-            {
-                var returnModel = _repository.Update(model);
-                ClearCache(returnModel.Content.Id);
-            }
+                _repository.Update(model);
             else
                 _repository.Add(model);
+
+            ClearCache(model.Content.Id);
         }
 
         public DocumentTypeSettingsDto Get(int id)
