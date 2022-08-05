@@ -33,7 +33,6 @@
 
   <Import Project="..\SeoToolkit.Umbraco.ScriptManager\build\SeoToolkit.Umbraco.ScriptManager.targets" Condition="'$(Configuration)'=='Release'" />
   <Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" Condition="'$(Configuration)'=='Release'" />
-  <Import Project="..\SeoToolkit.Umbraco.RobotsTxt\build\SeoToolkit.Umbraco.RobotsTxt.targets" Condition="'$(Configuration)'=='Release'" />
   <Import Project="..\SeoToolkit.Umbraco.Sitemap\build\SeoToolkit.Umbraco.Sitemap.targets" Condition="'$(Configuration)'=='Release'" />
   <Import Project="..\SeoToolkit.Umbraco\build\SeoToolkit.Umbraco.targets" Condition="'$(Configuration)'=='Release'" />
   <ItemGroup>
