@@ -1,39 +1,28 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ContentTargetFolders>.</ContentTargetFolders>
-    <Product>SeoToolkit SiteAudit</Product>
-    <PackageId>SeoToolkit.Umbraco.SiteAudit</PackageId>
-    <Title>SeoToolkit SiteAudit</Title>
-    <Description>An Umbraco plugin to run a site audit on your website to find any SEO issues</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageTags>umbraco plugin package</PackageTags>
-    <RootNamespace>SeoToolkit.Umbraco.SiteAudit</RootNamespace>
-    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
-    <Version>1.0.0-alpha</Version>
-  </PropertyGroup>
-  <ItemGroup>
-    <Content Include="App_Plugins\SeoToolkitSiteAudit\**\*.*">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </Content>
-    <None Include="build\**\*.*">
-      <Pack>True</Pack>
-      <PackagePath>build</PackagePath>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.0.0" />
-  </ItemGroup>
-
-  <Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" Condition="'$(Configuration)'=='Release'" />
-
-  <ItemGroup>
-    <ProjectReference Include="..\SeoToolkit.Umbraco.SiteAudit.Core\SeoToolkit.Umbraco.SiteAudit.Core.csproj" />
-    <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
-  </ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ContentTargetFolders>.</ContentTargetFolders>
+		<Product>SeoToolkit SiteAudit</Product>
+		<PackageId>SeoToolkit.Umbraco.SiteAudit</PackageId>
+		<Title>SeoToolkit SiteAudit</Title>
+		<Description>An Umbraco plugin to run a site audit on your website to find any SEO issues</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageTags>umbraco plugin package</PackageTags>
+		<RootNamespace>SeoToolkit.Umbraco.SiteAudit</RootNamespace>
+		<PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+		<PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
+		<Version>1.0.0-alpha</Version>
+		<StaticWebAssetBasePath>App_Plugins/SeoToolkitSiteAudit</StaticWebAssetBasePath>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0" />
+		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.0.0" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\SeoToolkit.Umbraco.SiteAudit.Core\SeoToolkit.Umbraco.SiteAudit.Core.csproj" />
+		<ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
+	</ItemGroup>
 </Project>
