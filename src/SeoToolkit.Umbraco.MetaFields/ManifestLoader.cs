@@ -20,7 +20,7 @@ namespace SeoToolkit.Umbraco.MetaFields
             manifests.Add(new PackageManifest
             {
                 PackageName = "SeoToolkit.Umbraco.MetaFields",
-                Version = "2.0.0",
+                Version = "2.1.0",
                 Scripts = new[]
                 {
                     "/App_Plugins/SeoToolkit/MetaFields/Interface/ContentApps/DocumentSettings/documentSettings.controller.js",
