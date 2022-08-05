@@ -44,7 +44,6 @@
   <Import Project="..\SeoToolkit.Umbraco.RobotsTxt\build\SeoToolkit.Umbraco.RobotsTxt.targets" />
   <Import Project="..\SeoToolkit.Umbraco.Sitemap\build\SeoToolkit.Umbraco.Sitemap.targets" />
   <Import Project="..\SeoToolkit.Umbraco.SiteAudit\build\SeoToolkit.Umbraco.SiteAudit.targets" />
-  <Import Project="..\SeoToolkit.Umbraco.Redirects\build\SeoToolkit.Umbraco.Redirects.targets" />
   <Import Project="..\SeoToolkit.Umbraco\build\SeoToolkit.Umbraco.targets" />
   <ItemGroup>
     <EmbeddedResource Remove="umbraco\**" />
