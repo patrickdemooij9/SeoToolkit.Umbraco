@@ -1,37 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ContentTargetFolders>.</ContentTargetFolders>
-    <Product>SeoToolkit MetaFields</Product>
-    <PackageId>SeoToolkit.Umbraco.MetaFields</PackageId>
-    <Title>SeoToolkit MetaFields</Title>
-    <Description>An Umbraco plugin to help you with your SEO meta fields.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageTags>umbraco plugin package</PackageTags>
-    <RootNamespace>SeoToolkit.Umbraco.MetaFields</RootNamespace>
-    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
-    <Version>2.0.1</Version>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="App_Plugins\SeoToolkit\MetaFields\**\*.*">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </Content>
-    <None Include="build\**\*.*">
-      <Pack>True</Pack>
-      <PackagePath>build</PackagePath>
-    </None>
-  </ItemGroup>
-
-  <Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" Condition="'$(Configuration)'=='Release'" />
-
-  <ItemGroup>
-    <ProjectReference Include="..\SeoToolkit.Umbraco.MetaFields.Core\SeoToolkit.Umbraco.MetaFields.Core.csproj" />
-    <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
-  </ItemGroup>
-
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ContentTargetFolders>.</ContentTargetFolders>
+		<Product>SeoToolkit MetaFields</Product>
+		<PackageId>SeoToolkit.Umbraco.MetaFields</PackageId>
+		<Title>SeoToolkit MetaFields</Title>
+		<Description>An Umbraco plugin to help you with your SEO meta fields.</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageTags>umbraco plugin package</PackageTags>
+		<RootNamespace>SeoToolkit.Umbraco.MetaFields</RootNamespace>
+		<PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+		<PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
+		<Version>2.0.1</Version>
+		<StaticWebAssetBasePath>App_Plugins/SeoToolkit</StaticWebAssetBasePath>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\SeoToolkit.Umbraco.MetaFields.Core\SeoToolkit.Umbraco.MetaFields.Core.csproj" />
+		<ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
+	</ItemGroup>
 </Project>

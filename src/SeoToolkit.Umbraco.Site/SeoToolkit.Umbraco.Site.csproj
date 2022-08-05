@@ -41,7 +41,6 @@
   </ItemGroup>
   <Import Project="..\SeoToolkit.Umbraco.ScriptManager\build\SeoToolkit.Umbraco.ScriptManager.targets" />
   <Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" />
-  <Import Project="..\SeoToolkit.Umbraco.MetaFields\build\SeoToolkit.Umbraco.MetaFields.targets" />
   <Import Project="..\SeoToolkit.Umbraco.RobotsTxt\build\SeoToolkit.Umbraco.RobotsTxt.targets" />
   <Import Project="..\SeoToolkit.Umbraco.Sitemap\build\SeoToolkit.Umbraco.Sitemap.targets" />
   <Import Project="..\SeoToolkit.Umbraco.SiteAudit\build\SeoToolkit.Umbraco.SiteAudit.targets" />
