@@ -39,8 +39,6 @@
     <!-- extends watching group to include *.js files -->
     <Watch Include="**\*.js" Exclude="node_modules\**\*;**\*.js.map;obj\**\*;bin\**\*" />
   </ItemGroup>
-  <Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" />
-  <Import Project="..\SeoToolkit.Umbraco\build\SeoToolkit.Umbraco.targets" />
   <ItemGroup>
     <EmbeddedResource Remove="umbraco\**" />
     <None Remove="umbraco\**" />

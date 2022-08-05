@@ -1,8 +1,0 @@
-﻿{
-  "javascript": [
-    "~/App_Plugins/SeoToolkit/Dashboards/welcomeDashboard.controller.js",
-    "~/App_Plugins/SeoToolkit/ContentApps/DocumentType/seoSettings.controller.js",
-    "~/App_Plugins/SeoToolkit/ContentApps/Content/seoContent.controller.js"
-  ],
-  "css": [ "~/App_Plugins/SeoToolkit/css/main.css" ]
-}
