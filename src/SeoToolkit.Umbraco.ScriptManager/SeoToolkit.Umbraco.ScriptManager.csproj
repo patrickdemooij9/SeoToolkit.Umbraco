@@ -18,23 +18,11 @@
 		<RazorCompileOnBuild>true</RazorCompileOnBuild>
 		<EmbedRazorGenerateSources>true</EmbedRazorGenerateSources>
 		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+		<StaticWebAssetBasePath>App_Plugins/SeoToolkit</StaticWebAssetBasePath>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\SeoToolkit.Umbraco.ScriptManager.Core\SeoToolkit.Umbraco.ScriptManager.Core.csproj" />
 		<ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="App_Plugins\SeoToolkit\**\*.*">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
-		</Content>
-		<None Include="build\**\*.*">
-			<Pack>True</Pack>
-			<PackagePath>build</PackagePath>
-		</None>
-	</ItemGroup>
-
-	<Import Project="..\SeoToolkit.Umbraco.Common\build\SeoToolkit.Umbraco.Common.targets" Condition="'$(Configuration)'=='Release'" />
 </Project>
