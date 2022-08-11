@@ -50,7 +50,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
 
         private string GetCulture()
         {
-            return _variationContextAccessor.VariationContext.Culture;
+            return _variationContextAccessor.VariationContext?.Culture ?? string.Empty;
         }
 
         private void ClearCache(int nodeId)
