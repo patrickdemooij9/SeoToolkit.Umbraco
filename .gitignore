@@ -487,3 +487,7 @@ $RECYCLE.BIN/
 **/wwwroot/umbraco/
 
 **/SeoToolkit.Umbraco.Site/App_Plugins/
+**/uSync/
+**/umbraco/Data/Umbraco.sqlite.db
+**/umbraco/Data/Umbraco.sqlite.db-shm
+**/umbraco/Data/Umbraco.sqlite.db-wal
