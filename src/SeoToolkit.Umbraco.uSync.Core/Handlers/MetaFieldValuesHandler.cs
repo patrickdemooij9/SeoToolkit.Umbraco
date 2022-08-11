@@ -14,7 +14,7 @@ using uSync.Core.Serialization;
 
 namespace uSync.BackOffice.SyncHandlers.Handlers;
 
-[SyncHandler("seoToolkitMetaFieldValuesHandler", "SeoToolkit Meta Fields", "seoToolkitContent", uSyncConstants.Priorites.Content
+[SyncHandler("seoToolkitMetaFieldValuesHandler", "SeoToolkit Meta Fields", "SeoToolkitMetaFields", uSyncConstants.Priorites.Content
     , Icon = "icon-list", IsTwoPass = true, EntityType = Constants.UdiEntityType.Document)]
 public class MetaFieldValuesHandler : ContentHandlerBase<IContent, IContentService>, ISyncHandler
 {
