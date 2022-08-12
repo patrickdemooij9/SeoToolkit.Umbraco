@@ -23,26 +23,29 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
             _cache = appCaches.RuntimeCache;
         }
 
-        public Dictionary<string, object> GetUserValues(int nodeId)
+        public Dictionary<string, object> GetUserValues(int nodeId, string culture = null)
         {
-            var culture = GetCulture();
-            return _cache.GetCacheItem($"{BaseCacheKey}{nodeId}_{culture}", () => _repository.GetAllValues(nodeId, culture), TimeSpan.FromMinutes(30));
+            var iso = culture ?? GetCulture();
+            return _cache.GetCacheItem($"{BaseCacheKey}{nodeId}_{iso}", () => _repository.GetAllValues(nodeId, iso), TimeSpan.FromMinutes(30));
         }
 
-        public void AddValues(int nodeId, Dictionary<string, object> values)
+        public void AddValues(int nodeId, Dictionary<string, object> values, string culture = null)
         {
+            var iso = culture ?? GetCulture();
             foreach (var (key, value) in values)
             {
-                if (_repository.Exists(nodeId, key, GetCulture()))
-                    _repository.Update(nodeId, key, GetCulture(), value);
+                if (_repository.Exists(nodeId, key, iso))
+                    _repository.Update(nodeId, key, iso, value);
                 else
                 {
-                    _repository.Add(nodeId, key, GetCulture(), value);
+                    _repository.Add(nodeId, key, iso, value);
                 }
             }
             ClearCache(nodeId);
         }
 
+    
+        
         public void Delete(int nodeId, string fieldAlias)
         {
             _repository.Delete(nodeId, fieldAlias, GetCulture());

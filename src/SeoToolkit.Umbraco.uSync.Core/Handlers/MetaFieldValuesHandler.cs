@@ -1,6 +1,8 @@
 ﻿using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.uSync.Core.Serializers;
+using SeoToolkit.Umbraco.uSync.Core.XmlTrackers;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Models;
@@ -18,6 +20,7 @@ namespace uSync.BackOffice.SyncHandlers.Handlers;
     , Icon = "icon-list", IsTwoPass = true, EntityType = Constants.UdiEntityType.Document)]
 public class MetaFieldValuesHandler : ContentHandlerBase<IContent, IContentService>, ISyncHandler
 {
+    private readonly IMetaFieldsValueService _metaFieldsValueService;
     private readonly MetaFieldValuesSerializer _metaFieldValuesSerializer;
     private readonly IContentService _contentService;
 
@@ -32,9 +35,11 @@ public class MetaFieldValuesHandler : ContentHandlerBase<IContent, IContentServi
         ISyncItemFactory syncItemFactory) : base(logger, entityService, appCaches, shortStringHelper, syncFileService,
         mutexService, uSyncConfigService, syncItemFactory)
     {
+
         _metaFieldValuesSerializer = metaFieldValuesSerializer;
         _contentService = contentService;
-        
+
+        this.serializer = _metaFieldValuesSerializer as ISyncSerializer<IContent>;
     }
 
     public override IEnumerable<uSyncAction> Export(IContent? item, string folder, HandlerSettings config)
@@ -70,8 +75,36 @@ public class MetaFieldValuesHandler : ContentHandlerBase<IContent, IContentServi
 
     public override IEnumerable<uSyncAction> Import(XElement node, string filename, HandlerSettings config, SerializerFlags flags)
     {
-        var attempt = _metaFieldValuesSerializer.Deserialize(node, new SyncSerializerOptions(config.Settings));
-        return uSyncActionHelper<IContent>.SetAction(attempt, filename,node.GetKey(), this.Alias)
+        if (ShouldImport(node, new HandlerSettings()))
+        {
+            var attempt = _metaFieldValuesSerializer.Deserialize(node, new SyncSerializerOptions(config.Settings));
+            return uSyncActionHelper<IContent>.SetAction(attempt, filename,node.GetKey(), this.Alias)
+                .AsEnumerableOfOne();
+        }
+
+        return uSyncAction.SetAction(true, filename, type: typeof(IContent).ToString(),
+                change: ChangeType.NoChange, message: "Not Imported (Based on config)", filename: filename)
             .AsEnumerableOfOne();
+    }
+
+
+    public override IEnumerable<uSyncAction> ReportFolder(string folder, HandlerSettings config, SyncUpdateCallback callback)
+    {
+        var reportActions= base.ReportFolder(folder, config, callback).ToList();
+        reportActions = reportActions.Select(action =>
+        {
+            if (!action.Details.Any())
+            {
+                return action;
+            }
+
+            var details = action.Details.ToList();
+            //First item will always be an error since the default XmlTracker will have a xml schema mismatch error.
+            details.RemoveAt(0);
+            action.Details = details;
+            return action;
+        }).ToList();
+       
+        return reportActions;
     }
 }
