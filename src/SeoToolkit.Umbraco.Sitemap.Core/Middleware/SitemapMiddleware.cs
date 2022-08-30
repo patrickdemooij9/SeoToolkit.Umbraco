@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
 using SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators;
 using SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator;
+using SeoToolkit.Umbraco.Sitemap.Core.Config;
+using SeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Utils;
 
@@ -19,12 +22,15 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly ISettingsService<SitemapConfig> _sitemapConfigurationService;
 
         public SitemapMiddleware(RequestDelegate next,
-            IUmbracoContextFactory umbracoContextFactory)
+            IUmbracoContextFactory umbracoContextFactory,
+            ISettingsService<SitemapConfig> sitemapConfigurationService)
         {
             _next = next;
             _umbracoContextFactory = umbracoContextFactory;
+            _sitemapConfigurationService = sitemapConfigurationService;
         }
 
         public async Task Invoke(HttpContext context,
@@ -68,7 +74,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
             }
 
             context.Response.StatusCode = 200;
-            context.Response.ContentType = "text/xml";
+            context.Response.ContentType = _sitemapConfigurationService.GetSettings().ReturnContentType;
 
             using (var writer = new UTF8StringWriter())
             {

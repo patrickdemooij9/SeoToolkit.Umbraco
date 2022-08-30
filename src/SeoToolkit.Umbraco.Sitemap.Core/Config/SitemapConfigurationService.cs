@@ -22,6 +22,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Config
                 LastModifiedFieldAlias = settings.LastModifiedFieldAlias,
                 ChangeFrequencyFieldAlias = settings.ChangeFrequencyFieldAlias,
                 PriorityFieldAlias = settings.PriorityFieldAlias,
+                ReturnContentType = settings.ReturnContentType,
                 DisabledModules = settings.DisabledModules
             };
         }
