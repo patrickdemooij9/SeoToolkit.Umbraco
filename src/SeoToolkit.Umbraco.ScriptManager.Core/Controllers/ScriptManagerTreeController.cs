@@ -44,7 +44,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
             {
                 var menuItemCollection = _menuItemCollectionFactory.Create();
 
-                var item = menuItemCollection.Items.Add<ActionNew>(LocalizedTextService, opensDialog: true);
+                var item = menuItemCollection.Items.Add<ActionNew>(LocalizedTextService, opensDialog: true, hasSeparator: false);
                 item.NavigateToRoute($"{SectionAlias}/{TreeAlias}/edit");
 
                 return menuItemCollection;

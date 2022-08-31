@@ -43,7 +43,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
             if (id == UmbConstants.System.RootString)
             {
                 var menuItemCollection = _menuItemCollectionFactory.Create();
-                var item = menuItemCollection.Items.Add<ActionNew>(LocalizedTextService, opensDialog: true);
+                var item = menuItemCollection.Items.Add<ActionNew>(LocalizedTextService, opensDialog: true, hasSeparator: false);
                 item.NavigateToRoute($"{queryStrings.GetRequiredValue<string>("application")}/{TreeAlias}/create");
 
                 return menuItemCollection;
