@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
@@ -12,7 +8,6 @@ using SeoToolkit.Umbraco.Common.Core.Dashboards;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository;
 using SeoToolkit.Umbraco.Common.Core.Sections;
 using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
-using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.Common.Core.Composers
 {
