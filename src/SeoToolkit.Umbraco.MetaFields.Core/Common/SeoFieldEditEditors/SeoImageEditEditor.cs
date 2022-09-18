@@ -8,7 +8,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors
 {
     public class SeoImageEditEditor : ISeoFieldEditEditor
     {
-        public string View => "MediaPicker";
+        public string View => "mediapicker";
         public Dictionary<string, object> Config { get; }
         public IEditorValueConverter ValueConverter { get; }
 
