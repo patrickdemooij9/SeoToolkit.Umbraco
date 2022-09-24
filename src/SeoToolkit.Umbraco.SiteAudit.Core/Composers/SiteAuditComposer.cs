@@ -35,7 +35,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
             builder.Services.AddSingleton(typeof(ISiteCheckRepository), typeof(SiteCheckDatabaseRepository));
             builder.Services.AddSingleton(typeof(ISiteAuditScheduler), typeof(SiteAuditScheduler));
 
-            builder.Services.AddHostedService<ScheduledSiteAuditTask>();
+            //builder.Services.AddHostedService<ScheduledSiteAuditTask>();
+            builder.Services.AddHostedService<SiteAuditHubClientCleanup>();
 
             builder.WithCollectionBuilder<SiteAuditCheckCollectionBuilder>()
                 .Append<BrokenLinkCheck>()

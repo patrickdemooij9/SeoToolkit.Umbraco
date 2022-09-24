@@ -1,6 +1,6 @@
 ﻿(function () {
 
-    function siteAuditDetailController($timeout, $routeParams, $http, $location, siteAuditHub, localizationService, overlayService) {
+    function siteAuditDetailController($timeout, $routeParams, $http, $location, siteAuditHub, localizationService, overlayService, notificationsService) {
 
         var vm = this;
 
@@ -18,6 +18,7 @@
             itemsPerPage: 10
         };
 
+        vm.back = back;
         vm.openPage = openPage;
         vm.closePage = closePage;
         vm.toggleShowIssues = toggleShowIssues;
@@ -60,6 +61,8 @@
                 const clientId = getClientId();
                 vm.hub.on("update",
                     function (update) {
+                        console.log(update);
+
                         vm.audit = update;
                         loadPage(vm.pagination.pageNumber);
                         loadAudit(false);
@@ -136,15 +139,15 @@
 
         function deleteAudit() {
             const dialog = {
-                view: "views/propertyeditors/listview/overlays/delete.html",
-                submitButtonLabelKey: "contentTypeEditor_yesDelete",
-                submitButtonStyle: "danger",
-                submit: function (model) {
+                view: "/App_Plugins/SeoToolkit/backoffice/SiteAudit/delete.html",
+                audit: vm.audit,
+                submit: function () {
                     $http.post("backoffice/SeoToolkit/SiteAudit/Delete",
                         {
                             ids: [vm.audit.id]
                         }).then(function (response) {
                             overlayService.close();
+                            notificationsService.success("Siteaudit succesfully deleted!");
                             $location.path("SeoToolkit/SiteAudit/list");
                         });
                 },
@@ -160,8 +163,15 @@
         }
 
         function stopAudit() {
-            //TODO: Actually stop
-            console.log("Trying to stop!");
+            $http.post("backoffice/SeoToolkit/SiteAudit/StopAudit", {
+                id: vm.audit.id
+            }).then(function (response) {
+                notificationsService.success("Succesfully stopped audit. Finishing up current page");
+            });
+        }
+
+        function back() {
+            $location.path("SeoToolkit/SiteAudit/list");
         }
 
         function openPage(page) {

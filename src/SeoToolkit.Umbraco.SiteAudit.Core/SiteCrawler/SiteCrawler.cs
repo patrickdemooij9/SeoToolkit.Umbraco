@@ -14,6 +14,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
         private readonly IScheduler _scheduler;
         private readonly ILinkParser _linkParser;
 
+        private bool _crawlComplete = false;
+
         public event EventHandler<PageCrawlCompleteArgs> OnPageCrawlCompleted;
 
         public SiteCrawler(
@@ -30,11 +32,10 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
         {
             var maxCrawls = maxUrlsToCrawl;
             var currentCrawls = 0;
-            var crawlComplete = false;
 
             _scheduler.Add(startingUrl);
 
-            while (!crawlComplete && currentCrawls < maxCrawls)
+            while (!_crawlComplete && currentCrawls < maxCrawls)
             {
                 var linksLeftToSchedule = _scheduler.Count;
                 if (linksLeftToSchedule > 0)
@@ -49,7 +50,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
                 else
                 {
                     //Finished the crawl
-                    crawlComplete = true;
+                    _crawlComplete = true;
                 }
             }
         }
@@ -67,6 +68,11 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
             }
             _scheduler.AddKnownUri(page.Url);
             OnPageCrawlCompleted?.Invoke(this, new PageCrawlCompleteArgs() { Page = page, TotalPagesFound = _scheduler.TotalCount});
+        }
+
+        public void StopCrawl()
+        {
+            _crawlComplete = true;
         }
     }
 }

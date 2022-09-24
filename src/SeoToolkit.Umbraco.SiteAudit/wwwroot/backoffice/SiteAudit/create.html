@@ -12,7 +12,7 @@
                         <div class="control-group umb-control-group">
                             <div class="umb-el-wrap">
                                 <div class="control-header">
-                                    <label for="name" class="control-label">Name</label>
+                                    <label for="name" class="control-label">Name <strong class="umb-control-required">*</strong></label>
                                 </div>
                                 <div class="controls">
                                     <input type="text" class="umb-textstring" id="name" style="width: 100%;" ng-model="vm.selectedAudit.name" />
@@ -22,7 +22,7 @@
                         <div class="control-group umb-control-group">
                             <div class="umb-el-wrap" style="padding-top: 10px">
                                 <div class="control-header">
-                                    <label for="starting-node" class="control-label">Starting node</label>
+                                    <label for="starting-node" class="control-label">Starting node <strong class="umb-control-required">*</strong></label>
                                 </div>
                                 <div class="controls">
                                     <a id="starting-node" ng-if="vm.selectedAudit.selectedNode == null" ng-click="vm.openNodeDialog()">Select starting node</a>
@@ -45,7 +45,7 @@
                             <div class="umb-el-wrap" style="padding-top: 10px">
                                 <div class="control-header">
                                     <label for="starting-node" class="control-label">Minimum delay between requests</label>
-                                    <small class="control-description">Minimum delay to use between requests in seconds.</small>
+                                    <small class="control-description">Minimum delay to use between requests in seconds. (Optional)</small>
                                 </div>
                                 <div class="controls">
                                     <input type="number" class="umb-number" id="name" style="width: 100%;" ng-model="vm.selectedAudit.delayBetweenRequests" />
@@ -77,7 +77,7 @@
                 </umb-box>
             </div>
             <div>
-                <umb-button type="button" style="float: right;" button-style="success btn-sm" size="xs" label-key="siteAudit_createAndStart" action="vm.createAudit(true)">Create and start</umb-button>
+                <umb-button type="button" disabled="vm.selectedAudit.name == '' || !vm.selectedAudit.selectedNode" style="float: right;" button-style="success btn-sm" size="xs" label-key="siteAudit_createAndStart" action="vm.createAudit(true)">Create and start</umb-button>
                 <!--<umb-button type="button" style="float: right;" button-style="success btn-sm" size="xs" label-key="siteAudit_create" action="vm.createAudit(false)">Create</umb-button>-->
                 <umb-button type="button" style="float: right;" button-style="primary btn-sm" size="xs" label-key="siteAudit_cancel" action="vm.cancel()">Cancel</umb-button>
             </div>

@@ -121,7 +121,19 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
             model = _siteAuditService.Save(model);
             if (postModel.StartAudit)
             {
-                _siteAuditScheduler.AddSiteAudit(model.Id);
+                ExecutionContext.SuppressFlow();
+                _ = Task.Run(() =>
+                {
+                    try
+                    {
+                        var result = _siteAuditService.StartSiteAudit(model).Result;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Something went wrong!");
+                    }
+                });
+                if (ExecutionContext.IsFlowSuppressed()) ExecutionContext.RestoreFlow();
             }
             return Ok(model.Id);
         }

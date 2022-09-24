@@ -77,6 +77,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
             {
                 if (value.Id == siteAuditId)
                 {
+                    key.StopCrawl();
                     CurrentlyRunningSiteAudits.TryRemove(key, out _);
                 }
             }

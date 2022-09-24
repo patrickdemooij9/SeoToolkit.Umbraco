@@ -20,22 +20,22 @@ namespace SeoToolkit.Umbraco.SiteAudit
             manifests.Add(new PackageManifest
             {
                 PackageName = "SeoToolkit.Umbraco.SiteAudit",
-                Version = "2.0.0",
+                Version = "1.0.0",
                 Scripts = new[]
                 {
-                    "/App_Plugins/SeoToolkitSiteAudit/Interface/Dashboards/SiteAudit/siteAuditDashboard.controller.js",
-                    "/App_Plugins/SeoToolkitSiteAudit/Interface/SiteAudit/create.controller.js",
-                    "/App_Plugins/SeoToolkitSiteAudit/Interface/SiteAudit/detail.controller.js",
-                    "/App_Plugins/SeoToolkitSiteAudit/Interface/SiteAudit/overview.controller.js",
-                    "/App_Plugins/SeoToolkitSiteAudit/js/siteAuditHub.js",
-                    "/App_Plugins/SeoToolkitSiteAudit/backoffice/SiteAudit/list.controller.js",
-                    "/App_Plugins/SeoToolkitSiteAudit/backoffice/SiteAudit/detail.controller.js",
-                    "/App_Plugins/SeoToolkitSiteAudit/backoffice/SiteAudit/create.controller.js",
-                    "/App_Plugins/SeoToolkitSiteAudit/libs/chart.min.js"
+                    "/App_Plugins/SeoToolkit/SiteAudit/Interface/Dashboards/SiteAudit/siteAuditDashboard.controller.js",
+                    "/App_Plugins/SeoToolkit/SiteAudit/Interface/SiteAudit/create.controller.js",
+                    "/App_Plugins/SeoToolkit/SiteAudit/Interface/SiteAudit/detail.controller.js",
+                    "/App_Plugins/SeoToolkit/SiteAudit/Interface/SiteAudit/overview.controller.js",
+                    "/App_Plugins/SeoToolkit/SiteAudit/js/siteAuditHub.js",
+                    "/App_Plugins/SeoToolkit/backoffice/SiteAudit/list.controller.js",
+                    "/App_Plugins/SeoToolkit/backoffice/SiteAudit/detail.controller.js",
+                    "/App_Plugins/SeoToolkit/backoffice/SiteAudit/create.controller.js",
+                    "/App_Plugins/SeoToolkit/SiteAudit/libs/chart.min.js"
                 },
                 Stylesheets = new[]
                 {
-                    "/App_Plugins/SeoToolkitSiteAudit/css/siteAudit.css"
+                    "/App_Plugins/SeoToolkit/SiteAudit/css/siteAudit.css"
                 }
             });
         }

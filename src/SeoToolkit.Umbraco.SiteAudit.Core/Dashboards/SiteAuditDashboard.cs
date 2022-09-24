@@ -10,6 +10,6 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Dashboards
 
         public string Alias => "siteAuditDashboard";
 
-        public string View => "/App_Plugins/SeoToolkitSiteAudit/backoffice/SiteAudit/list.html";
+        public string View => "/App_Plugins/SeoToolkit/backoffice/SiteAudit/list.html";
     }
 }

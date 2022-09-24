@@ -9,5 +9,6 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Interfaces
         event EventHandler<PageCrawlCompleteArgs> OnPageCrawlCompleted;
 
         Task Crawl(Uri startingUrl, int maxUrlsToCrawl, int delayBetweenRequests = 0);
+        void StopCrawl();
     }
 }

@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    function siteAuditListController($scope, $http, $location, listViewHelper) {
+    function siteAuditListController($scope, $http, $location, listViewHelper, overlayService, localizationService, notificationsService) {
         var vm = this;
 
         vm.items = [];
@@ -65,17 +65,33 @@
         }
 
         function deleteSelection() {
-            vm.loading = true;
-            $http.post("backoffice/SeoToolkit/SiteAudit/Delete",
-                {
-                    ids: vm.selection.map(function (item) {
-                        return item.id;
-                    })
-                }).then(function (response) {
-                    setItems(response.data);
-                    clearSelection();
-                    vm.loading = false;
-                });
+            const dialog = {
+                view: "/App_Plugins/SeoToolkit/backoffice/SiteAudit/delete.html",
+                submit: function () {
+                    $http.post("backoffice/SeoToolkit/SiteAudit/Delete",
+                        {
+                            ids: vm.selection.map(function (item) {
+                                return item.id;
+                            })
+                        }).then(function (response) {
+                            vm.loading = true;
+                            setItems(response.data);
+                            clearSelection();
+                            vm.loading = false;
+
+                            overlayService.close();
+                            notificationsService.success("Siteaudits succesfully deleted!");
+                        });
+                },
+                close: function () {
+                    overlayService.close();
+                }
+            };
+
+            localizationService.localize("general_delete").then(value => {
+                dialog.title = value;
+                overlayService.open(dialog);
+            });
         }
 
         function setItems(items) {
