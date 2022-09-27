@@ -114,14 +114,17 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
                         if (foundRedirect != null)
                             return new RedirectFindResult(uri, foundRedirect);
                     }
-
-                    //Else check if we can find a redirect on the custom domain
-                    foundRedirect = redirects.FirstOrDefault(it => it.CustomDomain != null && (it.CustomDomain.Equals(customDomainWithoutScheme, StringComparison.InvariantCultureIgnoreCase) || it.CustomDomain.Equals(customDomainWithScheme)));
-                    if (foundRedirect != null) return new RedirectFindResult(uri, foundRedirect);
+                    else
+                    {
+                        //Else check if we can find a redirect on the custom domain
+                        foundRedirect = redirects.FirstOrDefault(it => it.CustomDomain != null && (it.CustomDomain.Equals(customDomainWithoutScheme, StringComparison.InvariantCultureIgnoreCase) || it.CustomDomain.Equals(customDomainWithScheme)));
+                        if (foundRedirect != null) return new RedirectFindResult(uri, foundRedirect);
+                    }                    
 
                     //Else check if we can find a redirect on the global level
                     foundRedirect = redirects.FirstOrDefault(it =>
                         it.Domain is null &&
+                        string.IsNullOrWhiteSpace(it.CustomDomain) &&
                         (it.OldUrl.Equals(path, StringComparison.InvariantCultureIgnoreCase) ||
                         it.OldUrl.Equals(pathAndQuery, StringComparison.InvariantCultureIgnoreCase)));
                     if (foundRedirect != null) return new RedirectFindResult(uri, foundRedirect);

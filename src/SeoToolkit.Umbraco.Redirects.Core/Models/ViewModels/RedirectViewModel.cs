@@ -1,4 +1,5 @@
 ﻿using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
+using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
 {
@@ -28,7 +29,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
             Domain = redirect.Domain?.Id;
             CustomDomain = redirect.CustomDomain;
             IsRegex = redirect.IsRegex;
-            OldUrl = redirect.OldUrl;
+            OldUrl = redirect.OldUrl.IfNullOrWhiteSpace("/");
             NewUrl = redirect.NewUrl;
             NewNodeId = redirect.NewNode?.Id;
             NewCultureId = redirect.NewNodeCulture?.Id;
