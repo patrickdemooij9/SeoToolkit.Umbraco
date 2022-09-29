@@ -47,9 +47,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
                     if (delayBetweenRequests > 0 && currentCrawls > 0)
                         Thread.Sleep(TimeSpan.FromMilliseconds(delayBetweenRequests));
 
-                    //Check if a check has already visited it for us
+                    //Check if a check has already visited it for us and returned an invalid code
                     var cachedStatusCode = _context.GetStatusCode(linkToCrawl);
-                    if (cachedStatusCode != null)
+                    if (cachedStatusCode != null && (cachedStatusCode < 200 || cachedStatusCode > 299))
                     {
                         ProcessPage(new CrawledPageModel(linkToCrawl) { StatusCode = cachedStatusCode.Value });
                     }
