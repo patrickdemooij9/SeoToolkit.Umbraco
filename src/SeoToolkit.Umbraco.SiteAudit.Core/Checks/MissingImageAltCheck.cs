@@ -12,7 +12,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
         public string Alias => "MissingImageAltCheck";
         public string Description => "Checks if you have any images without an alt text";
         public string ErrorMessage => "There are images without an alt text!";
-        public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page)
+        public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page, SiteAuditContext context)
         {
             var images = page.Content?.DocumentNode.SelectNodes("//img");
             if (images is null)

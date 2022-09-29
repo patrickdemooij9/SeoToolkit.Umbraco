@@ -23,6 +23,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Config
             {
                 AllowMinimumDelayBetweenRequestSetting = settings.AllowMinimumDelayBetweenRequestSetting,
                 MinimumDelayBetweenRequest = settings.MinimumDelayBetweenRequest,
+                AllowInvalidCerts = settings.AllowInvalidCerts,
                 Checks = settings.Checks.Select(it => new SiteAuditCheckConfigModel
                 {
                     Alias = it.Key,

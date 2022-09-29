@@ -12,7 +12,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
         public string Alias => "MissingDescriptionCheck";
         public string Description => "Checks if you are missing any descriptions";
         public string ErrorMessage => "Your site has invalid descriptions!";
-        public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page)
+        public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page, SiteAuditContext context)
         {
             if (page.Content == null) yield break;
 
@@ -23,7 +23,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
                 yield break;
             }
 
-            if (string.IsNullOrWhiteSpace(descriptionTag.InnerText))
+            var content = descriptionTag.GetAttributeValue<string>("content", string.Empty);
+            if (string.IsNullOrWhiteSpace(content))
             {
                 yield return new CheckPageCrawlResult
                 {

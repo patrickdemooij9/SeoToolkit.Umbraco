@@ -13,7 +13,12 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
     {
         private readonly HttpClient _httpClient;
 
-        public DefaultPageUrlRequester()
+        public DefaultPageUrlRequester() : this(new HttpClient())
+        {
+
+        }
+
+        public DefaultPageUrlRequester(HttpClient httpClient)
         {
             var httpClientHandler = new HttpClientHandler()
             {

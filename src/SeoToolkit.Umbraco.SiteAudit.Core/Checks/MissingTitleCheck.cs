@@ -12,7 +12,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
         public string Alias => "MissingTitleCheck";
         public string Description => "Checks if you are missing any title tags";
         public string ErrorMessage => "Your site has invalid titles!";
-        public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page)
+        public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page, SiteAuditContext context)
         {
             if (page.Content == null) yield break;
 

@@ -11,7 +11,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Interfaces
         string Description { get; }
         string ErrorMessage { get; }
 
-        IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page);
+        IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page, SiteAuditContext context);
         string FormatMessage(CheckPageCrawlResult crawlResult);
         bool Compare(CheckPageCrawlResult result, CheckPageCrawlResult otherResult);
     }

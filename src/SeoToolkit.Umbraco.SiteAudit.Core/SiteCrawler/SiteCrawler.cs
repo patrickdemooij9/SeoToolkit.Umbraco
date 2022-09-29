@@ -15,6 +15,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
         private readonly ILinkParser _linkParser;
 
         private bool _crawlComplete = false;
+        private SiteAuditContext _context;
 
         public event EventHandler<PageCrawlCompleteArgs> OnPageCrawlCompleted;
 
@@ -26,6 +27,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
             _pageRequester = pageRequester ?? new DefaultPageUrlRequester();
             _scheduler = scheduler ?? new DefaultScheduler();
             _linkParser = linkParser ?? new DefaultLinkParser();
+
+            _context = new SiteAuditContext();
         }
 
         public async Task Crawl(Uri startingUrl, int maxUrlsToCrawl, int delayBetweenRequests = 0)
@@ -44,7 +47,17 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
                     if (delayBetweenRequests > 0 && currentCrawls > 0)
                         Thread.Sleep(TimeSpan.FromMilliseconds(delayBetweenRequests));
 
-                    ProcessPage(await _pageRequester.MakeRequest(linkToCrawl));
+                    //Check if a check has already visited it for us
+                    var cachedStatusCode = _context.GetStatusCode(linkToCrawl);
+                    if (cachedStatusCode != null)
+                    {
+                        ProcessPage(new CrawledPageModel(linkToCrawl) { StatusCode = cachedStatusCode.Value });
+                    }
+                    else
+                    {
+                        ProcessPage(await _pageRequester.MakeRequest(linkToCrawl));
+                    }
+                    
                     currentCrawls++;
                 }
                 else
@@ -57,6 +70,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
 
         private void ProcessPage(CrawledPageModel page)
         {
+            //We keep the urls in a context, so that any checks could benefit from it
+            _context.AddUrlIfNotPresent(page.Url, page.StatusCode);
+
             var links = _linkParser.GetLinks(page).ToArray();
             page.FoundUrls = links;
             foreach (var link in links)
@@ -67,7 +83,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
                 }
             }
             _scheduler.AddKnownUri(page.Url);
-            OnPageCrawlCompleted?.Invoke(this, new PageCrawlCompleteArgs() { Page = page, TotalPagesFound = _scheduler.TotalCount});
+            OnPageCrawlCompleted?.Invoke(this, new PageCrawlCompleteArgs() { Page = page, Context = _context, TotalPagesFound = _scheduler.TotalCount});
         }
 
         public void StopCrawl()

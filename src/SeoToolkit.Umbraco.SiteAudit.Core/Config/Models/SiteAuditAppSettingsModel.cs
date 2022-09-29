@@ -6,6 +6,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Config.Models
     {
         public int MinimumDelayBetweenRequest { get; set; } = 1000;
         public bool AllowMinimumDelayBetweenRequestSetting { get; set; } = false;
+        public bool AllowInvalidCerts { get; set; } = false;
         public Dictionary<string, CheckAppSettingsModel> Checks { get; set; } = new Dictionary<string, CheckAppSettingsModel>();
     }
 }

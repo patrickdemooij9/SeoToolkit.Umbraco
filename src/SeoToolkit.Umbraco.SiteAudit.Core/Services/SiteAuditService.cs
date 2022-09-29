@@ -127,7 +127,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
                 PageUrl = args.Page.Url,
                 StatusCode = args.Page.StatusCode
             };
-            crawledPage.Results.AddRange(auditModel.SiteChecks?.SelectMany(it => it.Check.RunCheck(args.Page).Select(p => new PageCrawlResult(it, p))) ?? Enumerable.Empty<PageCrawlResult>());
+            crawledPage.Results.AddRange(auditModel.SiteChecks?.SelectMany(it => it.Check.RunCheck(args.Page, args.Context).Select(p => new PageCrawlResult(it, p))) ?? Enumerable.Empty<PageCrawlResult>());
 
             using (var scope = _scopeProvider.CreateScope())
             {
