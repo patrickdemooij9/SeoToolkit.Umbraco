@@ -8,6 +8,7 @@
         vm.isLoading = false;
         vm.checks = [];
         vm.selectedAudit = null;
+        vm.allowSettingMiminumDelay = false;
 
         vm.toggleCheck = toggleCheck;
         vm.openNodeDialog = openNodeDialog;
@@ -59,12 +60,14 @@
 
         function init() {
             vm.isLoading = true;
-            $http.get("backoffice/SeoToolkit/SiteAudit/GetAllChecks").then(function (response) {
-                vm.checks = response.data;
+            $http.get("backoffice/SeoToolkit/SiteAudit/GetConfiguration").then(function (response) {
+                vm.checks = response.data.checks;
+                vm.allowSettingMiminumDelay = response.data.allowMinimumDelayBetweenRequestSetting;
                 vm.selectedAudit = {
                     isEdit: true,
                     name: "",
-                    checks: vm.checks.map(it => it.id)
+                    checks: vm.checks.map(it => it.id),
+                    delayBetweenRequests: response.data.minimumDelayBetweenRequest
                 };
                 vm.isLoading = false;
             });
