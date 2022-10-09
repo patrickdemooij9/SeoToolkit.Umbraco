@@ -9,7 +9,14 @@
 
         vm.model = {
             view: vm.field.editor.config.view,
+            config: vm.field.editor.config,
             value: vm.field.value
+        }
+
+        if (vm.field.editor.config.isPreValue) {
+            vm.isPreValue = vm.field.editor.config.isPreValue;
+        } else {
+            vm.isPreValue = false;
         }
 
         function init()
