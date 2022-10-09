@@ -75,7 +75,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             return new JsonResult(new MetaFieldsSettingsViewModel
             {
                 Groups = _groupCollection.Select(it => new SeoFieldGroupViewModel(it)).ToArray(),
-                Fields = metaTags.Fields.Select(it =>
+                Fields = metaTags.Fields.Where(it => it.Key.EditEditor != null).Select(it =>
                 {
                     var (key, value) = it;
                     var userValue = userValues.ContainsKey(key.Alias)

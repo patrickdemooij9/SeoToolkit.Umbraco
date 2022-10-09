@@ -8,5 +8,6 @@
         public const string OpenGraphDescription = "openGraphDescription";
         public const string OpenGraphImage = "openGraphImage";
         public const string CanonicalUrl = "canonicalUrl";
+        public const string Robots = "robots";
     }
 }

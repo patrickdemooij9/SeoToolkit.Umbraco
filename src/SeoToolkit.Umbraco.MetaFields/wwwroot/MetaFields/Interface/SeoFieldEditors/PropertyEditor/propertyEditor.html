@@ -1,5 +1,7 @@
 ﻿<div class="umb-el-wrap" ng-controller="SeoToolkit.SeoFieldEditors.PropertyEditorController as vm">
-    <umb-property-editor model="vm.model">
+    <umb-property-editor model="vm.model" ng-if="!vm.isPreValue">
+    </umb-property-editor>
+    <umb-property-editor model="vm.model" ng-if="vm.isPreValue" is-pre-value="{{vm.isPreValue}}">
     </umb-property-editor>
     <small class="control-description" ng-if="vm.field.editor.config.extraInformation">
         {{vm.field.editor.config.extraInformation}}
