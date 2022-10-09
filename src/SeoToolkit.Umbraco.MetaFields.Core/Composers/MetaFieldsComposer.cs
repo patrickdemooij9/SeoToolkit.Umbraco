@@ -85,8 +85,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 builder.WithCollectionBuilder<DisplayCollectionBuilder>()
                     .Add<MetaFieldsDocumentSettingsDisplayProvider>();
 
-                /*builder.WithCollectionBuilder<SeoDisplayCollectionBuilder>()
-                    .Add<MetaFieldsContentDisplayProvider>();*/
+                builder.WithCollectionBuilder<SeoDisplayCollectionBuilder>()
+                    .Add<MetaFieldsContentDisplayProvider>();
 
                 builder.WithCollectionBuilder<SeoGroupCollectionBuilder>()
                     .Append<MetaFieldsGroup>()
