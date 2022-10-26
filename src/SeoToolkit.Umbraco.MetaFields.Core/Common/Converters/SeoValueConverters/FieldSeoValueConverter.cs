@@ -5,6 +5,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Enums;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.Converters;
+using Umbraco.Cms.Core.Models;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters
 {
