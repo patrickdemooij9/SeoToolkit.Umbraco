@@ -8,7 +8,7 @@
 		<Title>SeoToolkit Robots.txt</Title>
 		<Description>An Umbraco plugin to help you to easily setup a robots.txt for your website</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageTags>umbraco plugin package</PackageTags>
+		<PackageTags>umbraco plugin package umbraco-marketplace</PackageTags>
 		<RootNamespace>SeoToolkit.Umbraco.RobotsTxt</RootNamespace>
 		<PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
