@@ -18,6 +18,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Config
             var settings = _config.CurrentValue;
             return new MetaFieldsConfigModel
             {
+                SupportedMediaTypes = settings.SupportedMediaTypes,
+                OpenGraphCropAlias = settings.OpenGraphCropAlias,
                 DisabledModules = settings.DisabledModules
             };
         }
