@@ -45,7 +45,6 @@
     <Watch Remove="umbraco\**" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SeoToolkit.Umbraco.SiteAudit\SeoToolkit.Umbraco.SiteAudit.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco\SeoToolkit.Umbraco.csproj" />
   </ItemGroup>
 
