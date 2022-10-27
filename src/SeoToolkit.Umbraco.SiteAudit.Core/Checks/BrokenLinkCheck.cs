@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using Azure;
 using Microsoft.Extensions.Logging;
 using SeoToolkit.Umbraco.SiteAudit.Core.Enums;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
@@ -35,7 +36,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
             return $"Broken url: {crawlResult.ExtraValues[BrokenLinkUrl]} ({crawlResult.ExtraValues[BrokenLinkStatusCode]})";
         }
 
-        public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page)
+        public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page, SiteAuditContext context)
         {
             if (page.FoundUrls?.Any() != true)
                 return new List<CheckPageCrawlResult>(0);
@@ -43,25 +44,30 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
             var results = new List<CheckPageCrawlResult>();
             foreach (var url in page.FoundUrls)
             {
+                //Check if we have already visited this url before
+                var cachedStatusCode = context.GetStatusCode(url);
+                if (cachedStatusCode != null)
+                {
+                    if (cachedStatusCode < 200 || cachedStatusCode > 299)
+                    {
+                        results.Add(CreateResult(url.ToString(), cachedStatusCode.Value));
+                    }
+                    continue;
+                }
+
                 using (var message = new HttpRequestMessage(HttpMethod.Head, url))
                 {
                     try
                     {
                         var response = _httpClient.SendAsync(message, CancellationToken.None).Result;
                         if (!response.IsSuccessStatusCode)
-                            results.Add(new CheckPageCrawlResult
-                            {
-                                Result = SiteCrawlResultType.Error,
-                                ExtraValues = new Dictionary<string, string>
-                                {
-                                    { BrokenLinkUrl, url.ToString() },
-                                    { BrokenLinkStatusCode, response.StatusCode.ToString() }
-                                }
-                            });
+                            results.Add(CreateResult(url.ToString(), (int)response.StatusCode));
+
+                        context.AddUrlIfNotPresent(url, (int)response.StatusCode);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Something went wrong");
+                        _logger.LogError(ex, $"Something went wrong when trying to access {url}");
                     }
                 }
             }
@@ -72,6 +78,19 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
         public bool Compare(CheckPageCrawlResult result, CheckPageCrawlResult otherResult)
         {
             return result.ExtraValues[BrokenLinkUrl] == otherResult.ExtraValues[BrokenLinkUrl];
+        }
+
+        private CheckPageCrawlResult CreateResult(string url, int statusCode)
+        {
+            return new CheckPageCrawlResult
+            {
+                Result = SiteCrawlResultType.Error,
+                ExtraValues = new Dictionary<string, string>
+                                {
+                                    { BrokenLinkUrl, url },
+                                    { BrokenLinkStatusCode, statusCode.ToString() }
+                                }
+            };
         }
     }
 }

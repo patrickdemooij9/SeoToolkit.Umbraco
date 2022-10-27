@@ -32,15 +32,13 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
         private readonly ISettingsService<SiteAuditConfigModel> _settingsService;
         private readonly ILogger<SiteAuditController> _logger;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
-        private readonly ISiteAuditScheduler _siteAuditScheduler;
 
         public SiteAuditController(SiteAuditService siteAuditService,
             ISiteCheckService siteCheckService,
             SiteAuditHubClientService siteAuditHubClient,
             ISettingsService<SiteAuditConfigModel> settingsService,
             ILogger<SiteAuditController> logger,
-            IUmbracoContextFactory umbracoContextFactory,
-            ISiteAuditScheduler siteAuditScheduler)
+            IUmbracoContextFactory umbracoContextFactory)
         {
             _siteAuditService = siteAuditService;
             _siteCheckService = siteCheckService;
@@ -48,7 +46,6 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
             _settingsService = settingsService;
             _logger = logger;
             _umbracoContextFactory = umbracoContextFactory;
-            _siteAuditScheduler = siteAuditScheduler;
         }
 
         [HttpGet]
@@ -94,14 +91,22 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllChecks()
+        public IActionResult GetConfiguration()
         {
-            return new JsonResult(_siteCheckService.GetAll().Select(it => new SiteAuditCheckViewModel { Id = it.Id, Name = it.Check.Name, Description = it.Check.Description }));
+            var config = _settingsService.GetSettings();
+            return new JsonResult(new SiteAuditCreateConfigViewModel
+            {
+                Checks = _siteCheckService.GetAll().Select(it => new SiteAuditCheckViewModel { Id = it.Id, Name = it.Check.Name, Description = it.Check.Description }).ToArray(),
+                AllowMinimumDelayBetweenRequestSetting = config.AllowMinimumDelayBetweenRequestSetting,
+                MinimumDelayBetweenRequest = config.MinimumDelayBetweenRequest
+            });
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateAudit([FromBody] CreateAuditPostModel postModel)
         {
+            var config = _settingsService.GetSettings();
+
             //TODO: Move to mapper
             SiteAuditDto model;
             using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
@@ -114,14 +119,26 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
                     StartingUrl = new Uri(ctx.UmbracoContext.Content.GetById(postModel.SelectedNodeId).Url(mode: UrlMode.Absolute)),
                     SiteChecks = _siteCheckService.GetAll().Where(it => postModel.Checks.Contains(it.Id)).ToList(),
                     MaxPagesToCrawl = postModel.MaxPagesToCrawl == 0 ? (int?)null : postModel.MaxPagesToCrawl,
-                    DelayBetweenRequests = postModel.DelayBetweenRequests * 1000
+                    DelayBetweenRequests = (config.AllowMinimumDelayBetweenRequestSetting ? postModel.DelayBetweenRequests : config.MinimumDelayBetweenRequest) * 1000
                 };
             }
 
             model = _siteAuditService.Save(model);
             if (postModel.StartAudit)
             {
-                _siteAuditScheduler.AddSiteAudit(model.Id);
+                ExecutionContext.SuppressFlow();
+                _ = Task.Run(() =>
+                {
+                    try
+                    {
+                        var result = _siteAuditService.StartSiteAudit(model).Result;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Something went wrong!");
+                    }
+                });
+                if (ExecutionContext.IsFlowSuppressed()) ExecutionContext.RestoreFlow();
             }
             return Ok(model.Id);
         }

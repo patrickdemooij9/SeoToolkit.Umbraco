@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.SignalR;
 using SeoToolkit.Umbraco.SiteAudit.Core.Enums;
@@ -11,20 +12,20 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Hubs
     {
         private readonly IHubContext<SiteAuditHub> _hubContext;
 
-        private readonly Dictionary<string, int> _assignedSiteAudits;
+        private readonly Dictionary<string, SiteAuditHubClient> _assignedSiteAudits;
 
         public SiteAuditHubClientService(IHubContext<SiteAuditHub> hubContext)
         {
             _hubContext = hubContext;
-            _assignedSiteAudits = new Dictionary<string, int>();
+            _assignedSiteAudits = new Dictionary<string, SiteAuditHubClient>();
         }
 
         public void AssignClient(string clientId, int auditId)
         {
             if (_assignedSiteAudits.ContainsKey(clientId))
-                _assignedSiteAudits[clientId] = auditId;
+                _assignedSiteAudits[clientId] = new SiteAuditHubClient(clientId, auditId);
             else
-                _assignedSiteAudits.Add(clientId, auditId);
+                _assignedSiteAudits.Add(clientId, new SiteAuditHubClient(clientId, auditId));
         }
 
         public void RemoveClient(string clientId)
@@ -46,18 +47,26 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Hubs
 
         public void UpdateSiteAudit(SiteAuditDto siteAudit)
         {
-            if (!_assignedSiteAudits.ContainsValue(siteAudit.Id))
-                return;
-
-            var clients = _assignedSiteAudits.Where(it => it.Value == siteAudit.Id);
+            var clients = _assignedSiteAudits.Where(it => it.Value.AuditId == siteAudit.Id).ToArray();
+            if (!clients.Any()) return;
+            
             _hubContext?.Clients.Clients(clients.Select(it => it.Key).ToList()).SendAsync("update", new SiteAuditDetailViewModel(siteAudit));
 
             if (siteAudit.Status == SiteAuditStatus.Finished)
             {
-                foreach (var client in _assignedSiteAudits.Where(it => it.Value == siteAudit.Id))
+                foreach (var client in clients)
                 {
                     RemoveClient(client.Key);
                 }
+            }
+        }
+
+        //Cleanup any old connections older than an hour
+        public void Cleanup()
+        {
+            foreach(var client in _assignedSiteAudits.Where(it => it.Value.LastAccessed.AddHours(1) < DateTime.UtcNow))
+            {
+                RemoveClient(client.Key);
             }
         }
     }

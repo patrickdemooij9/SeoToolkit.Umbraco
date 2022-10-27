@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using Azure;
 using Microsoft.Extensions.Logging;
 using SeoToolkit.Umbraco.SiteAudit.Core.Enums;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
@@ -29,7 +30,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
             _httpClient = httpClient;
         }
 
-        public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page)
+        public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page, SiteAuditContext context)
         {
             if (page.Content is null)
                 return new List<CheckPageCrawlResult>(0);
@@ -47,26 +48,28 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
 
                 if (!sourceUrl.StartsWith("http"))
                     sourceUrl = new Uri(page.Url, sourceUrl).ToString();
-                using (var message = new HttpRequestMessage(HttpMethod.Head, sourceUrl))
+
+                //Check if we have already visited this url before
+                var cachedStatusCode = context.GetStatusCode(new Uri(sourceUrl));
+                if (cachedStatusCode != null)
                 {
-                    try
-                    {
-                        var response = _httpClient.SendAsync(message, CancellationToken.None).Result;
-                        if (!response.IsSuccessStatusCode)
-                            results.Add(new CheckPageCrawlResult
-                            {
-                                Result = SiteCrawlResultType.Error,
-                                ExtraValues = new Dictionary<string, string>
-                                {
-                                    { BrokenLinkUrl, sourceUrl },
-                                    { BrokenLinkStatusCode, response.StatusCode.ToString() }
-                                }
-                            });
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Something went wrong!");
-                    }
+                    if (cachedStatusCode < 200 || cachedStatusCode > 299)
+                        results.Add(CreateResult(sourceUrl, cachedStatusCode.Value));
+                    continue;
+                }
+
+                using var message = new HttpRequestMessage(HttpMethod.Head, sourceUrl);
+                try
+                {
+                    var response = _httpClient.SendAsync(message, CancellationToken.None).Result;
+                    if (!response.IsSuccessStatusCode)
+                        results.Add(CreateResult(sourceUrl, (int)response.StatusCode));
+
+                    context.AddUrlIfNotPresent(new Uri(sourceUrl), (int)response.StatusCode);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Something went wrong!");
                 }
             }
 
@@ -81,6 +84,19 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
         public bool Compare(CheckPageCrawlResult result, CheckPageCrawlResult otherResult)
         {
             return result.ExtraValues[BrokenLinkUrl] == otherResult.ExtraValues[BrokenLinkUrl];
+        }
+
+        private CheckPageCrawlResult CreateResult(string url, int statusCode)
+        {
+            return new CheckPageCrawlResult
+            {
+                Result = SiteCrawlResultType.Error,
+                ExtraValues = new Dictionary<string, string>
+                                {
+                                    { BrokenLinkUrl, url },
+                                    { BrokenLinkStatusCode, statusCode.ToString() }
+                                }
+            };
         }
     }
 }

@@ -6,6 +6,13 @@
             <div ng-if="!vm.isLoading">
 
                 <umb-editor-sub-header>
+                    <umb-editor-sub-header-content-left>
+                        <umb-button type="button"
+                                    label="Back"
+                                    action="vm.back()"
+                                    button-style="outline">
+                        </umb-button>
+                    </umb-editor-sub-header-content-left>
                     <umb-editor-sub-header-content-right>
                         <div class="pull-right">
                             <umb-button type="button"
@@ -40,7 +47,8 @@
                             </div>
                             <div class="umb-healthcheck-message" style="margin: 0;">
                                 <i class="icon-document" aria-hidden="true"></i>
-                                {{vm.audit.pagesCrawled.length}}/{{vm.audit.maxPagesToCrawl ? vm.audit.maxPagesToCrawl : vm.audit.totalPagesFound}}
+                                <span>{{vm.audit.pagesCrawled.length}}</span>
+                                <span ng-if="vm.audit.progress !== 100">/{{vm.audit.totalPagesFound}}</span>
                             </div>
                         </div>
                     </div>
@@ -177,14 +185,14 @@
                                             {{page.warnings}}
                                         </div>
                                     </div>
-                                    <a ng-click="vm.openPage(page)" ng-show="!page.Show">
+                                    <a ng-click="vm.openPage(page)" ng-show="!page.show">
                                         Open
                                     </a>
-                                    <a ng-click="vm.closePage(page)" ng-show="page.Show">
+                                    <a ng-click="vm.closePage(page)" ng-show="page.show">
                                         Close
                                     </a>
                                 </div>
-                                <div class="umb-panel-group__details-status" ng-show="page.Show" style="padding: 0 20px 15px 40px; border-top: none; display: block;">
+                                <div class="umb-panel-group__details-status" ng-show="page.show" style="padding: 0 20px 15px 40px; border-top: none; display: block;">
                                     <div ng-repeat="result in page.results | filter:vm.resultFilter" ng-show="page.results.length > 0">
                                         {{result.message}}
                                     </div>

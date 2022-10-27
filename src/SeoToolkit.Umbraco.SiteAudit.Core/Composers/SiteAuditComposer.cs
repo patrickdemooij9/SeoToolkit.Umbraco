@@ -35,7 +35,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
             builder.Services.AddSingleton(typeof(ISiteCheckRepository), typeof(SiteCheckDatabaseRepository));
             builder.Services.AddSingleton(typeof(ISiteAuditScheduler), typeof(SiteAuditScheduler));
 
-            builder.Services.AddHostedService<ScheduledSiteAuditTask>();
+            //builder.Services.AddHostedService<ScheduledSiteAuditTask>();
+            builder.Services.AddHostedService<SiteAuditHubClientCleanup>();
 
             builder.WithCollectionBuilder<SiteAuditCheckCollectionBuilder>()
                 .Append<BrokenLinkCheck>()
@@ -53,14 +54,25 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
             builder.Services.AddHubSignalR();
 
             builder.Services.AddHttpClient<BrokenImageCheck>()
-                .ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler()
+                .ConfigurePrimaryHttpMessageHandler(x =>
                 {
-                    ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => true
+                    var allowInvalidCerts = x.GetRequiredService<ISettingsService<SiteAuditConfigModel>>().GetSettings().AllowInvalidCerts;
+
+                    return new HttpClientHandler()
+                    {
+                        ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => allowInvalidCerts
+                    };
                 });
+
             builder.Services.AddHttpClient<BrokenLinkCheck>()
-                .ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler()
+                .ConfigurePrimaryHttpMessageHandler(x =>
                 {
-                    ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => true
+                    var allowInvalidCerts = x.GetRequiredService<ISettingsService<SiteAuditConfigModel>>().GetSettings().AllowInvalidCerts;
+
+                    return new HttpClientHandler()
+                    {
+                        ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => allowInvalidCerts
+                    };
                 });
         }
     }
