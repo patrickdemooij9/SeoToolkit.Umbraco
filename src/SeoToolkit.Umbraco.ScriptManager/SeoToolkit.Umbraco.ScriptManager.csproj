@@ -8,7 +8,7 @@
 		<Title>SeoToolkit Script Manager</Title>
 		<Description>An Umbraco plugin to help you to include custom script on your website</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageTags>umbraco plugin package</PackageTags>
+		<PackageTags>umbraco plugin package umbraco-marketplace</PackageTags>
 		<RootNamespace>SeoToolkit.Umbraco.ScriptManager</RootNamespace>
 		<PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>

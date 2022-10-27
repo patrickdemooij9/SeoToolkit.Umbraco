@@ -7,10 +7,18 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditors
 {
     public class SeoFieldPropertyEditor : ISeoFieldEditor, ISeoFieldEditorDefaultValue
     {
+        private const string PreValueKey = "isPreValue";
+
         public string View => "/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/PropertyEditor/propertyEditor.html";
 
         public Dictionary<string, object> Config { get; }
         public IEditorValueConverter ValueConverter { get; }
+
+        public bool IsPreValue
+        {
+            get { return Config.ContainsKey(PreValueKey) && (bool)Config[PreValueKey]; }
+            set { Config[PreValueKey] = value; }
+        }
 
         private object _defaultValue;
 

@@ -33,6 +33,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels
 
         public SeoFieldViewModel(ISeoField field, DocumentTypeValueDto value) : this(field)
         {
+            if (value is null) return;
+
             Value = field.Editor.ValueConverter.ConvertObjectToEditorValue(value.Value);
             UseInheritedValue = value.UseInheritedValue;
         }

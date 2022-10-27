@@ -72,7 +72,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                         return null;
 
                     object intermediateObject = null;
-                    if (userValues?.ContainsKey(it.Alias) is true)
+                    if (userValues?.ContainsKey(it.Alias) is true && userValues[it.Alias] != null)
                     {
                         var result = it.EditEditor.ValueConverter.ConvertDatabaseToObject(userValues[it.Alias]);
                         if (!it.EditEditor.ValueConverter.IsEmpty(result))

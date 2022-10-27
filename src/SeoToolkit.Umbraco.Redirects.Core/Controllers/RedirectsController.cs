@@ -11,6 +11,7 @@ using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using SeoToolkit.Umbraco.Redirects.Core.Models.PostModels;
 using SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels;
 using Umbraco.Cms.Core.Security;
+using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 {
@@ -97,7 +98,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
                 return new RedirectListViewModel
                 {
                     Id = it.Id,
-                    OldUrl = it.OldUrl,
+                    OldUrl = it.OldUrl.IfNullOrWhiteSpace("/"),
                     NewUrl = it.GetNewUrl(),
                     Domain = domain,
                     StatusCode = it.RedirectCode,
