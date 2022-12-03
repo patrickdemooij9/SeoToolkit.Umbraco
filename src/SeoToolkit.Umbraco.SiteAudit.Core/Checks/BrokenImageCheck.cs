@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
-using Azure;
 using Microsoft.Extensions.Logging;
 using SeoToolkit.Umbraco.SiteAudit.Core.Enums;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Product>SeoToolkit Common Core</Product>
     <PackageId>SeoToolkit.Umbraco.Common.Core</PackageId>
     <Title>SeoToolkit Common Core</Title>
@@ -11,11 +11,11 @@
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
     <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
-    <Version>2.2.0</Version>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.0.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="11.0.0" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="11.0.0" />
   </ItemGroup>
 </Project>
