@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Umbraco.Cms.Core.Models.PublishedContent;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Models.Business
 {
@@ -14,6 +12,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Models.Business
         public DateTime? LastModifiedDate { get; set; }
         public string ChangeFrequency { get; set; }
         public double? Priority { get; set; }
+        public IPublishedContent Content { get; set; }
 
         public List<SitemapNodeAlternatePage> AlternatePages { get; set; }
 
