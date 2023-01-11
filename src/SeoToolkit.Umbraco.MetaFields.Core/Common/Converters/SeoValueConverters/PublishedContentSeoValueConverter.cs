@@ -28,9 +28,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
             var settings = _settingsService.GetSettings();
             if (content.ItemType == PublishedItemType.Media)
             {
-                if (!settings.SupportedMediaTypes.Contains(Path.GetExtension(currentContent.Url()), StringComparer.InvariantCultureIgnoreCase)) return null;
+                if (!settings.SupportedMediaTypes.Contains(Path.GetExtension(content.Url()), StringComparer.InvariantCultureIgnoreCase)) return null;
 
-                return string.IsNullOrWhiteSpace(settings.OpenGraphCropAlias) ? currentContent.GetCropUrl(urlMode: UrlMode.Absolute) : currentContent.GetCropUrl(settings.OpenGraphCropAlias, UrlMode.Absolute);
+                return string.IsNullOrWhiteSpace(settings.OpenGraphCropAlias) ? content.GetCropUrl(urlMode: UrlMode.Absolute) : content.GetCropUrl(settings.OpenGraphCropAlias, UrlMode.Absolute);
             }
 
             return content.Url(mode: UrlMode.Absolute);
