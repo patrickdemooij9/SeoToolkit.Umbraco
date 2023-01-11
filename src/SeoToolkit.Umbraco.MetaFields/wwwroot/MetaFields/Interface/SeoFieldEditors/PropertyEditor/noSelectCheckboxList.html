@@ -1,0 +1,11 @@
+﻿<div ng-controller="SeoToolkit.SeoFieldEditors.NoSelectCheckboxList as vm">
+    <umb-checkbox value="{{prevalue.value}}"
+                  model="true"
+                  text="{{prevalue.label}}"
+                  ng-repeat="prevalue in vm.prevalues track by prevalue.value">
+    </umb-checkbox>
+    <umb-checkbox value="none"
+                  model="true"
+                  text="None">
+    </umb-checkbox>
+</div>

@@ -14,6 +14,7 @@
 
         vm.isUrl = isUrl;
         vm.culture = $routeParams.cculture ? $routeParams.cculture : $routeParams.mculture;
+        vm.getValue = getValue;
 
         vm.isContentDirty = function () {
             var currentEditorItem = editorState.getCurrent();
@@ -108,6 +109,13 @@
                 return true;
             }
             return false;
+        }
+
+        function getValue(field) {
+            if (Array.isArray(field.value)) {
+                return "array";
+            }
+            return field.value;
         }
 
         unsubscribe.push($scope.$on("seoContentSubmitting",

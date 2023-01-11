@@ -43,7 +43,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
             };
             Editor.Config.Add("prevalues", items);
 
-            //EditEditor = new SeoCheckboxlistEditEditor(items);
+            EditEditor = new SeoCheckboxlistEditEditor(items);
         }
 
         protected override HtmlString Render(string[] value)
