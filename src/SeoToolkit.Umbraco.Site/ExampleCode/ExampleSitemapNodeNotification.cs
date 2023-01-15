@@ -1,5 +1,6 @@
 ﻿using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using Umbraco.Cms.Core.Events;
+using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Site.ExampleCode
 {
