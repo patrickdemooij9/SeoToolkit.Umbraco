@@ -8,6 +8,7 @@ namespace SeoToolkit.Umbraco.Site.ExampleCode
         public void Handle(GenerateSitemapNodeNotification notification)
         {
             notification.Node.Priority ??= 0.5;
+            notification.Node.HideFromSitemap |= notification.Node.Content.Value<bool>("hideFromSitemap");
         }
     }
 }

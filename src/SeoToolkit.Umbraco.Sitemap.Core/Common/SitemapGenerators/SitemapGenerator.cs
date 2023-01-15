@@ -90,7 +90,8 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
 
                 var item = new SitemapNodeItem(content.Url(culture, UrlMode.Absolute))
                 {
-                    HideFromSitemap = settings?.HideFromSitemap is true
+                    HideFromSitemap = settings?.HideFromSitemap is true,
+                    Content = content
                 };
 
                 if (settings is null || !settings.HideFromSitemap)
