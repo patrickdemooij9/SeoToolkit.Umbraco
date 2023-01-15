@@ -11,7 +11,17 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
         public Type ToValue => typeof(string);
         public object Convert(object value, IPublishedContent currentContent, string fieldAlias)
         {
-            return value?.ToString()?.Replace("%CurrentUrl%", currentContent.Url(mode: UrlMode.Absolute));
+            var stringValue = value?.ToString();
+            if (stringValue?.Contains("%CurrentUrl%") is true)
+            {
+                var url = currentContent.Url(mode: UrlMode.Absolute);
+                if (new Uri(url).PathAndQuery.Equals("/"))
+                {
+                    url = url.TrimEnd('/');
+                }
+                return stringValue.Replace("%CurrentUrl%", url);
+            }
+            return stringValue;
         }
     }
 }
