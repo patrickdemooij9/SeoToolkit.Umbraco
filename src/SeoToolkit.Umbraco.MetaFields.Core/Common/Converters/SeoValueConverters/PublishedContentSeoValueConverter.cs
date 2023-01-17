@@ -6,6 +6,8 @@ using System.IO;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Config.Models;
 using System.Linq;
+using static Umbraco.Cms.Core.Constants.HttpContext;
+using Umbraco.Cms.Core.PropertyEditors.ValueConverters;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters
 {
@@ -30,7 +32,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
             {
                 if (!settings.SupportedMediaTypes.Contains(Path.GetExtension(content.Url()), StringComparer.InvariantCultureIgnoreCase)) return null;
 
-                return string.IsNullOrWhiteSpace(settings.OpenGraphCropAlias) ? content.GetCropUrl(urlMode: UrlMode.Absolute) : content.GetCropUrl(settings.OpenGraphCropAlias, UrlMode.Absolute);
+                if (string.IsNullOrWhiteSpace(settings.OpenGraphCropAlias)) return content.Url(mode: UrlMode.Absolute);
+
+                var crops = content.Value<ImageCropperValue>("umbracoFile");
+                if (crops?.HasCrop(settings.OpenGraphCropAlias) is true) return content.GetCropUrl(settings.OpenGraphCropAlias, UrlMode.Absolute);
+                return content.Url(mode: UrlMode.Absolute);
             }
 
             return content.Url(mode: UrlMode.Absolute);
