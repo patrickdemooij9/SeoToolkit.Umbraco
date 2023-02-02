@@ -35,11 +35,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                 {
                     if (!settings.SupportedMediaTypes.Contains(Path.GetExtension(item.Url()), StringComparer.InvariantCultureIgnoreCase)) continue;
 
-                    if (string.IsNullOrWhiteSpace(settings.OpenGraphCropAlias)) return item.GetCropUrl(urlMode: UrlMode.Absolute);
+                    if (string.IsNullOrWhiteSpace(settings.OpenGraphCropAlias)) return item.Url(mode: UrlMode.Absolute);
 
                     var crops = item.Value<ImageCropperValue>("umbracoFile");
                     if (crops?.HasCrop(settings.OpenGraphCropAlias) is true) return item.GetCropUrl(settings.OpenGraphCropAlias, UrlMode.Absolute);
-                    return item.GetCropUrl(urlMode: UrlMode.Absolute);
+                    return item.Url(mode: UrlMode.Absolute);
                 }
 
                 return item.Url(mode: UrlMode.Absolute);
