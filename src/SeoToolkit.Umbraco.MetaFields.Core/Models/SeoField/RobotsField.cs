@@ -37,11 +37,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
                 new CheckboxItem("No image index", "noimageindex")
             };
 
-            Editor = new SeoFieldPropertyEditor("checkboxlist", new CheckboxlistConverter())
-            {
-                IsPreValue = true
-            };
-            Editor.Config.Add("prevalues", items);
+            Editor = new CheckboxListFieldPropertyEditor(items);
 
             //EditEditor = new SeoCheckboxlistEditEditor(items);
         }

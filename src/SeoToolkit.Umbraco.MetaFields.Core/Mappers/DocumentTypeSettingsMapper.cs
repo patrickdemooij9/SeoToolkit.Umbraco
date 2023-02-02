@@ -9,6 +9,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Database;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.PostModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsSettings.Database;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Mappers
 {
@@ -36,10 +37,14 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Mappers
                         if (field is null)
                             continue;
 
+                        var value = item.Value.Value;
+                        if (field.Editor is ISeoFieldEditorProcessor processor)
+                            value = processor.HandleValue(value);
+
                         target.Fields.Add(field, new DocumentTypeValueDto
                         {
                             UseInheritedValue = item.Value.UseInheritedValue,
-                            Value = field.Editor.ValueConverter.ConvertEditorToDatabaseValue(item.Value.Value)
+                            Value = field.Editor.ValueConverter.ConvertEditorToDatabaseValue(value)
                         });
                     }
                     target.Inheritance = source.InheritanceId is null ? null : _contentTypeService.Get(source.InheritanceId.Value);
