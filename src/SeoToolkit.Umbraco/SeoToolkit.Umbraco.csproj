@@ -28,4 +28,9 @@
 		<ProjectReference Include="..\SeoToolkit.Umbraco.Sitemap\SeoToolkit.Umbraco.Sitemap.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0" />
+		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.0.0" />
+	</ItemGroup>
+
 </Project>
