@@ -24,7 +24,8 @@ namespace SeoToolkit.Umbraco.RobotsTxt
                 Scripts = new[]
                 {
                     "/App_Plugins/SeoToolkit/backoffice/RobotsTxt/detail.controller.js"
-                }
+                },
+                BundleOptions = BundleOptions.None
             });
         }
     }

@@ -24,7 +24,8 @@ namespace SeoToolkit.Umbraco.Sitemap
                 Scripts = new[]
                 {
                     "/App_Plugins/SeoToolkit/Sitemap/Displays/DocumentType/sitemapSettings.controller.js"
-                }
+                },
+                BundleOptions = BundleOptions.None
             });
         }
     }

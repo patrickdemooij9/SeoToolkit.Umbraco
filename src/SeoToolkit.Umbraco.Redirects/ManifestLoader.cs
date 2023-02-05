@@ -30,7 +30,8 @@ namespace SeoToolkit.Umbraco.Redirects
                 Stylesheets = new[]
                 {
                     "/App_Plugins/SeoToolkit/Redirects/css/main.css"
-                }
+                },
+                BundleOptions = BundleOptions.None
             });
         }
     }

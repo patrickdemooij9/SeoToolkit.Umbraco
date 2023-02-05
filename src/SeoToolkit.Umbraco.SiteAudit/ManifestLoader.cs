@@ -35,7 +35,8 @@ namespace SeoToolkit.Umbraco.SiteAudit
                 Stylesheets = new[]
                 {
                     "/App_Plugins/SeoToolkit/SiteAudit/css/siteAudit.css"
-                }
+                },
+                BundleOptions = BundleOptions.None
             });
         }
     }

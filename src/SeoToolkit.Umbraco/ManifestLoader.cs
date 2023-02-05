@@ -24,7 +24,8 @@ namespace SeoToolkit.Umbraco
                 Scripts = new[]
                 {
                     "/App_Plugins/SeoToolkit/backoffice/License/licenseDashboard.controller.js"
-                }
+                },
+                BundleOptions = BundleOptions.None
             });
         }
     }

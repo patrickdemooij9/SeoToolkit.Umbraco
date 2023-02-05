@@ -25,7 +25,8 @@ namespace SeoToolkit.Umbraco.ScriptManager
                 {
                     "/App_Plugins/SeoToolkit/backoffice/ScriptManager/list.controller.js",
                     "/App_Plugins/SeoToolkit/backoffice/ScriptManager/edit.controller.js"
-                }
+                },
+                BundleOptions = BundleOptions.None
             });
         }
     }
