@@ -1,0 +1,8 @@
+﻿<div ng-controller="SeoToolkit.SeoFieldEditors.NoSelectCheckboxList as vm">
+    <umb-checkbox value="{{item.value}}"
+                  model="item.checked"
+                  text="{{item.label}}"
+                  ng-repeat="item in vm.items track by item.value"
+                  on-change="vm.change(model, value)">
+    </umb-checkbox>
+</div>
