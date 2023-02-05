@@ -81,13 +81,15 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                     var userValue = userValues.ContainsKey(key.Alias)
                         ? key.EditEditor.ValueConverter.ConvertObjectToEditorValue(key.EditEditor.ValueConverter.ConvertDatabaseToObject(userValues[key.Alias]))
                         : null;
+
+                    var humanReadableValue = value is string[] ? string.Join(", ", value as string[]) : value;
                     return new SeoSettingsFieldViewModel
                     {
                         Alias = key.Alias,
                         Title = key.Title,
                         Description = key.Description,
                         GroupAlias = key.GroupAlias,
-                        Value = value?.ToString(),
+                        Value = humanReadableValue?.ToString(),
                         UserValue = userValue,
                         EditView = key.EditEditor.View,
                         EditConfig = key.EditEditor.Config

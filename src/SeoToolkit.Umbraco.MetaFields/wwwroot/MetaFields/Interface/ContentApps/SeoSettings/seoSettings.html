@@ -24,7 +24,7 @@
                                     <div class="controls">
                                         <umb-property-editor class="umb-property-editor" model="field.editModel">
                                         </umb-property-editor>
-                                        <small class="property-fallback-info" ng-if="field.value">Fallback value: <strong>{{field.value}}</strong></small>
+                                        <small class="property-fallback-info" ng-if="field.value">Fallback value: <strong>{{vm.getValue(field)}}</strong></small>
                                         <small class="property-fallback-info" ng-if="!field.value">No fallback value found!</small>
                                     </div>
                                 </div>
