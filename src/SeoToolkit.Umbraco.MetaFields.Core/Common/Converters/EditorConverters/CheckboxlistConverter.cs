@@ -14,7 +14,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
 
         public object ConvertEditorToDatabaseValue(object value)
         {
-            if (!(value is JArray array)) return null;
+            if (!(value is JArray array) || array.Count == 0) return null;
             return string.Join(',', array);
         }
 
