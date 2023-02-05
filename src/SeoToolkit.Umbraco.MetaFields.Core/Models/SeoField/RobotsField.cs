@@ -49,6 +49,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         protected override HtmlString Render(string[] value)
         {
             if (value is null || value.Length == 0) return HtmlString.Empty;
+            if (value.Length == 1 && value[0].Equals("none")) return HtmlString.Empty;
 
             return new HtmlString($"<meta name=\"robots\" content=\"{string.Join(',', value)}\">");
         }
