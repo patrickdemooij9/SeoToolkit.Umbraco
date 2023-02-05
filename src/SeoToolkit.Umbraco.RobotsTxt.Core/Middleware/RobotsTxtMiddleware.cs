@@ -25,7 +25,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Middleware
                 return;
             }
 
-            var robotsTxt = _robotsTxtService.GetContent();
+            var robotsTxt = _robotsTxtService.GetContentWithSitemaps(context.Request);
             if (string.IsNullOrWhiteSpace(robotsTxt))
             {
                 await _next.Invoke(context);
