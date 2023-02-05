@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
-using Polly;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using System;
 using System.Collections.Generic;
