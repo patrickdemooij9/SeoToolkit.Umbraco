@@ -20,7 +20,7 @@ namespace SeoToolkit.Umbraco.SiteAudit
             manifests.Add(new PackageManifest
             {
                 PackageName = "SeoToolkit.Umbraco.SiteAudit",
-                Version = "1.0.0",
+                Version = "1.1.0",
                 Scripts = new[]
                 {
                     "/App_Plugins/SeoToolkit/SiteAudit/Interface/Dashboards/SiteAudit/siteAuditDashboard.controller.js",
