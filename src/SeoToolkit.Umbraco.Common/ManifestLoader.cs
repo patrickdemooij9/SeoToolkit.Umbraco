@@ -30,7 +30,8 @@ namespace SeoToolkit.Umbraco.Common
                 Stylesheets = new[]
                 {
                     "/App_Plugins/SeoToolkit/css/main.css"
-                }
+                },
+                BundleOptions = BundleOptions.None
             });
         }
     }

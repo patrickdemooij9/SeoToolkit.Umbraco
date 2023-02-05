@@ -37,7 +37,8 @@ namespace SeoToolkit.Umbraco.MetaFields
                 Stylesheets = new[]
                 {
                     "/App_Plugins/SeoToolkit/MetaFields/css/main.css"
-                }
+                },
+                BundleOptions = BundleOptions.None
             });
         }
     }
