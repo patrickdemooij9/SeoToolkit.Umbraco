@@ -23,29 +23,30 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
             _cache = appCaches.RuntimeCache;
         }
 
-        public Dictionary<string, object> GetUserValues(int nodeId)
+        public Dictionary<string, object> GetUserValues(int nodeId, string culture = null)
         {
-            var culture = GetCulture();
-            return _cache.GetCacheItem($"{BaseCacheKey}{nodeId}_{culture}", () => _repository.GetAllValues(nodeId, culture), TimeSpan.FromMinutes(30));
+            var foundCulture = culture.IfNullOrWhiteSpace(GetCulture());
+            return _cache.GetCacheItem($"{BaseCacheKey}{nodeId}_{foundCulture}", () => _repository.GetAllValues(nodeId, foundCulture), TimeSpan.FromMinutes(30));
         }
 
-        public void AddValues(int nodeId, Dictionary<string, object> values)
+        public void AddValues(int nodeId, Dictionary<string, object> values, string culture = null)
         {
+            var foundCulture = culture.IfNullOrWhiteSpace(GetCulture());
             foreach (var (key, value) in values)
             {
-                if (_repository.Exists(nodeId, key, GetCulture()))
-                    _repository.Update(nodeId, key, GetCulture(), value);
+                if (_repository.Exists(nodeId, key, foundCulture))
+                    _repository.Update(nodeId, key, foundCulture, value);
                 else
                 {
-                    _repository.Add(nodeId, key, GetCulture(), value);
+                    _repository.Add(nodeId, key, foundCulture, value);
                 }
             }
             ClearCache(nodeId);
         }
 
-        public void Delete(int nodeId, string fieldAlias)
+        public void Delete(int nodeId, string fieldAlias, string culture)
         {
-            _repository.Delete(nodeId, fieldAlias, GetCulture());
+            _repository.Delete(nodeId, fieldAlias, culture.IfNullOrWhiteSpace(GetCulture()));
         }
 
         private string GetCulture()
