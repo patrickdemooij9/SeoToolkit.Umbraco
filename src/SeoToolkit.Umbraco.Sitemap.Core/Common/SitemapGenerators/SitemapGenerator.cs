@@ -22,6 +22,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
         private readonly IPublicAccessService _publicAccessService;
         private readonly IEventAggregator _eventAggregator;
         private readonly SitemapConfig _settings;
+        private readonly IVariationContextAccessor _variationContextAccessor;
 
         private List<string> _validAlternateCultures;
         private Dictionary<int, SitemapPageSettings> _pageTypeSettings; //Used to cache the types for the generation
@@ -33,12 +34,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             ISettingsService<SitemapConfig> settingsService,
             ISitemapService sitemapService,
             IPublicAccessService publicAccessService,
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator,
+            IVariationContextAccessor variationContextAccessor)
         {
             _umbracoContextFactory = umbracoContextFactory;
             _sitemapService = sitemapService;
             _publicAccessService = publicAccessService;
             _eventAggregator = eventAggregator;
+            _variationContextAccessor = variationContextAccessor;
             _settings = settingsService.GetSettings();
 
             _pageTypeSettings = new Dictionary<int, SitemapPageSettings>();
@@ -49,6 +52,11 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             _validAlternateCultures = new List<string>();
             var rootNamespace = new XElement(_namespace + "urlset", _settings.ShowAlternatePages ? new XAttribute(XNamespace.Xmlns + "xhtml", _xHtmlNamespace) : null);
 
+            if (!string.IsNullOrWhiteSpace(options.Culture))
+            {
+                _variationContextAccessor.VariationContext = new VariationContext(options.Culture);
+            }
+            
             using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
             {
                 var startingNodes = new List<IPublishedContent>();
