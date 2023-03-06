@@ -12,8 +12,8 @@ namespace SeoToolkit.Umbraco.Site.ExampleCode
         
         public ExampleSitemapNotification(IMetaFieldsValueService metaFieldsValueService)
         {
-			_metaFieldsValueService = metaFieldsValueService;
-		}
+            _metaFieldsValueService = metaFieldsValueService;
+        }
 
         public void Handle(GenerateSitemapNotification notification)
         {
