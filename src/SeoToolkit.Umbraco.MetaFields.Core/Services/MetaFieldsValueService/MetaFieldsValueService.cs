@@ -44,7 +44,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
             ClearCache(nodeId);
         }
 
-        public void Delete(int nodeId, string fieldAlias, string culture)
+        public void Delete(int nodeId, string fieldAlias, string culture = null)
         {
             _repository.Delete(nodeId, fieldAlias, culture.IfNullOrWhiteSpace(GetCulture()));
         }

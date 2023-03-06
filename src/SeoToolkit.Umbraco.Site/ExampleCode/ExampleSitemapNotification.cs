@@ -8,9 +8,9 @@ namespace SeoToolkit.Umbraco.Site.ExampleCode
 {
     public class ExampleSitemapNotification : INotificationHandler<GenerateSitemapNotification>
     {
-		private readonly IMetaFieldsValueService _metaFieldsValueService;
-
-		public ExampleSitemapNotification(IMetaFieldsValueService metaFieldsValueService)
+        private readonly IMetaFieldsValueService _metaFieldsValueService;
+        
+        public ExampleSitemapNotification(IMetaFieldsValueService metaFieldsValueService)
         {
 			_metaFieldsValueService = metaFieldsValueService;
 		}
@@ -18,6 +18,6 @@ namespace SeoToolkit.Umbraco.Site.ExampleCode
         public void Handle(GenerateSitemapNotification notification)
         {
             notification.Nodes.Add(new SitemapNodeItem("https://google.nl"));
-		}
+        }
     }
 }

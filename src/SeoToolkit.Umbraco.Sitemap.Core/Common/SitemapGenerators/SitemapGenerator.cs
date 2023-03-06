@@ -28,8 +28,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
         private Dictionary<int, SitemapPageSettings> _pageTypeSettings; //Used to cache the types for the generation
 
         private XNamespace _namespace => XNamespace.Get("http://www.sitemaps.org/schemas/sitemap/0.9");
-
-		private XNamespace _xHtmlNamespace = XNamespace.Get("http://www.w3.org/1999/xhtml");
+        private XNamespace _xHtmlNamespace = XNamespace.Get("http://www.w3.org/1999/xhtml");
 
         public SitemapGenerator(IUmbracoContextFactory umbracoContextFactory,
             ISettingsService<SitemapConfig> settingsService,
@@ -42,8 +41,8 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             _sitemapService = sitemapService;
             _publicAccessService = publicAccessService;
             _eventAggregator = eventAggregator;
-			_variationContextAccessor = variationContextAccessor;
-			_settings = settingsService.GetSettings();
+            _variationContextAccessor = variationContextAccessor;
+            _settings = settingsService.GetSettings();
 
             _pageTypeSettings = new Dictionary<int, SitemapPageSettings>();
         }
@@ -56,9 +55,9 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             if (!string.IsNullOrWhiteSpace(options.Culture))
             {
                 _variationContextAccessor.VariationContext = new VariationContext(options.Culture);
-			}
-
-			using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
+            }
+            
+            using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
             {
                 var startingNodes = new List<IPublishedContent>();
                 if (options.StartingNode != null)
