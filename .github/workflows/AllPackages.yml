@@ -28,7 +28,7 @@ jobs:
       run: dotnet pack ./src/SeoToolkit.Umbraco.sln -c ${{ env.CONFIG }} --no-build
       
     - name: Copy files
-      run: find . -name ".nupkg" -type f ./Output
+      run: find . ./Output -name ".nupkg"
 
 #    - name: Push packages to NuGet
 #      run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_DEPLOY_KEY }} -s https://api.nuget.org/v3/index.json
