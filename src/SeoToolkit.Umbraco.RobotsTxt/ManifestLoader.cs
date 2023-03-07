@@ -20,7 +20,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt
             manifests.Add(new PackageManifest
             {
                 PackageName = "SeoToolkit.Umbraco.RobotsTxt",
-                Version = "3.1.0",
+                Version = "3.1.1",
                 Scripts = new[]
                 {
                     "/App_Plugins/SeoToolkit/backoffice/RobotsTxt/detail.controller.js"
