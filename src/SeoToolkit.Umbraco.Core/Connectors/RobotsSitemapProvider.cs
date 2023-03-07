@@ -21,15 +21,17 @@ namespace SeoToolkit.Umbraco.Core.Connectors
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
+            var baseUri = new Uri(request.GetEncodedUrl());
             if (domains.Length == 0)
             {
-                yield return $"{new Uri(request.GetEncodedUrl()).GetLeftPart(UriPartial.Authority).TrimEnd('/')}/sitemap.xml";
+                yield return $"{baseUri.GetLeftPart(UriPartial.Authority).TrimEnd('/')}/sitemap.xml";
             }
             else
             {
                 foreach (var domain in domains)
                 {
-                    yield return $"{domain.Name.TrimEnd('/')}/sitemap.xml";
+                    var url = domain.Name.StartsWith('/') ? new Uri(baseUri, domain.Name).ToString() : domain.Name;
+                    yield return $"{url.TrimEnd('/')}/sitemap.xml";
                 }
             }
         }
