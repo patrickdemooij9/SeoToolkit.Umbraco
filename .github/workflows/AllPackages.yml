@@ -15,8 +15,11 @@ jobs:
     steps:      
     - uses: actions/checkout@v2  
       
-    - name: Setup .net core
-      uses: actions/setup-dotnet@v1.4.0
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '7.0.103'
+        include-prerelease: true
       
     - name: Restore dependencies
       run: dotnet restore ./src/SeoToolkit.Umbraco.sln
@@ -25,7 +28,7 @@ jobs:
       run: dotnet build ./src/SeoToolkit.Umbraco.sln --configuration ${{ env.CONFIG }} --no-restore
 
     - name: Create NuGet packages
-      run: dotnet pack ./src/SeoToolkit.Umbraco.sln -c ${{ env.CONFIG }} --no-build --property:PublishDir=${{ env.OUTPUT }}
+      run: dotnet pack ./src/SeoToolkit.Umbraco.sln -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }}
 
 #    - name: Push packages to NuGet
 #      run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_DEPLOY_KEY }} -s https://api.nuget.org/v3/index.json
