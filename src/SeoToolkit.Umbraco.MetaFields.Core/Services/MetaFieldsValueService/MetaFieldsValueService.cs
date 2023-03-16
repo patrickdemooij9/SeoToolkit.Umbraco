@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
@@ -42,6 +44,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
                 }
             }
             ClearCache(nodeId);
+        }
+
+        public IEnumerable<IGrouping<int, MetaFieldsValueEntity>> GetAll()
+        {
+            return _repository.GetAll();
         }
 
         public void Delete(int nodeId, string fieldAlias, string culture = null)

@@ -49,6 +49,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeoToolkit.Umbraco.Redirect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeoToolkit.Umbraco.Redirects.Core", "SeoToolkit.Umbraco.Redirects.Core\SeoToolkit.Umbraco.Redirects.Core.csproj", "{566D1DBF-EC21-405C-BB92-424C4A1C1B88}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "uSync", "uSync", "{782F3EFF-9063-4C1D-AB3F-1E45734EFB27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeoToolkit.uSync", "SeoToolkit.uSync\SeoToolkit.uSync.csproj", "{3B981A49-B278-4D40-B8E2-EB62266FC80D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +127,10 @@ Global
 		{566D1DBF-EC21-405C-BB92-424C4A1C1B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{566D1DBF-EC21-405C-BB92-424C4A1C1B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{566D1DBF-EC21-405C-BB92-424C4A1C1B88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B981A49-B278-4D40-B8E2-EB62266FC80D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B981A49-B278-4D40-B8E2-EB62266FC80D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B981A49-B278-4D40-B8E2-EB62266FC80D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B981A49-B278-4D40-B8E2-EB62266FC80D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -140,6 +148,7 @@ Global
 		{5B460335-8786-4FA9-911B-AEC5A752B88C} = {5641B436-FCCB-4D1A-9D25-6A39B95031CB}
 		{7C9ABE0D-106C-48C0-B0CF-DBBCD8AF334E} = {B0B49325-8248-4DB8-889D-211D9408D7A5}
 		{566D1DBF-EC21-405C-BB92-424C4A1C1B88} = {B0B49325-8248-4DB8-889D-211D9408D7A5}
+		{3B981A49-B278-4D40-B8E2-EB62266FC80D} = {782F3EFF-9063-4C1D-AB3F-1E45734EFB27}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {551ADBA5-3DFB-4300-929C-2BE0DB346636}

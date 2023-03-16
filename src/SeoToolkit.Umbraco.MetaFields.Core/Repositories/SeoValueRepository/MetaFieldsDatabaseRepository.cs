@@ -74,5 +74,13 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
                     .ToDictionary(it => it.Alias, it => JsonConvert.DeserializeObject(it.UserValue));
             }
         }
+
+        public IEnumerable<IGrouping<int, MetaFieldsValueEntity>> GetAll()
+        {
+            using var scope = _scopeProvider.CreateScope();
+            var values = scope.Database
+                .Fetch<MetaFieldsValueEntity>(scope.SqlContext.Sql()).GroupBy(it => it.NodeId);
+            return values;
+        }
     }
 }

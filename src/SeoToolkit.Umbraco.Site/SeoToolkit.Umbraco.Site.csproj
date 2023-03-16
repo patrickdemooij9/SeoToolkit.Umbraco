@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="clean" Version="2.0.0-beta002" />
     <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="68.2.0.6" />
+    <PackageReference Include="uSync" Version="11.0.2" />
     <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="68.2" />
   </ItemGroup>
 
@@ -46,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SeoToolkit.Umbraco\SeoToolkit.Umbraco.csproj" />
+    <ProjectReference Include="..\SeoToolkit.uSync\SeoToolkit.uSync.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
