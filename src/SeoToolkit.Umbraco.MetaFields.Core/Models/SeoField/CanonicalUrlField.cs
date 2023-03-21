@@ -28,7 +28,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 
         protected override HtmlString Render(string value)
         {
-            return string.IsNullOrWhiteSpace(value) ? null : new HtmlString($"<link rel='canonical' href='{value}'/>");
+            return string.IsNullOrWhiteSpace(value) ? null : new HtmlString($"<link rel=\"canonical\" href=\"{value}\"/>");
         }
     }
 }
