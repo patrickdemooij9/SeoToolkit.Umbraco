@@ -41,7 +41,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
                 url = value?.ToString();
             }
 
-            return new HtmlString($"<meta property='og:image' content='{url}'/>");
+            return new HtmlString($"<meta property=\"og:image\" content=\"{url}\"/>");
         }
     }
 }

@@ -22,7 +22,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 
         public HtmlString Render(object value)
         {
-            return new HtmlString($"<meta property='og:description' content='{value}'/>");
+            return new HtmlString($"<meta property=\"og:description\" content=\"{value}\"/>");
         }
     }
 }
