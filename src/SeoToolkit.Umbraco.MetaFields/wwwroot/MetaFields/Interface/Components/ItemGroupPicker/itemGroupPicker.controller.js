@@ -7,6 +7,12 @@
         var vm = this;
         
         vm.availableItems = $scope.model.availableItems;
+        vm.groupedItems = $scope.model.availableItems.reduce((grp, item) => {
+            let { group } = item;
+            grp[group] = grp[group] ?? [];
+            grp[group].push(item);   
+            return grp;
+          }, {});
         vm.model = {
             selection: []
         };
