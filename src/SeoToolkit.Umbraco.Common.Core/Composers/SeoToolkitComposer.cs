@@ -8,6 +8,8 @@ using SeoToolkit.Umbraco.Common.Core.Dashboards;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository;
 using SeoToolkit.Umbraco.Common.Core.Sections;
 using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.Common.Core.Models.Config;
 
 namespace SeoToolkit.Umbraco.Common.Core.Composers
 {
@@ -15,6 +17,10 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
+            var section = builder.Config.GetSection("SeoToolkit:Global");
+            builder.Services.Configure<GlobalAppSettingsModel>(section);
+            builder.Services.AddSingleton(typeof(ISettingsService<GlobalConfig>), typeof(GlobalConfigService));
+
             builder.Sections().Append<SeoToolkitSection>();
 
             builder.Dashboards().Add<WelcomeDashboard>();
@@ -26,23 +32,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
 
             builder.Services.AddUnique<ISeoSettingsRepository, SeoSettingsRepository>();
             builder.Services.AddUnique<ISeoSettingsService, SeoSettingsService>();
-
-            /*builder.Services.AddTransient(sp =>
-            {
-                var languageFiles = new List<LocalizedTextServiceSupplementaryFileSource>();
-                var webhostEnvironment = sp.GetRequiredService<IWebHostEnvironment>();
-
-                var seoToolkitFolder = webhostEnvironment.ContentRootFileProvider.GetDirectoryContents("/App_Plugins/SeoToolkit/");
-                foreach (var dir in seoToolkitFolder.Where(it => it.IsDirectory))
-                {
-                    foreach (var langDir in new DirectoryInfo(dir.PhysicalPath).EnumerateDirectories().Where(d => d.Exists && d.Name.InvariantEquals("lang")))
-                    {
-                        languageFiles.AddRange(langDir.EnumerateFiles("*.xml").Select(langFile => new LocalizedTextServiceSupplementaryFileSource(langFile, false)));
-                    }
-                }
-                languageFiles.Add(new LocalizedTextServiceSupplementaryFileSource(new FileInfo(webhostEnvironment.ContentRootFileProvider.GetFileInfo("/App_Plugins/SeoToolkit/lang/en-us.xml").PhysicalPath), false));
-                return (IEnumerable<LocalizedTextServiceSupplementaryFileSource>)languageFiles;
-            });*/
+            
         }
     }
 }

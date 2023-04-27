@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SeoToolkit.Umbraco.Core.Config;
+using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using SeoToolkit.Umbraco.Core.Connectors;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using Umbraco.Cms.Core.Composing;
