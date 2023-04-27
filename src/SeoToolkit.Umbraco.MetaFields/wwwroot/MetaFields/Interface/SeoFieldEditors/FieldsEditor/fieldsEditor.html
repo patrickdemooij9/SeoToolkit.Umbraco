@@ -10,7 +10,7 @@
                         <div class="umb-nested-content__heading">
                             <umb-icon icon="icon-autofill" class="icon"></umb-icon>
                             <div class="umb-nested-content__item-name --has-icon">
-                                {{field.name}}
+                                {{field.name}} {{field.source == 1 ? '(' + field.value + ')' : ''}}
                             </div>
                         </div>
                         <div class="umb-nested-content__icons">

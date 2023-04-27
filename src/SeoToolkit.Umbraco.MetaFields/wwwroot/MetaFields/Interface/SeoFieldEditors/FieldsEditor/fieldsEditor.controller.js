@@ -46,7 +46,8 @@
                         name: field.name,
                         value: field.value,
                         onlyShowIfInherited: field.onlyShowIfInherited,
-                        source: 2
+                        source: 2,
+                        group: 'SEO Toolkit'
                     });
                 });
                 fields.forEach(function (d) {
@@ -107,11 +108,11 @@
 
         function getAllContentFields(fields) {
             return editorState.getCurrent().groups.flatMap(function (g) {
-                return g.properties;
+                return g.properties.map(prop => {return { group: g, prop};});
             }).filter(function (g) {
-                return fields.includes(g.editor);
+                return fields.includes(g.prop.editor);
             }).map(function (g) {
-                return { name: g.label, value: g.alias, source: 1 };
+                return { name: g.prop.label, value: g.prop.alias, source: 1, group: g.group.name };
             });
         }
 
