@@ -20,7 +20,7 @@ namespace SeoToolkit.Umbraco
             manifests.Add(new PackageManifest
             {
                 PackageName = "SeoToolkit.Umbraco",
-                Version = "3.1.2",
+                Version = "3.1.3",
                 Scripts = new[]
                 {
                     "/App_Plugins/SeoToolkit/backoffice/License/licenseDashboard.controller.js"
