@@ -60,8 +60,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                 _eventAggregator.Publish(new BeforeMetaTagsNotification(content.ContentType.Alias, metaTags));
 
                 var settings = _documentTypeSettingsService.Get(content.ContentType.Id);
-                if (settings is null)
-                    return null;
                 if (_seoSettingsService.IsEnabled(content.ContentType.Id) != true)
                     return null;
                 var userValues = includeUserValues ? _seoValueService.GetUserValues(content.Id) : null;
@@ -79,7 +77,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                             intermediateObject = result;
                     }
 
-                    if (intermediateObject is null)
+                    if (intermediateObject is null && settings != null)
                     {
                         var documentTypeValue = settings.Get(it.Alias);
                         if (documentTypeValue != null && documentTypeValue.UseInheritedValue)
@@ -88,7 +86,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                             while (inheritance != null)
                             {
                                 var inheritedSettings = _documentTypeSettingsService.Get(inheritance.Id);
-                                documentTypeValue = inheritedSettings.Get(it.Alias);
+                                documentTypeValue = inheritedSettings?.Get(it.Alias);
                                 if (documentTypeValue != null && documentTypeValue.UseInheritedValue)
                                     inheritance = inheritedSettings.Inheritance;
                                 else

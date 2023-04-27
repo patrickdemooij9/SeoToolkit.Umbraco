@@ -32,7 +32,8 @@ namespace SeoToolkit.Umbraco.MetaFields
                     "/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/PropertyEditor/noSelectCheckboxList.controller.js",
                     "/App_Plugins/SeoToolkit/MetaFields/Interface/Components/ItemGroupPicker/itemGroupPicker.controller.js",
                     "/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/seoFieldEditor.directive.js",
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/Previewers/previewer.directive.js"
+                    "/App_Plugins/SeoToolkit/MetaFields/Interface/Previewers/previewer.directive.js",
+                    "/App_Plugins/SeoToolkit/backoffice/MetaFields/settings.controller.js"
                 },
                 Stylesheets = new[]
                 {
