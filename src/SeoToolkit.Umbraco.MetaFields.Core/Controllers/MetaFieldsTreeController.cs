@@ -9,7 +9,7 @@ using Umbraco.Cms.Web.Common.Attributes;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 {
-    [Tree("SeoToolkit", "MetaFields", TreeTitle = "MetaFields", TreeGroup = "SeoToolkit", SortOrder = 5)]
+    /*[Tree("SeoToolkit", "MetaFields", TreeTitle = "MetaFields", TreeGroup = "SeoToolkit", SortOrder = 5)]
     [PluginController("SeoToolkit")]
     public class MetaFieldsTreeController : TreeController
     {
@@ -38,5 +38,5 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
         {
             return null;
         }
-    }
+    }*/
 }
