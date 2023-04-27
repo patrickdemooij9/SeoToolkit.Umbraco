@@ -12,6 +12,8 @@ using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Services;
+using SeoToolkit.Umbraco.Sitemap.Core.Collections;
+using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
 {
@@ -23,6 +25,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
         private readonly IEventAggregator _eventAggregator;
         private readonly SitemapConfig _settings;
         private readonly IVariationContextAccessor _variationContextAccessor;
+        private readonly SitemapCollectionProviderCollection _sitemapCollectionProviders;
 
         private List<string> _validAlternateCultures;
         private Dictionary<int, SitemapPageSettings> _pageTypeSettings; //Used to cache the types for the generation
@@ -35,7 +38,8 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             ISitemapService sitemapService,
             IPublicAccessService publicAccessService,
             IEventAggregator eventAggregator,
-            IVariationContextAccessor variationContextAccessor)
+            IVariationContextAccessor variationContextAccessor,
+            SitemapCollectionProviderCollection sitemapCollectionProviders = null)
         {
             _umbracoContextFactory = umbracoContextFactory;
             _sitemapService = sitemapService;
@@ -43,6 +47,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             _eventAggregator = eventAggregator;
             _variationContextAccessor = variationContextAccessor;
             _settings = settingsService.GetSettings();
+            _sitemapCollectionProviders = sitemapCollectionProviders;
 
             _pageTypeSettings = new Dictionary<int, SitemapPageSettings>();
         }
@@ -76,6 +81,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                     var items = GetSelfAndChildren(node, options.Culture);
 
                     _eventAggregator.Publish(new GenerateSitemapNotification(items));
+
+                    if (_sitemapCollectionProviders != null)
+                    {
+                        foreach (var collection in _sitemapCollectionProviders)
+                        {
+                            items.AddRange(collection.GetItems());
+                        }
+                    }
 
                     rootNamespace.Add(ToXmlElements(items));
 
