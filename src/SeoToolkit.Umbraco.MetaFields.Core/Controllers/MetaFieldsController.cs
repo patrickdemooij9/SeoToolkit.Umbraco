@@ -101,16 +101,14 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
         [HttpPost]
         public IActionResult Save(MetaFieldsSettingsPostViewModel postModel)
-        {
-            var settings = _documentTypeSettingsService.Get(postModel.ContentTypeId);
-            
+        {            
             if (!_seoSettingsService.IsEnabled(postModel.ContentTypeId))
                 return BadRequest("SEO settings are turned off for this node!");
 
             EnsureLanguage(postModel.Culture);
             var isDirty = false;
             var values = new Dictionary<string, object>();
-            foreach (var (seoField, _) in settings.Fields)
+            foreach (var seoField in _fieldCollection)
             {
                 if (!postModel.UserValues.ContainsKey(seoField.Alias))
                 {

@@ -1,16 +1,20 @@
 ﻿using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Models.Database;
 using Umbraco.Cms.Infrastructure.Scoping;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.Common.Core.Models.Config;
 
 namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
 {
     public class SeoSettingsRepository : ISeoSettingsRepository
     {
         private readonly IScopeProvider _scopeProvider;
+        private readonly ISettingsService<GlobalConfig> _settingsService;
 
-        public SeoSettingsRepository(IScopeProvider scopeProvider)
+        public SeoSettingsRepository(IScopeProvider scopeProvider, ISettingsService<GlobalConfig> settingsService)
         {
             _scopeProvider = scopeProvider;
+            _settingsService = settingsService;
         }
 
         public bool IsEnabled(int contentTypeId)
@@ -24,7 +28,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
 
                 //Default is disabled.
                 if (entity is null)
-                    return false;
+                    return _settingsService.GetSettings().EnableSeoSettingsByDefault;
                 return entity.Enabled;
             }
         }
