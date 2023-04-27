@@ -7,16 +7,19 @@
                            hide-description="true">
         </umb-editor-header>
         <umb-editor-container>
-            <umb-box>
+            <umb-box ng-repeat="group in vm.groupedItems">
                 <umb-box-content>
                     <div class="umb-tree">
+                        <h4>
+                            {{group[0].group}}
+                        </h4>
                         <ul>
-                            <li class="umb-tree-item" ng-repeat="item in vm.availableItems">
+                            <li class="umb-tree-item" ng-repeat="item in group">
                                 <div class="umb-tree-item__inner">
                                     <umb-icon icon="icon-check" class="umb-tree-icon" ng-show="vm.model.selection.includes(item)"></umb-icon>
                                     <umb-icon icon="icon-autofill" class="umb-tree-icon" ng-show="!vm.model.selection.includes(item)"></umb-icon>
                                     <a class="umb-tree-item__label" ng-click="vm.selectItem(item)">
-                                        {{item.name}}
+                                        {{item.name}} {{item.source == 1 ? '(' + item.value + ')' : ''}}
                                     </a>
                                 </div>
                             </li>
