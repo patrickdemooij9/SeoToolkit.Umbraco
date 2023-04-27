@@ -10,7 +10,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
 
         protected override void DefinePlan()
         {
-            To<MetaFieldsInitialMigration>("state-1");
+            To<MetaFieldsInitialMigration>("state-1")
+                .To<MetaFieldsValueTextMigration>("state-2");
         }
     }
 }

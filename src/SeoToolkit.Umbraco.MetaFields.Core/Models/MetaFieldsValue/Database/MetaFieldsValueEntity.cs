@@ -19,6 +19,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database
         public string Culture { get; set; } = "";
 
         [Column("UserValue")]
+        [SpecialDbType(SpecialDbTypes.NVARCHARMAX)]
         public string UserValue { get; set; }
     }
 }
