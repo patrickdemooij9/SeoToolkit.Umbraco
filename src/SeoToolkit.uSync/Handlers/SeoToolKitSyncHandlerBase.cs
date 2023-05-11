@@ -11,6 +11,12 @@ using uSync.Core;
 namespace SeoToolkit.uSync.Handlers;
 public abstract class SeoToolKitSyncHandlerBase<TObject> : SyncHandlerRoot<TObject, TObject>
 {
+    public override string Group => "SeoToolkit";
+
+    protected SeoToolKitSyncHandlerBase(ILogger<SyncHandlerRoot<TObject, TObject>> logger, AppCaches appCaches, IShortStringHelper shortStringHelper, SyncFileService syncFileService, uSyncEventService mutexService, uSyncConfigService uSyncConfig, ISyncItemFactory itemFactory) : base(logger, appCaches, shortStringHelper, syncFileService, mutexService, uSyncConfig, itemFactory)
+    {
+    }
+
     protected override IEnumerable<TObject> GetFolders(TObject parent)
         => Enumerable.Empty<TObject>();
     protected override TObject GetFromService(TObject item)
@@ -24,9 +30,5 @@ public abstract class SeoToolKitSyncHandlerBase<TObject> : SyncHandlerRoot<TObje
     protected override bool ShouldExport(XElement node, HandlerSettings config)
     {
         return base.ShouldExport(node, config);
-    }
-
-    protected SeoToolKitSyncHandlerBase(ILogger<SeoToolKitSyncHandlerBase<TObject>> logger, AppCaches appCaches, IShortStringHelper shortStringHelper, SyncFileService syncFileService, uSyncEventService mutexService, uSyncConfigService uSyncConfig, ISyncItemFactory itemFactory) : base(logger, appCaches, shortStringHelper, syncFileService, mutexService, uSyncConfig, itemFactory)
-    {
     }
 }
