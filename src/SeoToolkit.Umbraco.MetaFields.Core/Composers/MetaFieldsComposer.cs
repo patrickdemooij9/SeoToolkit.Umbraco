@@ -50,7 +50,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             }
 
             builder.Components().Append<EnableModuleComponent>();
-            
+
             builder.Services.AddTransient(typeof(IRepository<DocumentTypeSettingsDto>), typeof(MetaFieldsSettingsDatabaseRepository));
             builder.Services.AddTransient(typeof(IMetaFieldsSettingsService), typeof(MetaFieldsSettingsService));
             builder.Services.AddTransient(typeof(IMetaFieldsService), typeof(MetaFieldsService));
@@ -67,6 +67,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<OpenGraphImageField>()
                 .Add<CanonicalUrlField>()
                 .Add<RobotsField>()
+                .Add<SeoSchemaField>()
                 .Add<KeywordsField>();
 
             builder.WithCollectionBuilder<SeoConverterCollectionBuilder>()
