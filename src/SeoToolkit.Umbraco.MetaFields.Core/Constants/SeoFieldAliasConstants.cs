@@ -3,6 +3,7 @@
     public static class SeoFieldAliasConstants
     {
         public const string Title = "title";
+        public const string Keywords = "keywords";
         public const string MetaDescription = "metaDescription";
         public const string OpenGraphTitle = "openGraphTitle";
         public const string OpenGraphDescription = "openGraphDescription";

@@ -66,7 +66,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<OpenGraphDescriptionField>()
                 .Add<OpenGraphImageField>()
                 .Add<CanonicalUrlField>()
-                .Add<RobotsField>();
+                .Add<RobotsField>()
+                .Add<KeywordsField>();
 
             builder.WithCollectionBuilder<SeoConverterCollectionBuilder>()
                 .Add<TextSeoValueConverter>()
