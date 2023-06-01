@@ -9,7 +9,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Notifications
     {
         public string ContentTypeAlias { get; }
         public MetaTagsModel MetaTags { get; }
-        public IPublishedContent Content { get; set; }
+        public IPublishedContent Content { get; }
 
         [Obsolete("This constructor is deprecated and will be removed in the next major release.")]
         public AfterMetaTagsNotification(string contentTypeAlias, MetaTagsModel metaTags)
