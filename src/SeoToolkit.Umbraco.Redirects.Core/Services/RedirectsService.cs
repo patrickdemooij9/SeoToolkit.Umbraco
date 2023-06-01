@@ -91,19 +91,39 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
             {
                 var domain = DomainUtilities.SelectDomain(ctx.UmbracoContext.Domains.GetAll(false), uri);
+
+                var pathAndQuery = uri.PathAndQuery.CleanUrl();
+                var globalUrls = new List<string>
+                {
+                    uri.AbsolutePath.CleanUrl(),
+                    pathAndQuery
+                };
+                List<string> domainUrls = null;
+
                 if (domain != null)
                 {
                     //We do this to ensure that we support subdirectories. So if you have domain domain.com/en and relative path /test123, you don't also need to include the subdirectory /en/test123.
-                    uri = new Uri(domain.Uri, uri.AbsolutePath.TrimStart(domain.Uri.LocalPath));
+                    var domainUrl = uri.AbsolutePath.CleanUrl().TrimStart(domain.Uri.LocalPath);
+
+                    domainUrls = new List<string>
+                    {
+                        domainUrl,
+                        $"{domainUrl}{uri.Query}"
+                    };
                 }
 
-                var path = uri.AbsolutePath.CleanUrl();
-                var pathAndQuery = uri.PathAndQuery.CleanUrl();
                 var customDomainWithoutScheme = uri.Host;
                 var customDomainWithScheme = $"{uri.Scheme}://{uri.Host}";
 
+                var urlsToSearch = new List<string>();
+                urlsToSearch.AddRange(globalUrls);
+                if (domainUrls != null)
+                {
+                    urlsToSearch.AddRange(domainUrls);
+                }
+
                 //Because we are checking both the url with and without query, we might get two urls.
-                var redirects = _redirectsRepository.GetByUrls(path, pathAndQuery).ToArray();
+                var redirects = _redirectsRepository.GetByUrls(urlsToSearch.Distinct().ToArray()).ToArray();
                 if (redirects.Length > 0)
                 {
                     Redirect foundRedirect = null;
@@ -125,8 +145,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
                     foundRedirect = redirects.FirstOrDefault(it =>
                         it.Domain is null &&
                         string.IsNullOrWhiteSpace(it.CustomDomain) &&
-                        (it.OldUrl.Equals(path, StringComparison.InvariantCultureIgnoreCase) ||
-                        it.OldUrl.Equals(pathAndQuery, StringComparison.InvariantCultureIgnoreCase)));
+                        globalUrls.Contains(it.OldUrl, StringComparer.InvariantCultureIgnoreCase));
                     if (foundRedirect != null) return new RedirectFindResult(uri, foundRedirect);
                 }
 
