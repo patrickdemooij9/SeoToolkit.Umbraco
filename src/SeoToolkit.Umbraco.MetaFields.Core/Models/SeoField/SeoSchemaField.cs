@@ -22,7 +22,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 
         public HtmlString Render(object value)
         {
-            return new HtmlString($"<script type=\"application/ld+json\" />{value}</script>");
+            return new HtmlString($"{value}");
         }
     }
 }
