@@ -1,7 +1,6 @@
-﻿(function() {
+﻿(function () {
 
-    function SeoContentController($scope, $http, editorState, eventsService, notificationsService)
-    {
+    function SeoContentController($scope, $http, editorState, eventsService, notificationsService) {
         var unsubscribe = [];
 
         var vm = this;
@@ -35,34 +34,34 @@
                     if (response.status === 200) {
                         vm.displays = response.data.displays;
                         vm.displays[0].active = true;
-
-                        const maxTries = 20;
-                        var tries = 0;
-                        var currentScope = $scope.$parent;
-                        while (!currentScope.hasOwnProperty("defaultButton") && tries <= maxTries) {
-                            currentScope = currentScope.$parent;
-                            tries++;
-                        }
-
-                        if (maxTries > tries) {
-                            vm.defaultButtonScope = currentScope;
-                        }
-
-                        if (vm.defaultButtonScope) {
-                            vm.defaultButtonScope.defaultButton = {
-                                letter: 'S',
-                                labelKey: "buttons_save",
-                                handler: save,
-                                hotKey: "ctrl+s",
-                                hotKeyWhenHidden: true,
-                                alias: "save",
-                                addEllipsis: "true"
-                            }
-                        }
-
-                        vm.loading = false;
                     }
                 });
+        }
+
+        function initSaveButton() {
+            const maxTries = 20;
+            var tries = 0;
+            var currentScope = $scope.$parent;
+            while (currentScope && !currentScope.hasOwnProperty("defaultButton") && tries <= maxTries) {
+                currentScope = currentScope.$parent;
+                tries++;
+            }
+
+            if (maxTries > tries) {
+                vm.defaultButtonScope = currentScope;
+            }
+
+            if (vm.defaultButtonScope) {
+                vm.defaultButtonScope.defaultButton = {
+                    letter: 'S',
+                    labelKey: "buttons_save",
+                    handler: save,
+                    hotKey: "ctrl+s",
+                    hotKeyWhenHidden: true,
+                    alias: "save",
+                    addEllipsis: "true"
+                }
+            }
         }
 
         unsubscribe.push(eventsService.on("app.tabChange",
@@ -71,12 +70,14 @@
                     return;
                 }
 
-                init();
+                initSaveButton();
             }));
 
         vm.$onDestroy = function () {
             unsubscribe.forEach(x => x());
         }
+
+        init();
     }
 
     angular.module("umbraco").controller("SeoToolkit.ContentApps.SeoContentController", SeoContentController);
