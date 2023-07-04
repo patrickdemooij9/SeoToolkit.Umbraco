@@ -14,7 +14,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Title => "Schema";
         public string Alias => SeoFieldAliasConstants.Schema;
         public string Description => "The schemas are a set of 'types', each associated with a set of properties. The types are arranged in a hierarchy.";
-        public string GroupAlias => SeoFieldGroupConstants.MetaFieldsGroup;
+        public string GroupAlias => SeoFieldGroupConstants.Others;
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.TextBox", "Umbraco.TextArea", "Umbraco.TinyMCE" });

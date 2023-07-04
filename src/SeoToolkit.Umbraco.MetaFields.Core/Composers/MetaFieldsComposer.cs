@@ -41,7 +41,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.Services.Configure<MetaFieldsAppSettingsModel>(section);
             builder.Services.AddSingleton(typeof(ISettingsService<MetaFieldsConfigModel>), typeof(MetaFieldsConfigurationService));
 
-            var disabledModules = section?.Get<MetaFieldsAppSettingsModel>()?.DisabledModules ?? Array.Empty<string>();
+            var settings = section?.Get<MetaFieldsAppSettingsModel>();
+            var disabledModules = settings?.DisabledModules ?? Array.Empty<string>();
 
             if (disabledModules.Contains(DisabledModuleConstant.All))
             {
@@ -67,8 +68,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<OpenGraphImageField>()
                 .Add<CanonicalUrlField>()
                 .Add<RobotsField>()
-                .Add<SeoSchemaField>()
-                .Add<KeywordsField>();
+                .Add<SeoSchemaField>();
+
+            if (settings?.ShowKeywordsField is true)
+            {
+                builder.WithCollectionBuilder<SeoFieldCollectionBuilder>().Add<KeywordsField>();
+            }
 
             builder.WithCollectionBuilder<SeoConverterCollectionBuilder>()
                 .Add<TextSeoValueConverter>()
