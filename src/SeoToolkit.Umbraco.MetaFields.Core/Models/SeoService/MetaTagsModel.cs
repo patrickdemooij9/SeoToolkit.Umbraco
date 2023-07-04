@@ -73,6 +73,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoService
             set => SetValue(SeoFieldAliasConstants.CanonicalUrl, value);
         }
 
+        public string[] Robots
+        {
+            get => GetValue<string[]>(SeoFieldAliasConstants.Robots);
+            set => SetValue(SeoFieldAliasConstants.Robots, value);
+        }
+
         public string Keywords
         {
             get => GetValue<string>(SeoFieldAliasConstants.Keywords);

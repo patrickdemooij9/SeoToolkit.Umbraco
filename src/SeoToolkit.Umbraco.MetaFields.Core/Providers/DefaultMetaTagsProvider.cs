@@ -57,7 +57,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
 
                 //Make sure that the fields are set, otherwise the values cannot be set!
                 var metaTags = new MetaTagsModel(allFields.ToDictionary(it => it, it => (object)null));
-                _eventAggregator.Publish(new BeforeMetaTagsNotification(content.ContentType.Alias, metaTags));
+                _eventAggregator.Publish(new BeforeMetaTagsNotification(content, metaTags));
 
                 var settings = _documentTypeSettingsService.Get(content.ContentType.Id);
                 if (_seoSettingsService.IsEnabled(content.ContentType.Id) != true)
@@ -111,7 +111,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                     metaTags.SetValue(fieldValue.Field.Alias, fieldValue.Value);
                 }
 
-                _eventAggregator.Publish(new AfterMetaTagsNotification(content.ContentType.Alias, metaTags));
+                _eventAggregator.Publish(new AfterMetaTagsNotification(content, metaTags));
 
                 return metaTags;
             }

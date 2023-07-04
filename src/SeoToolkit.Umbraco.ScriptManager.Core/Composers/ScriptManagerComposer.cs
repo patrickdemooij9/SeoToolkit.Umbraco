@@ -34,12 +34,16 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
             builder.Services.AddSingleton(typeof(ISettingsService<ScriptManagerConfigModel>), typeof(ScriptManagerConfigurationService));
 
             var disabledModules = section?.Get<ScriptManagerAppSettingsModel>()?.DisabledModules ?? Array.Empty<string>();
-
             if (disabledModules.Contains(DisabledModuleConstant.All))
             {
                 builder.Components().Append<DisableModuleComponent>();
                 builder.Trees().RemoveTreeController(typeof(ScriptManagerTreeController));
                 return;
+            }
+
+            if (disabledModules.Contains(DisabledModuleConstant.SectionTree))
+            {
+                builder.Trees().RemoveTreeController(typeof(ScriptManagerTreeController));
             }
 
             builder.ScriptDefinitions()

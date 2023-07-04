@@ -165,7 +165,7 @@
                         return item.id;
                     })
                 }).then(function (response) {
-                    setItems(response.data);
+                    setItems(response.data.items);
                     clearSelection();
 
                     if (response.status === 200) {
