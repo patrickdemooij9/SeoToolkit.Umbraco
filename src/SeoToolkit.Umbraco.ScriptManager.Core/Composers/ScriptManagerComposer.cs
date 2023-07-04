@@ -39,15 +39,18 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
                 builder.Components().Append<DisableModuleComponent>();
                 builder.Trees().RemoveTreeController(typeof(ScriptManagerTreeController));
                 return;
-            } else if (disabledModules.Contains(DisabledModuleConstant.Trees)) {
-                builder.Trees().RemoveTreeController(typeof(ScriptManagerTreeController));
-            } else {
-                builder.ScriptDefinitions()
-                       .Add<GoogleTagManagerDefinition>()
-                       .Add<GoogleAnalyticsDefinition>()
-                       .Add<HotjarDefinition>()
-                       .Add<CustomScriptDefinition>();
             }
+
+            if (disabledModules.Contains(DisabledModuleConstant.SectionTree))
+            {
+                builder.Trees().RemoveTreeController(typeof(ScriptManagerTreeController));
+            }
+
+            builder.ScriptDefinitions()
+                .Add<GoogleTagManagerDefinition>()
+                .Add<GoogleAnalyticsDefinition>()
+                .Add<HotjarDefinition>()
+                .Add<CustomScriptDefinition>();
 
             builder.Components().Append<EnableModuleComponent>();
 
