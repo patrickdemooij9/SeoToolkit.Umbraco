@@ -95,7 +95,7 @@
         }
 
         function search() {
-            loadItems();
+            goToPage(1);
         }
 
         function openRedirectDialog(model) {
