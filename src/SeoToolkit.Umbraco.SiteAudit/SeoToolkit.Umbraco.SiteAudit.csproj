@@ -17,8 +17,8 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Umbraco.Cms.Web.Website" Version="11.0.0" />
-		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="11.0.0" />
+		<PackageReference Include="Umbraco.Cms.Web.Website" Version="[11.0.0,12.999)" />
+		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[11.0.0,12.999)" />
 	</ItemGroup>
 	
 	<ItemGroup>
