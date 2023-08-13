@@ -178,7 +178,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                 var selfItem = new XElement(_namespace + "url");
                 selfItem.Add(new XElement(_namespace + "loc", node.Url));
                 if (node.LastModifiedDate != null)
-                    selfItem.Add(new XElement(_namespace + "lastmod", node.LastModifiedDate.Value.ToString("yyyy-MM-dd")));
+                    selfItem.Add(new XElement(_namespace + "lastmod", node.LastModifiedDate.Value.ToString(_settings.LastModifiedFormat)));
                 if (!string.IsNullOrWhiteSpace(node.ChangeFrequency))
                     selfItem.Add(new XElement(_namespace + "changefreq", node.ChangeFrequency));
                 if (node.Priority != null)

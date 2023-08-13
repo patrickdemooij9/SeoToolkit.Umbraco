@@ -12,6 +12,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Config.Models
         public string PriorityFieldAlias { get; set; } = "priority";
 
         public string ReturnContentType { get; set; } = "application/xml";
+        public string LastModifiedFormat { get; set; } = "yyyy-MM-ddTHH:mm:sszzz";
         public string[] DisabledModules { get; set; } = Array.Empty<string>();
     }
 }
