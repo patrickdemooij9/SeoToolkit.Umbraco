@@ -5,19 +5,21 @@ using Umbraco.Extensions;
 using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
 using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
+using SeoToolkit.Umbraco.ScriptManager.Core.Caching;
+using SeoToolkit.Umbraco.ScriptManager.Core.Constants;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 {
     public class ScriptManagerService : IScriptManagerService
     {
-        private const string BaseCacheKey = "ScriptManager_";
-
         private readonly IScriptRepository _scriptRepository;
+        private readonly DistributedCache _distributedCache;
         private readonly IAppPolicyCache _cache;
 
-        public ScriptManagerService(IScriptRepository scriptRepository, AppCaches appCaches)
+        public ScriptManagerService(IScriptRepository scriptRepository, AppCaches appCaches, DistributedCache distributedCache)
         {
             _scriptRepository = scriptRepository;
+            _distributedCache = distributedCache;
             _cache = appCaches.RuntimeCache;
         }
 
@@ -51,7 +53,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 
         public IEnumerable<Script> GetAll()
         {
-            return _cache.GetCacheItem($"{BaseCacheKey}GetAll", () =>
+            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}GetAll", () =>
             {
                 return _scriptRepository.GetAll().Where(it => it.Definition != null);
             });
@@ -59,12 +61,12 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 
         public Script Get(int id)
         {
-            return _cache.GetCacheItem($"{BaseCacheKey}Get_{id}", () => _scriptRepository.Get(id));
+            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}Get_{id}", () => _scriptRepository.Get(id));
         }
 
         public ScriptRenderModel GetRender()
         {
-            return _cache.GetCacheItem($"{BaseCacheKey}GetRender", () =>
+            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}GetRender", () =>
             {
                 var renderModel = new ScriptRenderModel();
                 foreach (var script in GetAll())
@@ -78,7 +80,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 
         private void ClearCache()
         {
-            _cache.ClearByKey(BaseCacheKey);
+            _distributedCache.RefreshAll(ScriptManagerCacheRefresher.CacheGuid);
         }
     }
 }

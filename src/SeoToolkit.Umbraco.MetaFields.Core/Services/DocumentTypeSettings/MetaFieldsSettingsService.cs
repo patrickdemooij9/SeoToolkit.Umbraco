@@ -8,23 +8,27 @@ using SeoToolkit.Umbraco.Common.Core.Models;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
+using Microsoft.Extensions.Caching.Distributed;
+using SeoToolkit.Umbraco.MetaFields.Core.Caching;
+using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 {
     public class MetaFieldsSettingsService : IMetaFieldsSettingsService
     {
-        private const string BaseCacheKey = "DocumentTypeSettings_";
-
         private readonly IRepository<DocumentTypeSettingsDto> _repository;
         private readonly FieldProviderCollection _fieldProviders;
+        private readonly DistributedCache _distributedCache;
         private readonly IAppPolicyCache _cache;
 
         public MetaFieldsSettingsService(IRepository<DocumentTypeSettingsDto> repository,
             FieldProviderCollection fieldProviders,
-            AppCaches appCaches)
+            AppCaches appCaches,
+            DistributedCache distributedCache)
         {
             _repository = repository;
             _fieldProviders = fieldProviders;
+            _distributedCache = distributedCache;
             _cache = appCaches.RuntimeCache;
         }
 
@@ -41,7 +45,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 
         public DocumentTypeSettingsDto Get(int id)
         {
-            return _cache.GetCacheItem($"{BaseCacheKey}{id}_Get", () =>
+            return _cache.GetCacheItem($"{CacheConstants.DocumentTypeSettings}{id}_Get", () =>
             {
                 return new CachedNullableModel<DocumentTypeSettingsDto>(_repository.Get(id));
             }, TimeSpan.FromMinutes(30)).Model;
@@ -54,7 +58,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 
         private void ClearCache(int id)
         {
-            _cache.ClearByKey($"{BaseCacheKey}{id}");
+            _distributedCache.Refresh(DocumentTypeSettingsCacheRefresher.CacheGuid, id);
         }
     }
 }
