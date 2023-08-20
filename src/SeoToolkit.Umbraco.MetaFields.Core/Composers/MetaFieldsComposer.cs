@@ -81,20 +81,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.WithCollectionBuilder<FieldProviderCollectionBuilder>()
                 .Add<InheritedValueFieldProvider>()
                 .Add<PageNameFieldProvider>();
-
-            if (!disabledModules.Contains(DisabledModuleConstant.DocumentTypeContextApp))
-            {
-                builder.WithCollectionBuilder<DisplayCollectionBuilder>()
-                    .Add<MetaFieldsDocumentSettingsDisplayProvider>();
-
-                builder.WithCollectionBuilder<SeoDisplayCollectionBuilder>()
-                    .Add<MetaFieldsContentDisplayProvider>();
-
-                builder.WithCollectionBuilder<SeoGroupCollectionBuilder>()
-                    .Append<MetaFieldsGroup>()
-                    .Append<OpenGraphFieldsGroup>()
-                    .Append<OthersFieldGroup>();
-            }
         }
     }
 }
