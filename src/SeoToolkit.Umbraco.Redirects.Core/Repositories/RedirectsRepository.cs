@@ -10,27 +10,31 @@ using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
 using Umbraco.Cms.Infrastructure.Scoping;
+using SeoToolkit.Umbraco.Redirects.Core.Constants;
+using Microsoft.Extensions.Caching.Distributed;
+using SeoToolkit.Umbraco.Redirects.Core.Caching;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 {
     public class RedirectsRepository : IRedirectsRepository
     {
-        private const string BaseCacheKey = "redirects_";
-
         private readonly IScopeProvider _scopeProvider;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ILocalizationService _localizationService;
         private readonly AppCaches _appCaches;
+        private readonly DistributedCache _distributedCache;
 
         public RedirectsRepository(IScopeProvider scopeProvider,
             IUmbracoContextFactory umbracoContextFactory,
             ILocalizationService localizationService,
-            AppCaches appCaches)
+            AppCaches appCaches,
+            DistributedCache distributedCache)
         {
             _scopeProvider = scopeProvider;
             _umbracoContextFactory = umbracoContextFactory;
             _localizationService = localizationService;
             _appCaches = appCaches;
+            _distributedCache = distributedCache;
         }
 
         public void Save(Redirect redirect)
@@ -95,7 +99,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 
         public IEnumerable<Redirect> GetAllRegexRedirects()
         {
-            return _appCaches.RuntimeCache.GetCacheItem($"{BaseCacheKey}GetRegexRedirects", () =>
+            return _appCaches.RuntimeCache.GetCacheItem($"{CacheConstants.Redirects}GetRegexRedirects", () =>
             {
                 using (var scope = _scopeProvider.CreateScope(autoComplete: true))
                 {
@@ -165,7 +169,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 
         private void ClearCache()
         {
-            _appCaches.RuntimeCache.ClearByKey(BaseCacheKey);
+            _distributedCache.RefreshAll(RedirectsCacheRefresher.CacheGuid);
         }
 
         private Expression<Func<RedirectEntity, object>> GetOrderingColumn(string orderBy)
