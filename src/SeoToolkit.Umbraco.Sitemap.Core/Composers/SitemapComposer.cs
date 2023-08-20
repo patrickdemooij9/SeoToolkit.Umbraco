@@ -41,12 +41,6 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Composers
 
             builder.Components().Append<EnableModuleComponent>();
 
-            if (!disabledModules.Contains(DisabledModuleConstant.DocumentTypeContextApp))
-            {
-                builder.WithCollectionBuilder<DisplayCollectionBuilder>()
-                    .Add<SitemapDocumentTypeDisplayProvider>();
-            }
-
             builder.Services.AddScoped<ISitemapGenerator, SitemapGenerator>();
             builder.Services.AddScoped<ISitemapIndexGenerator, SitemapIndexGenerator>();
             builder.Services.AddUnique<ISitemapService, SitemapService>();
