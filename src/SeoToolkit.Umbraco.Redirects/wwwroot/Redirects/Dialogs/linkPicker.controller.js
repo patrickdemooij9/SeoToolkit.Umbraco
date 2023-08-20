@@ -74,6 +74,7 @@
 
         vm.selectListViewNode = function (node) {
             node.selected = node.selected === true ? false : true;
+            node.nodeType = this.section; // ListView nodes apparently don't come with nodeTypes.
             nodeSelectHandler({
                 node: node
             });
@@ -185,6 +186,7 @@
             } else if (vm.linkTypeProperty.value === '3') {
                 changeSection("media");
             }
+            vm.closeMiniListView();
         }
 
         function changeSection(section) {
