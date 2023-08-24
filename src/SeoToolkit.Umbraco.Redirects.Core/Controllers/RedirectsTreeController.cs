@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SeoToolkit.Umbraco.Common.Core.Constants;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Services;
@@ -9,10 +10,12 @@ using Umbraco.Cms.Web.Common.Attributes;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 {
-    [Tree("SeoToolkit", "Redirects", TreeTitle = "Redirects", TreeGroup = "SeoToolkit", SortOrder = 4)]
+    [Tree("SeoToolkit", "Redirects", TreeTitle = "Redirects", TreeGroup = TreeGroupAlias, SortOrder = 4)]
     [PluginController("SeoToolkit")]
     public class RedirectsTreeController : TreeController
     {
+        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
+
         public RedirectsTreeController(ILocalizedTextService localizedTextService, UmbracoApiControllerTypeCollection umbracoApiControllerTypeCollection, IEventAggregator eventAggregator) : base(localizedTextService, umbracoApiControllerTypeCollection, eventAggregator)
         {
         }

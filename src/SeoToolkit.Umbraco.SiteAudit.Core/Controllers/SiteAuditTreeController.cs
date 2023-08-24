@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SeoToolkit.Umbraco.Common.Core.Constants;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Actions;
 using Umbraco.Cms.Core.Events;
@@ -12,10 +13,12 @@ using UmbConstants = Umbraco.Cms.Core.Constants;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
 {
-    [Tree("SeoToolkit", "SiteAudit", TreeTitle = "Site Audits", TreeGroup = "SeoToolkit", SortOrder = 1)]
+    [Tree("SeoToolkit", "SiteAudit", TreeTitle = "Site Audits", TreeGroup = TreeGroupAlias, SortOrder = 1)]
     [PluginController("SeoToolkit")]
     public class SeoToolkitTreeController : TreeController
     {
+        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
+
         private readonly IMenuItemCollectionFactory _menuItemCollectionFactory;
 
         public SeoToolkitTreeController(ILocalizedTextService localizedTextService,
