@@ -1,0 +1,30 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Author>
+
+@using Clean.Core.Models.ViewModels
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+
+@{
+    Layout = "master.cshtml";
+    var authorListPage = Model.Parent as AuthorList;
+}
+
+
+@await Html.PartialAsync("~/Views/Partials/pageHeader.cshtml", new PageHeaderViewModel(Model.Name, Model.Title, Model.Subtitle, authorListPage.MainImage, null, null))
+
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+
+                <div class="row clearfix">
+                    <div class="col-md-4 column mx-auto">
+                        <img src="@Model.MainImage.GetCropUrl(400)" alt="@Model.Name" class="w-100">
+                        <p class="caption">@Model.Name</p>
+                    </div>
+                </div>
+
+                @Html.GetBlockListHtml(Model.ContentRows)
+            </div>
+        </div>
+    </div>
+</article>

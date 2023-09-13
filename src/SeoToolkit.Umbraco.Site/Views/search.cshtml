@@ -2,11 +2,14 @@
 
 @using Clean.Core.Models.ViewModels
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+@using Umbraco.Cms.Core
+@using Clean.Core.Extensions
 @inject Umbraco.Cms.Core.IPublishedContentQuery publishedContentQuery
 
-@{ 
+@{
     Layout = "master.cshtml";
-    var searchQuery = Context.Request.Query["q"]; 
+    var searchQuery = Context.Request.Query["q"];
+    var docTypesToIgnore = new[] { Category.ModelTypeAlias, CategoryList.ModelTypeAlias, Error.ModelTypeAlias, Search.ModelTypeAlias, XMlsitemap.ModelTypeAlias };
 }
 
 @await Html.PartialAsync("~/Views/Partials/pageHeader.cshtml", new PageHeaderViewModel(Model.Name, Model.Title, Model.Subtitle, Model.MainImage))
@@ -19,15 +22,15 @@
                     <input type="text" class="form-control col-xs-6" placeholder="@Umbraco.GetDictionaryValue("Search.Placeholder")" name="q" value="@searchQuery" />
                 </div>
             </div>
-            <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="col-lg-8 col-md-10 mx-auto my-3">
                 <div class="form-group">
-                    <button class="btn btn-primary search-button">@Umbraco.GetDictionaryValue("Search.SearchButton") <i class="fa fa-search"></i></button>
+                    <button class="btn btn-primary search-button float-end">@Umbraco.GetDictionaryValue("Search.SearchButton") <i class="fa fa-search"></i></button>
                 </div>
             </div>
             <div class="col-lg-8 col-md-10 mx-auto">
                 @if (!string.IsNullOrWhiteSpace(searchQuery))
                 {
-                    var results = publishedContentQuery.Search(searchQuery);
+                    var results = publishedContentQuery.Search(searchQuery).Where(x => !docTypesToIgnore.Contains(x.Content.ContentType.Alias));
                     long resultCount = results != null && results.Any() ? results.Count() : 0;
                     @Html.Raw(string.Format(Umbraco.GetDictionaryValue("Search.Results"), resultCount, searchQuery)) if (resultCount > 0)
                     {
@@ -42,15 +45,14 @@
                                     {
                                     <h3 class="post-subtitle">@(result.Content.Value<string>("subtitle"))</h3>}
                                 </a>
-                                @if (result.Content.HasProperty("authorName") && result.Content.HasValue("authorName") && !string.IsNullOrWhiteSpace(result.Content.Value<string>("authorName"))
+                                @if ((result.Content.HasProperty("author") && result.Content.HasValue("author"))
                                     || (result.Content.HasProperty("articleDate") && result.Content.HasValue("articleDate") && result.Content.Value<DateTime>("articleDate") > DateTime.MinValue))
                                 {
+                                    var author = result.Content.GetAuthor(Umbraco);
+
                                     <p class="post-meta">
                                         @Umbraco.GetDictionaryValue("Article.Posted")
-                                        @if (result.Content.HasProperty("authorName") && result.Content.HasValue("authorName") && !string.IsNullOrWhiteSpace(result.Content.Value<string>("authorName")))
-                                        {
-                                            @Umbraco.GetDictionaryValue("Article.By")@Html.Raw("&nbsp;")@(result.Content.Value<string>("authorName"))
-                                        }
+                                        @Umbraco.GetDictionaryValue("Article.By")@Html.Raw("&nbsp;")@(author.Name)
 
                                         @if (result.Content.HasProperty("articleDate") && result.Content.HasValue("articleDate") && result.Content.Value<DateTime>("articleDate") > DateTime.MinValue)
                                         {

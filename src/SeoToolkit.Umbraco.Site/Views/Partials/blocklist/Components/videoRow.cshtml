@@ -1,0 +1,29 @@
+﻿@inherits UmbracoViewPage<BlockListItem>
+@using Clean.Core.Helpers
+@using Umbraco.Cms.Core.Models.Blocks
+
+@{
+    var row = Model.Content as VideoRow;
+    var settings = Model.Settings as VideoRowSettings;
+    if (settings?.Hide ?? false) { return; }
+    if (string.IsNullOrWhiteSpace(row.VideoUrl)) { return; }
+
+    var spacingClasses = "";
+    if (Model.Settings is ISpacingProperties spacing)
+    {
+        spacingClasses = Clean.Core.Helpers.SpacingHelper.GetSpacingClasses(spacing.PaddingTop, spacing.PaddingBottom, spacing.PaddingLeft, spacing.PaddingRight, spacing.MarginTop, spacing.MarginBottom, spacing.MarginLeft, spacing.MarginRight);
+    }
+
+    var videoId = VideoUrlHelper.GetVideoId(row.VideoUrl);
+}
+
+<div class="row clearfix @(spacingClasses)">
+    <div class="col-md-12 column">
+        <div class="youtube-player" data-id="@videoId"></div>
+        @if (!string.IsNullOrWhiteSpace(row.Caption))
+        {
+            <p class="caption video-caption">@row.Caption</p>
+        }
+    </div>
+</div>
+

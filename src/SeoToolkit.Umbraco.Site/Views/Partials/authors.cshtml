@@ -1,0 +1,55 @@
+﻿@inherits UmbracoViewPage
+
+@using Clean.Core.Helpers
+@using Clean.Core.Models.ViewModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+
+@{
+    AuthorList authorList = UmbracoContext.Content.GetAtRoot().DescendantsOrSelf<AuthorList>().FirstOrDefault();
+    int modelId = Model.Id;
+    var isAuthorListPage = modelId == authorList?.Id;
+    var fallbackPageSize = isAuthorListPage ? 10 : 3;
+
+    var pageSize = QueryStringHelper.GetIntFromQueryString(Context.Request.Query, "size", fallbackPageSize);
+    var pageNumber = QueryStringHelper.GetIntFromQueryString(Context.Request.Query, "page", 1);
+    var allAuthors = authorList?.Children<Author>().Where(x => x.IsVisible()) ?? Enumerable.Empty<Author>();
+    var pageOfAuthors = allAuthors.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+    var totalItemCount = allAuthors.Count();
+    var pageCount = totalItemCount > 0 ? Math.Ceiling((double)totalItemCount / pageSize) : 1;
+
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="container-fluid">
+                <div class="row">
+                    @foreach (var author in pageOfAuthors)
+                    {
+                        <div class="col-4 mx-auto">
+                            <div class="card">
+                                <header>
+                                    <img src="@(author.MainImage.Url())" alt="@author.Name" class="w-100" />
+                                </header>
+                                <div class="card-body">
+                                    <div class="content-left text-start my-auto py-4">
+                                        <h2 class="card-title">@author.Name</h2>
+                                        <p class="card-description">@author.MetaDescription</p>
+                                        <a href="@author.Url()" class="text-primary">
+                                            @Umbraco.GetDictionaryValue("Author.ReadMore")
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (isAuthorListPage)
+            {
+                @await Component.InvokeAsync("Pagination", new { totalItems = totalItemCount, url = Model.Url(), pageNumber = pageNumber, pageSize = pageSize })
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+﻿@inherits UmbracoViewPage<BlockListItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@using Clean.Core.Extensions
+
+@{
+    var row = Model.Content as ImageRow;
+    var settings = Model.Settings as ImageRowSettings;
+    if (settings?.Hide ?? false) { return; }
+
+    var spacingClasses = "";
+    if (Model.Settings is ISpacingProperties spacing)
+    {
+        spacingClasses = Clean.Core.Helpers.SpacingHelper.GetSpacingClasses(spacing.PaddingTop, spacing.PaddingBottom, spacing.PaddingLeft, spacing.PaddingRight, spacing.MarginTop, spacing.MarginBottom, spacing.MarginLeft, spacing.MarginRight);
+    }
+}
+
+<div class="row clearfix @(spacingClasses)">
+    <div class="col-md-12 column">
+        <img src="@row.Image.Url()" alt="@row.Image.Content.GetAltText()" class="img-fluid">
+        @if (!string.IsNullOrWhiteSpace(row.Caption))
+        {
+            <p class="caption">@row.Caption</p>
+        }
+    </div>
+</div>
+

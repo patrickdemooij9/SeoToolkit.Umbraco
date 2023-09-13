@@ -1,0 +1,15 @@
+﻿@inherits UmbracoViewPage<BlockListItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@addTagHelper *, Clean.Core
+
+@{
+    var row = Model.Content as IconLinkRow;
+    var settings = Model.Settings as IconLinkRowSettings;
+    if (settings?.Hide ?? false) { return; }
+}
+
+<li class="list-inline-item">
+    <a href="@row.Link.Url" target="@row.Link.Target" rel="@(row.Link.Type == global::Umbraco.Cms.Core.Models.LinkType.External ? "noopener" : null)" title="@row.Link.Name">
+        <our-svg media-item="@row.Icon" class="social-icon"></our-svg>
+    </a>
+</li>

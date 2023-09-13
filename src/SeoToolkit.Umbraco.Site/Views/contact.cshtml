@@ -1,10 +1,9 @@
 ﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Contact>
 
-@using Clean.Core.Controllers.Surface
 @using Clean.Core.Models.ViewModels
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
 
-@{  
+@{
     Layout = "master.cshtml";
     var submitted = false;
     if (bool.TryParse(TempData["Success"]?.ToString() ?? "", out var success))
@@ -15,37 +14,31 @@
 
 @await Html.PartialAsync("~/Views/Partials/pageHeader.cshtml", new PageHeaderViewModel(Model.Name, Model.Title, Model.Subtitle, Model.MainImage))
 
-<article id="article-content">
-    @if (submitted)
-    {
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-md-10 mx-auto">
+<main class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                @if(submitted)
+                {
+
                     @if (success)
                     {
-                        <p>Thanks for contacting us. We will be in touch soon.</p>
+                        @Model.SuccessMessage
                     }
                     else
                     {
-                        <p>There was an error when trying to submit the form. Please try again later.</p>
+                        @Model.ErrorMessage
                     }
-                </div>
-            </div>
-        </div>
-    }
-    else
-    {
-        @Html.GetGridHtml(Model, "mainContent", "Clean")
-    }
-</article>
+                }
+                else
+                {
+                    @Model.InstructionMessage
+                    <div class="my-5">
+                        @await Component.InvokeAsync("Contact")
+                    </div>
 
-@if (!submitted)
-{
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-                @await Component.InvokeAsync("Contact")
+                }
             </div>
         </div>
     </div>
-}
+</main>

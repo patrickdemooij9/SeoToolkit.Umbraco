@@ -1,0 +1,76 @@
+﻿@inherits UmbracoViewPage<BlockListItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@using Clean.Core.Extensions
+@using Clean.Core.Helpers
+
+@{
+    var row = Model.Content as LatestArticlesRow;
+    var settings = Model.Settings as LatestArticlesRowSettings;
+    if (settings?.Hide ?? false) { return; }
+
+    var spacingClasses = "";
+    if (Model.Settings is ISpacingProperties spacing)
+    {
+        spacingClasses = SpacingHelper.GetSpacingClasses(spacing.PaddingTop, spacing.PaddingBottom, spacing.PaddingLeft, spacing.PaddingRight, spacing.MarginTop, spacing.MarginBottom, spacing.MarginLeft, spacing.MarginRight);
+    }
+
+    var pageSize = row.PageSize;
+    var pageNumber = QueryStringHelper.GetIntFromQueryString(Context.Request.Query, "page", 1);
+    var allArticles = row.ArticleList.Children<Article>().Where(x => x.IsVisible()).OrderByDescending(x => x.ArticleDate) ?? Enumerable.Empty<Article>();
+    var pageOfArticles = allArticles.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+    var totalItemCount = allArticles.Count();
+    var pageCount = totalItemCount > 0 ? Math.Ceiling((double)totalItemCount / pageSize) : 1;
+}
+
+<div class="row clearfix @(spacingClasses)">
+    <div class="col-md-12 column">
+        @foreach (var article in pageOfArticles)
+        {
+            var author = article.GetAuthor(Umbraco);
+            bool.TryParse(article.Value<string>("showFullArticleOnListPage", fallback: Fallback.ToAncestors), out var showFullArticleOnListPage);
+
+            <div class="post-preview">
+                <a href="@article.Url()">
+                    <h2 class="post-title">
+                        @(!string.IsNullOrWhiteSpace(article.Title) ? article.Title : article.Name)
+                    </h2>
+                    @if (!string.IsNullOrWhiteSpace(article.Subtitle))
+                    {
+                        <h3 class="post-subtitle">@article.Subtitle</h3>
+                    }
+                </a>
+                <p class="post-meta @(showFullArticleOnListPage ? "mb-0" : "")">
+                    @Umbraco.GetDictionaryValue("Article.Posted")
+                    @Umbraco.GetDictionaryValue("Article.By")@Html.Raw("&nbsp;")@author.Name
+                    @Umbraco.GetDictionaryValue("Article.On") @article.ArticleDate.ToString("MMMM dd, yyyy")
+                </p>
+                @if (showFullArticleOnListPage && article.Categories != null && article.Categories.Any())
+                {
+                    <span class="mt-2 d-block"></span>
+                    @foreach (var category in article.Categories.Select(x => x.Name).OrderBy(y => y))
+                    {
+                        <span class="badge rounded-pill bg-light text-dark border-dark border-5">@category</span>
+                    }
+
+                }
+            </div>
+
+            @if (showFullArticleOnListPage)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        @Html.GetBlockListHtml(article.ContentRows)
+                    </div>
+                </div>
+            }
+
+            <hr>
+        }
+
+        @if (row.ShowPagination)
+        {
+            @await Component.InvokeAsync("Pagination", new { totalItems = totalItemCount, url = row.ArticleList.Url(), pageNumber = pageNumber, pageSize = pageSize })
+        }
+    </div>
+</div>
+

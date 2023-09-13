@@ -1,27 +1,26 @@
 ﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContactViewModel>
 
-@using Clean.Core.Controllers.Surface
 @using Clean.Core.Models.ViewModels;
-@using Umbraco.Extensions
 
-@using (Html.BeginUmbracoForm<ContactSurfaceController>("SubmitForm", FormMethod.Post, new { @class = "text-left" }))
+@using (Html.BeginUmbracoForm("SubmitForm", "ContactSurface", FormMethod.Post, new { @class = "text-left" }))
 {
-    <div class="form-group">
+    <div class="form-floating">
+        <input asp-for="@Model.Name" class="form-control" id="name" type="text" placeholder="Enter your name..." data-sb-validations="required" />
         <label for="Name">@Umbraco.GetDictionaryValue("ContactForm.Name")</label>
-        <input asp-for="@Model.Name" class="form-control" />
         <span asp-validation-for="@Model.Name" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-floating">
+        <input asp-for="@Model.Email" class="form-control" id="email" placeholder="Enter your email..." data-sb-validations="required,email"/>
         <label for="Email">@Umbraco.GetDictionaryValue("ContactForm.Email")</label>
-        <input asp-for="@Model.Email" class="form-control" />
         <span asp-validation-for="@Model.Email" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-floating">
+        <textarea asp-for="@Model.Message" class="form-control" id="message" placeholder="Enter your message here..." rows="5" style="height: 12rem"></textarea>
         <label for="Message">@Umbraco.GetDictionaryValue("ContactForm.Message")</label>
-        <textarea asp-for="@Model.Message" class="form-control" rows="5"></textarea>
         <span asp-validation-for="@Model.Message" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <button class="btn btn-primary btn-block btn-lg" type="submit">@Umbraco.GetDictionaryValue("ContactForm.Send")</button>
+    <br />
+    <div class="form-floating">
+        <button class="btn btn-primary text-uppercase float-end" id="submitButton" type="submit">@Umbraco.GetDictionaryValue("ContactForm.Send")</button>
     </div>
 }

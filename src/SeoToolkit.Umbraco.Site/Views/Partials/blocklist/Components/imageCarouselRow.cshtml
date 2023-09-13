@@ -1,0 +1,57 @@
+﻿@inherits UmbracoViewPage<BlockListItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@using Clean.Core.Extensions
+
+@{
+    var row = Model.Content as ImageCarouselRow;
+    var settings = Model.Settings as ImageCarouselRowSettings;
+    if (settings?.Hide ?? false) { return; }
+    if (row.Images == null || !row.Images.Any()) { return; }
+
+    var spacingClasses = "";
+    if (Model.Settings is ISpacingProperties spacing)
+    {
+        spacingClasses = Clean.Core.Helpers.SpacingHelper.GetSpacingClasses(spacing.PaddingTop, spacing.PaddingBottom, spacing.PaddingLeft, spacing.PaddingRight, spacing.MarginTop, spacing.MarginBottom, spacing.MarginLeft, spacing.MarginRight);
+    }
+
+    SmidgeHelper.RequiresCss("~/clean-assets/css/swiffy-slider.min.css");
+    SmidgeHelper.RequiresJs("~/clean-assets/js/swiffy-slider.min.js");
+}
+
+<div class="row clearfix @(spacingClasses)">
+    <div class="col-md-12 column">
+        <div class="swiffy-slider slider-item-reveal slider-nav-round slider-item-ratio slider-item-ratio-21x9" id="slider-@(row.Key.ToString())">
+            <ul class="slider-container">
+                @foreach (var item in row.Images)
+                {
+                    <li><img src="@item.Url()" loading="lazy" alt="@item.Content.GetAltText()"></li>
+                }
+            </ul>
+
+            <button type="button" class="slider-nav" aria-label="Go left"></button>
+            <button type="button" class="slider-nav slider-nav-next" aria-label="Go right"></button>
+
+            <div class="slider-indicators slider-indicators-square d-none d-md-flex">
+                <button class="active" aria-label="Go to slide"></button>
+                @if (row.Images.Count() > 1)
+                {
+                    foreach (var image in row.Images.Skip(1))
+                    {
+                        <button aria-label="Go to slide"></button>
+                    }
+                }
+            </div>
+
+            <div class="slider-indicators slider-indicators-sm slider-indicators-dark slider-indicators-round d-md-none slider-indicators-highlight">
+                <button class="active" aria-label="Go to slide"></button>
+                @if (row.Images.Count() > 1)
+                {
+                    foreach (var image in row.Images.Skip(1))
+                    {
+                        <button aria-label="Go to slide"></button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
