@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SeoToolkit.Umbraco.Common.Core.Constants;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Services;
@@ -9,10 +10,12 @@ using Umbraco.Cms.Web.Common.Attributes;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
 {
-    [Tree("SeoToolkit", "RobotsTxt", TreeTitle = "Robots.txt", TreeGroup = "SeoToolkit", SortOrder = 3)]
+    [Tree("SeoToolkit", "RobotsTxt", TreeTitle = "Robots.txt", TreeGroup = TreeGroupAlias, SortOrder = 3)]
     [PluginController("SeoToolkit")]
     public class RobotsTxtTreeController : TreeController
     {
+        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
+
         public RobotsTxtTreeController(
             ILocalizedTextService localizedTextService,
             UmbracoApiControllerTypeCollection umbracoApiControllerTypeCollection,

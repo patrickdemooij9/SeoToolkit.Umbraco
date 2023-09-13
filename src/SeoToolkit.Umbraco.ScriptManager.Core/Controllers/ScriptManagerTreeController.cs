@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NUglify.JavaScript.Syntax;
+using SeoToolkit.Umbraco.Common.Core.Constants;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Actions;
 using Umbraco.Cms.Core.Events;
@@ -12,10 +13,12 @@ using UmbConstants = Umbraco.Cms.Core.Constants;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 {
-    [Tree("SeoToolkit", "ScriptManager", TreeTitle = "Script Manager", TreeGroup = "SeoToolkit", SortOrder = 2)]
+    [Tree("SeoToolkit", "ScriptManager", TreeTitle = "Script Manager", TreeGroup = TreeGroupAlias, SortOrder = 2)]
     [PluginController("SeoToolkit")]
     public class ScriptManagerTreeController : TreeController
     {
+        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
+
         private readonly IMenuItemCollectionFactory _menuItemCollectionFactory;
 
         public ScriptManagerTreeController(
