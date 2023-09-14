@@ -22,5 +22,11 @@
             public const string Title = "Robots.txt";
             public const string Alias = "RobotsTxt";
         }
+
+        public static class Redirects
+        {
+            public const string Title = "Redirects";
+            public const string Alias = "Redirects";
+        }
     }
 }
