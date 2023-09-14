@@ -17,9 +17,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
     [PluginController("SeoToolkit")]
     public class SeoToolkitTreeController : TreeController
     {
-        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
-        public const string Title = TreeControllerConstants.SiteAudit.Title;
         public const string Alias = TreeControllerConstants.SiteAudit.Alias;
+        public const string Title = TreeControllerConstants.SiteAudit.Title;
+        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
 
         private readonly IMenuItemCollectionFactory _menuItemCollectionFactory;
 

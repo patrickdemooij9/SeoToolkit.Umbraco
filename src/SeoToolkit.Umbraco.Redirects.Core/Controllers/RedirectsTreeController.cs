@@ -14,9 +14,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
     [PluginController("SeoToolkit")]
     public class RedirectsTreeController : TreeController
     {
-        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
-        public const string Title = TreeControllerConstants.Redirects.Title;
         public const string Alias = TreeControllerConstants.Redirects.Alias;
+        public const string Title = TreeControllerConstants.Redirects.Title;
+        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
 
         public RedirectsTreeController(ILocalizedTextService localizedTextService, UmbracoApiControllerTypeCollection umbracoApiControllerTypeCollection, IEventAggregator eventAggregator) : base(localizedTextService, umbracoApiControllerTypeCollection, eventAggregator)
         {

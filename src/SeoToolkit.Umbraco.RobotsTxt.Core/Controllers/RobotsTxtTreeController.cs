@@ -14,9 +14,9 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
     [PluginController("SeoToolkit")]
     public class RobotsTxtTreeController : TreeController
     {
-        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
-        public const string Title = TreeControllerConstants.RobotsTxt.Title;
         public const string Alias = TreeControllerConstants.RobotsTxt.Alias;
+        public const string Title = TreeControllerConstants.RobotsTxt.Title;
+        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
 
         public RobotsTxtTreeController(
             ILocalizedTextService localizedTextService,

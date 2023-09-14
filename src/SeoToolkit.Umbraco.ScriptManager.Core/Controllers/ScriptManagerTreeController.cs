@@ -17,9 +17,9 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
     [PluginController("SeoToolkit")]
     public class ScriptManagerTreeController : TreeController
     {
-        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
-        public const string Title = TreeControllerConstants.ScriptManager.Title;
         public const string Alias = TreeControllerConstants.ScriptManager.Alias;
+        public const string Title = TreeControllerConstants.ScriptManager.Title;
+        public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
 
         private readonly IMenuItemCollectionFactory _menuItemCollectionFactory;
 
