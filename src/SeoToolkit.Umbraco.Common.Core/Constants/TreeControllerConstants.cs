@@ -16,5 +16,11 @@
             public const string Title = "Script Manager";
             public const string Alias = "ScriptManager";
         }
+
+        public static class RobotsTxt
+        {
+            public const string Title = "Robots.txt";
+            public const string Alias = "RobotsTxt";
+        }
     }
 }

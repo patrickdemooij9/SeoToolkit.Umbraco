@@ -10,11 +10,13 @@ using Umbraco.Cms.Web.Common.Attributes;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
 {
-    [Tree("SeoToolkit", "RobotsTxt", TreeTitle = "Robots.txt", TreeGroup = TreeGroupAlias, SortOrder = 3)]
+    [Tree("SeoToolkit", Alias, TreeTitle = Title, TreeGroup = TreeGroupAlias, SortOrder = 3)]
     [PluginController("SeoToolkit")]
     public class RobotsTxtTreeController : TreeController
     {
         public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
+        public const string Title = TreeControllerConstants.RobotsTxt.Title;
+        public const string Alias = TreeControllerConstants.RobotsTxt.Alias;
 
         public RobotsTxtTreeController(
             ILocalizedTextService localizedTextService,
