@@ -12,7 +12,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
 public class OpenGraphUrlField : SeoField<string>
 {
     public override string Title => "Open Graph Url";
-    public override string Alias => Constants.OpenGraphUrl;
+    public override string Alias => SeoFieldAliasConstants.OpenGraphUrl;
     public override string Description => "Open Graph Url for the content";
     public override string GroupAlias => SeoFieldGroupConstants.MetaFieldsGroup;
     public override ISeoFieldEditor Editor { get; }

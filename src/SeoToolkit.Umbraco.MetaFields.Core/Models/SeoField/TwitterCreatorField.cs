@@ -12,7 +12,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
 public class TwitterCreatorField : SeoField<string>
 {
     public override string Title => "Twitter Creator";
-    public override string Alias => Constants.TwitterCreator;
+    public override string Alias => SeoFieldAliasConstants.TwitterCreator;
     public override string Description => "Twitter Creator for the content";
     public override string GroupAlias => SeoFieldGroupConstants.OpenGraphGroup;
     public override ISeoFieldEditor Editor { get; }
@@ -22,13 +22,16 @@ public class TwitterCreatorField : SeoField<string>
     {
         var propertyEditor = new SeoFieldPropertyEditor("textbox");
         propertyEditor.SetExtraInformation("Provide the Twitter username of the content creator");
-        propertyEditor.SetDefaultValue("@Your_IT_Team");
 
         Editor = propertyEditor;
     }
 
     protected override HtmlString Render(string value)
     {
-        return new HtmlString(value.IsNullOrWhiteSpace() ? null : $"<meta name=\"twitter:creator\" content=\"{value}\"/>");
+        // Check for the "@" at the start of the value and remove if present - we'll add it in.
+        if (value.StartsWith("@")) {
+            value = value[1..];
+        }
+        return new HtmlString(value.IsNullOrWhiteSpace() ? null : $"<meta name=\"twitter:creator\" content=\"@{value}\"/>");
     }
 }

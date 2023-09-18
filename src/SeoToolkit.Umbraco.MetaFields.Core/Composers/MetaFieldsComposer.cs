@@ -66,9 +66,13 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<OpenGraphTitleField>()
                 .Add<OpenGraphDescriptionField>()
                 .Add<OpenGraphImageField>()
+                .Add<OpenGraphUrlField>()
                 .Add<CanonicalUrlField>()
                 .Add<RobotsField>()
-                .Add<SeoSchemaField>();
+                .Add<SeoSchemaField>()
+                .Add<TwitterCardTypeField>()
+                .Add<TwitterSiteField>()
+                .Add<TwitterCreatorField>();
 
             if (settings?.ShowKeywordsField is true)
             {

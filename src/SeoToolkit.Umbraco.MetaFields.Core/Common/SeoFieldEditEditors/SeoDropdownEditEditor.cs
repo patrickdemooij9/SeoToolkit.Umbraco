@@ -8,16 +8,16 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors
 {
     public class SeoDropdownEditEditor : ISeoFieldEditEditor
     {
-        public string View => "dropdownFlexible";
+        public string View => "/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/PropertyEditor/dropdownList.html";
         public Dictionary<string, object> Config { get; }
         public IEditorValueConverter ValueConverter { get; }
 
-        public SeoDropdownEditEditor(CheckboxItem[] items)
+        public SeoDropdownEditEditor(string[] items)
         {
             ValueConverter = new TextValueConverter();
             Config = new Dictionary<string, object>
             {
-                {"prevalues",  items}
+                {"items",  items}
             };
         }
     }
