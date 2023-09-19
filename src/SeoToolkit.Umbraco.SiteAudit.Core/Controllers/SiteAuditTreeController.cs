@@ -13,10 +13,12 @@ using UmbConstants = Umbraco.Cms.Core.Constants;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
 {
-    [Tree("SeoToolkit", "SiteAudit", TreeTitle = "Site Audits", TreeGroup = TreeGroupAlias, SortOrder = 1)]
+    [Tree("SeoToolkit", Alias, TreeTitle = Title, TreeGroup = TreeGroupAlias, SortOrder = 1)]
     [PluginController("SeoToolkit")]
     public class SeoToolkitTreeController : TreeController
     {
+        public const string Alias = TreeControllerConstants.SiteAudit.Alias;
+        public const string Title = TreeControllerConstants.SiteAudit.Title;
         public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
 
         private readonly IMenuItemCollectionFactory _menuItemCollectionFactory;
