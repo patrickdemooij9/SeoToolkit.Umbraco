@@ -80,6 +80,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<PublishedContentSeoValueConverter>()
                 .Add<FieldSeoValueConverter>()
                 .Add<MultiplePublishedContentSeoValueConverter>()
+                .Add<BlockGridSeoValueConverter>()
+                .Add<BlockListSeoValueConverter>()
                 .Add<HtmlEncodedStringSeoConverter>();
 
             builder.WithCollectionBuilder<MapDefinitionCollectionBuilder>()
