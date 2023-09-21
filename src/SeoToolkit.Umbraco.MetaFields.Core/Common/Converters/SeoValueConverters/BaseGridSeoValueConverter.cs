@@ -5,6 +5,7 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Models.Blocks;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
+using Umbraco.Cms.Core.Strings;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters
 {
@@ -27,7 +28,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                 {
                     // Go through each of the properties in the content element that are Text, Text Area or Rich Text and aggregate their values into a single string.
                     foreach(var property in item.Properties.Where(p => dataTypes.Contains(p.PropertyType.DataType.EditorAlias))) {
-                        values.Add(item.Value(property.Alias));
+                        var propertyValue = item.Value(property.Alias);
+                        if (propertyValue is IHtmlEncodedString encodedString) {
+                            values.Add(encodedString.ToHtmlString()?.StripHtml());
+                        } else {
+                            values.Add(propertyValue);
+                        }
 
                         // TODO: If there is an embedded Block Grid or Block List item, recurse into it and get the values.
                     }
