@@ -16,5 +16,7 @@
         public const string TwitterCardType = "twitterCardType";
         public const string TwitterSite = "twitterSite";
         public const string TwitterCreator = "twitterCreator";
+
+        public const string FacebookId = "facebookId";
     }
 }

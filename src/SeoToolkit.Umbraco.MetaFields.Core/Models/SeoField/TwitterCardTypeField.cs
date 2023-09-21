@@ -17,18 +17,18 @@ public class TwitterCardTypeField : SeoField<string>
     public override string Title => "Twitter Card Type";
     public override string Alias => SeoFieldAliasConstants.TwitterCardType;
     public override string Description => "Twitter Card Type for your page";
-    public override string GroupAlias => SeoFieldGroupConstants.OpenGraphGroup;
+    public override string GroupAlias => SeoFieldGroupConstants.TwitterGroup;
     public override ISeoFieldEditor Editor { get; }
     public override ISeoFieldEditEditor EditEditor { get; }
 
     public TwitterCardTypeField()
     {
+        // App is relevant to direct download links to mobile apps; Player is relevant to video/audio media.
         var items = new string[] {
             "summary",
             "summary_large_image",
             "app",
-            "player",
-            "product"
+            "player"
         };
 
         var propertyEditor = new SeoDropdownEditEditor(items);
