@@ -14,7 +14,7 @@ public class FacebookIdField : SeoField<string>
     public override string Title => "App Id";
     public override string Alias => SeoFieldAliasConstants.FacebookId;
     public override string Description => "Facebook app_id for the content";
-    public override string GroupAlias => SeoFieldGroupConstants.FacebookGroup;
+    public override string GroupAlias => SeoFieldGroupConstants.SocialMediaGroup;
     public override ISeoFieldEditor Editor { get; }
     public override ISeoFieldEditEditor EditEditor => new SeoTextBoxEditEditor();
 

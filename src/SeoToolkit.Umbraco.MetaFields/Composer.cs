@@ -30,9 +30,7 @@ namespace SeoToolkit.Umbraco.MetaFields
 
                 builder.WithCollectionBuilder<SeoGroupCollectionBuilder>()
                     .Append<MetaFieldsGroup>()
-                    .Append<OpenGraphFieldsGroup>()
-                    .Append<TwitterFieldsGroup>()
-                    .Append<FacebookFieldsGroup>()
+                    .Append<SocialMediaFieldsGroup>()
                     .Append<OthersFieldGroup>();
             }
         }
