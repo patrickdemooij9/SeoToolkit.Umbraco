@@ -487,3 +487,4 @@ $RECYCLE.BIN/
 **/wwwroot/umbraco/
 
 **/SeoToolkit.Umbraco.Site/App_Plugins/
+src/SeoToolkit.Umbraco.Site/uSync/

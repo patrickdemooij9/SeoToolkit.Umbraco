@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
 {
@@ -10,5 +12,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         bool Exists(int nodeId, string fieldAlias, string culture);
 
         Dictionary<string, object> GetAllValues(int nodeId, string culture);
+        IEnumerable<IGrouping<int, MetaFieldsValueEntity>> GetAll();
     }
 }
