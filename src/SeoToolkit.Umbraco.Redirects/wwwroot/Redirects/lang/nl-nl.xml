@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<language alias="nl">
+	<area alias="redirect">
+		<key alias="create">Redirect aanmaken</key>
+	</area>
+</language>

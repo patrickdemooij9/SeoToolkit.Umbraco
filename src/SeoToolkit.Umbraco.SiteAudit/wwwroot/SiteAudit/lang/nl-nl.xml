@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<language alias="nl">
+	<area alias="siteAudit">
+		<key alias="create">Audit Aanmaken</key>
+		<key alias="createAndStart">Aanmaken en strarten</key>
+		<key alias="cancel">Annuleren</key>
+	</area>
+</language>
