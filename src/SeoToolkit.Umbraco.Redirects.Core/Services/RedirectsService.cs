@@ -151,8 +151,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
 
                 var regexRedirects = _redirectsRepository.GetAllRegexRedirects().Where(it =>
                 {
-                    if (it.Domain?.Id == 0) return true;
-                    if (domain != null && it.Domain?.Id == domain.Id) return true;
+                    if (it.Domain == null) return true;
+                    if (domain != null && it.Domain.Id == domain.Id) return true;
                     if (domain is null &&
                         !string.IsNullOrWhiteSpace(it.CustomDomain) &&
                         (it.CustomDomain.Equals(customDomainWithoutScheme,
