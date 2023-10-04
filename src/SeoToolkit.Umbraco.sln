@@ -45,9 +45,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeoToolkit.Umbraco.Core", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Redirects", "Redirects", "{B0B49325-8248-4DB8-889D-211D9408D7A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeoToolkit.Umbraco.Redirects", "SeoToolkit.Umbraco.Redirects\SeoToolkit.Umbraco.Redirects.csproj", "{7C9ABE0D-106C-48C0-B0CF-DBBCD8AF334E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeoToolkit.Umbraco.Redirects", "SeoToolkit.Umbraco.Redirects\SeoToolkit.Umbraco.Redirects.csproj", "{7C9ABE0D-106C-48C0-B0CF-DBBCD8AF334E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeoToolkit.Umbraco.Redirects.Core", "SeoToolkit.Umbraco.Redirects.Core\SeoToolkit.Umbraco.Redirects.Core.csproj", "{566D1DBF-EC21-405C-BB92-424C4A1C1B88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeoToolkit.Umbraco.Redirects.Core", "SeoToolkit.Umbraco.Redirects.Core\SeoToolkit.Umbraco.Redirects.Core.csproj", "{566D1DBF-EC21-405C-BB92-424C4A1C1B88}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{410B1EAC-B947-4E17-A53E-835CA5948B5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeoToolkit.Tests", "SeoToolkit.Tests\SeoToolkit.Tests\SeoToolkit.Tests.csproj", "{A722B608-441C-40F2-962A-DD481E3FF849}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -123,6 +127,10 @@ Global
 		{566D1DBF-EC21-405C-BB92-424C4A1C1B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{566D1DBF-EC21-405C-BB92-424C4A1C1B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{566D1DBF-EC21-405C-BB92-424C4A1C1B88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A722B608-441C-40F2-962A-DD481E3FF849}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A722B608-441C-40F2-962A-DD481E3FF849}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A722B608-441C-40F2-962A-DD481E3FF849}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A722B608-441C-40F2-962A-DD481E3FF849}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -140,6 +148,7 @@ Global
 		{5B460335-8786-4FA9-911B-AEC5A752B88C} = {5641B436-FCCB-4D1A-9D25-6A39B95031CB}
 		{7C9ABE0D-106C-48C0-B0CF-DBBCD8AF334E} = {B0B49325-8248-4DB8-889D-211D9408D7A5}
 		{566D1DBF-EC21-405C-BB92-424C4A1C1B88} = {B0B49325-8248-4DB8-889D-211D9408D7A5}
+		{A722B608-441C-40F2-962A-DD481E3FF849} = {410B1EAC-B947-4E17-A53E-835CA5948B5A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {551ADBA5-3DFB-4300-929C-2BE0DB346636}
