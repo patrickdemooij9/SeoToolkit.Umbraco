@@ -18,5 +18,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.MetaFieldsService
         {
             return _metaTagsProvider.Get(content, includeUserValues);
         }
+
+        public MetaTagsModel GetEmpty()
+        {
+            return _metaTagsProvider.GetEmpty();
+        }
     }
 }

@@ -19,11 +19,13 @@
         vm.isContentDirty = function () {
             var currentEditorItem = editorState.getCurrent();
             var isDirty = false;
-            currentEditorItem.variants.forEach(function (variant) {
-                if (variant.isDirty) {
-                    isDirty = true;
-                }
-            });
+            if (currentEditorItem.variants !== undefined) {
+                currentEditorItem.variants.forEach(function (variant) {
+                    if (variant.isDirty) {
+                        isDirty = true;
+                    }
+                });
+            }
             return isDirty;
         }
 
@@ -122,6 +124,10 @@
             function () {
                 save();
             }));
+
+        vm.$onDestroy = function () {
+            unsubscribe.forEach(x => x());
+        }
 
         init();
     }

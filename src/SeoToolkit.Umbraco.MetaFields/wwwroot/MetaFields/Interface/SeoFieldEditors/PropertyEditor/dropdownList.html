@@ -1,0 +1,10 @@
+<div ng-controller="SeoToolkit.SeoFieldEditors.DropdownListController">
+    <select name="dropDownList"
+            class="umb-property-editor umb-dropdown"
+            ng-change="updateSingleDropdownValue()"
+            ng-model="model.singleDropdownValue"
+            ng-options="item as item for item in model.config.items"
+            ng-disabled="readonly">
+        <option></option>
+    </select>
+</div>

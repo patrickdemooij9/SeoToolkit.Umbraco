@@ -14,10 +14,16 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Title => "Open Graph Description";
         public string Alias => SeoFieldAliasConstants.OpenGraphDescription;
         public string Description => "Description for Open Graph";
-        public string GroupAlias => SeoFieldGroupConstants.OpenGraphGroup;
+        public string GroupAlias => SeoFieldGroupConstants.SocialMediaGroup;
         public Type FieldType => typeof(string);
 
-        public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.TextBox", "Umbraco.TextArea", "Umbraco.TinyMCE" });
+        public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] {
+                global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TextArea,
+                global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TextBox,
+                global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TinyMce,
+                global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.BlockGrid,
+                global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.BlockList,
+            });
         public ISeoFieldEditEditor EditEditor => new SeoTextAreaEditEditor();
 
         public HtmlString Render(object value)

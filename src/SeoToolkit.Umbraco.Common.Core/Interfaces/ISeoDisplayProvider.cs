@@ -5,6 +5,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Interfaces
 {
     public interface ISeoDisplayProvider
     {
-        SeoDisplayViewModel Get(IContent content);
+        SeoDisplayViewModel Get(IContent? content);
     }
 }
