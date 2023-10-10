@@ -125,6 +125,10 @@
                 save();
             }));
 
+        vm.$onDestroy = function () {
+            unsubscribe.forEach(x => x());
+        }
+
         init();
     }
 

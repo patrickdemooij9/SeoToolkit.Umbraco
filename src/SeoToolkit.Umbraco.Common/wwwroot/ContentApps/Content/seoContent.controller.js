@@ -1,6 +1,6 @@
 ﻿(function () {
 
-    function SeoContentController($scope, $http, editorState, eventsService, notificationsService) {
+    function SeoContentController($scope, $http, editorState, eventsService, notificationsService, contentAppHelper) {
         var unsubscribe = [];
 
         var vm = this;
@@ -21,14 +21,14 @@
         }
 
         function save() {
-            vm.defaultButtonScope.defaultButton.saveButtonState = "busy";
             $scope.$broadcast("seoContentSubmitting");
-
             notificationsService.success("SEO content saved!");
-            vm.defaultButtonScope.defaultButton.saveButtonState = "success";
         }
 
         function init() {
+            if (!contentAppHelper.CONTENT_BASED_APPS.includes("seoContent")) {
+                contentAppHelper.CONTENT_BASED_APPS.push("seoContent");
+            }
             $http.get("backoffice/SeoToolkit/SeoContent/Get?contentId=" + editorState.getCurrent().id).then(
                 function (response) {
                     if (response.status === 200) {
@@ -38,39 +38,20 @@
                 });
         }
 
-        function initSaveButton() {
-            const maxTries = 20;
-            var tries = 0;
-            var currentScope = $scope.$parent;
-            while (currentScope && !currentScope.hasOwnProperty("defaultButton") && tries <= maxTries) {
-                currentScope = currentScope.$parent;
-                tries++;
-            }
-
-            if (maxTries > tries) {
-                vm.defaultButtonScope = currentScope;
-            }
-
-            if (vm.defaultButtonScope) {
-                vm.defaultButtonScope.defaultButton = {
-                    letter: 'S',
-                    labelKey: "buttons_save",
-                    handler: save,
-                    hotKey: "ctrl+s",
-                    hotKeyWhenHidden: true,
-                    alias: "save",
-                    addEllipsis: "true"
-                }
-            }
-        }
-
         unsubscribe.push(eventsService.on("app.tabChange",
             (e, data) => {
                 if (data.alias !== "seoContent") {
                     return;
                 }
 
-                initSaveButton();
+                if (unsubscribe.length == 1) {
+                    unsubscribe.push(eventsService.on("content.saved", () => {
+                        save();
+                    }));
+                    unsubscribe.push(eventsService.on("content.unpublished", () => {
+                        save();
+                    }));
+                }
             }));
 
         vm.$onDestroy = function () {
