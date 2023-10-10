@@ -48,7 +48,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
             {
                 //If domain is null, we are either at root or we don't have any domains on the website anyway.
                 var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
-                if (domains.Length == 0)
+                if (domains.Length <= 1)
                 {
                     doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture));
                 }
