@@ -23,7 +23,7 @@ namespace SeoToolkit.Umbraco.Common.Core.ContentApps
 
         public ContentApp GetContentAppFor(object source, IEnumerable<IReadOnlyUserGroup> userGroups)
         {
-            if (source is not IContent { HasIdentity: true } content || !_seoSettingsService.IsEnabled(content.ContentTypeId))
+            if (source is not IContent content || !_seoSettingsService.IsEnabled(content.ContentTypeId))
                 return null;
 
             using var scope = _serviceScopeFactory.CreateScope();

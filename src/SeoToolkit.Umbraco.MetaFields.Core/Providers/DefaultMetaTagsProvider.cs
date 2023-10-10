@@ -116,5 +116,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                 return metaTags;
             }
         }
+
+        public MetaTagsModel GetEmpty()
+        {
+            var allFields = _seoFieldCollection.GetAll().ToArray();
+
+            return new MetaTagsModel(allFields.ToDictionary(it => it, it => (object)null));
+        }
     }
 }
