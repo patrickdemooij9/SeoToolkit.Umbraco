@@ -63,14 +63,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             var content = ctx.UmbracoContext.Content.GetById(true, nodeId);
-            if (content is null)
-            {
-                _logger.LogInformation("Could not find content by id {0}", nodeId);
-                return NotFound();
-            }
 
-            var metaTags = _seoService.Get(content, false);
-            var userValues = _seoValueService.GetUserValues(nodeId);
+            var metaTags = content is null ? _seoService.GetEmpty() : _seoService.Get(content, false);
+            var userValues = content is null ? new Dictionary<string, object>() : _seoValueService.GetUserValues(nodeId);
 
             return new JsonResult(new MetaFieldsSettingsViewModel
             {
