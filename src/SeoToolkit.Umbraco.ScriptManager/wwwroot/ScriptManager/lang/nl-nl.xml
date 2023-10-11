@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <language alias="nl">
 	<area alias="siteManager">
-		<key alias="create">Script Aanmaken</key>
+		<key alias="create">Script aanmaken</key>
 	</area>
 </language>
