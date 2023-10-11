@@ -1,0 +1,4 @@
+# SQLite database files
+/umbraco/Data/*.sqlite.db
+/umbraco/Data/*.sqlite.db-shm
+/umbraco/Data/*.sqlite.db-wal
