@@ -13,7 +13,7 @@
 		<PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
 		<PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
-		<Version>3.3.0</Version>
+		<Version>3.4.0</Version>
 		<StaticWebAssetBasePath>App_Plugins/SeoToolkit</StaticWebAssetBasePath>
 	</PropertyGroup>
 	<ItemGroup>
