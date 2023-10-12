@@ -68,24 +68,16 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<OpenGraphUrlField>()
                 .Add<CanonicalUrlField>()
                 .Add<RobotsField>()
-                .Add<SeoSchemaField>()
                 .Add<TwitterCardTypeField>()
                 .Add<TwitterSiteField>()
                 .Add<TwitterCreatorField>()
                 .Add<FacebookIdField>();
-
-            if (settings?.ShowKeywordsField is true)
-            {
-                builder.WithCollectionBuilder<SeoFieldCollectionBuilder>().Add<KeywordsField>();
-            }
 
             builder.WithCollectionBuilder<SeoConverterCollectionBuilder>()
                 .Add<TextSeoValueConverter>()
                 .Add<PublishedContentSeoValueConverter>()
                 .Add<FieldSeoValueConverter>()
                 .Add<MultiplePublishedContentSeoValueConverter>()
-                .Add<BlockGridSeoValueConverter>()
-                .Add<BlockListSeoValueConverter>()
                 .Add<HtmlEncodedStringSeoConverter>();
 
             builder.WithCollectionBuilder<MapDefinitionCollectionBuilder>()
