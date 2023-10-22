@@ -36,6 +36,14 @@
             }
         }
 
+        vm.isEnabledProperty = {
+            alias: "enabled",
+            label: "Enabled",
+            description: "Uncheck this box to stop the redirect from functioning",
+            value: "1",
+            view: "boolean"
+        }
+
         vm.oldUrlProperty = {
             alias: "oldUrl",
             label: "From Url",
@@ -87,6 +95,7 @@
                 } else {
                     vm.domainProperty.value = $scope.model.redirect.customDomain ? -1 : 0;
                 }
+                vm.isEnabledProperty.value = $scope.model.redirect.isEnabled ? '1' : '0';
                 vm.customDomainProperty.value = $scope.model.redirect.customDomain;
                 vm.oldUrlProperty.value = $scope.model.redirect.oldUrl;
                 vm.oldUrlType = $scope.model.redirect.isRegex ? 2 : 1;
@@ -131,6 +140,7 @@
                 $scope.model.submit({
                     id: vm.id,
                     domain: vm.domainProperty.value > 0 ? vm.domainProperty.value : null,
+                    isEnabled: vm.isEnabledProperty.value === '1',
                     customDomain: vm.domainProperty.value === -1 ? vm.customDomainProperty.value : null,
                     urlType: vm.oldUrlType,
                     oldUrl: vm.oldUrlProperty.value,

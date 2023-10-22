@@ -106,7 +106,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                     return scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
                             .SelectAll()
                             .From<RedirectEntity>()
-                            .Where<RedirectEntity>(it => it.IsRegex))
+                            .Where<RedirectEntity>(it => it.IsEnabled && it.IsRegex))
                         .Select(ToModel).ToArray();
                 }
             }, TimeSpan.FromMinutes(10));
@@ -119,7 +119,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 return scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
                         .SelectAll()
                         .From<RedirectEntity>()
-                        .Where<RedirectEntity>(it => !it.IsRegex && paths.Contains(it.OldUrl)))
+                        .Where<RedirectEntity>(it => it.IsEnabled && !it.IsRegex && paths.Contains(it.OldUrl)))
                     .Select(ToModel);
             }
         }
@@ -132,6 +132,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 Domain = redirect.Domain?.Id,
                 CustomDomain = redirect.CustomDomain,
                 IsRegex = redirect.IsRegex,
+                IsEnabled = redirect.IsEnabled,
                 OldUrl = redirect.OldUrl,
                 NewNodeId = redirect.NewNode?.Id,
                 NewUrl = redirect.NewUrl,
@@ -153,6 +154,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                         ? null
                         : ctx.UmbracoContext.Domains.GetAll(false).FirstOrDefault(it => it.Id == entity.Domain),
                     CustomDomain = entity.CustomDomain,
+                    IsEnabled = entity.IsEnabled,
                     IsRegex = entity.IsRegex,
                     OldUrl = entity.OldUrl,
                     NewNode = entity.NewNodeId is null

@@ -12,6 +12,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
         {
             To<InitialRedirectsMigration>("state-1");
             To<CreatedByMigration>("state-2");
+            To<IsEnabledMigration>("state-3");
         }
     }
 }

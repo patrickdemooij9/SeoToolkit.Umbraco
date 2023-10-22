@@ -11,6 +11,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
 
         public string CustomDomain { get; set; }
 
+        public bool IsEnabled { get; set; }
+
         public bool IsRegex { get; set; }
 
         public string OldUrl { get; set; }
@@ -28,6 +30,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
             Id = redirect.Id;
             Domain = redirect.Domain?.Id;
             CustomDomain = redirect.CustomDomain;
+            IsEnabled = redirect.IsEnabled;
             IsRegex = redirect.IsRegex;
             OldUrl = redirect.OldUrl.IfNullOrWhiteSpace("/");
             NewUrl = redirect.NewUrl;
