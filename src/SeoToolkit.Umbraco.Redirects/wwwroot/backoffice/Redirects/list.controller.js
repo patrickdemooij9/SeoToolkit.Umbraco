@@ -110,6 +110,7 @@
                             domain: model.domain,
                             customDomain: model.customDomain,
                             isRegex: model.urlType === 2,
+                            isEnabled: model.isEnabled,
                             oldUrl: model.oldUrl,
                             newUrl: model.newUrl,
                             newNodeId: model.newNodeId,
@@ -149,6 +150,7 @@
                     customDomain: redirect.CustomDomain ?? "",
                     oldUrl: redirect.OldUrl,
                     isRegex: redirect.IsRegex,
+                    isEnabled: redirect.IsEnabled,
                     newUrl: redirect.NewUrl,
                     newNodeId: redirect.NewNodeId,
                     newCultureId: redirect.NewCultureId,
@@ -190,7 +192,8 @@
                                 : i.StatusCode === 302 ? 'Temporary (302)'
                             : undefined,
                     "lastUpdated": i.LastUpdated,
-                    "published": true
+                    "published": i.IsEnabled,
+                    "updater": '-'
                 }
             });
         }

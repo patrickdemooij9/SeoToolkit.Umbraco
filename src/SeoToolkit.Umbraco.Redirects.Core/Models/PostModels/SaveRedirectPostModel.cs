@@ -10,6 +10,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.PostModels
         
         public string CustomDomain { get; set; }
         
+        public bool IsEnabled { get; set; }
+
         public bool IsRegex { get; set; }
         
         public string OldUrl { get; set; }

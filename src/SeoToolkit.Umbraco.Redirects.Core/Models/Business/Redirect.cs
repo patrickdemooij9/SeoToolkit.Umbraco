@@ -12,6 +12,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Business
     public class Redirect
     {
         public int Id { get; set; }
+        public bool IsEnabled { get; set; }
         public bool IsRegex { get; set; }
         public Domain Domain { get; set; }
         public string CustomDomain { get; set; }

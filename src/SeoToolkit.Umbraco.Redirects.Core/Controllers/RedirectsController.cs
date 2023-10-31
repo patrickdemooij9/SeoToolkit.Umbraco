@@ -43,6 +43,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             {
                 Id = postModel.Id,
                 CustomDomain = postModel.CustomDomain,
+                IsEnabled = postModel.IsEnabled,
                 IsRegex = postModel.IsRegex,
                 OldUrl = postModel.OldUrl,
                 NewUrl = postModel.NewUrl,
@@ -98,6 +99,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
                 return new RedirectListViewModel
                 {
                     Id = it.Id,
+                    IsEnabled = it.IsEnabled,
                     OldUrl = it.OldUrl.IfNullOrWhiteSpace("/"),
                     NewUrl = it.GetNewUrl(),
                     Domain = domain,

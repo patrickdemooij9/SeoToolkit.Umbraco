@@ -23,6 +23,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Database
         [Column("IsRegex")]
         public bool IsRegex { get; set; }
 
+        [Column("IsEnabled")]
+        public bool IsEnabled { get; set; }
+
         [Column("OldUrl")]
         public string OldUrl { get; set; }
 
