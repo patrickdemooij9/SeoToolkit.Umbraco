@@ -32,7 +32,8 @@
                 {
                     var results = publishedContentQuery.Search(searchQuery).Where(x => !docTypesToIgnore.Contains(x.Content.ContentType.Alias));
                     long resultCount = results != null && results.Any() ? results.Count() : 0;
-                    @Html.Raw(string.Format(Umbraco.GetDictionaryValue("Search.Results"), resultCount, searchQuery)) if (resultCount > 0)
+                    @Html.Raw(string.Format(Umbraco.GetDictionaryValue("Search.Results"), resultCount, searchQuery))
+                    if (resultCount > 0)
                     {
                         foreach (var result in results)
                         {
@@ -43,25 +44,27 @@
                                     </h2>
                                     @if (result.Content.HasProperty("subtitle") && result.Content.HasValue("subtitle") && !string.IsNullOrWhiteSpace(result.Content.Value<string>("subtitle")))
                                     {
-                                    <h3 class="post-subtitle">@(result.Content.Value<string>("subtitle"))</h3>}
+                                        <h3 class="post-subtitle">@(result.Content.Value<string>("subtitle"))</h3>
+                                    }
                                 </a>
-                                @if ((result.Content.HasProperty("author") && result.Content.HasValue("author"))
-                                    || (result.Content.HasProperty("articleDate") && result.Content.HasValue("articleDate") && result.Content.Value<DateTime>("articleDate") > DateTime.MinValue))
+                                @if (result.Content is IArticleControls article && ((result.Content.HasProperty("author") && result.Content.HasValue("author"))
+                               || (result.Content.HasProperty("articleDate") && result.Content.HasValue("articleDate") && result.Content.Value<DateTime>("articleDate") > DateTime.MinValue)))
                                 {
-                                    var author = result.Content.GetAuthor(Umbraco);
-
+                                    var author = article.Author;
                                     <p class="post-meta">
                                         @Umbraco.GetDictionaryValue("Article.Posted")
                                         @Umbraco.GetDictionaryValue("Article.By")@Html.Raw("&nbsp;")@(author.Name)
 
-                                        @if (result.Content.HasProperty("articleDate") && result.Content.HasValue("articleDate") && result.Content.Value<DateTime>("articleDate") > DateTime.MinValue)
+                                        @if (article.ArticleDate != null && article.ArticleDate > DateTime.MinValue)
                                         {
-                                            @Umbraco.GetDictionaryValue("Article.On")@:&nbsp;@(result.Content.Value<DateTime>("ArticleDate").ToString("MMMM dd, yyyy"))
+                                            @Umbraco.GetDictionaryValue("Article.On")
+
+                                            @:&nbsp;@(article.ArticleDate.ToString("MMMM dd, yyyy"))
                                         }
                                     </p>
                                 }
-                            </div> 
-                            }
+                            </div>
+                        }
                         <hr>
                     }
                 }
