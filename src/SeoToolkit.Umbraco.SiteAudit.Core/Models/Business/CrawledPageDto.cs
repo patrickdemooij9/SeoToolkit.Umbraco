@@ -15,6 +15,10 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Models.Business
             Results = new List<PageCrawlResult>();
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
         public override bool Equals(object obj)
         {
             if (!(obj is CrawledPageDto page))

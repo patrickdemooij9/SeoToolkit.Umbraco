@@ -103,7 +103,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAudit([FromBody] CreateAuditPostModel postModel)
+        public IActionResult CreateAudit([FromBody] CreateAuditPostModel postModel)
         {
             var config = _settingsService.GetSettings();
 
