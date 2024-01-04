@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Product>SeoToolkit Redirects Core</Product>
     <PackageId>SeoToolkit.Umbraco.Redirects.Core</PackageId>
     <Title>SeoToolkit Redirects Core</Title>

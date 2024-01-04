@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Product>SeoToolkit MetaFields Core</Product>
     <PackageId>SeoToolkit.Umbraco.MetaFields.Core</PackageId>
     <Title>SeoToolkit MetaFields Core</Title>
@@ -16,8 +16,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="[11.0.0,12.999)" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[11.0.0,12.999)" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="[11.0.0,13.999)" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[11.0.0,13.999)" />
   </ItemGroup>
 
   <ItemGroup>

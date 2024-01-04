@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Product>SeoToolkit Common Core</Product>
     <PackageId>SeoToolkit.Umbraco.Common.Core</PackageId>
+    <Nullable>enable</Nullable>
     <Title>SeoToolkit Common Core</Title>
     <Description>Package containing common logic for SeoToolkit</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -15,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="[11.0.0,12.999)" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[11.0.0,12.999)" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="[11.0.0,13.999)" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[11.0.0,13.999)" />
   </ItemGroup>
 </Project>
