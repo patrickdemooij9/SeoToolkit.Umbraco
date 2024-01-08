@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
 		<ContentTargetFolders>.</ContentTargetFolders>
 		<Product>SeoToolkit</Product>
 		<PackageId>SeoToolkit.Umbraco</PackageId>
@@ -15,7 +15,8 @@
 		<PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
 		<Version>3.4.0</Version>
 		<StaticWebAssetBasePath>App_Plugins/SeoToolkit</StaticWebAssetBasePath>
-	</PropertyGroup>
+	
+</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />

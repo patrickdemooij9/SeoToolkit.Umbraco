@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
     <Product>SeoToolkit Sitemap Core</Product>
     <PackageId>SeoToolkit.Umbraco.Sitemap.Core</PackageId>
     <Title>SeoToolkit Sitemap Core</Title>
@@ -13,7 +13,8 @@
     <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
     <Version>3.4.0</Version>
-	</PropertyGroup>
+	
+</PropertyGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[11.0.0,13.999)" />

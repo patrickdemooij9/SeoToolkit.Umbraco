@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
 		<ContentTargetFolders>.</ContentTargetFolders>
 		<Product>SeoToolkit Script Manager</Product>
 		<PackageId>SeoToolkit.Umbraco.ScriptManager</PackageId>
