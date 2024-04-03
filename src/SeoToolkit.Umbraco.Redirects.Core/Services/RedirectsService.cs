@@ -151,13 +151,18 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
 
                 var regexRedirects = _redirectsRepository.GetAllRegexRedirects().Where(it =>
                 {
-                    if (it.Domain == null) return true;
-                    if (domain != null && it.Domain.Id == domain.Id) return true;
-                    if (domain is null &&
-                        !string.IsNullOrWhiteSpace(it.CustomDomain) &&
+                    // Selected Any site
+                    if (it.Domain == null && string.IsNullOrWhiteSpace(it.CustomDomain)) return true;
+                    
+                    // Selected a domain
+                    if (it.Domain != null && domain != null && it.Domain.Id == domain.Id) return true;
+                    
+                    // Selected a Custom domain
+                    if (it.Domain == null && !string.IsNullOrWhiteSpace(it.CustomDomain) &&
                         (it.CustomDomain.Equals(customDomainWithoutScheme,
                              StringComparison.InvariantCultureIgnoreCase) ||
                          it.CustomDomain.Equals(customDomainWithScheme))) return true;
+
                     return false;
                 });
 
