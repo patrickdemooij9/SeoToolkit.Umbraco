@@ -6,7 +6,7 @@
         var vm = this;
         vm.displays = [];
         vm.defaultButtonScope = null;
-
+        vm.nodeId = "";
         vm.setActive = setActive;
 
         function setActive(display) {
@@ -21,8 +21,10 @@
         }
 
         function save() {
-            $scope.$broadcast("seoContentSubmitting");
-            notificationsService.success("SEO content saved!");
+            if(vm.nodeId === editorState.current.id){
+                $scope.$broadcast("seoContentSubmitting");
+                notificationsService.success("SEO content saved!");
+            }
         }
 
         function init() {
@@ -36,6 +38,8 @@
                         vm.displays[0].active = true;
                     }
                 });
+
+            vm.nodeId = editorState.current.id;
         }
 
         unsubscribe.push(eventsService.on("app.tabChange",
