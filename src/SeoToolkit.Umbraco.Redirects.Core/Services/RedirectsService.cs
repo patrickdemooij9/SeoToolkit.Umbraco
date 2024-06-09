@@ -139,7 +139,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
                         //Else check if we can find a redirect on the custom domain
                         foundRedirect = redirects.FirstOrDefault(it => it.CustomDomain != null && (it.CustomDomain.Equals(customDomainWithoutScheme, StringComparison.InvariantCultureIgnoreCase) || it.CustomDomain.Equals(customDomainWithScheme)));
                         if (foundRedirect != null) return new RedirectFindResult(uri, foundRedirect);
-                    }                    
+                    }                 
 
                     //Else check if we can find a redirect on the global level
                     foundRedirect = redirects.FirstOrDefault(it =>
@@ -151,13 +151,18 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
 
                 var regexRedirects = _redirectsRepository.GetAllRegexRedirects().Where(it =>
                 {
-                    if (it.Domain == null) return true;
-                    if (domain != null && it.Domain.Id == domain.Id) return true;
-                    if (domain is null &&
-                        !string.IsNullOrWhiteSpace(it.CustomDomain) &&
+                    // Any site
+                    if (it.Domain == null && string.IsNullOrWhiteSpace(it.CustomDomain)) return true;
+                    
+                    // Find by domain
+                    if (it.Domain != null && domain != null && it.Domain.Id == domain.Id) return true;
+                    
+                    // Find by Custom domain
+                    if (!string.IsNullOrWhiteSpace(it.CustomDomain) &&
                         (it.CustomDomain.Equals(customDomainWithoutScheme,
                              StringComparison.InvariantCultureIgnoreCase) ||
                          it.CustomDomain.Equals(customDomainWithScheme))) return true;
+
                     return false;
                 });
 
