@@ -60,13 +60,13 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             if (existingRedirects.Length > 0)
             {
                 if (existingRedirects.Any(it => it.Domain is null && string.IsNullOrWhiteSpace(it.CustomDomain)))
-                    throw new ArgumentException($"An redirect already exists for {oldUrl}");
+                    throw new ArgumentException($"A redirect already exists for {oldUrl}");
 
                 if (redirect.Domain != null && existingRedirects.Any(it => it.Domain?.Id == redirect.Domain.Id))
-                    throw new ArgumentException($"An redirect already exists for {oldUrl}");
+                    throw new ArgumentException($"A redirect already exists for {oldUrl}");
 
                 if (!string.IsNullOrWhiteSpace(redirect.CustomDomain) && existingRedirects.Any(it => !string.IsNullOrWhiteSpace(it.CustomDomain) && it.CustomDomain.Equals(redirect.CustomDomain)))
-                    throw new ArgumentException($"An redirect already exists for {oldUrl}");
+                    throw new ArgumentException($"A redirect already exists for {oldUrl}");
             }
 
             redirect.OldUrl = oldUrl;
