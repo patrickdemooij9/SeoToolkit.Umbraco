@@ -95,8 +95,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
                 var pathAndQuery = uri.PathAndQuery.CleanUrl();
                 var globalUrls = new List<string>
                 {
-                    uri.AbsolutePath.CleanUrl(),
-                    pathAndQuery
+                    WebUtility.UrlDecode(uri.AbsolutePath.CleanUrl()),
+                    WebUtility.UrlDecode(pathAndQuery)
                 };
                 List<string> domainUrls = null;
 
