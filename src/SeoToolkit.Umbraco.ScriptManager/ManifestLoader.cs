@@ -20,7 +20,7 @@ namespace SeoToolkit.Umbraco.ScriptManager
             manifests.Add(new PackageManifest
             {
                 PackageName = "SeoToolkit.Umbraco.ScriptManager",
-                Version = "3.5.0",
+                Version = "3.5.1",
                 Scripts = new[]
                 {
                     "/App_Plugins/SeoToolkit/backoffice/ScriptManager/list.controller.js",
