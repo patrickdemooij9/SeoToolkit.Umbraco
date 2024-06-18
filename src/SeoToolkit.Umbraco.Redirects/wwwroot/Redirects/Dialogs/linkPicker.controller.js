@@ -94,6 +94,7 @@
 
         vm.selectResult = function (evt, result) {
             result.selected = result.selected === true ? false : true;
+            result.nodeType = vm.section;
             nodeSelectHandler({
                 event: evt,
                 node: result
