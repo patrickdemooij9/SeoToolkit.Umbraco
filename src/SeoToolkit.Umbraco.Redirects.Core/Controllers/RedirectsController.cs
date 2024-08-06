@@ -1,6 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using SeoToolkit.Umbraco.Redirects.Core.Constants;
+using SeoToolkit.Umbraco.Redirects.Core.Enumerators;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
@@ -133,6 +139,59 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         {
             _redirectsService.Delete(postModel.Ids);
             return GetAll(1, 20);
+        }
+        
+        [HttpPost]
+        public IActionResult ValidateRedirects(ImportRedirectsFileExtension fileExtension, string domain)
+        {
+            var files = HttpContext.Request.Form.Files;
+            if (files.Count != 1 || files[0].Length == 0)
+            {
+                return BadRequest(new { isValid = false, Error = "Please select a file"});
+            }
+        
+            var file = HttpContext.Request.Form.Files[0];
+            using var memoryStream = new MemoryStream();
+            file.CopyTo(memoryStream);
+
+            return Ok(Validate(fileExtension, memoryStream, domain, false));
+        }
+
+        private IActionResult Validate(ImportRedirectsFileExtension fileExtension, MemoryStream memoryStream,
+            string domain, bool importFile)
+        {
+            HttpResponseMessage validationResult;
+            switch (fileExtension)
+            {
+                case ImportRedirectsFileExtension.Csv:
+                    validationResult = redirectsImportHelper.ImportCsv(memoryStream, importFile, domain);
+                    break;
+                case ImportRedirectsFileExtension.Excel:
+                    validationResult = redirectsImportHelper.ImportExcel(memoryStream, importFile, domain);
+                    break;
+                default:
+                    return BadRequest("Invalid filetype, you may only use .csv or .xls");
+            }
+        }
+
+        public IActionResult ImportRedirects()
+        {
+            var fileContent = HttpContext.Session.Get(ImportConstants.SessionAlias);
+            var fileExtensionString = HttpContext.Session.GetString(ImportConstants.SessionFileTypeAlias);
+            var domain= HttpContext.Session.GetString(ImportConstants.SessionDomainId);
+
+            if (fileContent == null || fileExtensionString == null || domain == null)
+            {
+                return BadRequest("Something went wrong during import, please try again");
+            }
+        
+            if (!Enum.TryParse(fileExtensionString, out ImportRedirectsFileExtension fileExtension))
+            {
+                return BadRequest("Invalid file extension.");
+            }
+        
+            using var memoryStream = new MemoryStream(fileContent);
+            return Ok(Validate(fileExtension, memoryStream, domain,true));
         }
     }
 }
