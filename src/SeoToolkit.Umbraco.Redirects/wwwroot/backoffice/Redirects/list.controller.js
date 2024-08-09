@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    function redirectListController($timeout, $http, listViewHelper, notificationsService, editorService) {
+    function redirectListController($timeout, $http, listViewHelper, notificationsService, editorService, localizationService) {
         var vm = this;
 
         vm.items = [];
@@ -37,7 +37,15 @@
         vm.search = search;
 
         vm.create = openRedirectDialog;
+        vm.import = openImportDialog;
         vm.deleteSelection = deleteSelection;
+
+        vm.dialogLabel = "import redirects"
+
+        var labelKeys = ["redirect_importButton"];
+        localizationService.localizeMany(labelKeys).then(function (data) {
+            vm.dialogLabel = data[0];
+        });
 
         vm.pageNumber = 1;
         vm.pageSize = 20;
@@ -96,6 +104,22 @@
 
         function search() {
             goToPage(1);
+        }
+
+        function openImportDialog(model) {
+            var redirectDialogOptions = {
+                title: vm.dialogLabel,
+                view: "/App_Plugins/SeoToolkit/Redirects/Dialogs/import.html",
+                size: "small",
+                close: function () {
+                    editorService.close();
+                }
+            };
+            if (model) {
+                redirectDialogOptions.redirect = model;
+            }
+
+            editorService.open(redirectDialogOptions);
         }
 
         function openRedirectDialog(model) {

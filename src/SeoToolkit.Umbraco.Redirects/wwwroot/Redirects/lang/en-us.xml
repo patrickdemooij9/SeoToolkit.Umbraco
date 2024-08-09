@@ -2,5 +2,15 @@
 <language alias="en">
 	<area alias="redirect">
 		<key alias="create">Create Redirect</key>
+		<key alias="importButton">Import redirects</key>
+		<key alias="fileTypePropertyLabel">Select the file type</key>
+		<key alias="fileTypePropertyDescription">Select the type of file you want to import the redirects from</key>
+		<key alias="filePropertyLabel">Select a file to import</key>
+		<key alias="validationSuccess">Validated successfully</key>
+		<key alias="validationFailed">Something went wrong: </key>
+		<key alias="importSuccess">Imported successfully</key>
+		<key alias="importFailed">Something went wrong: </key>
+		<key alias="domainPropertyLabel">Select the domain to import for</key>
+		<key alias="domainPropertyDescription">if nothing is selected, redirects will be active for all domains</key>
 	</area>
 </language>

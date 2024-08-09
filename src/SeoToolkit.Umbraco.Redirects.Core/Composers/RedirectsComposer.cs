@@ -8,12 +8,12 @@ using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Constants;
-using SeoToolkit.Umbraco.Common.Core.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Redirects.Core.Components;
 using SeoToolkit.Umbraco.Redirects.Core.Config;
 using SeoToolkit.Umbraco.Redirects.Core.Config.Models;
 using SeoToolkit.Umbraco.Redirects.Core.Controllers;
+using SeoToolkit.Umbraco.Redirects.Core.Helpers;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Middleware;
 using SeoToolkit.Umbraco.Redirects.Core.Repositories;
@@ -42,11 +42,12 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Composers
             {
                 builder.Trees().RemoveTreeController<RedirectsTreeController>();
             }
-            
+
             builder.Components().Append<EnableModuleComponent>();
 
             builder.Services.AddUnique<IRedirectsRepository, RedirectsRepository>();
             builder.Services.AddUnique<IRedirectsService, RedirectsService>();
+            builder.Services.AddTransient<RedirectsImportHelper>();
 
             if (!disabledModules.Contains(DisabledModuleConstant.Middleware))
             {

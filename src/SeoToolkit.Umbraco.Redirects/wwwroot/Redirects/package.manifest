@@ -2,7 +2,9 @@
   "javascript": [
     "/App_Plugins/SeoToolkit/backoffice/Redirects/list.controller.js",
     "/App_Plugins/SeoToolkit/Redirects/Dialogs/createRedirect.controller.js",
-    "/App_Plugins/SeoToolkit/Redirects/Dialogs/linkPicker.controller.js"
+    "/App_Plugins/SeoToolkit/Redirects/Dialogs/linkPicker.controller.js",
+    "/App_Plugins/SeoToolkit/Redirects/Dialogs/redirectsapi.resource.js",
+    "/App_Plugins/SeoToolkit/Redirects/Dialogs/import.controller.js"
   ],
   "css": [
     "/App_Plugins/SeoToolkit/Redirects/css/main.css"

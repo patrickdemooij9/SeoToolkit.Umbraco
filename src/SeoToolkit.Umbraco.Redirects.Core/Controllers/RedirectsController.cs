@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using SeoToolkit.Umbraco.Redirects.Core.Constants;
 using SeoToolkit.Umbraco.Redirects.Core.Enumerators;
+using SeoToolkit.Umbraco.Redirects.Core.Helpers;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
@@ -28,16 +27,18 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ILocalizationService _localizationService;
         private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
+        private readonly RedirectsImportHelper _redirectsImportHelper;
 
         public RedirectsController(IRedirectsService redirectsService,
             IUmbracoContextFactory umbracoContextFactory,
             ILocalizationService localizationService,
-            IBackOfficeSecurityAccessor backOfficeSecurityAccessor)
+            IBackOfficeSecurityAccessor backOfficeSecurityAccessor, RedirectsImportHelper redirectsImportHelper)
         {
             _redirectsService = redirectsService;
             _umbracoContextFactory = umbracoContextFactory;
             _localizationService = localizationService;
             _backOfficeSecurityAccessor = backOfficeSecurityAccessor;
+            _redirectsImportHelper = redirectsImportHelper;
         }
 
         [HttpPost]
@@ -140,38 +141,27 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             _redirectsService.Delete(postModel.Ids);
             return GetAll(1, 20);
         }
-        
+
         [HttpPost]
         public IActionResult ValidateRedirects(ImportRedirectsFileExtension fileExtension, string domain)
         {
             var files = HttpContext.Request.Form.Files;
             if (files.Count != 1 || files[0].Length == 0)
             {
-                return BadRequest(new { isValid = false, Error = "Please select a file"});
+                return Ok(new ImportStatus(StatusCodes.Status400BadRequest, "Please select a file"));
             }
-        
+
             var file = HttpContext.Request.Form.Files[0];
             using var memoryStream = new MemoryStream();
             file.CopyTo(memoryStream);
 
-            return Ok(Validate(fileExtension, memoryStream, domain, false));
-        }
-
-        private IActionResult Validate(ImportRedirectsFileExtension fileExtension, MemoryStream memoryStream,
-            string domain, bool importFile)
-        {
-            HttpResponseMessage validationResult;
-            switch (fileExtension)
+            var result = _redirectsImportHelper.Validate(fileExtension, memoryStream, domain);
+            if (result.Success)
             {
-                case ImportRedirectsFileExtension.Csv:
-                    validationResult = redirectsImportHelper.ImportCsv(memoryStream, importFile, domain);
-                    break;
-                case ImportRedirectsFileExtension.Excel:
-                    validationResult = redirectsImportHelper.ImportExcel(memoryStream, importFile, domain);
-                    break;
-                default:
-                    return BadRequest("Invalid filetype, you may only use .csv or .xls");
+                return Ok(new ImportStatus(StatusCodes.Status200OK));
             }
+
+            return Ok(!string.IsNullOrWhiteSpace(result.Status) ? new ImportStatus(StatusCodes.Status400BadRequest, result.Status) : new ImportStatus(StatusCodes.Status400BadRequest, "Something went wrong during the validation"));
         }
 
         public IActionResult ImportRedirects()
@@ -182,16 +172,22 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 
             if (fileContent == null || fileExtensionString == null || domain == null)
             {
-                return BadRequest("Something went wrong during import, please try again");
+                return Ok(new ImportStatus(StatusCodes.Status400BadRequest, "Something went wrong during import, please try again"));
             }
-        
+
             if (!Enum.TryParse(fileExtensionString, out ImportRedirectsFileExtension fileExtension))
             {
-                return BadRequest("Invalid file extension.");
+                return Ok(new ImportStatus(StatusCodes.Status400BadRequest, "Invalid file extension."));
             }
-        
+
             using var memoryStream = new MemoryStream(fileContent);
-            return Ok(Validate(fileExtension, memoryStream, domain,true));
+            var result = _redirectsImportHelper.Import(fileExtension, memoryStream, domain);
+            if (result.Success)
+            {
+                return Ok(new ImportStatus(StatusCodes.Status200OK));
+            }
+
+            return !string.IsNullOrWhiteSpace(result.Status) ? Ok(new ImportStatus(StatusCodes.Status400BadRequest, result.Status)) : Ok(new ImportStatus(StatusCodes.Status400BadRequest, "Something went wrong during the import"));
         }
     }
 }
