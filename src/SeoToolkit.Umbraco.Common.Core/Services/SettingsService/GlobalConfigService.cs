@@ -19,7 +19,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SettingsService
             return new GlobalConfig
             {
                 AutomaticSitemapsInRobotsTxt = settings.AutomaticSitemapsInRobotsTxt,
-                EnableSeoSettingsByDefault = settings.EnableSeoSettingsByDefault
+                EnableSeoSettingsByDefault = settings.EnableSeoSettingsByDefault,
+                SupressContentAppSavingNotification = settings.SupressContentAppSavingNotification,
             };
         }
     }

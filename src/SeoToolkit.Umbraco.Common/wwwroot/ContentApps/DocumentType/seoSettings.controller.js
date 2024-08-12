@@ -13,7 +13,7 @@
         vm.model = {
             enableSeoSettings: false
         }
-
+        vm.model.supressSavingNotification = false;
         vm.setSeoSettings = function (value) {
             vm.model.enableSeoSettings = value;
         }
@@ -32,8 +32,10 @@
         function init() {
             $http.get("backoffice/SeoToolkit/SeoSettings/Get?contentTypeId=" + $scope.model.id).then(
                 function (response) {
+                    console.log(response);
                     if (response.status === 200) {
                         vm.model.enableSeoSettings = response.data.isEnabled;
+                        vm.model.supressContentAppSavingNotification = response.data.supressContentAppSavingNotification;
                         vm.displays = response.data.displays;
                         vm.displays[0].active = true;
 
@@ -51,7 +53,11 @@
                     if (response.status !== 200) {
                         notificationsService.error("Something went wrong while saving SEO settings");
                     } else {
-                        notificationsService.success("SEO settings saved!");
+                        if(!vm.model.supressContentAppSavingNotification){
+                            notificationsService.success("SEO settings saved!");
+                        } else {
+                            console.log("supressed!");
+                        }
                     }
                 });
         }

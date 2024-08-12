@@ -4,5 +4,6 @@
     {
         public bool AutomaticSitemapsInRobotsTxt { get; set; }
         public bool EnableSeoSettingsByDefault { get; set; }
+        public bool SupressContentAppSavingNotification { get; set; }
     }
 }
