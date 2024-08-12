@@ -32,7 +32,6 @@
         function init() {
             $http.get("backoffice/SeoToolkit/SeoSettings/Get?contentTypeId=" + $scope.model.id).then(
                 function (response) {
-                    console.log(response);
                     if (response.status === 200) {
                         vm.model.enableSeoSettings = response.data.isEnabled;
                         vm.model.supressContentAppSavingNotification = response.data.supressContentAppSavingNotification;
@@ -55,8 +54,6 @@
                     } else {
                         if(!vm.model.supressContentAppSavingNotification){
                             notificationsService.success("SEO settings saved!");
-                        } else {
-                            console.log("supressed!");
                         }
                     }
                 });
