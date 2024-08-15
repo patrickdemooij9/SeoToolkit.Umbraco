@@ -28,17 +28,20 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
         private readonly RedirectsImportHelper _redirectsImportHelper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        
 
         public RedirectsController(IRedirectsService redirectsService,
             IUmbracoContextFactory umbracoContextFactory,
             ILocalizationService localizationService,
-            IBackOfficeSecurityAccessor backOfficeSecurityAccessor, RedirectsImportHelper redirectsImportHelper)
+            IBackOfficeSecurityAccessor backOfficeSecurityAccessor, RedirectsImportHelper redirectsImportHelper, IHttpContextAccessor httpContextAccessor)
         {
             _redirectsService = redirectsService;
             _umbracoContextFactory = umbracoContextFactory;
             _localizationService = localizationService;
             _backOfficeSecurityAccessor = backOfficeSecurityAccessor;
             _redirectsImportHelper = redirectsImportHelper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost]
@@ -143,28 +146,42 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         }
 
         [HttpPost]
-        public IActionResult ValidateRedirects(ImportRedirectsFileExtension fileExtension, string domain)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public IActionResult Validate(ImportRedirectsFileExtension fileExtension, string domain, IFormFile file)
         {
-            var files = HttpContext.Request.Form.Files;
-            if (files.Count != 1 || files[0].Length == 0)
+            if (file.Length == 0)
             {
-                return Ok(new ImportStatus(StatusCodes.Status400BadRequest, "Please select a file"));
+                return BadRequest("Please select a file");
             }
-
-            var file = HttpContext.Request.Form.Files[0];
+        
             using var memoryStream = new MemoryStream();
             file.CopyTo(memoryStream);
 
             var result = _redirectsImportHelper.Validate(fileExtension, memoryStream, domain);
             if (result.Success)
             {
-                return Ok(new ImportStatus(StatusCodes.Status200OK));
+                if (_httpContextAccessor.HttpContext is null)
+                {
+                    return BadRequest("Could not get context, please try again");
+                }
+
+                // Storing the file contents in session for later import
+                _httpContextAccessor.HttpContext.Session.Set(ImportConstants.SessionAlias, memoryStream.ToArray());
+                _httpContextAccessor.HttpContext.Session.SetString(ImportConstants.SessionFileTypeAlias, fileExtension.ToString());
+                _httpContextAccessor.HttpContext.Session.SetString(ImportConstants.SessionDomainId, domain);
+
+                return Ok();
             }
 
-            return Ok(!string.IsNullOrWhiteSpace(result.Status) ? new ImportStatus(StatusCodes.Status400BadRequest, result.Status) : new ImportStatus(StatusCodes.Status400BadRequest, "Something went wrong during the validation"));
+            return UnprocessableEntity(!string.IsNullOrWhiteSpace(result.Status) ? result.Status : "Something went wrong during the validation");
         }
 
-        public IActionResult ImportRedirects()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public IActionResult Import()
         {
             var fileContent = HttpContext.Session.Get(ImportConstants.SessionAlias);
             var fileExtensionString = HttpContext.Session.GetString(ImportConstants.SessionFileTypeAlias);
@@ -172,22 +189,22 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 
             if (fileContent == null || fileExtensionString == null || domain == null)
             {
-                return Ok(new ImportStatus(StatusCodes.Status400BadRequest, "Something went wrong during import, please try again"));
+                return BadRequest("Something went wrong during import, please try again");
             }
-
+        
             if (!Enum.TryParse(fileExtensionString, out ImportRedirectsFileExtension fileExtension))
             {
-                return Ok(new ImportStatus(StatusCodes.Status400BadRequest, "Invalid file extension."));
+                return UnprocessableEntity("Invalid file extension.");
             }
-
+        
             using var memoryStream = new MemoryStream(fileContent);
             var result = _redirectsImportHelper.Import(fileExtension, memoryStream, domain);
             if (result.Success)
             {
-                return Ok(new ImportStatus(StatusCodes.Status200OK));
+                return Ok();
             }
-
-            return !string.IsNullOrWhiteSpace(result.Status) ? Ok(new ImportStatus(StatusCodes.Status400BadRequest, result.Status)) : Ok(new ImportStatus(StatusCodes.Status400BadRequest, "Something went wrong during the import"));
+        
+            return UnprocessableEntity(!string.IsNullOrWhiteSpace(result.Status) ? result.Status : "Something went wrong during the import");
         }
     }
 }

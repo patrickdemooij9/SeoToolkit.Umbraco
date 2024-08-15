@@ -88,32 +88,28 @@
 
         function submit() {
             if (formHelper.submitForm({ scope: $scope, formCtrl: $scope.createRedirectForm })) {
-                redirectsApiResource.validateRedirects(vm.fileTypeSelection.value.label, vm.fileSelection.value, vm.domainSelection.value).then(function (response) {
-                    console.log(response);
-                    if (response.StatusCode == 200) {
-                        vm.notification = vm.validationSuccess;
-                        vm.validated = true;
-                    } else {
-                        vm.notification = `${vm.validationFailed} ${response.Error}`;
-                        vm.validated = false;
-                    }
+                redirectsImportApiResource.validateRedirects(vm.fileTypeSelection.value.label, vm.fileSelection.value, vm.domainSelection.value).then(function (response) {
+                    vm.notification = vm.validationSuccess;
+                    vm.validated = true;
+                }).catch(function (error) {
+                    vm.notification = `${vm.validationFailed} ${error}`;
+                    vm.validated = false;
                 });
             }
         }
         function importFile() {
             if (formHelper.submitForm({ scope: $scope, formCtrl: $scope.createRedirectForm })) {
-                redirectsApiResource.importRedirects().then(function (response) {
-                    if (response.StatusCode == 200) {
-                        notificationsService.success(`${vm.fileSelection.value.name} ${vm.importSuccess}`);
-                        vm.validated = true;
-                        $scope.model.close();
-                    } else {
-                        vm.notification = `${vm.importFailed} ${response.Error}`;
-                        vm.validated = false;
-                    }
+                redirectsImportApiResource.importRedirects().then(function (response) {
+                    notificationsService.success(`${vm.fileSelection.value.name} ${vm.importSuccess}`);
+                    vm.validated = true;
+                    $scope.model.close();
+                }).catch(function (error) {
+                    vm.notification = `${vm.validationFailed} ${error}`;
+                    vm.validated = false;
                 });
             }
         }
+        
         function close() {
             if ($scope.model.close) {
                 $scope.model.close();

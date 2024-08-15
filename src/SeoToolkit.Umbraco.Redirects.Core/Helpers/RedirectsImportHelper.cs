@@ -4,9 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ExcelDataReader;
-using Microsoft.AspNetCore.Http;
 using Microsoft.VisualBasic.FileIO;
-using SeoToolkit.Umbraco.Redirects.Core.Constants;
 using SeoToolkit.Umbraco.Redirects.Core.Enumerators;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
@@ -22,13 +20,11 @@ public class RedirectsImportHelper
     private Domain _selectedDomain;
     private readonly IRedirectsService _redirectsService;
     private readonly IUmbracoContextFactory _umbracoContextFactory;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public RedirectsImportHelper(IRedirectsService redirectsService, IUmbracoContextFactory umbracoContextFactory, IHttpContextAccessor httpContextAccessor)
+    public RedirectsImportHelper(IRedirectsService redirectsService, IUmbracoContextFactory umbracoContextFactory)
     {
         _redirectsService = redirectsService;
         _umbracoContextFactory = umbracoContextFactory;
-        _httpContextAccessor = httpContextAccessor;
     }
 
     public Attempt<Dictionary<string,string>?, string> Validate(ImportRedirectsFileExtension fileExtension, MemoryStream memoryStream, string domain)
@@ -49,14 +45,6 @@ public class RedirectsImportHelper
 
         if (validationResult.Success)
         {
-            if (_httpContextAccessor.HttpContext is null)
-            {
-                return Attempt<Dictionary<string,string>?, string>.Fail("Could not access context", result: null);
-            }
-            // Storing the file contents in session for later import
-            _httpContextAccessor.HttpContext.Session.Set(ImportConstants.SessionAlias, memoryStream.ToArray());
-            _httpContextAccessor.HttpContext.Session.SetString(ImportConstants.SessionFileTypeAlias, fileExtension.ToString());
-            _httpContextAccessor.HttpContext.Session.SetString(ImportConstants.SessionDomainId, domain);
             return Attempt<Dictionary<string,string>?, string>.Succeed(string.Empty, validationResult.Result);
         }
 
@@ -144,50 +132,59 @@ public class RedirectsImportHelper
 
 
     }
-    private Attempt<Dictionary<string,string>?, string> ValidateExcel(Stream fileStream)
+     private Attempt<Dictionary<string,string>?, string> ValidateExcel(Stream fileStream)
     {
         fileStream.Position = 0;
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-        using var reader = ExcelReaderFactory.CreateReader(fileStream);
-        var result = reader.AsDataSet();
-        var dataTable = result.Tables[0];
-
-        var parsedData = new Dictionary<string, string>();
-
-        for (var i = 0; i < dataTable.Rows.Count; i++)
+        try
         {
-            var row = dataTable.Rows[i];
-            if (row.ItemArray.Length != 2)
-            {
-                return Attempt<Dictionary<string,string>?, string>.Fail($"only 2 columns allowed on row {i + 1}");
-            }
+            using var reader = ExcelReaderFactory.CreateReader(fileStream);
+            var result = reader.AsDataSet();
+            var dataTable = result.Tables[0];
 
-            var fromUrl = CleanFromUrl(row[0].ToString());
-            var toUrl = Uri.IsWellFormedUriString(row[1].ToString(), UriKind.Absolute) ?
-                row[1].ToString() :
-                row[1].ToString()?.EnsureEndsWith("/").ToLower();
+            var parsedData = new Dictionary<string, string>();
 
-            if (!string.IsNullOrWhiteSpace(fromUrl) && !string.IsNullOrWhiteSpace(toUrl))
+            for (var i = 0; i < dataTable.Rows.Count; i++)
             {
-                if (!Uri.IsWellFormedUriString(fromUrl, UriKind.Relative))
+                var row = dataTable.Rows[i];
+                if (row.ItemArray.Length != 2)
                 {
-                    return Attempt<Dictionary<string,string>?, string>.Fail($"row {i + 1}", result: null);
+                    return Attempt<Dictionary<string, string>?, string>.Fail($"only 2 columns allowed on row {i + 1}");
                 }
 
-                if (UrlExists(fromUrl))
+                var fromUrl = CleanFromUrl(row[0].ToString());
+                var toUrl = Uri.IsWellFormedUriString(row[1].ToString(), UriKind.Absolute)
+                    ? row[1].ToString()
+                    : row[1].ToString()?.EnsureEndsWith("/").ToLower();
+
+                if (!string.IsNullOrWhiteSpace(fromUrl) && !string.IsNullOrWhiteSpace(toUrl))
                 {
-                    return Attempt<Dictionary<string,string>?, string>.Fail($"Redirect already exists for 'from' URL: {fromUrl} validation aborted.");
+                    if (!Uri.IsWellFormedUriString(fromUrl, UriKind.Relative))
+                    {
+                        return Attempt<Dictionary<string, string>?, string>.Fail($"row {i + 1}", result: null);
+                    }
+
+                    if (UrlExists(fromUrl))
+                    {
+                        return Attempt<Dictionary<string, string>?, string>.Fail(
+                            $"Redirect already exists for 'from' URL: {fromUrl} validation aborted.");
+                    }
+
+                    parsedData.Add(fromUrl, toUrl);
                 }
-                parsedData.Add(fromUrl, toUrl);
+                else
+                {
+                    return Attempt<Dictionary<string, string>?, string>.Fail($"row {i + 1}");
+                }
             }
-            else
-            {
-                return Attempt<Dictionary<string,string>?, string>.Fail($"row {i + 1}");
-            }
+
+            return Attempt<Dictionary<string, string>?, string>.Succeed(string.Empty, parsedData);
         }
-
-        return Attempt<Dictionary<string,string>?, string>.Succeed(string.Empty, parsedData);
+        catch
+        {
+            return Attempt<Dictionary<string, string>?, string>.Fail("Invalid file type");
+        }
     }
 
     private void SetDomain(string domain)
