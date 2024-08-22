@@ -77,6 +77,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<TwitterCardTypeField>()
                 .Add<TwitterSiteField>()
                 .Add<TwitterCreatorField>()
+                .Add<TwitterTitleField>()
                 .Add<FacebookIdField>();
 
             if (settings?.ShowKeywordsField is true)
