@@ -24,6 +24,7 @@
         public const string TwitterSite = "twitterSite";
         public const string TwitterCreator = "twitterCreator";
         public const string TwitterTitle = "twitterTitle";
+        public const string TwitterDescription = "twitterDescription";
 
 
         public const string FacebookId = "facebookId";
