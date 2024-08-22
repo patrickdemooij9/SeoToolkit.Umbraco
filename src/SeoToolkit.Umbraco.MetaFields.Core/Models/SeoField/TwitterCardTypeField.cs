@@ -17,7 +17,7 @@ public class TwitterCardTypeField : SeoField<string>
     public override string Title => "Twitter Card Type";
     public override string Alias => SeoFieldAliasConstants.TwitterCardType;
     public override string Description => "Twitter Card Type for your page";
-    public override string GroupAlias => SeoFieldGroupConstants.SocialMediaGroup;
+    public override string GroupAlias => SeoFieldGroupConstants.TwitterGroup;
     public override ISeoFieldEditor Editor { get; }
     public override ISeoFieldEditEditor EditEditor { get; }
 
