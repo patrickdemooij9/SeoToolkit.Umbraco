@@ -11,7 +11,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
 [Weight(701)]
 public class FacebookIdField : SeoField<string>
 {
-    public override string Title => "App Id";
+    public override string Title => "Facebook App Id";
     public override string Alias => SeoFieldAliasConstants.FacebookId;
     public override string Description => "Facebook app_id for the content";
     public override string GroupAlias => SeoFieldGroupConstants.SocialMediaGroup;
