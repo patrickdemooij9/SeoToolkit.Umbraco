@@ -1,40 +1,33 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.AspNetCore.Html;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors;
-using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditors;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
 using Umbraco.Cms.Core.Composing;
-using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
     [Weight(500)]
-    public class OpenGraphImageField : SeoField<IPublishedContent>
+    public class OpenGraphVideoField : SeoField<IPublishedContent>
     {
         private readonly IUmbracoContextFactory _umbracoContextFactory;
-        public override string Title => "Open Graph Image";
-        public override string Alias => SeoFieldAliasConstants.OpenGraphImage;
-        public override string Description => "Image for Open Graph";
+        public override string Title => "Open Graph Video";
+        public override string Alias => SeoFieldAliasConstants.OpenGraphVideo;
+        public override string Description => "Video for Open Graph";
         public override string GroupAlias => SeoFieldGroupConstants.OpenGraphGroup;
-      
+       
 
-        public override ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.MediaPicker", "Umbraco.MediaPicker3" });
-        public override ISeoFieldEditEditor EditEditor => new SeoImageEditEditor(_umbracoContextFactory);
+        public override ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.MediaPicker3" });
+        public override ISeoFieldEditEditor EditEditor => new SeoVideoEditEditor(_umbracoContextFactory);
 
-        public OpenGraphImageField(IUmbracoContextFactory umbracoContextFactory)
+        public OpenGraphVideoField(IUmbracoContextFactory umbracoContextFactory)
         {
             _umbracoContextFactory = umbracoContextFactory;
-       
-        
         }
-     
 
         protected override HtmlString Render(IPublishedContent value)
         {
@@ -42,10 +35,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
             string height = string.Empty;
             string width = string.Empty;
             string type = string.Empty;
-            if (value is { } media)
+            if (value is IPublishedContent media)
             {
                 url = media.Url(mode: UrlMode.Absolute);
-                width =  media.Value<string>("umbracoWidth");
+                width = media.Value<string>("umbracoWidth");
                 height = media.Value<string>("umbracoHeight");
                 type = media.Value<string>("umbracoExtension");
             }
@@ -54,18 +47,18 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
                 url = value?.ToString();
             }
 
-            var html = $"<meta property=\"og:image\" content=\"{url}\"/>";
+            var html = $"<meta property=\"og:video\" content=\"{url}\"/>";
             if (!string.IsNullOrEmpty(width))
             {
-                html += $"<meta property=\"og:image:width\" content=\"{width}\"/>";
+                html += $"<meta property=\"og:video:width\" content=\"{width}\"/>";
             }
             if (!string.IsNullOrEmpty(height))
             {
-                html += $"<meta property=\"og:image:height\" content=\"{height}\"/>";
+                html += $"<meta property=\"og:video:height\" content=\"{height}\"/>";
             }
             if (!string.IsNullOrEmpty(type))
             {
-                html += $"<meta property=\"og:image:type\" content=\"{type}\"/>";
+                html += $"<meta property=\"og:video:type\" content=\"{type}\"/>";
             }
             
 

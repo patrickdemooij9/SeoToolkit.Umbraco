@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.AspNetCore.Html;
-using Umbraco.Cms.Core.Composing;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
+using Umbraco.Cms.Core.Composing;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
@@ -14,7 +14,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Title => "Open Graph Description";
         public string Alias => SeoFieldAliasConstants.OpenGraphDescription;
         public string Description => "Description for Open Graph";
-        public string GroupAlias => SeoFieldGroupConstants.SocialMediaGroup;
+        public string GroupAlias => SeoFieldGroupConstants.OpenGraphGroup;
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] {
