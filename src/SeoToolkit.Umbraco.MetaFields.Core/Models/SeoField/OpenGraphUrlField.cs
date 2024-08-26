@@ -29,6 +29,6 @@ public class OpenGraphUrlField : SeoField<string>
 
     protected override HtmlString Render(string value)
     {
-        return new HtmlString(value.IsNullOrWhiteSpace() ? null : $"<meta name=\"og:url\" content=\"{value}\"/>");
+        return new HtmlString(value.IsNullOrWhiteSpace() ? null : $"<meta property=\"og:url\" content=\"{value}\"/>");
     }
 }
