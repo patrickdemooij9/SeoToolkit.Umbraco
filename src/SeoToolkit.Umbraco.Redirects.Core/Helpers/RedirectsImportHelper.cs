@@ -71,6 +71,11 @@ public class RedirectsImportHelper
         var existingRedirects = _redirectsService.GetAll(1, 10, null, null, oldUrl.TrimEnd('/'));
         if (existingRedirects.TotalItems > 0 && existingRedirects.Items is not null)
         {
+            if (existingRedirects.Items.All(x => x.OldUrl != oldUrl.TrimEnd('/')))
+            {
+                //exact match not found
+                return false;
+            }
             if (existingRedirects.Items.Count(x => x.Domain is null || x.Domain.Id == 0) > 0)
             {
                 //url exists without any domain set
