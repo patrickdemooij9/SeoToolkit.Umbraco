@@ -28,6 +28,6 @@ public class FacebookIdField : SeoField<string>
 
     protected override HtmlString Render(string value)
     {
-        return new HtmlString(value.IsNullOrWhiteSpace() ? string.Empty : $"<meta name=\"fb:app_id\" content=\"{value}\"/>");
+        return new HtmlString(value.IsNullOrWhiteSpace() ? string.Empty : $"<meta property=\"fb:app_id\" content=\"{value}\"/>");
     }
 }
