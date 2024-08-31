@@ -112,6 +112,7 @@
                 view: "/App_Plugins/SeoToolkit/Redirects/Dialogs/import.html",
                 size: "small",
                 close: function () {
+                    loadItems();
                     editorService.close();
                 }
             };

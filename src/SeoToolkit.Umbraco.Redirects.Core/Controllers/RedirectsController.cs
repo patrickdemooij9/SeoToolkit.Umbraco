@@ -29,7 +29,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
         private readonly RedirectsImportHelper _redirectsImportHelper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        
+
 
         public RedirectsController(IRedirectsService redirectsService,
             IUmbracoContextFactory umbracoContextFactory,
@@ -155,22 +155,18 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             {
                 return BadRequest("Please select a file");
             }
-        
+
             using var memoryStream = new MemoryStream();
             file.CopyTo(memoryStream);
 
             var result = _redirectsImportHelper.Validate(fileExtension, memoryStream, domain);
             if (result.Success)
             {
-                if (_httpContextAccessor.HttpContext is null)
-                {
-                    return BadRequest("Could not get context, please try again");
-                }
 
                 // Storing the file contents in session for later import
-                _httpContextAccessor.HttpContext.Session.Set(ImportConstants.SessionAlias, memoryStream.ToArray());
-                _httpContextAccessor.HttpContext.Session.SetString(ImportConstants.SessionFileTypeAlias, fileExtension.ToString());
-                _httpContextAccessor.HttpContext.Session.SetString(ImportConstants.SessionDomainId, domain);
+                HttpContext.Session.Set(ImportConstants.SessionAlias, memoryStream.ToArray());
+                HttpContext.Session.SetString(ImportConstants.SessionFileTypeAlias, fileExtension.ToString());
+                HttpContext.Session.SetString(ImportConstants.SessionDomainId, domain);
 
                 return Ok();
             }
@@ -191,19 +187,19 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             {
                 return BadRequest("Something went wrong during import, please try again");
             }
-        
+
             if (!Enum.TryParse(fileExtensionString, out ImportRedirectsFileExtension fileExtension))
             {
                 return UnprocessableEntity("Invalid file extension.");
             }
-        
+
             using var memoryStream = new MemoryStream(fileContent);
             var result = _redirectsImportHelper.Import(fileExtension, memoryStream, domain);
             if (result.Success)
             {
                 return Ok();
             }
-        
+
             return UnprocessableEntity(!string.IsNullOrWhiteSpace(result.Status) ? result.Status : "Something went wrong during the import");
         }
     }

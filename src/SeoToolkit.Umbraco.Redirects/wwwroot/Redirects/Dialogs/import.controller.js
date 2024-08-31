@@ -88,7 +88,7 @@
 
         function submit() {
             if (formHelper.submitForm({ scope: $scope, formCtrl: $scope.createRedirectForm })) {
-                redirectsImportApiResource.validateRedirects(vm.fileTypeSelection.value.label, vm.fileSelection.value, vm.domainSelection.value).then(function (response) {
+                redirectsApiResource.validateRedirects(vm.fileTypeSelection.value.label, vm.fileSelection.value, vm.domainSelection.value).then(function (response) {
                     vm.notification = vm.validationSuccess;
                     vm.validated = true;
                 }).catch(function (error) {
@@ -99,7 +99,7 @@
         }
         function importFile() {
             if (formHelper.submitForm({ scope: $scope, formCtrl: $scope.createRedirectForm })) {
-                redirectsImportApiResource.importRedirects().then(function (response) {
+                redirectsApiResource.importRedirects().then(function (response) {
                     notificationsService.success(`${vm.fileSelection.value.name} ${vm.importSuccess}`);
                     vm.validated = true;
                     $scope.model.close();
@@ -109,7 +109,7 @@
                 });
             }
         }
-        
+
         function close() {
             if ($scope.model.close) {
                 $scope.model.close();
