@@ -28,20 +28,18 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
         private readonly RedirectsImportHelper _redirectsImportHelper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public RedirectsController(IRedirectsService redirectsService,
             IUmbracoContextFactory umbracoContextFactory,
             ILocalizationService localizationService,
-            IBackOfficeSecurityAccessor backOfficeSecurityAccessor, RedirectsImportHelper redirectsImportHelper, IHttpContextAccessor httpContextAccessor)
+            IBackOfficeSecurityAccessor backOfficeSecurityAccessor, RedirectsImportHelper redirectsImportHelper)
         {
             _redirectsService = redirectsService;
             _umbracoContextFactory = umbracoContextFactory;
             _localizationService = localizationService;
             _backOfficeSecurityAccessor = backOfficeSecurityAccessor;
             _redirectsImportHelper = redirectsImportHelper;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost]

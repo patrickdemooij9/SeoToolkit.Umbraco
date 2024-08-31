@@ -119,6 +119,10 @@ public class RedirectsImportHelper
                     {
                         return Attempt<Dictionary<string,string>?, string>.Fail($"Redirect already exists for 'from' URL: {fromUrl} validation aborted.", result: null);
                     }
+                    if (parsedData.ContainsKey(fromUrl.TrimEnd("/")))
+                    {
+                        return Attempt<Dictionary<string,string>?, string>.Fail($"Url appears more then one time in import file: {fromUrl}", result: null);
+                    }
                     parsedData.Add(fromUrl, toUrl);
 
                 }
@@ -170,7 +174,10 @@ public class RedirectsImportHelper
                         return Attempt<Dictionary<string, string>?, string>.Fail(
                             $"Redirect already exists for 'from' URL: {fromUrl} validation aborted.");
                     }
-
+                    if (parsedData.ContainsKey(fromUrl.TrimEnd("/")))
+                    {
+                        return Attempt<Dictionary<string,string>?, string>.Fail($"Url appears more then one time in import file: {fromUrl}", result: null);
+                    }
                     parsedData.Add(fromUrl, toUrl);
                 }
                 else
