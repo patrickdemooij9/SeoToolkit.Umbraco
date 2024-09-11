@@ -9,6 +9,6 @@
   "css": [
     "/App_Plugins/SeoToolkit/Redirects/css/main.css"
   ],
-  "version": "3.5.1",
+  "version": "3.6.0",
   "name": "SeoToolkit.Umbraco.Redirects"
 }

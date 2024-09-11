@@ -20,7 +20,7 @@ namespace SeoToolkit.Umbraco.Common
             manifests.Add(new PackageManifest
             {
                 PackageName = "SeoToolkit.Umbraco.Common",
-                Version = "3.5.1",
+                Version = "3.6.0",
                 Scripts = new[]
                 {
                     "/App_Plugins/SeoToolkit/Dashboards/welcomeDashboard.controller.js",
