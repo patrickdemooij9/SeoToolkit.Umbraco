@@ -10,6 +10,11 @@
                                 size="xs"
                                 label-key="redirect_create"
                                 action="vm.create()">Add Redirect</umb-button>
+                    <umb-button type="button"
+                                button-style="outline"
+                                size="xs"
+                                label-key="redirect_importButton"
+                                action="vm.import()">Import redirects</umb-button>
                 </umb-editor-sub-header-content-left>
 
                 <umb-editor-sub-header-content-left ng-if="vm.selection.length > 0">
@@ -19,7 +24,7 @@
                                 label-key="buttons_clearSelection"
                                 action="vm.clearSelection()">Clear Selection</umb-button>
                 </umb-editor-sub-header-content-left>
-                
+
                 <umb-editor-sub-header-content-right ng-if="vm.selection.length == 0">
                     <umb-mini-search model="vm.searchFilter" on-search="vm.search()">
 
@@ -34,9 +39,9 @@
                                 action="vm.deleteSelection()">Delete</umb-button>
                 </umb-editor-sub-header-content-right>
             </umb-editor-sub-header>
-            
+
             <umb-load-indicator ng-if="vm.loading"></umb-load-indicator>
-            
+
             <div ng-if="!vm.loading">
                 <umb-table class="redirects-table"
                            items="vm.items"

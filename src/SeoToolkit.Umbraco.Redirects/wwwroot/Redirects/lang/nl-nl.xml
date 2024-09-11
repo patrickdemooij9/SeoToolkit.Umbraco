@@ -2,5 +2,15 @@
 <language alias="nl">
 	<area alias="redirect">
 		<key alias="create">Redirect aanmaken</key>
+		<key alias="importButton">Redirects importeren</key>
+		<key alias="fileTypePropertyLabel">Selecteer het type bestand</key>
+		<key alias="fileTypePropertyDescription">Selecteer hier het type bestand dat geimporteerd moet worden</key>
+		<key alias="filePropertyLabel">Selecteer het bestand</key>
+		<key alias="validationSuccess">Gevalideerd</key>
+		<key alias="validationFailed">Er ging iets mis: </key>
+		<key alias="importSuccess">Succesvol geimporteerd</key>
+		<key alias="importFailed">Er ging iets mis: </key>
+		<key alias="domainPropertyLabel">Selecteer hier het domein</key>
+		<key alias="domainPropertyDescription">Als niets is geselecteerd worden de redirects actief voor alle domeinen</key>
 	</area>
 </language>

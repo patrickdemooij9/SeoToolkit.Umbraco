@@ -1,0 +1,66 @@
+﻿<div ng-controller="SeoToolkit.Redirects.ImportController as vm">
+    <form name="createRedirectForm" novalidate val-form-manager ng-submit="vm.submit()" class="form-horizontal">
+        <umb-editor-view>
+            <umb-editor-header name="model.title"
+                               name-locked="true"
+                               hide-alias="true"
+                               hide-icon="true"
+                               hide-description="true">
+            </umb-editor-header>
+            <umb-editor-container class="block-form">
+                <umb-box>
+                    <umb-box-content>
+                        <umb-property property="vm.domainSelection">
+                            <div class="umb-property-editor">
+                                <select name="domainEditor" ng-model="vm.domainSelection.value">
+                                    <option ng-repeat="d in vm.domains" value="{{d.id}}">{{d.name}}</option>
+                                </select>
+                            </div>
+                        </umb-property>
+                        <umb-property property="vm.fileTypeSelection">
+                            <div class="umb-property-editor">
+                                <select name="fileTypeEditor"
+                                        ng-model="vm.fileTypeSelection.value"
+                                        ng-options="d.label for d in vm.fileTypes"></select>
+                            </div>
+                        </umb-property>
+                        <umb-property property="vm.fileSelection" ng-hide="vm.fileTypeSelection.value == '0'">
+                            <input type="file"
+                                   ngf-select
+                                   ng-model="vm.fileSelection.value"
+                                   ngf-change="vm.handleFiles($files, $event)"
+                                   ngf-multiple="false"
+                                   ngf-pattern="{{ vm.fileTypeSelection.value.extension }}"
+                                   accept="{{ vm.fileTypeSelection.value.extension }}">
+                            <umb-button  ng-hide="vm.fileSelection.value == ''" action="vm.submit()"
+                                         button-style="success"
+                                         label-key="general_submit"
+                                         state="saveButtonState">
+                            </umb-button>
+                        </umb-property>
+                        <div ng-hide="vm.notification.length == '0'" style="padding-top:10px" ng-class="{'red': vm.validated == false, 'text-success': vm.validated == true}">
+                            {{vm.notification}}
+                            <umb-button ng-hide="vm.validated == false"
+                                        action="vm.import()"
+                                        button-style="success"
+                                        label-key="import"
+                                        state="saveButtonState">
+                            </umb-button>
+                        </div>
+                    </umb-box-content>
+                </umb-box>
+            </umb-editor-container>
+            <umb-editor-footer>
+                <umb-editor-footer-content-right>
+                    <umb-button type="button"
+                                button-style="link"
+                                label-key="general_close"
+                                shortcut="esc"
+                                action="vm.close()">
+                    </umb-button>
+
+                </umb-editor-footer-content-right>
+            </umb-editor-footer>
+        </umb-editor-view>
+    </form>
+</div>
