@@ -9,6 +9,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
     {
         public Type FromValue => typeof(string);
         public Type ToValue => typeof(string);
+
         public object Convert(object value, IPublishedContent currentContent, string fieldAlias)
         {
             var stringValue = value?.ToString();
@@ -20,8 +21,23 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                 {
                     url = url.TrimEnd('/');
                 }
+
                 return stringValue.Replace("%CurrentUrl%", url);
             }
+            else if (stringValue?.Contains("%CurrentLang%") is true)
+            {
+                var lang = currentContent.GetCultureFromDomains();
+
+                return stringValue.Replace("%CurrentLang%", lang);
+            }
+            
+            else if (stringValue?.Contains("%CurrentPageName%") is true)
+            {
+                var name = currentContent.Name();
+
+                return stringValue.Replace("%CurrentPageName%", name);
+            }
+
             return stringValue;
         }
     }

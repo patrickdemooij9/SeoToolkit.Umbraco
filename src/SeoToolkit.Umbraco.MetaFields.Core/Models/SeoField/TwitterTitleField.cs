@@ -8,30 +8,27 @@ using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
 
-[Weight(603)]
-public class TwitterCreatorField : SeoField<string>
+[Weight(602)]
+public class TwitterTitleField : SeoField<string>
 {
-    public override string Title => "Twitter Creator";
-    public override string Alias => SeoFieldAliasConstants.TwitterCreator;
-    public override string Description => "Twitter Creator for the content";
+    public override string Title => "Twitter Title";
+    public override string Alias => SeoFieldAliasConstants.TwitterTitle;
+    public override string Description => "Twitter Name for the content";
     public override string GroupAlias => SeoFieldGroupConstants.TwitterGroup;
     public override ISeoFieldEditor Editor { get; }
     public override ISeoFieldEditEditor EditEditor => new SeoTextBoxEditEditor();
 
-    public TwitterCreatorField()
+    public TwitterTitleField()
     {
         var propertyEditor = new SeoFieldPropertyEditor("textbox");
-        propertyEditor.SetExtraInformation("Provide the Twitter username of the content creator");
+        propertyEditor.SetExtraInformation("Provide the Title of Page to show on Twitter");
+        propertyEditor.SetDefaultValue("%CurrentPageName%");
 
         Editor = propertyEditor;
     }
 
     protected override HtmlString Render(string value)
     {
-        // Check for the "@" at the start of the value and remove if present - we'll add it in.
-        if (value.StartsWith("@")) {
-            value = value[1..];
-        }
-        return new HtmlString(value.IsNullOrWhiteSpace() ? null : $"<meta name=\"twitter:creator\" content=\"@{value}\"/>");
+        return new HtmlString(value.IsNullOrWhiteSpace() ? string.Empty : $"<meta name=\"twitter:title\" content=\"{value}\"/>");
     }
 }

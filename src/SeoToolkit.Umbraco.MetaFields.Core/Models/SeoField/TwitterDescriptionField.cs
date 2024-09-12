@@ -9,12 +9,12 @@ using Umbraco.Cms.Core.Composing;
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
     [Weight(400)]
-    public class OpenGraphDescriptionField : ISeoField
+    public class TwitterDescriptionField : ISeoField
     {
-        public string Title => "Open Graph Description";
-        public string Alias => SeoFieldAliasConstants.OpenGraphDescription;
-        public string Description => "Description for Open Graph";
-        public string GroupAlias => SeoFieldGroupConstants.OpenGraphGroup;
+        public string Title => "Twitter Description";
+        public string Alias => SeoFieldAliasConstants.TwitterDescription;
+        public string Description => "Description for Twitter";
+        public string GroupAlias => SeoFieldGroupConstants.TwitterGroup;
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] {
@@ -28,7 +28,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 
         public HtmlString Render(object value)
         {
-            return new HtmlString($"<meta property=\"og:description\" content=\"{value}\"/>");
+            return new HtmlString($"<meta name=\"twitter:description\" content=\"{value}\"/>");
         }
     }
 }
