@@ -1,4 +1,5 @@
 import { ManifestDashboard } from "@umbraco-cms/backoffice/extension-registry";
+import MyWelcomeDashboardElement from "./welcomeDashboard.element";
 
 export const welcomeDashboardManifest : ManifestDashboard = {
     type: "dashboard",
@@ -7,7 +8,7 @@ export const welcomeDashboardManifest : ManifestDashboard = {
     meta: {
         pathname: "welcome"
     },
-    element: () => import("./welcomeDashboard.element"),
+    element: MyWelcomeDashboardElement,
     conditions: [
         {
             alias: "Umb.Condition.SectionAlias",

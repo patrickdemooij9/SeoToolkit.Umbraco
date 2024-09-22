@@ -1,10 +1,11 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { NamedEntityTreeItemResponseModel } from "@umbraco-cms/backoffice/external/backend-api";
-import { UmbTreeItemModel, UmbTreeServerDataSourceBase } from "@umbraco-cms/backoffice/tree";
+import { UmbTreeAncestorsOfRequestArgs, UmbTreeChildrenOfRequestArgs, UmbTreeServerDataSourceBase } from "@umbraco-cms/backoffice/tree";
 import { SeoToolkitService } from "../api";
-import { UmbPagedModel } from "@umbraco-cms/backoffice/repository";
+import { SEOTOOLKIT_TREE_ENTITY, SEOTOOLKIT_TREE_ROOT } from "../constants/seoToolkitConstants";
+import { SeoToolkitTreeItemModel } from "../trees/types";
 
-export class seoToolkitTreeSource extends UmbTreeServerDataSourceBase<NamedEntityTreeItemResponseModel, UmbTreeItemModel> {
+export class seoToolkitTreeSource extends UmbTreeServerDataSourceBase<NamedEntityTreeItemResponseModel, SeoToolkitTreeItemModel> {
 
     constructor(host: UmbControllerHost) {
         super(host, {
@@ -20,30 +21,36 @@ const getRootItems = () => {
     return SeoToolkitService.getUmbracoSeoToolkitTreeInfoRoot();
 };
 
-const getChildrenOf = () => {
-    return new Promise<UmbPagedModel<NamedEntityTreeItemResponseModel>>((resolve) => {
-        resolve({
-            total: 0,
-            items: []
-        })
-    });
+const getChildrenOf = (args: UmbTreeChildrenOfRequestArgs) => {
+    if (args.parent.unique === null) {
+		return getRootItems();
+	} else {
+		// eslint-disable-next-line local-rules/no-direct-api-import
+		return SeoToolkitService.getUmbracoSeoToolkitTreeInfoChildren({
+			parentId: args.parent.unique,
+			skip: args.skip,
+			take: args.take,
+		});
+	}
 };
 
-const getAncestorsOf = () => {
-    return new Promise<NamedEntityTreeItemResponseModel[]>((res) => res([]));
+const getAncestorsOf = (args: UmbTreeAncestorsOfRequestArgs) => {
+    return SeoToolkitService.getUmbracoSeoToolkitTreeInfoAncestors({
+		descendantId: args.treeItem.unique,
+	});
 }
 
-const mapper = (item: NamedEntityTreeItemResponseModel): UmbTreeItemModel => {
+const mapper = (item: NamedEntityTreeItemResponseModel): SeoToolkitTreeItemModel => {
     return {
-        unique: item.id,
-        name: item.name,
-        parent: {
-            unique: null,
-            entityType: "root"
-        },
-        entityType: "seoToolkit",
-        hasChildren: item.hasChildren,
-        isFolder: false,
-        icon: 'icon-alarm-clock'
-    };
+		unique: item.id,
+		parent: {
+			unique: item.parent?.id || null,
+			entityType: item.parent ? SEOTOOLKIT_TREE_ENTITY : SEOTOOLKIT_TREE_ROOT,
+		},
+		name: item.name,
+		entityType: SEOTOOLKIT_TREE_ENTITY,
+		hasChildren: item.hasChildren,
+		isFolder: false,
+		icon: 'icon-book-alt',
+	};
 };

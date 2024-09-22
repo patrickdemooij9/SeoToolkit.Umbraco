@@ -7,6 +7,7 @@ export const seoToolkitSidebar : ManifestSectionSidebarApp = {
     name: 'SeoToolkit',
     meta: {
         label: "SeoToolkit",
+        menu: "SeoToolkitMenu",
     },
     conditions: [
         {

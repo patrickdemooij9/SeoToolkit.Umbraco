@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetUmbracoSeoToolkitModulesResponse, GetUmbracoSeoToolkitTreeInfoRootData, GetUmbracoSeoToolkitTreeInfoRootResponse } from './types.gen';
+import type { GetUmbracoSeoToolkitModulesResponse, GetUmbracoSeoToolkitTreeInfoAncestorsData, GetUmbracoSeoToolkitTreeInfoAncestorsResponse, GetUmbracoSeoToolkitTreeInfoChildrenData, GetUmbracoSeoToolkitTreeInfoChildrenResponse, GetUmbracoSeoToolkitTreeInfoRootData, GetUmbracoSeoToolkitTreeInfoRootResponse } from './types.gen';
 
 export class SeoToolkitService {
     /**
@@ -14,6 +14,42 @@ export class SeoToolkitService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/seoToolkit/modules'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.descendantId
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitTreeInfoAncestors(data: GetUmbracoSeoToolkitTreeInfoAncestorsData = {}): CancelablePromise<GetUmbracoSeoToolkitTreeInfoAncestorsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkit/tree/info/ancestors',
+            query: {
+                descendantId: data.descendantId
+            }
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.parentId
+     * @param data.skip
+     * @param data.take
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitTreeInfoChildren(data: GetUmbracoSeoToolkitTreeInfoChildrenData = {}): CancelablePromise<GetUmbracoSeoToolkitTreeInfoChildrenResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkit/tree/info/children',
+            query: {
+                parentId: data.parentId,
+                skip: data.skip,
+                take: data.take
+            }
         });
     }
     

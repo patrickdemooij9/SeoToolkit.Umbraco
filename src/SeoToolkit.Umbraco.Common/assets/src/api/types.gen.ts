@@ -34,6 +34,20 @@ export const SeoToolkitModuleStatus = {
 
 export type GetUmbracoSeoToolkitModulesResponse = (Array<(SeoToolkitModule)>);
 
+export type GetUmbracoSeoToolkitTreeInfoAncestorsData = {
+    descendantId?: string;
+};
+
+export type GetUmbracoSeoToolkitTreeInfoAncestorsResponse = (Array<(NamedEntityTreeItemResponseModel)>);
+
+export type GetUmbracoSeoToolkitTreeInfoChildrenData = {
+    parentId?: string;
+    skip?: number;
+    take?: number;
+};
+
+export type GetUmbracoSeoToolkitTreeInfoChildrenResponse = ((PagedNamedEntityTreeItemResponseModel));
+
 export type GetUmbracoSeoToolkitTreeInfoRootData = {
     skip?: number;
     take?: number;
