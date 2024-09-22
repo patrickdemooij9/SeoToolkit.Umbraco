@@ -9,15 +9,10 @@
 
   <!-- Force windows to use ICU. Otherwise Windows 10 2019H1+ will do it, but older windows 10 and most if not all winodws servers will run NLS -->
   <ItemGroup>
-    <PackageReference Include="Clean" Version="4.0.0" />
-    <PackageReference Include="Umbraco.Cms" Version="13.0.1" />
+    <PackageReference Include="Umbraco.Cms" Version="14.1.0" />
     <!-- Opt-in to app-local ICU to ensure consistent globalization APIs across different platforms -->
     <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="72.1.0.3" />
     <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="72.1.0.3" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\SeoToolkit.Umbraco\SeoToolkit.Umbraco.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +38,9 @@
     <EmbeddedResource Remove="umbraco\**" />
     <None Remove="umbraco\**" />
     <Watch Remove="umbraco\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

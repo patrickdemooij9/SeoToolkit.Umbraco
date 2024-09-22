@@ -1,20 +1,19 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Mapping;
-using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
-using SeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.PostModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.ViewModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
+using Umbraco.Cms.Api.Management.Controllers;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 {
     [PluginController("SeoToolkit")]
-    public class MetaFieldsSettingsController : UmbracoAuthorizedApiController
+    public class MetaFieldsSettingsController : ManagementApiControllerBase
     {
         private readonly IMetaFieldsSettingsService _documentTypeSettingsService;
         private readonly SeoFieldCollection _seoFieldCollection;

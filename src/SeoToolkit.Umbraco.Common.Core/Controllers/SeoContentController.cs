@@ -2,15 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Models.ViewModels;
+using Umbraco.Cms.Api.Management.Controllers;
 using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
 {
     [PluginController("SeoToolkit")]
-    public class SeoContentController : UmbracoAuthorizedApiController
+    public class SeoContentController : ManagementApiControllerBase
     {
         private readonly IContentService _contentService;
         private readonly SeoDisplayCollection _seoDisplayCollection;
@@ -21,6 +21,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             _seoDisplayCollection = seoDisplayCollection;
         }
 
+        [HttpGet("seoContent")]
         public IActionResult Get(int contentId)
         {
             var content = _contentService.GetById(contentId);

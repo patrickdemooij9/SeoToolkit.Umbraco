@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Manifest;
+using Umbraco.Cms.Infrastructure.Manifest;
 
 namespace SeoToolkit.Umbraco.MetaFields
 {
@@ -9,39 +14,32 @@ namespace SeoToolkit.Umbraco.MetaFields
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            builder.ManifestFilters().Append<ManifestFilter>();
+            builder.Services.AddSingleton<IPackageManifestReader, ManifestFilter>();
         }
     }
 
-    internal class ManifestFilter : IManifestFilter
+    internal class ManifestFilter : IPackageManifestReader
     {
-        public void Filter(List<PackageManifest> manifests)
+        public Task<IEnumerable<PackageManifest>> ReadPackageManifestsAsync()
         {
-            manifests.Add(new PackageManifest
+
+            var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.metaFields.entrypoint"",
+            ""alias"": ""SeoToolkit.MetaFields.EntryPoint"",
+            ""type"": ""entryPoint"",
+            ""js"": ""/App_Plugins/SeoToolkit/MetaFields.js""}");
+
+            List<PackageManifest> manifest = [
+                new PackageManifest
             {
-                PackageName = "SeoToolkit.Umbraco.MetaFields",
-                Version = "3.6.0",
-                Scripts = new[]
-                {
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/ContentApps/DocumentSettings/documentSettings.controller.js",
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/ContentApps/SeoSettings/seoSettings.controller.js",
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/Previewers/MetaFields/metaFieldsPreviewer.controller.js",
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/Previewers/OpenGraph/openGraphPreviewer.controller.js",
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/FieldsEditor/fieldsEditor.controller.js",
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/PropertyEditor/propertyEditor.controller.js",
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/PropertyEditor/noSelectCheckboxList.controller.js",
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/PropertyEditor/dropdownList.controller.js",
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/Components/ItemGroupPicker/itemGroupPicker.controller.js",
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/SeoFieldEditors/seoFieldEditor.directive.js",
-                    "/App_Plugins/SeoToolkit/MetaFields/Interface/Previewers/previewer.directive.js",
-                    "/App_Plugins/SeoToolkit/backoffice/MetaFields/settings.controller.js"
-                },
-                Stylesheets = new[]
-                {
-                    "/App_Plugins/SeoToolkit/MetaFields/css/main.css"
-                },
-                BundleOptions = BundleOptions.None
-            });
+                Id = "SeoToolkit.Umbraco.MetaFields",
+                Name = "SeoToolkit MetaFields",
+                AllowTelemetry = true,
+                Version = "4.0.0",
+                Extensions = [ entrypoint!],
+            }
+            ];
+
+            return Task.FromResult(manifest.AsEnumerable());
         }
     }
 }

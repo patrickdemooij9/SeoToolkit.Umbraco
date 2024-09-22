@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-using SeoToolkit.Umbraco.Common.Core.Collections;
-using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
-using Umbraco.Cms.Core.Models;
-using Umbraco.Cms.Core.Models.ContentEditing;
-using Umbraco.Cms.Core.Models.Membership;
-
-namespace SeoToolkit.Umbraco.Common.Core.ContentApps
+﻿namespace SeoToolkit.Umbraco.Common.Core.ContentApps
 {
-    public class SeoContentAppFactory : IContentAppFactory
+    /*public class SeoContentAppFactory
     {
         private readonly ISeoSettingsService _seoSettingsService;
         private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -40,5 +31,5 @@ namespace SeoToolkit.Umbraco.Common.Core.ContentApps
                 View = "/App_Plugins/SeoToolkit/ContentApps/Content/seoContent.html"
             };
         }
-    }
+    }*/
 }

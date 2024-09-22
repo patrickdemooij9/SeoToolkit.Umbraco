@@ -1,44 +1,37 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SeoToolkit.Umbraco.Common.Core.Constants;
-using Umbraco.Cms.Core;
-using Umbraco.Cms.Core.Events;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Trees;
-using Umbraco.Cms.Web.BackOffice.Trees;
+using System;
+using Umbraco.Cms.Api.Common.ViewModels.Pagination;
+using Umbraco.Cms.Api.Management.ViewModels.Tree;
+using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
 {
     //This controller is only here to prevent single node trees if you only download one package
-    [Tree("SeoToolkit", "info", TreeTitle = "Info", TreeGroup = TreeGroupAlias, SortOrder = 99)]
-    public class InfoTreeController : TreeController
+    [ApiExplorerSettings(GroupName = "seoToolkit")]
+    [BackOfficeRoute("seoToolkit/tree/info")]
+    public class InfoTreeController : SeoToolkitControllerBase
     {
         public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
 
-        public InfoTreeController(ILocalizedTextService localizedTextService, UmbracoApiControllerTypeCollection umbracoApiControllerTypeCollection, IEventAggregator eventAggregator) : base(localizedTextService, umbracoApiControllerTypeCollection, eventAggregator)
+        [HttpGet("root")]
+        [ProducesResponseType(typeof(PagedViewModel<NamedEntityTreeItemResponseModel>), StatusCodes.Status200OK)]
+        public ActionResult<PagedViewModel<NamedEntityTreeItemResponseModel>> GetRoot(int skip = 0, int take = 100)
         {
-        }
+            var items = new[] { new NamedEntityTreeItemResponseModel 
+            {
+                Id = Guid.NewGuid(),
+                Name = "Info",
+                HasChildren = false
+            }};
+            var result = new PagedViewModel<NamedEntityTreeItemResponseModel>()
+            {
+                Items = items,
+                Total = 1
+            };
 
-        protected override ActionResult<TreeNode> CreateRootNode(FormCollection queryStrings)
-        {
-            var root = base.CreateRootNode(queryStrings);
-
-            root.Value.Icon = "icon-info";
-            root.Value.HasChildren = false;
-            root.Value.RoutePath = $"SeoToolkit";
-            root.Value.MenuUrl = null;
-
-            return root.Value;
-        }
-
-        protected override ActionResult<TreeNodeCollection> GetTreeNodes(string id, FormCollection queryStrings)
-        {
-            return TreeNodeCollection.Empty;
-        }
-
-        protected override ActionResult<MenuItemCollection> GetMenuForNode(string id, FormCollection queryStrings)
-        {
-            return null;
+            return Ok(result);
         }
     }
 }

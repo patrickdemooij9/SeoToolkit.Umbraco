@@ -7,7 +7,7 @@ using Umbraco.Cms.Core.Models.Membership;
 
 namespace SeoToolkit.Umbraco.Common.Core.ContentApps
 {
-    public class SeoSettingsContentAppFactory : IContentAppFactory
+    /*public class SeoSettingsContentAppFactory : IContentAppFactory
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -35,5 +35,5 @@ namespace SeoToolkit.Umbraco.Common.Core.ContentApps
                 View = "/App_Plugins/SeoToolkit/ContentApps/DocumentType/seoSettings.html"
             };
         }
-    }
+    }*/
 }

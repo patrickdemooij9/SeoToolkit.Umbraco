@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using SeoToolkit.Umbraco.Common.Core.Collections;
+using SeoToolkit.Umbraco.Common.Core.Models;
+using System.Linq;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
 {
-    [PluginController("SeoToolkit")]
-    public class ModuleController : UmbracoAuthorizedApiController
+    [ApiExplorerSettings(GroupName = "seoToolkit")]
+    public class ModuleController : SeoToolkitControllerBase
     {
         private readonly ModuleCollection _moduleCollection;
 
@@ -15,10 +16,11 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             _moduleCollection = moduleCollection;
         }
 
-        [HttpGet]
+        [HttpGet("modules")]
+        [ProducesResponseType(typeof(SeoToolkitModule[]), 200)]
         public IActionResult GetModules()
         {
-            return new JsonResult(_moduleCollection.GetAll());
+            return Ok(_moduleCollection.GetAll().ToArray());
         }
     }
 }

@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Manifest;
+using Umbraco.Cms.Infrastructure.Manifest;
 
 namespace SeoToolkit.Umbraco.Common
 {
@@ -9,30 +14,32 @@ namespace SeoToolkit.Umbraco.Common
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            builder.ManifestFilters().Append<ManifestFilter>();
+            builder.Services.AddSingleton<IPackageManifestReader, ManifestFilter>();
         }
     }
 
-    internal class ManifestFilter : IManifestFilter
+    internal class ManifestFilter : IPackageManifestReader
     {
-        public void Filter(List<PackageManifest> manifests)
+        public Task<IEnumerable<PackageManifest>> ReadPackageManifestsAsync()
         {
-            manifests.Add(new PackageManifest
+
+            var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.common.entrypoint"",
+            ""alias"": ""SeoToolkit.Common.EntryPoint"",
+            ""type"": ""entryPoint"",
+            ""js"": ""/App_Plugins/SeoToolkit/assets.js""}");
+
+            List<PackageManifest> manifest = [
+                new PackageManifest
             {
-                PackageName = "SeoToolkit.Umbraco.Common",
-                Version = "3.6.0",
-                Scripts = new[]
-                {
-                    "/App_Plugins/SeoToolkit/Dashboards/welcomeDashboard.controller.js",
-                    "/App_Plugins/SeoToolkit/ContentApps/DocumentType/seoSettings.controller.js",
-                    "/App_Plugins/SeoToolkit/ContentApps/Content/seoContent.controller.js"
-                },
-                Stylesheets = new[]
-                {
-                    "/App_Plugins/SeoToolkit/css/main.css"
-                },
-                BundleOptions = BundleOptions.None
-            });
+                Id = "SeoToolkit.Umbraco.Common",
+                Name = "SeoToolkit Common",
+                AllowTelemetry = true,
+                Version = "4.0.0",
+                Extensions = [ entrypoint!],
+            }
+            ];
+
+            return Task.FromResult(manifest.AsEnumerable());
         }
     }
 }

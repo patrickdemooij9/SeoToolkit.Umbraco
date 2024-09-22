@@ -1,13 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Core;
-using Umbraco.Cms.Core.Events;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Trees;
-using Umbraco.Cms.Web.BackOffice.Trees;
-using Umbraco.Cms.Web.Common.Attributes;
-
-namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
+﻿namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 {
     /*[Tree("SeoToolkit", "MetaFields", TreeTitle = "MetaFields", TreeGroup = "SeoToolkit", SortOrder = 5)]
     [PluginController("SeoToolkit")]

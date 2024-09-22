@@ -6,12 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Web;
-using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
-using SeoToolkit.Umbraco.SiteAudit.Core.Collections;
-using SeoToolkit.Umbraco.SiteAudit.Core.Common.Scheduler;
 using SeoToolkit.Umbraco.SiteAudit.Core.Enums;
 using SeoToolkit.Umbraco.SiteAudit.Core.Hubs;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
@@ -20,11 +17,12 @@ using SeoToolkit.Umbraco.SiteAudit.Core.Models.Config;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.PostModels;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.ViewModels;
 using SeoToolkit.Umbraco.SiteAudit.Core.Services;
+using Umbraco.Cms.Api.Management.Controllers;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
 {
     [PluginController("SeoToolkit")]
-    public class SiteAuditController : UmbracoAuthorizedApiController
+    public class SiteAuditController : ManagementApiControllerBase
     {
         private readonly SiteAuditService _siteAuditService;
         private readonly ISiteCheckService _siteCheckService;

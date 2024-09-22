@@ -1,19 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NUglify.JavaScript.Syntax;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Actions;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Trees;
-using Umbraco.Cms.Web.BackOffice.Trees;
 using Umbraco.Cms.Web.Common.Attributes;
 using UmbConstants = Umbraco.Cms.Core.Constants;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 {
-    [Tree("SeoToolkit", Alias, TreeTitle = Title, TreeGroup = TreeGroupAlias, SortOrder = 2)]
+    /*[Tree("SeoToolkit", Alias, TreeTitle = Title, TreeGroup = TreeGroupAlias, SortOrder = 2)]
     [PluginController("SeoToolkit")]
     public class ScriptManagerTreeController : TreeController
     {
@@ -63,5 +60,5 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
         {
             return null;
         }
-    }
+    }*/
 }

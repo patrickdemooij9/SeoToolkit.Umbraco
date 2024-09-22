@@ -20,7 +20,7 @@ namespace SeoToolkit.Umbraco.Sitemap
             manifests.Add(new PackageManifest
             {
                 PackageName = "SeoToolkit.Umbraco.Sitemap",
-                Version = "3.6.0",
+                Version = "4.0.0",
                 Scripts = new[]
                 {
                     "/App_Plugins/SeoToolkit/Sitemap/Displays/DocumentType/sitemapSettings.controller.js"

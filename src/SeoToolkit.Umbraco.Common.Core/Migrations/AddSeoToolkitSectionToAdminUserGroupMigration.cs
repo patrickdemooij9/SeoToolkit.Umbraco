@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations;
-using SeoToolkit.Umbraco.Common.Core.Sections;
 using UmbConstants = Umbraco.Cms.Core.Constants;
 
 namespace SeoToolkit.Umbraco.Common.Core.Migrations
@@ -20,9 +19,9 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
         {
             var userGroup = _userService.GetUserGroupByAlias(UmbConstants.Security.AdminGroupAlias);
 
-            if (userGroup != null && !userGroup.AllowedSections.Contains(SeoToolkitSection.SectionAlias))
+            if (userGroup != null && !userGroup.AllowedSections.Contains("SeoToolkit"))
             {
-                userGroup.AddAllowedSection(SeoToolkitSection.SectionAlias);
+                userGroup.AddAllowedSection("SeoToolkit");
 
                 _userService.Save(userGroup);
             }

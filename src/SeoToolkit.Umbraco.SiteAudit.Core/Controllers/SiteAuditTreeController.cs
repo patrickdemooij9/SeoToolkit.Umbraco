@@ -5,15 +5,13 @@ using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Actions;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Trees;
-using Umbraco.Cms.Web.BackOffice.Trees;
 using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Extensions;
 using UmbConstants = Umbraco.Cms.Core.Constants;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
 {
-    [Tree("SeoToolkit", Alias, TreeTitle = Title, TreeGroup = TreeGroupAlias, SortOrder = 1)]
+    /*[Tree("SeoToolkit", Alias, TreeTitle = Title, TreeGroup = TreeGroupAlias, SortOrder = 1)]
     [PluginController("SeoToolkit")]
     public class SeoToolkitTreeController : TreeController
     {
@@ -61,5 +59,5 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
         {
             return null;
         }
-    }
+    }*/
 }

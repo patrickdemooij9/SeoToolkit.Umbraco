@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Umbraco.Cms.Core.Trees;
-using Umbraco.Cms.Web.BackOffice.Trees;
 
 namespace SeoToolkit.Umbraco.Common.Core.Extensions
 {
     public static class TreeCollectionBuilderExtensions
     {
-        public static TreeCollectionBuilder RemoveTreeController<TController>(this TreeCollectionBuilder collection)
+        /*public static TreeCollectionBuilder RemoveTreeController<TController>(this TreeCollectionBuilder collection)
             where TController : TreeControllerBase
         {
             return RemoveTreeController(collection, typeof(TController));
@@ -42,6 +40,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Extensions
             }
 
             return collection;
-        }
+        }*/
     }
 }

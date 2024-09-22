@@ -1,18 +1,17 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using SeoToolkit.Umbraco.ScriptManager.Core.Collections;
 using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.PostModels;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels;
+using Umbraco.Cms.Api.Management.Controllers;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 {
     [PluginController("SeoToolkit")]
-    public class ScriptManagerController : UmbracoAuthorizedApiController
+    public class ScriptManagerController : ManagementApiControllerBase
     {
         private readonly ScriptDefinitionCollection _scriptDefinitionCollection;
         private readonly IScriptManagerService _scriptManagerService;

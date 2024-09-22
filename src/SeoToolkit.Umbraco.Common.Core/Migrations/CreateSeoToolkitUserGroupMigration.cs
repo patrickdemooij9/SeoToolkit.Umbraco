@@ -3,7 +3,6 @@ using Umbraco.Cms.Core.Models.Membership;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Strings;
 using Umbraco.Cms.Infrastructure.Migrations;
-using SeoToolkit.Umbraco.Common.Core.Sections;
 
 namespace SeoToolkit.Umbraco.Common.Core.Migrations
 {
@@ -37,7 +36,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
                 Icon = "icon-globe-alt",
             };
 
-            userGroup.AddAllowedSection(SeoToolkitSection.SectionAlias);
+            userGroup.AddAllowedSection("SeoToolkit");
 
             _userService.Save(userGroup);
         }

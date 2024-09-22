@@ -1,17 +1,17 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Models.PostModels;
 using SeoToolkit.Umbraco.Common.Core.Models.ViewModels;
 using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
+using Umbraco.Cms.Api.Management.Controllers;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
 {
     [PluginController("SeoToolkit")]
-    public class SeoSettingsController : UmbracoAuthorizedApiController
+    public class SeoSettingsController : ManagementApiControllerBase
     {
         private readonly ISeoSettingsService _seoSettingsService;
         private readonly DisplayCollection _displayCollection;
@@ -22,6 +22,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             _displayCollection = displayCollection;
         }
 
+        [HttpGet("seoSettings")]
         public IActionResult Get(int contentTypeId)
         {
             return new JsonResult(new SeoSettingsViewModel
@@ -32,6 +33,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             });
         }
 
+        [HttpPost("seoSettings")]
         public IActionResult Set(SeoSettingsPostModel postModel)
         {
             _seoSettingsService.ToggleSeoSettings(postModel.ContentTypeId, postModel.Enabled);
