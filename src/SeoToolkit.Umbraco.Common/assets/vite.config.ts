@@ -5,6 +5,7 @@ export default defineConfig({
         lib: {
             entry: "src/index.ts", // your web component source file
             formats: ["es"],
+            fileName: "common"
         },
         outDir: "../wwwroot", 
         emptyOutDir: false,

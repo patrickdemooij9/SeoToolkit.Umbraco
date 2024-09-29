@@ -1,15 +1,16 @@
-var D = (t) => {
+var A = (t) => {
   throw TypeError(t);
 };
-var x = (t, e, o) => e.has(t) || D("Cannot " + o);
-var E = (t, e, o) => (x(t, e, "read from private field"), o ? o.call(t) : e.get(t)), g = (t, e, o) => e.has(t) ? D("Cannot add the same private member more than once") : e instanceof WeakSet ? e.add(t) : e.set(t, o), R = (t, e, o, r) => (x(t, e, "write to private field"), r ? r.call(t, o) : e.set(t, o), o);
-import { LitElement as $, html as u, when as f, repeat as B, css as L, state as F, customElement as W } from "@umbraco-cms/backoffice/external/lit";
-import { UmbElementMixin as G } from "@umbraco-cms/backoffice/element-api";
+var v = (t, e, o) => e.has(t) || A("Cannot " + o);
+var g = (t, e, o) => (v(t, e, "read from private field"), o ? o.call(t) : e.get(t)), w = (t, e, o) => e.has(t) ? A("Cannot add the same private member more than once") : e instanceof WeakSet ? e.add(t) : e.set(t, o), _ = (t, e, o, r) => (v(t, e, "write to private field"), r ? r.call(t, o) : e.set(t, o), o);
+import { LitElement as B, html as u, when as f, repeat as L, css as W, state as F, customElement as G } from "@umbraco-cms/backoffice/external/lit";
+import { UmbElementMixin as V } from "@umbraco-cms/backoffice/element-api";
 import { UmbControllerBase as K } from "@umbraco-cms/backoffice/class-api";
-import { tryExecuteAndNotify as V } from "@umbraco-cms/backoffice/resources";
-import { UMB_AUTH_CONTEXT as z } from "@umbraco-cms/backoffice/auth";
-import { UmbTreeServerDataSourceBase as J, UmbTreeRepositoryBase as X, UmbUniqueTreeStore as Q } from "@umbraco-cms/backoffice/tree";
-const Y = {
+import { tryExecuteAndNotify as z } from "@umbraco-cms/backoffice/resources";
+import { UMB_AUTH_CONTEXT as J } from "@umbraco-cms/backoffice/auth";
+import { UmbTreeServerDataSourceBase as X, UmbTreeRepositoryBase as Y, UmbUniqueTreeStore as Q } from "@umbraco-cms/backoffice/tree";
+import { UmbConditionBase as Z } from "@umbraco-cms/backoffice/extension-registry";
+const ee = {
   type: "section",
   alias: "SeoToolkit",
   name: "SeoToolkit",
@@ -19,12 +20,12 @@ const Y = {
     pathname: "SeoToolkit"
   }
 };
-class j extends Error {
+class x extends Error {
   constructor(e, o, r) {
     super(r), this.name = "ApiError", this.url = o.url, this.status = o.status, this.statusText = o.statusText, this.body = o.body, this.request = e;
   }
 }
-class Z extends Error {
+class te extends Error {
   constructor(e) {
     super(e), this.name = "CancelError";
   }
@@ -32,7 +33,7 @@ class Z extends Error {
     return !0;
   }
 }
-class ee {
+class oe {
   constructor(e) {
     this._isResolved = !1, this._isRejected = !1, this._isCancelled = !1, this.cancelHandlers = [], this.promise = new Promise((o, r) => {
       this._resolve = o, this._reject = r;
@@ -74,14 +75,14 @@ class ee {
           console.warn("Cancellation threw an error", e);
           return;
         }
-      this.cancelHandlers.length = 0, this._reject && this._reject(new Z("Request aborted"));
+      this.cancelHandlers.length = 0, this._reject && this._reject(new te("Request aborted"));
     }
   }
   get isCancelled() {
     return this._isCancelled;
   }
 }
-class q {
+class j {
   constructor() {
     this._fns = [];
   }
@@ -104,38 +105,38 @@ const d = {
   VERSION: "Latest",
   WITH_CREDENTIALS: !1,
   interceptors: {
-    request: new q(),
-    response: new q()
+    request: new j(),
+    response: new j()
   }
-}, p = (t) => typeof t == "string", _ = (t) => p(t) && t !== "", C = (t) => t instanceof Blob, N = (t) => t instanceof FormData, te = (t) => {
+}, T = (t) => typeof t == "string", R = (t) => T(t) && t !== "", C = (t) => t instanceof Blob, U = (t) => t instanceof FormData, re = (t) => {
   try {
     return btoa(t);
   } catch {
     return Buffer.from(t).toString("base64");
   }
-}, oe = (t) => {
+}, se = (t) => {
   const e = [], o = (s, n) => {
     e.push(`${encodeURIComponent(s)}=${encodeURIComponent(String(n))}`);
   }, r = (s, n) => {
     n != null && (n instanceof Date ? o(s, n.toISOString()) : Array.isArray(n) ? n.forEach((i) => r(s, i)) : typeof n == "object" ? Object.entries(n).forEach(([i, a]) => r(`${s}[${i}]`, a)) : o(s, n));
   };
   return Object.entries(t).forEach(([s, n]) => r(s, n)), e.length ? `?${e.join("&")}` : "";
-}, re = (t, e) => {
+}, ne = (t, e) => {
   const o = encodeURI, r = e.url.replace("{api-version}", t.VERSION).replace(/{(.*?)}/g, (n, i) => {
     var a;
     return (a = e.path) != null && a.hasOwnProperty(i) ? o(String(e.path[i])) : n;
   }), s = t.BASE + r;
-  return e.query ? s + oe(e.query) : s;
-}, se = (t) => {
+  return e.query ? s + se(e.query) : s;
+}, ie = (t) => {
   if (t.formData) {
     const e = new FormData(), o = (r, s) => {
-      p(s) || C(s) ? e.append(r, s) : e.append(r, JSON.stringify(s));
+      T(s) || C(s) ? e.append(r, s) : e.append(r, JSON.stringify(s));
     };
     return Object.entries(t.formData).filter(([, r]) => r != null).forEach(([r, s]) => {
       Array.isArray(s) ? s.forEach((n) => o(r, n)) : o(r, s);
     }), e;
   }
-}, y = async (t, e) => typeof e == "function" ? e(t) : e, ne = async (t, e) => {
+}, y = async (t, e) => typeof e == "function" ? e(t) : e, ae = async (t, e) => {
   const [o, r, s, n] = await Promise.all([
     // @ts-ignore
     y(e, t.TOKEN),
@@ -153,16 +154,16 @@ const d = {
     ...a,
     [c]: String(l)
   }), {});
-  if (_(o) && (i.Authorization = `Bearer ${o}`), _(r) && _(s)) {
-    const a = te(`${r}:${s}`);
+  if (R(o) && (i.Authorization = `Bearer ${o}`), R(r) && R(s)) {
+    const a = re(`${r}:${s}`);
     i.Authorization = `Basic ${a}`;
   }
-  return e.body !== void 0 && (e.mediaType ? i["Content-Type"] = e.mediaType : C(e.body) ? i["Content-Type"] = e.body.type || "application/octet-stream" : p(e.body) ? i["Content-Type"] = "text/plain" : N(e.body) || (i["Content-Type"] = "application/json")), new Headers(i);
-}, ie = (t) => {
+  return e.body !== void 0 && (e.mediaType ? i["Content-Type"] = e.mediaType : C(e.body) ? i["Content-Type"] = e.body.type || "application/octet-stream" : T(e.body) ? i["Content-Type"] = "text/plain" : U(e.body) || (i["Content-Type"] = "application/json")), new Headers(i);
+}, le = (t) => {
   var e, o;
   if (t.body !== void 0)
-    return (e = t.mediaType) != null && e.includes("application/json") || (o = t.mediaType) != null && o.includes("+json") ? JSON.stringify(t.body) : p(t.body) || C(t.body) || N(t.body) ? t.body : JSON.stringify(t.body);
-}, ae = async (t, e, o, r, s, n, i) => {
+    return (e = t.mediaType) != null && e.includes("application/json") || (o = t.mediaType) != null && o.includes("+json") ? JSON.stringify(t.body) : T(t.body) || C(t.body) || U(t.body) ? t.body : JSON.stringify(t.body);
+}, ce = async (t, e, o, r, s, n, i) => {
   const a = new AbortController();
   let c = {
     headers: n,
@@ -174,13 +175,13 @@ const d = {
   for (const l of t.interceptors.request._fns)
     c = await l(c);
   return i(() => a.abort()), await fetch(o, c);
-}, le = (t, e) => {
+}, de = (t, e) => {
   if (e) {
     const o = t.headers.get(e);
-    if (p(o))
+    if (T(o))
       return o;
   }
-}, ce = async (t) => {
+}, ue = async (t) => {
   if (t.status !== 204)
     try {
       const e = t.headers.get("Content-Type");
@@ -198,7 +199,7 @@ const d = {
     } catch (e) {
       console.error(e);
     }
-}, de = (t, e) => {
+}, me = (t, e) => {
   const r = {
     400: "Bad Request",
     401: "Unauthorized",
@@ -243,7 +244,7 @@ const d = {
     ...t.errors
   }[e.status];
   if (r)
-    throw new j(t, e, r);
+    throw new x(t, e, r);
   if (!e.ok) {
     const s = e.status ?? "unknown", n = e.statusText ?? "unknown", i = (() => {
       try {
@@ -252,36 +253,36 @@ const d = {
         return;
       }
     })();
-    throw new j(
+    throw new x(
       t,
       e,
       `Generic Error: status: ${s}; status text: ${n}; body: ${i}`
     );
   }
-}, b = (t, e) => new ee(async (o, r, s) => {
+}, b = (t, e) => new oe(async (o, r, s) => {
   try {
-    const n = re(t, e), i = se(e), a = ie(e), c = await ne(t, e);
+    const n = ne(t, e), i = ie(e), a = le(e), c = await ae(t, e);
     if (!s.isCancelled) {
-      let l = await ae(t, e, n, a, i, c, s);
-      for (const H of t.interceptors.response._fns)
-        l = await H(l);
-      const I = await ce(l), P = le(l, e.responseHeader);
+      let l = await ce(t, e, n, a, i, c, s);
+      for (const $ of t.interceptors.response._fns)
+        l = await $(l);
+      const I = await ue(l), H = de(l, e.responseHeader);
       let O = I;
       e.responseTransformer && l.ok && (O = await e.responseTransformer(I));
-      const A = {
+      const D = {
         url: n,
         ok: l.ok,
         status: l.status,
         statusText: l.statusText,
-        body: P ?? O
+        body: H ?? O
       };
-      de(e, A), o(A.body);
+      me(e, D), o(D.body);
     }
   } catch (n) {
     r(n);
   }
 });
-class S {
+class k {
   /**
    * @returns unknown OK
    * @throws ApiError
@@ -345,36 +346,36 @@ class S {
   }
 }
 var h;
-class ue {
+class he {
   constructor(e) {
-    g(this, h);
-    R(this, h, e);
+    w(this, h);
+    _(this, h, e);
   }
   async getModules() {
-    return await V(E(this, h), S.getUmbracoSeoToolkitModules());
+    return await z(g(this, h), k.getUmbracoSeoToolkitModules());
   }
 }
 h = new WeakMap();
-var T;
-class me extends K {
+var p;
+class pe extends K {
   constructor(o) {
     super(o);
-    g(this, T);
-    R(this, T, new ue(this));
+    w(this, p);
+    _(this, p, new he(this));
   }
   async getModules() {
-    return E(this, T).getModules();
+    return g(this, p).getModules();
   }
 }
-T = new WeakMap();
-var he = Object.defineProperty, Te = Object.getOwnPropertyDescriptor, v = (t, e, o, r) => {
-  for (var s = r > 1 ? void 0 : r ? Te(e, o) : e, n = t.length - 1, i; n >= 0; n--)
+p = new WeakMap();
+var Te = Object.defineProperty, fe = Object.getOwnPropertyDescriptor, q = (t, e, o, r) => {
+  for (var s = r > 1 ? void 0 : r ? fe(e, o) : e, n = t.length - 1, i; n >= 0; n--)
     (i = t[n]) && (s = (r ? i(e, o, s) : i(s)) || s);
-  return r && s && he(e, o, s), s;
+  return r && s && Te(e, o, s), s;
 };
-let m = class extends G($) {
+let m = class extends V(B) {
   connectedCallback() {
-    super.connectedCallback(), new me(this).getModules().then((t) => {
+    super.connectedCallback(), new pe(this).getModules().then((t) => {
       this.modules = t.data, console.log(this.modules);
     });
   }
@@ -391,7 +392,7 @@ let m = class extends G($) {
       this.modules,
       () => u`
       
-        ${B(
+        ${L(
         this.modules,
         (t) => t.alias,
         (t) => u`
@@ -414,7 +415,7 @@ let m = class extends G($) {
   }
 };
 m.styles = [
-  L`
+  W`
       .welcomeDashboard h1 {
     text-align: center;
 }
@@ -462,27 +463,33 @@ m.styles = [
 }
     `
 ];
-v([
+q([
   F()
 ], m.prototype, "modules", 2);
-m = v([
-  W("welcome-dashboard")
+m = q([
+  G("welcome-dashboard")
 ], m);
-const pe = m, fe = {
+const N = m, ye = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  get MyWelcomeDashboardElement() {
+    return m;
+  },
+  default: N
+}, Symbol.toStringTag, { value: "Module" })), be = {
   type: "dashboard",
   alias: "seoToolkitWelcomeDashboard",
   name: "Welcome",
   meta: {
     pathname: "welcome"
   },
-  element: pe,
+  element: N,
   conditions: [
     {
       alias: "Umb.Condition.SectionAlias",
       match: "SeoToolkit"
     }
   ]
-}, ye = {
+}, Se = {
   type: "sectionSidebarApp",
   kind: "menuWithEntityActions",
   alias: "seoToolkit.sidebar",
@@ -497,46 +504,46 @@ const pe = m, fe = {
       match: "SeoToolkit"
     }
   ]
-}, k = "seoToolkit_tree_root", w = "seoToolkit_tree_entity", U = "seoToolkit_tree_store_context";
-class be extends J {
+}, E = "seoToolkit_tree_root", S = "seoToolkit-module", M = "seoToolkit_tree_store_context";
+class ke extends X {
   constructor(e) {
     super(e, {
-      getRootItems: M,
-      getChildrenOf: Se,
-      getAncestorsOf: ke,
-      mapper: Ee
+      getRootItems: P,
+      getChildrenOf: Ee,
+      getAncestorsOf: ge,
+      mapper: we
     });
   }
 }
-const M = () => S.getUmbracoSeoToolkitTreeInfoRoot(), Se = (t) => t.parent.unique === null ? M() : S.getUmbracoSeoToolkitTreeInfoChildren({
+const P = () => k.getUmbracoSeoToolkitTreeInfoRoot(), Ee = (t) => t.parent.unique === null ? P() : k.getUmbracoSeoToolkitTreeInfoChildren({
   parentId: t.parent.unique,
   skip: t.skip,
   take: t.take
-}), ke = (t) => S.getUmbracoSeoToolkitTreeInfoAncestors({
+}), ge = (t) => k.getUmbracoSeoToolkitTreeInfoAncestors({
   descendantId: t.treeItem.unique
-}), Ee = (t) => {
+}), we = (t) => {
   var e;
   return {
     unique: t.id,
     parent: {
       unique: ((e = t.parent) == null ? void 0 : e.id) || null,
-      entityType: t.parent ? w : k
+      entityType: t.parent ? S : E
     },
     name: t.name,
-    entityType: w,
+    entityType: S,
     hasChildren: t.hasChildren,
     isFolder: !1,
     icon: "icon-book-alt"
   };
 };
-class ge extends X {
+class _e extends Y {
   constructor(e) {
-    super(e, be, U);
+    super(e, ke, M);
   }
   async requestTreeRoot() {
     return { data: {
       unique: null,
-      entityType: k,
+      entityType: E,
       name: "SeoToolkit",
       hasChildren: !0,
       isFolder: !0
@@ -545,20 +552,20 @@ class ge extends X {
 }
 class Re extends Q {
   constructor(e) {
-    super(e, U);
+    super(e, M);
   }
 }
-const _e = {
+const Ce = {
   type: "repository",
   alias: "SeoToolkitTreeRepository",
   name: "SeoToolkit Tree repository",
-  api: ge
-}, we = {
+  api: _e
+}, Ie = {
   type: "treeStore",
   alias: "SeoToolkitTreeStore",
   name: "SeoToolkit tree Store",
   api: Re
-}, Ce = {
+}, Oe = {
   type: "tree",
   kind: "default",
   alias: "SeoToolkitTree",
@@ -566,20 +573,20 @@ const _e = {
   meta: {
     repositoryAlias: "SeoToolkitTreeRepository"
   }
-}, Ie = {
+}, De = {
   type: "treeItem",
   kind: "default",
   alias: "SeoToolkitTreeItem",
   name: "SeoToolkit Tree Item",
   forEntityTypes: [
-    w,
-    k
+    S,
+    E
   ]
-}, Oe = {
+}, Ae = {
   type: "menu",
   alias: "SeoToolkitMenu",
   name: "SeoToolkit Menu"
-}, Ae = {
+}, ve = {
   type: "menuItem",
   kind: "tree",
   alias: "SeoToolkitMenuItem",
@@ -588,18 +595,54 @@ const _e = {
   meta: {
     label: "Times",
     icon: "icon-alarm-clock",
-    entityType: k,
+    entityType: E,
     menus: ["SeoToolkitMenu"],
     treeAlias: "SeoToolkitTree",
     hideTreeRoot: !0
   }
-}, Me = (t, e) => {
-  t.consumeContext(z, (o) => {
+}, xe = {
+  type: "workspace",
+  alias: "seoToolkit.module.workspace",
+  name: "SeoToolkit Module Workspace",
+  element: () => import("./seoToolkitModuleWorkspace.element-BJrQtRGU.js"),
+  meta: {
+    entityType: S
+  }
+}, je = {
+  type: "workspaceView",
+  alias: "seotoolkit.workspace.info",
+  name: "default view",
+  js: () => Promise.resolve().then(() => ye),
+  weight: 300,
+  meta: {
+    icon: "icon-alarm-clock",
+    pathname: "overview",
+    label: "time"
+  },
+  conditions: [
+    {
+      alias: "Umb.Condition.WorkspaceAlias",
+      match: "seoToolkit.module.workspace"
+    }
+  ]
+};
+class Ue extends Z {
+  constructor(e, o) {
+    super(e, o), console.log(o), o.config.match === "Yes" && (this.permitted = !0, o.onChange());
+  }
+}
+const qe = {
+  type: "condition",
+  name: "Workspace Entity Id Condition",
+  alias: "SeoToolkit.WorkspaceEntityIdCondition",
+  api: Ue
+}, Fe = (t, e) => {
+  t.consumeContext(J, (o) => {
     const r = o.getOpenApiConfiguration();
     d.BASE = r.base, d.WITH_CREDENTIALS = r.withCredentials, d.CREDENTIALS = r.credentials, d.TOKEN = r.token;
-  }), e.register(Y), e.register(fe), e.register(ye), e.registerMany([_e, Ce, we, Ie, Oe, Ae]);
+  }), e.register(ee), e.register(be), e.register(Se), e.register(qe), e.registerMany([Ce, Oe, Ie, De, Ae, ve, xe, je]);
 };
 export {
-  Me as onInit
+  Fe as onInit
 };
 //# sourceMappingURL=assets.js.map

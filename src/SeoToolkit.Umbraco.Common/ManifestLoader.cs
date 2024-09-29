@@ -26,7 +26,7 @@ namespace SeoToolkit.Umbraco.Common
             var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.common.entrypoint"",
             ""alias"": ""SeoToolkit.Common.EntryPoint"",
             ""type"": ""entryPoint"",
-            ""js"": ""/App_Plugins/SeoToolkit/assets.js""}");
+            ""js"": ""/App_Plugins/SeoToolkit/common.js""}");
 
             List<PackageManifest> manifest = [
                 new PackageManifest

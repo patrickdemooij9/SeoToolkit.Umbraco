@@ -2,12 +2,21 @@ import { LitElement, css, html, customElement, state, when, repeat } from "@umbr
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
 import { SeoToolkitModule } from "../../api";
 import { ModuleRepository } from "../../repositories/moduleRepository";
+import { SEOTOOLKIT_MODULES_CONTEXT_TOKEN } from "../../workspaces/seoToolkitModule.context";
 
 @customElement('welcome-dashboard')
 export class MyWelcomeDashboardElement extends UmbElementMixin(LitElement) {
 
   @state()
   modules?: SeoToolkitModule[];
+
+  constructor(){
+    super();
+
+    this.consumeContext(SEOTOOLKIT_MODULES_CONTEXT_TOKEN, () => {
+console.log("Hello?");
+    });
+  }
 
   connectedCallback(): void {
     super.connectedCallback();

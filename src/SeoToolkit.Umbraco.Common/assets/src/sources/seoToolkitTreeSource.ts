@@ -2,7 +2,7 @@ import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { NamedEntityTreeItemResponseModel } from "@umbraco-cms/backoffice/external/backend-api";
 import { UmbTreeAncestorsOfRequestArgs, UmbTreeChildrenOfRequestArgs, UmbTreeServerDataSourceBase } from "@umbraco-cms/backoffice/tree";
 import { SeoToolkitService } from "../api";
-import { SEOTOOLKIT_TREE_ENTITY, SEOTOOLKIT_TREE_ROOT } from "../constants/seoToolkitConstants";
+import { SEOTOOLKIT_MODULE_ENTITY, SEOTOOLKIT_TREE_ROOT } from "../constants/seoToolkitConstants";
 import { SeoToolkitTreeItemModel } from "../trees/types";
 
 export class seoToolkitTreeSource extends UmbTreeServerDataSourceBase<NamedEntityTreeItemResponseModel, SeoToolkitTreeItemModel> {
@@ -45,12 +45,12 @@ const mapper = (item: NamedEntityTreeItemResponseModel): SeoToolkitTreeItemModel
 		unique: item.id,
 		parent: {
 			unique: item.parent?.id || null,
-			entityType: item.parent ? SEOTOOLKIT_TREE_ENTITY : SEOTOOLKIT_TREE_ROOT,
+			entityType: item.parent ? SEOTOOLKIT_MODULE_ENTITY : SEOTOOLKIT_TREE_ROOT,
 		},
 		name: item.name,
-		entityType: SEOTOOLKIT_TREE_ENTITY,
+		entityType: SEOTOOLKIT_MODULE_ENTITY,
 		hasChildren: item.hasChildren,
 		isFolder: false,
-		icon: 'icon-book-alt',
+		icon: 'icon-book-alt'
 	};
 };

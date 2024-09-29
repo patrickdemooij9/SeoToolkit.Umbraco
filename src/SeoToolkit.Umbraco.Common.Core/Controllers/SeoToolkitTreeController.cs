@@ -18,20 +18,25 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
     {
         public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
 
+        private Guid _infoGuid = new Guid("CDF429D1-2380-4AC2-AC3E-22D619EE4529");
+        private Guid _robotsGuid = new Guid("20A2086E-7D72-44BA-B97B-5836CAF6E28E");
+
         [HttpGet("root")]
         [ProducesResponseType(typeof(PagedViewModel<NamedEntityTreeItemResponseModel>), StatusCodes.Status200OK)]
         public ActionResult<PagedViewModel<NamedEntityTreeItemResponseModel>> GetRoot(int skip = 0, int take = 100)
         {
-            var items = new[] { new NamedEntityTreeItemResponseModel 
+            var items = new[] { new NamedEntityTreeItemResponseModel
             {
-                Id = Guid.NewGuid(),
+                Id = _infoGuid,
                 Name = "Info",
-                HasChildren = false
-            }};
+            }, new NamedEntityTreeItemResponseModel{
+                Id = _robotsGuid,
+                Name = "Robots.txt",
+            } };
             var result = new PagedViewModel<NamedEntityTreeItemResponseModel>()
             {
                 Items = items,
-                Total = 1
+                Total = items.Length
             };
 
             return Ok(result);
