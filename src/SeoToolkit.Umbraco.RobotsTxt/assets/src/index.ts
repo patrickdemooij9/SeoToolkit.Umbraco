@@ -1,9 +1,9 @@
 import { UmbEntryPointOnInit } from '@umbraco-cms/backoffice/extension-api';
 import { OpenAPI } from '@umbraco-cms/backoffice/external/backend-api';
 import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
-//import { robotsTxtWorkspaceView } from "../contentApps/RobotsTxtModuleContentApp.element";
+import { Manifests } from './manifests/ModuleManifests';
 
-export const onInit: UmbEntryPointOnInit = (host, _extensionRegistry) => {
+export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
 
     host.consumeContext(UMB_AUTH_CONTEXT, (auth) => {
 
@@ -16,5 +16,5 @@ export const onInit: UmbEntryPointOnInit = (host, _extensionRegistry) => {
 
     });
 
-    //extensionRegistry.register(robotsTxtWorkspaceView);
+    extensionRegistry.registerMany(Manifests);
 };

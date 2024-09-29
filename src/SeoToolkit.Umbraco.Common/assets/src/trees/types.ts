@@ -1,8 +1,8 @@
 import type { UmbTreeItemModel, UmbTreeRootModel } from '@umbraco-cms/backoffice/tree';
-import { SeoToolkitTreeEntityType, SeoToolkitTreeRootType } from '../constants/seoToolkitConstants';
+import { SeoToolkitTreeRootType } from '../constants/seoToolkitConstants';
 
 export interface SeoToolkitTreeItemModel extends UmbTreeItemModel {
-	entityType: SeoToolkitTreeEntityType;
+	entityType: string;
 }
 
 export interface SeoToolkitTreeRootModel extends UmbTreeRootModel {

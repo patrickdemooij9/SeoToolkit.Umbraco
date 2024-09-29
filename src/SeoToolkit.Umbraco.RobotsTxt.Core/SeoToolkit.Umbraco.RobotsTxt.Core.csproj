@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <Product>SeoToolkit Robots.txt Core</Product>
     <PackageId>SeoToolkit.Umbraco.RobotsTxt.Core</PackageId>
     <Title>SeoToolkit Robots.txt Core</Title>

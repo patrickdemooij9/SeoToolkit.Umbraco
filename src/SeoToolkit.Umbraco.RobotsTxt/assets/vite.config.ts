@@ -7,7 +7,7 @@ export default defineConfig({
             formats: ["es"],
             fileName: "robotstxt"
         },
-        outDir: "../wwwroot", 
+        outDir: "../wwwroot/entry/robotstxt", 
         emptyOutDir: false,
         sourcemap: true,
         rollupOptions: {

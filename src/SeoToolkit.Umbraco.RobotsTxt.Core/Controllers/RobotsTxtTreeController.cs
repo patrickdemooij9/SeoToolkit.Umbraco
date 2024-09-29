@@ -4,13 +4,11 @@ using SeoToolkit.Umbraco.Common.Core.Constants;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Trees;
-using Umbraco.Cms.Web.BackOffice.Trees;
 using Umbraco.Cms.Web.Common.Attributes;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
 {
-    [Tree("SeoToolkit", Alias, TreeTitle = Title, TreeGroup = TreeGroupAlias, SortOrder = 3)]
+    /*[Tree("SeoToolkit", Alias, TreeTitle = Title, TreeGroup = TreeGroupAlias, SortOrder = 3)]
     [PluginController("SeoToolkit")]
     public class RobotsTxtTreeController : TreeController
     {
@@ -46,5 +44,5 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
         {
             return null;
         }
-    }
+    }*/
 }

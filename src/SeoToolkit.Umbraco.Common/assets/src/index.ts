@@ -4,7 +4,7 @@ import { welcomeDashboardManifest } from './dashboards/welcome/welcomeDashboardM
 import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
 import { OpenAPI } from './api';
 import { seoToolkitSidebar } from './sidebar/seoToolkitSidebar';
-import { infoWorkspaceView, infoWorkspaceView2, menu, menuItem, tree, treeItem, treeRepository, treeStore, workspaceContext, workspaceManifest } from './trees/seoToolkitTree';
+import { TreeManifests } from './trees/seoToolkitTree';
 import { manifest } from './conditions/workspaceEntityIdCondition';
 
 export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
@@ -25,5 +25,5 @@ export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
     extensionRegistry.register(seoToolkitSidebar);
     extensionRegistry.register(manifest);
 
-    extensionRegistry.registerMany([treeRepository, tree, treeStore, treeItem, menu, menuItem, workspaceManifest, infoWorkspaceView, infoWorkspaceView2, workspaceContext]);
+    extensionRegistry.registerMany(TreeManifests);
 };

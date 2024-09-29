@@ -7,7 +7,7 @@ export default defineConfig({
             formats: ["es"],
             fileName: "common"
         },
-        outDir: "../wwwroot", 
+        outDir: "../wwwroot/entry/common", 
         emptyOutDir: false,
         sourcemap: true,
         rollupOptions: {

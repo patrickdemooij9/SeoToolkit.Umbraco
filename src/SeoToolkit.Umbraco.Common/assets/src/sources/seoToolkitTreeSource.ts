@@ -2,7 +2,7 @@ import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { NamedEntityTreeItemResponseModel } from "@umbraco-cms/backoffice/external/backend-api";
 import { UmbTreeAncestorsOfRequestArgs, UmbTreeChildrenOfRequestArgs, UmbTreeServerDataSourceBase } from "@umbraco-cms/backoffice/tree";
 import { SeoToolkitService } from "../api";
-import { SEOTOOLKIT_MODULE_ENTITY, SEOTOOLKIT_TREE_ROOT } from "../constants/seoToolkitConstants";
+import { SEOTOOLKIT_MODULE_ENTITY, SEOTOOLKIT_ROBOTSTXT_ENTITY, SEOTOOLKIT_TREE_ROOT } from "../constants/seoToolkitConstants";
 import { SeoToolkitTreeItemModel } from "../trees/types";
 
 export class seoToolkitTreeSource extends UmbTreeServerDataSourceBase<NamedEntityTreeItemResponseModel, SeoToolkitTreeItemModel> {
@@ -41,16 +41,18 @@ const getAncestorsOf = (args: UmbTreeAncestorsOfRequestArgs) => {
 }
 
 const mapper = (item: NamedEntityTreeItemResponseModel): SeoToolkitTreeItemModel => {
+	const isInfo = item.id === 'CDF429D1-2380-4AC2-AC3E-22D619EE4529'.toLowerCase();
+	const entity = isInfo ? SEOTOOLKIT_MODULE_ENTITY : SEOTOOLKIT_ROBOTSTXT_ENTITY;
     return {
 		unique: item.id,
 		parent: {
 			unique: item.parent?.id || null,
-			entityType: item.parent ? SEOTOOLKIT_MODULE_ENTITY : SEOTOOLKIT_TREE_ROOT,
+			entityType: item.parent ? entity : SEOTOOLKIT_TREE_ROOT,
 		},
 		name: item.name,
-		entityType: SEOTOOLKIT_MODULE_ENTITY,
+		entityType: entity,
 		hasChildren: item.hasChildren,
 		isFolder: false,
-		icon: 'icon-book-alt'
+		icon: isInfo ? 'icon-book' : 'icon-book-alt'
 	};
 };

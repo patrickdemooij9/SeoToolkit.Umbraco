@@ -1,18 +1,15 @@
 ﻿using System.Linq;
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.BackOffice.Controllers;
-using Umbraco.Cms.Web.Common.ActionsResults;
 using Umbraco.Cms.Web.Common.Attributes;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.PostModel;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.ViewModels;
-using SeoToolkit.Umbraco.RobotsTxt.Core.Services;
+using SeoToolkit.Umbraco.Common.Core.Controllers;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
 {
-    [PluginController("SeoToolkit")]
-    public class RobotsTxtController : UmbracoAuthorizedApiController
+    [ApiExplorerSettings(GroupName = "seoToolkit")]
+    public class RobotsTxtController : SeoToolkitControllerBase
     {
         private readonly IRobotsTxtService _robotsTxtService;
 
@@ -21,13 +18,15 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
             _robotsTxtService = robotsTxtService;
         }
 
-        [HttpGet]
+        [HttpGet("robotsTxt")]
+        [ProducesResponseType(typeof(string), 200)]
         public IActionResult Get()
         {
-            return new JsonResult(_robotsTxtService.GetContent());
+            return Ok(_robotsTxtService.GetContent());
         }
 
-        [HttpPost]
+        [HttpPost("robotsTxt")]
+        [ProducesResponseType(typeof(string), 200)]
         public IActionResult Save(RobotsTxtSavePostModel model)
         {
             var content = model.Content ?? string.Empty;

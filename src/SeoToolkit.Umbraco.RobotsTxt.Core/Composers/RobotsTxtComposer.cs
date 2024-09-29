@@ -35,16 +35,16 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Composers
             if (disabledModules.Contains(DisabledModuleConstant.All))
             {
                 builder.Components().Append<DisableModuleComponent>();
-                builder.Trees().RemoveTreeController<RobotsTxtTreeController>();
+                //builder.Trees().RemoveTreeController<RobotsTxtTreeController>();
                 return;
             }
 
-            if (disabledModules.Contains(DisabledModuleConstant.SectionTree))
-                builder.Trees().RemoveTreeController<RobotsTxtTreeController>();
+            if (disabledModules.Contains(DisabledModuleConstant.SectionTree)) { }
+                //builder.Trees().RemoveTreeController<RobotsTxtTreeController>();
 
-            builder.Services.AddUnique<IRobotsTxtRepository, RobotsTxtRepository>();
-            builder.Services.AddUnique<IRobotsTxtService, RobotsTxtService>();
-            builder.Services.AddUnique<IRobotsTxtValidator, DefaultRobotsTxtValidator>();
+            builder.Services.AddSingleton<IRobotsTxtRepository, RobotsTxtRepository>();
+            builder.Services.AddSingleton<IRobotsTxtService, RobotsTxtService>();
+            builder.Services.AddSingleton<IRobotsTxtValidator, DefaultRobotsTxtValidator>();
 
             builder.Components().Append<EnableModuleComponent>();
 

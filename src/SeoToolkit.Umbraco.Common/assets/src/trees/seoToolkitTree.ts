@@ -2,7 +2,6 @@ import { ManifestMenu, ManifestRepository, ManifestTree, ManifestTreeItem, Manif
 import { seoToolkitTreeRepository } from "../repositories/seoToolkitTreeRepository";
 import { seoToolkitTreeStore } from "../stores/seoToolkitTreeStore";
 import { SEOTOOLKIT_MODULE_ENTITY, SEOTOOLKIT_TREE_ROOT } from "../constants/seoToolkitConstants";
-import { WorkspaceEntityIdConditionConfig } from "../conditions/workspaceEntityIdCondition";
 
 export const treeRepository: ManifestRepository = {
     type: 'repository',
@@ -36,7 +35,7 @@ export const treeItem: ManifestTreeItem = {
     forEntityTypes: [
         SEOTOOLKIT_MODULE_ENTITY, SEOTOOLKIT_TREE_ROOT
     ]
-}
+};
 
 export const menu: ManifestMenu = {
     type: 'menu',
@@ -103,26 +102,4 @@ export const infoWorkspaceView: ManifestWorkspaceView =
     ],
 };
 
-export const infoWorkspaceView2: ManifestWorkspaceView =
-{
-    type: 'workspaceView',
-    alias: 'seotoolkit.workspace.info2',
-    name: 'default view',
-    js: () => import('../dashboards/welcome/welcomeDashboard.element'),
-    weight: 300,
-    meta: {
-        icon: 'icon-alarm-clock',
-        pathname: 'default2',
-        label: 'time2'
-    },
-    conditions: [
-        {
-            alias: 'Umb.Condition.WorkspaceAlias',
-            match: 'seoToolkit.module.workspace'
-        },
-        {
-            alias: 'SeoToolkit.WorkspaceEntityIdCondition',
-            match: '20A2086E-7D72-44BA-B97B-5836CAF6E28E'
-        } as WorkspaceEntityIdConditionConfig
-    ],
-};
+export const TreeManifests = [treeRepository, treeStore, tree, treeItem, menu, menuItem, workspaceManifest, workspaceContext, infoWorkspaceView];
