@@ -1,5 +1,6 @@
-import { ManifestTreeItem, ManifestWorkspace } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestTreeItem, ManifestWorkspace, ManifestWorkspaceAction } from "@umbraco-cms/backoffice/extension-registry";
 import { SEOTOOLKIT_ROBOTSTXT_ENTITY } from "../Constants";
+import { UmbSubmitWorkspaceAction } from "@umbraco-cms/backoffice/workspace";
 
 const RobotsTxtTreeItem: ManifestTreeItem = {
     type: 'treeItem',
@@ -16,9 +17,29 @@ const RobotsTxtWorkspace: ManifestWorkspace = {
     alias: 'seoToolkit.module.workspace.robotsTxt',
     name: 'SeoToolkit RobotsTxt Workspace',
     element: () => import('../workspaces/RobotsTxtModuleWorkspace.element'),
+    api: () => import('../contexts/RobotsTxtModuleContext'),
     meta: {
         entityType: SEOTOOLKIT_ROBOTSTXT_ENTITY
     }
 };
 
-export const Manifests = [RobotsTxtTreeItem, RobotsTxtWorkspace];
+const RobotsTxtSaveAction: ManifestWorkspaceAction = {
+    type: 'workspaceAction',
+    kind: 'default',
+    alias: 'seoToolkit.module.workspace.actions.save',
+    name: 'SeoToolkit RobotsTxt Workspace Save',
+    api: UmbSubmitWorkspaceAction,
+    meta: {
+        look: 'primary',
+        color: 'positive',
+        label: '#buttons_save',
+    },
+    conditions: [
+        {
+            alias: 'Umb.Condition.WorkspaceAlias',
+            match: 'seoToolkit.module.workspace.robotsTxt',
+        },
+    ],
+}
+
+export const Manifests = [RobotsTxtTreeItem, RobotsTxtWorkspace, RobotsTxtSaveAction];

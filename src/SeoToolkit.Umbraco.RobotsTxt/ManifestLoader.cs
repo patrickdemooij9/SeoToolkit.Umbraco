@@ -22,7 +22,6 @@ namespace SeoToolkit.Umbraco.RobotsTxt
     {
         public Task<IEnumerable<PackageManifest>> ReadPackageManifestsAsync()
         {
-
             var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.robotstxt.entrypoint"",
             ""alias"": ""SeoToolkit.RobotsTxt.EntryPoint"",
             ""type"": ""entryPoint"",

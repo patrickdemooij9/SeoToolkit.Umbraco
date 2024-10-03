@@ -10,11 +10,11 @@ export class MyWelcomeDashboardElement extends UmbElementMixin(LitElement) {
   @state()
   modules?: SeoToolkitModule[];
 
-  constructor(){
+  constructor() {
     super();
 
     this.consumeContext(SEOTOOLKIT_MODULES_CONTEXT_TOKEN, () => {
-console.log("Hello?");
+      console.log("Hello?");
     });
   }
 
