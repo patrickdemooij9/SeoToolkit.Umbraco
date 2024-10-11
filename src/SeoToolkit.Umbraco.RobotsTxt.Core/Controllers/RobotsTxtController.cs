@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.Common.Attributes;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.PostModel;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.ViewModels;
 using SeoToolkit.Umbraco.Common.Core.Controllers;
+using SeoToolkit.Umbraco.RobotsTxt.Core.Models.ResponseModel;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
 {
@@ -26,7 +26,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
         }
 
         [HttpPost("robotsTxt")]
-        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(RobotsTxtSaveResponseModel), 200)]
         public IActionResult Save(RobotsTxtSavePostModel model)
         {
             var content = model.Content ?? string.Empty;
@@ -37,12 +37,19 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
                 var validationErrors = _robotsTxtService.Validate(content).ToArray();
                 if (validationErrors.Length > 0)
                 {
-                    return BadRequest(validationErrors.Select(it => new RobotsTxtValidationViewModel(it)));
+                    return Ok(new RobotsTxtSaveResponseModel
+                    {
+                        Content = model.Content,
+                        Errors = validationErrors.Select(it => new RobotsTxtValidationViewModel(it)).ToArray()
+                    });
                 }
             }
 
             _robotsTxtService.SetContent(content);
-            return Get();
+            return Ok(new RobotsTxtSaveResponseModel
+            {
+                Content = content
+            });
         }
     }
 }

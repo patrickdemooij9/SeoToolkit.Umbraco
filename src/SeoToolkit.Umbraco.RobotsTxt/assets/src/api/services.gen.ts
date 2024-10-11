@@ -31,7 +31,7 @@ export class SeoToolkitService {
     /**
      * @param data The data for the request.
      * @param data.requestBody
-     * @returns string OK
+     * @returns unknown OK
      * @throws ApiError
      */
     public static postUmbracoSeoToolkitRobotsTxt(data: PostUmbracoSeoToolkitRobotsTxtData = {}): CancelablePromise<PostUmbracoSeoToolkitRobotsTxtResponse> {

@@ -37,6 +37,16 @@ export type RobotsTxtSavePostModel = {
     content?: (string) | null;
 };
 
+export type RobotsTxtSaveResponseModel = {
+    content?: (string) | null;
+    errors?: Array<(RobotsTxtValidationViewModel)> | null;
+};
+
+export type RobotsTxtValidationViewModel = {
+    readonly lineNumber: number;
+    readonly error?: (string) | null;
+};
+
 export type SeoToolkitModule = {
     title: string;
     alias: string;
@@ -61,7 +71,7 @@ export type PostUmbracoSeoToolkitRobotsTxtData = {
     requestBody?: (RobotsTxtSavePostModel);
 };
 
-export type PostUmbracoSeoToolkitRobotsTxtResponse = (string);
+export type PostUmbracoSeoToolkitRobotsTxtResponse = ((RobotsTxtSaveResponseModel));
 
 export type GetUmbracoSeoToolkitTreeInfoAncestorsData = {
     descendantId?: string;

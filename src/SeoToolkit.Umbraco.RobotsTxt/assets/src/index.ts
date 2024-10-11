@@ -1,5 +1,5 @@
 import { UmbEntryPointOnInit } from '@umbraco-cms/backoffice/extension-api';
-import { OpenAPI } from '@umbraco-cms/backoffice/external/backend-api';
+import { OpenAPI } from './api';
 import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
 import { Manifests } from './manifests/ModuleManifests';
 

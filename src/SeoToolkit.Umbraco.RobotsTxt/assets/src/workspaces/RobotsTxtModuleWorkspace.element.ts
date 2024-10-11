@@ -35,9 +35,19 @@ export class SeoToolkitRobotsTxtModuleElement extends
                     alias: 'robotsTxt',
                     value: val
                 };
+            });
+
+            this.observe(instance.validationErrors, (val) => {
+                this._validationErrors = val;
             })
         });
     }
+
+    connectedCallback(): void {
+        super.connectedCallback();
+
+        this.#context?.load();
+      }
 
     #onPropertyDataChange(e: Event) {
         const value = (e.target as UmbPropertyDatasetElement).value;
@@ -71,10 +81,9 @@ export class SeoToolkitRobotsTxtModuleElement extends
                     </umb-property-dataset>
 
                     ${when(this._validationErrors.length > 0, () => html`
-                        <h5>Validation Errors</h5>
+                        <h5 class="error-heading">Validation Errors</h5>
                             ${repeat(this._validationErrors, (item) => item.error, (item) => html`
                             <p class="error">
-                                <umb-icon icon="icon-delete" class="red"></umb-icon>
                                 Line ${item.lineNumber} - ${item.error}
                             </p>
                             `)}
@@ -88,8 +97,17 @@ export class SeoToolkitRobotsTxtModuleElement extends
 
     static styles = [
         css`
-            .robotsTxtWorkspace{
+            .robotsTxtWorkspace {
                 padding: var(--uui-size-layout-1);
+            }
+
+            .error-heading {
+                margin-bottom: 8px;
+            }
+
+            .error {
+                color: red;
+                margin: 0;
             }
         `
     ]

@@ -15,7 +15,7 @@ export class RobotsTxtRepository extends UmbControllerBase{
         return this.#robotsTxtSource.getContent();
     }
 
-    async saveContent(content: string){
-        return this.#robotsTxtSource.saveContent(content);
+    async saveContent(content: string, skipValidation: boolean){
+        return this.#robotsTxtSource.saveContent(content, skipValidation);
     }
 }

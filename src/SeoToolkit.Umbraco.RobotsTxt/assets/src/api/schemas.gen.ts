@@ -97,6 +97,46 @@ export const RobotsTxtSavePostModelSchema = {
     additionalProperties: false
 } as const;
 
+export const RobotsTxtSaveResponseModelSchema = {
+    type: 'object',
+    properties: {
+        content: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                oneOf: [
+                    {
+                        '$ref': '#/components/schemas/RobotsTxtValidationViewModel'
+                    }
+                ]
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const RobotsTxtValidationViewModelSchema = {
+    required: ['lineNumber'],
+    type: 'object',
+    properties: {
+        lineNumber: {
+            type: 'integer',
+            format: 'int32',
+            readOnly: true
+        },
+        error: {
+            type: 'string',
+            nullable: true,
+            readOnly: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const SeoToolkitModuleSchema = {
     required: ['alias', 'icon', 'link', 'status', 'title'],
     type: 'object',

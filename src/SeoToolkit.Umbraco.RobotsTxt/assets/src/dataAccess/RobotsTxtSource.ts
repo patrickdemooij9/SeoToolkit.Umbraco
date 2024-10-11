@@ -14,10 +14,10 @@ export class RobotsTxtSource{
         return await tryExecuteAndNotify(this.#host, SeoToolkitService.getUmbracoSeoToolkitRobotsTxt());
     }
 
-    async saveContent(content: string): Promise<UmbDataSourceResponse<PostUmbracoSeoToolkitRobotsTxtResponse>>{
+    async saveContent(content: string, skipValidation: boolean): Promise<UmbDataSourceResponse<PostUmbracoSeoToolkitRobotsTxtResponse>>{
         return await tryExecuteAndNotify(this.#host, SeoToolkitService.postUmbracoSeoToolkitRobotsTxt({
             requestBody: {
-                skipValidation: false,
+                skipValidation: skipValidation,
                 content: content
             }
         }))
