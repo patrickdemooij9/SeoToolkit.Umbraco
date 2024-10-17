@@ -1,0 +1,1 @@
+export const SEOTOOLKIT_SCRIPTMANAGER_ENTITY = "seoToolkit-scriptManager";

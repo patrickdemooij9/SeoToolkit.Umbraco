@@ -7,7 +7,6 @@ import { UmbPropertyTypeAppearanceModel } from "@umbraco-cms/backoffice/content-
 import { ValidationError } from "../types/ValidationError";
 import { UmbPropertyDatasetElement, UmbPropertyValueData } from "@umbraco-cms/backoffice/property";
 
-
 @customElement('seotoolkit-module-robotstxt')
 export class SeoToolkitRobotsTxtModuleElement extends
     UmbElementMixin(LitElement) {

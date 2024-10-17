@@ -42,6 +42,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco.RobotsTxt\SeoToolkit.Umbraco.RobotsTxt.csproj" />
+    <ProjectReference Include="..\SeoToolkit.Umbraco.ScriptManager\SeoToolkit.Umbraco.ScriptManager.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

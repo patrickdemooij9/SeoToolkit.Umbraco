@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Manifest;
+using Umbraco.Cms.Infrastructure.Manifest;
 
 namespace SeoToolkit.Umbraco.ScriptManager
 {
@@ -9,25 +14,31 @@ namespace SeoToolkit.Umbraco.ScriptManager
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            builder.ManifestFilters().Append<ManifestFilter>();
+            builder.Services.AddSingleton<IPackageManifestReader, ManifestFilter>();
         }
     }
 
-    internal class ManifestFilter : IManifestFilter
+    internal class ManifestFilter : IPackageManifestReader
     {
-        public void Filter(List<PackageManifest> manifests)
+        public Task<IEnumerable<PackageManifest>> ReadPackageManifestsAsync()
         {
-            manifests.Add(new PackageManifest
+            var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.scriptManager.entrypoint"",
+            ""alias"": ""SeoToolkit.ScriptManager.EntryPoint"",
+            ""type"": ""entryPoint"",
+            ""js"": ""/App_Plugins/SeoToolkit/entry/scriptManager/scriptManager.js""}");
+
+            List<PackageManifest> manifest = [
+                new PackageManifest
             {
-                PackageName = "SeoToolkit.Umbraco.ScriptManager",
+                Id = "SeoToolkit.Umbraco.ScriptManager",
+                Name = "SeoToolkit ScriptManager",
+                AllowTelemetry = true,
                 Version = "4.0.0",
-                Scripts = new[]
-                {
-                    "/App_Plugins/SeoToolkit/backoffice/ScriptManager/list.controller.js",
-                    "/App_Plugins/SeoToolkit/backoffice/ScriptManager/edit.controller.js"
-                },
-                BundleOptions = BundleOptions.None
-            });
+                Extensions = [ entrypoint!],
+            }
+            ];
+
+            return Task.FromResult(manifest.AsEnumerable());
         }
     }
 }

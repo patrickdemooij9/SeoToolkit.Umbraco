@@ -3,7 +3,7 @@ import { GetUmbracoSeoToolkitRobotsTxtResponse, PostUmbracoSeoToolkitRobotsTxtRe
 import { UmbDataSourceResponse } from "@umbraco-cms/backoffice/repository";
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
-export class RobotsTxtSource{
+export class RobotsTxtSource {
     #host: UmbControllerHost;
 
     constructor(host: UmbControllerHost){

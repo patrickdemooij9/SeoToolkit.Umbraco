@@ -16,11 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="[14.1.0,14.999)" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[14.1.0,14.999)" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SeoToolkit.Umbraco.Common.Core\SeoToolkit.Umbraco.Common.Core.csproj" />
   </ItemGroup>
 

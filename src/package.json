@@ -2,7 +2,8 @@
   "scripts": {
     "common": "cd SeoToolkit.Umbraco.Common/assets && npm run build --watch",
     "robotsTxt": "cd SeoToolkit.Umbraco.RobotsTxt/assets && npm run build --watch",
-    "start": "concurrently \"npm run common\" \"npm run robotsTxt\""
+    "scriptManager": "cd SeoToolkit.Umbraco.ScriptManager/assets && npm run build --watch",
+    "start": "concurrently \"npm run common\" \"npm run robotsTxt\" \"npm run scriptManager\""
   },
   "dependencies": {
     "concurrently": "^9.0.1"

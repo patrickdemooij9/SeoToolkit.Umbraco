@@ -2,7 +2,7 @@ import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { NamedEntityTreeItemResponseModel } from "@umbraco-cms/backoffice/external/backend-api";
 import { UmbTreeAncestorsOfRequestArgs, UmbTreeChildrenOfRequestArgs, UmbTreeServerDataSourceBase } from "@umbraco-cms/backoffice/tree";
 import { SeoToolkitService } from "../api";
-import { SEOTOOLKIT_MODULE_ENTITY, SEOTOOLKIT_ROBOTSTXT_ENTITY, SEOTOOLKIT_TREE_ROOT } from "../constants/seoToolkitConstants";
+import { SEOTOOLKIT_MODULE_ENTITY, SEOTOOLKIT_ROBOTSTXT_ENTITY, SEOTOOLKIT_SCRIPTMANAGER_ENTITY, SEOTOOLKIT_TREE_ROOT } from "../constants/seoToolkitConstants";
 import { SeoToolkitTreeItemModel } from "../trees/types";
 
 export class seoToolkitTreeSource extends UmbTreeServerDataSourceBase<NamedEntityTreeItemResponseModel, SeoToolkitTreeItemModel> {
@@ -42,7 +42,18 @@ const getAncestorsOf = (args: UmbTreeAncestorsOfRequestArgs) => {
 
 const mapper = (item: NamedEntityTreeItemResponseModel): SeoToolkitTreeItemModel => {
 	const isInfo = item.id === 'CDF429D1-2380-4AC2-AC3E-22D619EE4529'.toLowerCase();
-	const entity = isInfo ? SEOTOOLKIT_MODULE_ENTITY : SEOTOOLKIT_ROBOTSTXT_ENTITY;
+	let entity = SEOTOOLKIT_MODULE_ENTITY;
+	switch(item.id){
+		case '20A2086E-7D72-44BA-B97B-5836CAF6E28E'.toLowerCase():
+			entity = SEOTOOLKIT_ROBOTSTXT_ENTITY;
+			break;
+		case '94E95F4A-2ECB-4038-BCFD-8357B7C41F1A'.toLowerCase():
+			entity = SEOTOOLKIT_SCRIPTMANAGER_ENTITY;
+			break;
+		default:
+			entity = SEOTOOLKIT_MODULE_ENTITY;
+			break;
+	}
     return {
 		unique: item.id,
 		parent: {

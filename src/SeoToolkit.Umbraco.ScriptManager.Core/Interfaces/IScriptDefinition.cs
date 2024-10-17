@@ -9,7 +9,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces
     {
         string Name { get; }
         string Alias { get; }
-        ConfigurationField[] Fields { get; }
+        ScriptField[] Fields { get; }
 
         void Render(ScriptRenderModel model, Dictionary<string, object> config);
     }

@@ -1,17 +1,16 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.Common.Attributes;
 using SeoToolkit.Umbraco.ScriptManager.Core.Collections;
 using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.PostModels;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels;
-using Umbraco.Cms.Api.Management.Controllers;
+using SeoToolkit.Umbraco.Common.Core.Controllers;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 {
-    [PluginController("SeoToolkit")]
-    public class ScriptManagerController : ManagementApiControllerBase
+    [ApiExplorerSettings(GroupName = "seoToolkit")]
+    public class ScriptManagerController : SeoToolkitControllerBase
     {
         private readonly ScriptDefinitionCollection _scriptDefinitionCollection;
         private readonly IScriptManagerService _scriptManagerService;
@@ -22,15 +21,19 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
             _scriptManagerService = scriptManagerService;
         }
 
+        [HttpGet]
+        [ProducesResponseType(typeof(ScriptDetailViewModel), 200)]
         public IActionResult Get(int id)
         {
             var script = _scriptManagerService.Get(id);
             if (script is null)
                 return NotFound();
 
-            return new JsonResult(new ScriptDetailViewModel(script));
+            return Ok(new ScriptDetailViewModel(script));
         }
 
+        [HttpPost]
+        [ProducesResponseType(typeof(ScriptDetailViewModel), 200)]
         public IActionResult Save(CreateScriptPostModel postModel)
         {
             var definition = _scriptDefinitionCollection.FirstOrDefault(it => it.Alias == postModel.DefinitionAlias);
@@ -41,26 +44,29 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
                 Id = postModel.Id,
                 Name = postModel.Name,
                 Definition = definition,
-                Config = postModel.Fields.ToDictionary(it => it.Key, it => it.Value)
+                Config = postModel.Fields.ToDictionary(it => it.Key, it => (object) it.Value)
             };
             script = _scriptManagerService.Save(script);
-            return new JsonResult(new ScriptDetailViewModel(script));
+            return Ok(new ScriptDetailViewModel(script));
         }
 
-        [HttpGet]
+        [HttpGet("All")]
+        [ProducesResponseType(typeof(ScriptListViewModel[]), 200)]
         public IActionResult GetAllScripts()
         {
-            return new JsonResult(_scriptManagerService.GetAll().Select(it => new ScriptListViewModel(it)));
+            return Ok(_scriptManagerService.GetAll().Select(it => new ScriptListViewModel(it)));
 
         }
 
-        [HttpGet]
+        [HttpGet("Definitions")]
+        [ProducesResponseType(typeof(ScriptDefinitionViewModel[]), 200)]
         public IActionResult GetAllDefinitions()
         {
-            return new JsonResult(_scriptDefinitionCollection.GetAll().Select(it => new ScriptDefinitionViewModel(it)));
+            return Ok(_scriptDefinitionCollection.GetAll().Select(it => new ScriptDefinitionViewModel(it)));
         }
 
-        [HttpPost]
+        [HttpDelete]
+        [ProducesResponseType(typeof(ScriptListViewModel[]), 200)]
         public IActionResult Delete(DeleteScriptPostModel postModel)
         {
             _scriptManagerService.Delete(postModel.Ids);

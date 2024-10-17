@@ -16,15 +16,14 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions
         public string Name => "Google Tag Manager";
         public string Alias => "googleTagManager";
 
-        public ConfigurationField[] Fields => new[]
+        public ScriptField[] Fields => new[]
         {
-            new ConfigurationField
+            new ScriptField
             {
                 Key = "code",
                 Name = "Code",
                 Description = "Code that is used for your GTM instance",
-                View = "textstring"
-
+                PropertyAlias = "Umb.PropertyEditorUi.TextBox"
             }
         };
 

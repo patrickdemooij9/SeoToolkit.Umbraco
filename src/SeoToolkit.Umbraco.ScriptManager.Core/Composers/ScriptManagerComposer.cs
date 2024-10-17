@@ -37,13 +37,13 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
             if (disabledModules.Contains(DisabledModuleConstant.All))
             {
                 builder.Components().Append<DisableModuleComponent>();
-                builder.Trees().RemoveTreeController(typeof(ScriptManagerTreeController));
+                //builder.Trees().RemoveTreeController(typeof(ScriptManagerTreeController));
                 return;
             }
 
             if (disabledModules.Contains(DisabledModuleConstant.SectionTree))
             {
-                builder.Trees().RemoveTreeController(typeof(ScriptManagerTreeController));
+                //builder.Trees().RemoveTreeController(typeof(ScriptManagerTreeController));
             }
 
             builder.ScriptDefinitions()

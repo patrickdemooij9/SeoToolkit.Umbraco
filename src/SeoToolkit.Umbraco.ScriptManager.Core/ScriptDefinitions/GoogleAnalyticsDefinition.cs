@@ -19,16 +19,16 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions
         public string Alias => "googleAnalytics";
 
         //Umbraco Configuration fields of the definition
-        public ConfigurationField[] Fields => new ConfigurationField[]
-        {
-            new ConfigurationField
+        public ScriptField[] Fields =>
+        [
+            new ScriptField
             {
                 Key = PropertyIdKey,
                 Name = "Property Id",
                 Description = "Property id for Google Analytics",
-                View = "textstring"
+                PropertyAlias = "Umb.PropertyEditorUi.TextBox"
             },
-        };
+        ];
 
         public GoogleAnalyticsDefinition(ViewRenderHelper viewRenderHelper)
         {

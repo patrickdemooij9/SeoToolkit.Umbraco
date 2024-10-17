@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Html;
-using Umbraco.Cms.Core.PropertyEditors;
 using SeoToolkit.Umbraco.ScriptManager.Core.Enums;
 using SeoToolkit.Umbraco.ScriptManager.Core.Helpers;
 using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
@@ -15,16 +13,16 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions
 
         public string Name => "Hotjar";
         public string Alias => "hotjar";
-        public ConfigurationField[] Fields => new ConfigurationField[]
-        {
-            new ConfigurationField
+        public ScriptField[] Fields =>
+        [
+            new ScriptField
             {
                 Key = TrackingIdProperty,
                 Name = "Tracking Id",
                 Description = "Tracking Id used by hotjar",
-                View = "textstring"
+                PropertyAlias = "Umb.PropertyEditorUi.TextBox"
             },
-        };
+        ];
 
         public HotjarDefinition(ViewRenderHelper viewRenderHelper)
         {

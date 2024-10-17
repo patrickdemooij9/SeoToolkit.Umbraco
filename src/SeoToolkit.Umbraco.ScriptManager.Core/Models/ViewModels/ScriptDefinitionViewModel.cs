@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Umbraco.Cms.Core.PropertyEditors;
-using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
+﻿using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
+using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels
 {
@@ -9,7 +7,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels
     {
         public string Name { get; }
         public string Alias { get; }
-        public ConfigurationField[] Fields { get; }
+        public ScriptField[] Fields { get; }
 
         public ScriptDefinitionViewModel(IScriptDefinition scriptDefinition)
         {
