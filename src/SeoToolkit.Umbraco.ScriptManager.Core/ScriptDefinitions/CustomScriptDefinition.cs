@@ -37,7 +37,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions
             } 
         ];
 
-        public void Render(ScriptRenderModel model, Dictionary<string, object> config)
+        public void Render(ScriptRenderModel model, Dictionary<string, string> config)
         {
             if (config.ContainsKey(ScriptBottomHeadKey) && !string.IsNullOrWhiteSpace(config[ScriptBottomHeadKey]?.ToString()))
                 model.AddScript(ScriptPositionType.HeadBottom, new HtmlString(config[ScriptBottomHeadKey].ToString()));

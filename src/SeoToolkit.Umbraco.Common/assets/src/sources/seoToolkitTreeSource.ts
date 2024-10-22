@@ -41,14 +41,16 @@ const getAncestorsOf = (args: UmbTreeAncestorsOfRequestArgs) => {
 }
 
 const mapper = (item: NamedEntityTreeItemResponseModel): SeoToolkitTreeItemModel => {
-	const isInfo = item.id === 'CDF429D1-2380-4AC2-AC3E-22D619EE4529'.toLowerCase();
 	let entity = SEOTOOLKIT_MODULE_ENTITY;
+	let icon = 'icon-book';
 	switch(item.id){
 		case '20A2086E-7D72-44BA-B97B-5836CAF6E28E'.toLowerCase():
 			entity = SEOTOOLKIT_ROBOTSTXT_ENTITY;
+			icon = 'icon-cloud';
 			break;
 		case '94E95F4A-2ECB-4038-BCFD-8357B7C41F1A'.toLowerCase():
 			entity = SEOTOOLKIT_SCRIPTMANAGER_ENTITY;
+			icon = 'icon-script';
 			break;
 		default:
 			entity = SEOTOOLKIT_MODULE_ENTITY;
@@ -64,6 +66,6 @@ const mapper = (item: NamedEntityTreeItemResponseModel): SeoToolkitTreeItemModel
 		entityType: entity,
 		hasChildren: item.hasChildren,
 		isFolder: false,
-		icon: isInfo ? 'icon-book' : 'icon-book-alt'
+		icon: icon
 	};
 };

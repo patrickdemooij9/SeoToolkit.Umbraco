@@ -36,7 +36,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions
         }
 
         //Render function where you add your script to the correct location. You can use the ViewRenderHelper to render a cshtml view.
-        public void Render(ScriptRenderModel model, Dictionary<string, object> config)
+        public void Render(ScriptRenderModel model, Dictionary<string, string> config)
         {
             if (!config.ContainsKey(PropertyIdKey) || string.IsNullOrWhiteSpace(config[PropertyIdKey]?.ToString()))
                 return;

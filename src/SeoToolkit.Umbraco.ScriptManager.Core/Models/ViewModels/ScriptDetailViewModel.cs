@@ -8,7 +8,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public string DefinitionAlias { get; set; }
-        public Dictionary<string, object> Config { get; set; }
+        public Dictionary<string, string> Config { get; set; }
 
         public ScriptDetailViewModel(Script script)
         {

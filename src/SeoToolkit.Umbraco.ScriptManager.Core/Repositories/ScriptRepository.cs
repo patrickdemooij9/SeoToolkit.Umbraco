@@ -95,7 +95,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
                 Id = entity.Id,
                 Name = entity.Name,
                 Definition = _scriptDefinitionCollection.Get(entity.DefinitionAlias),
-                Config = JsonSerializer.Deserialize<Dictionary<string, object>>(entity.Config)
+                Config = JsonSerializer.Deserialize<Dictionary<string, string>>(entity.Config)
             };
         }
     }

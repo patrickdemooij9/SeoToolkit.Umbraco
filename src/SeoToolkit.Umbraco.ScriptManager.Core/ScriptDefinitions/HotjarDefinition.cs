@@ -29,7 +29,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions
             _viewRenderHelper = viewRenderHelper;
         }
 
-        public void Render(ScriptRenderModel model, Dictionary<string, object> config)
+        public void Render(ScriptRenderModel model, Dictionary<string, string> config)
         {
             if (!config.ContainsKey(TrackingIdProperty) ||
                 string.IsNullOrWhiteSpace(config[TrackingIdProperty]?.ToString()))

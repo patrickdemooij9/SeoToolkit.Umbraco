@@ -11,6 +11,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces
         string Alias { get; }
         ScriptField[] Fields { get; }
 
-        void Render(ScriptRenderModel model, Dictionary<string, object> config);
+        void Render(ScriptRenderModel model, Dictionary<string, string> config);
     }
 }

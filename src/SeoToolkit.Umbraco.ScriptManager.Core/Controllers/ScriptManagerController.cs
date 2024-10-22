@@ -6,10 +6,13 @@ using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.PostModels;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels;
 using SeoToolkit.Umbraco.Common.Core.Controllers;
+using Umbraco.Cms.Api.Common.Attributes;
+using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkit")]
+    [ApiExplorerSettings(GroupName = "seoToolkitScriptManager")]
+    [BackOfficeRoute("seoToolkitScriptManager")]
     public class ScriptManagerController : SeoToolkitControllerBase
     {
         private readonly ScriptDefinitionCollection _scriptDefinitionCollection;
@@ -21,7 +24,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
             _scriptManagerService = scriptManagerService;
         }
 
-        [HttpGet]
+        [HttpGet("script")]
         [ProducesResponseType(typeof(ScriptDetailViewModel), 200)]
         public IActionResult Get(int id)
         {
@@ -32,7 +35,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
             return Ok(new ScriptDetailViewModel(script));
         }
 
-        [HttpPost]
+        [HttpPost("script")]
         [ProducesResponseType(typeof(ScriptDetailViewModel), 200)]
         public IActionResult Save(CreateScriptPostModel postModel)
         {
@@ -44,13 +47,13 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
                 Id = postModel.Id,
                 Name = postModel.Name,
                 Definition = definition,
-                Config = postModel.Fields.ToDictionary(it => it.Key, it => (object) it.Value)
+                Config = postModel.Fields.ToDictionary(it => it.Key, it => it.Value)
             };
             script = _scriptManagerService.Save(script);
             return Ok(new ScriptDetailViewModel(script));
         }
 
-        [HttpGet("All")]
+        [HttpGet("scripts")]
         [ProducesResponseType(typeof(ScriptListViewModel[]), 200)]
         public IActionResult GetAllScripts()
         {
@@ -58,14 +61,14 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 
         }
 
-        [HttpGet("Definitions")]
+        [HttpGet("definitions")]
         [ProducesResponseType(typeof(ScriptDefinitionViewModel[]), 200)]
         public IActionResult GetAllDefinitions()
         {
             return Ok(_scriptDefinitionCollection.GetAll().Select(it => new ScriptDefinitionViewModel(it)));
         }
 
-        [HttpDelete]
+        [HttpDelete("script")]
         [ProducesResponseType(typeof(ScriptListViewModel[]), 200)]
         public IActionResult Delete(DeleteScriptPostModel postModel)
         {

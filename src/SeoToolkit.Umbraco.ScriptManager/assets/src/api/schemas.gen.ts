@@ -228,6 +228,7 @@ export const ScriptDetailViewModelSchema = {
         config: {
             type: 'object',
             additionalProperties: {
+                type: 'string',
                 nullable: true
             },
             nullable: true

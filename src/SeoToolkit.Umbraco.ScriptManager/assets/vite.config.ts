@@ -8,7 +8,7 @@ export default defineConfig({
             fileName: "scriptManager"
         },
         outDir: "../wwwroot/entry/scriptManager", 
-        emptyOutDir: false,
+        emptyOutDir: true,
         sourcemap: true,
         rollupOptions: {
             external: [/^@umbraco/],

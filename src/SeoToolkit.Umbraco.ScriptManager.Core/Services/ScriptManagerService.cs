@@ -55,7 +55,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
         {
             return _cache.GetCacheItem($"{CacheConstants.ScriptManager}GetAll", () =>
             {
-                return _scriptRepository.GetAll().Where(it => it.Definition != null);
+                return _scriptRepository.GetAll().Where(it => it.Definition != null).ToArray();
             });
         }
 

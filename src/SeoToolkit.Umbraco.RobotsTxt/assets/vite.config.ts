@@ -8,7 +8,7 @@ export default defineConfig({
             fileName: "robotstxt"
         },
         outDir: "../wwwroot/entry/robotstxt", 
-        emptyOutDir: false,
+        emptyOutDir: true,
         sourcemap: true,
         rollupOptions: {
             external: [/^@umbraco/],

@@ -71,7 +71,7 @@ export type ScriptDetailViewModel = {
     name?: (string) | null;
     definitionAlias?: (string) | null;
     config?: {
-        [key: string]: unknown;
+        [key: string]: ((string) | null);
     } | null;
 };
 
@@ -104,28 +104,6 @@ export const SeoToolkitModuleStatus = {
     DISABLED: 'Disabled'
 } as const;
 
-export type DeleteUmbracoSeoToolkitData = {
-    requestBody?: (DeleteScriptPostModel);
-};
-
-export type DeleteUmbracoSeoToolkitResponse = (Array<(ScriptListViewModel)>);
-
-export type GetUmbracoSeoToolkitData = {
-    id?: number;
-};
-
-export type GetUmbracoSeoToolkitResponse = ((ScriptDetailViewModel));
-
-export type PostUmbracoSeoToolkitData = {
-    requestBody?: (CreateScriptPostModel);
-};
-
-export type PostUmbracoSeoToolkitResponse = ((ScriptDetailViewModel));
-
-export type GetUmbracoSeoToolkitAllResponse = (Array<(ScriptListViewModel)>);
-
-export type GetUmbracoSeoToolkitDefinitionsResponse = (Array<(ScriptDefinitionViewModel)>);
-
 export type GetUmbracoSeoToolkitModulesResponse = (Array<(SeoToolkitModule)>);
 
 export type GetUmbracoSeoToolkitRobotsTxtResponse = (string);
@@ -156,3 +134,25 @@ export type GetUmbracoSeoToolkitTreeInfoRootData = {
 };
 
 export type GetUmbracoSeoToolkitTreeInfoRootResponse = ((PagedNamedEntityTreeItemResponseModel));
+
+export type GetUmbracoSeoToolkitScriptManagerDefinitionsResponse = (Array<(ScriptDefinitionViewModel)>);
+
+export type DeleteUmbracoSeoToolkitScriptManagerScriptData = {
+    requestBody?: (DeleteScriptPostModel);
+};
+
+export type DeleteUmbracoSeoToolkitScriptManagerScriptResponse = (Array<(ScriptListViewModel)>);
+
+export type GetUmbracoSeoToolkitScriptManagerScriptData = {
+    id?: number;
+};
+
+export type GetUmbracoSeoToolkitScriptManagerScriptResponse = ((ScriptDetailViewModel));
+
+export type PostUmbracoSeoToolkitScriptManagerScriptData = {
+    requestBody?: (CreateScriptPostModel);
+};
+
+export type PostUmbracoSeoToolkitScriptManagerScriptResponse = ((ScriptDetailViewModel));
+
+export type GetUmbracoSeoToolkitScriptManagerScriptsResponse = (Array<(ScriptListViewModel)>);

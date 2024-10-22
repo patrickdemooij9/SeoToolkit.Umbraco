@@ -9,6 +9,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Business
         public string Name { get; set; }
         public IScriptDefinition Definition { get; set; }
         public int[] DocumentTypeIds { get; set; }
-        public Dictionary<string, object> Config { get; set; }
+        public Dictionary<string, string> Config { get; set; }
     }
 }

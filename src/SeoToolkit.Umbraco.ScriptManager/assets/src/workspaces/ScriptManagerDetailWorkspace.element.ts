@@ -1,16 +1,35 @@
 import { customElement, state } from "@umbraco-cms/backoffice/external/lit";
+import { UUIInputElement } from "@umbraco-cms/backoffice/external/uui";
 import { umbFocus, UmbLitElement } from "@umbraco-cms/backoffice/lit-element";
 import { css, html } from "lit";
+import ScriptManagerDetailContext, { ST_SCRIPTMANAGER_DETAIL_TOKEN_CONTEXT } from "./ScriptManagerDetailContext";
 
 @customElement("seotoolkit-scriptmanager-detail")
 export class ScriptManagerDetailWorkspace extends UmbLitElement {
+
+    #context?: ScriptManagerDetailContext;
+
     @state()
 	private _name?: string = '';
 
-    #onNameInput(_event: Event) {
-		//const target = event.target as UUIInputElement;
-		//const value = target.value as string;
-		//this.#context?.setName(value);
+    constructor(){
+        super();
+
+        this.consumeContext(ST_SCRIPTMANAGER_DETAIL_TOKEN_CONTEXT, (instance) => {
+            this.#context = instance;
+
+            this.observe(this.#context.script, (value) => {
+                this._name = value.name!;
+            })
+        })
+    }
+
+    #onNameInput(event: Event) {
+		const target = event.target as UUIInputElement;
+		const value = target.value as string;
+		this.#context?.updateScript({
+            name: value
+        });
 	}
 
     override render(){
