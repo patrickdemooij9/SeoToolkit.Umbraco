@@ -7,7 +7,6 @@ using Umbraco.Cms.Core.Web;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
 {
-    //TODO: I need to write a migration to move everything to this format....
     public class UmbracoMediaConverter : IEditorValueConverter
     {
         private readonly IUmbracoContextFactory _umbracoContextFactory;
