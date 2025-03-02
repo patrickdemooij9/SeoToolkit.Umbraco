@@ -1,7 +1,9 @@
+import { ManifestCondition } from "@umbraco-cms/backoffice/extension-api";
 import {
   ManifestWorkspaceAction,
   ManifestWorkspaceView,
 } from "@umbraco-cms/backoffice/extension-registry";
+import { SeoEnabledCondition } from "../conditions/SeoEnabledCondition";
 
 const workSpaceView: ManifestWorkspaceView = {
   type: "workspaceView",
@@ -18,6 +20,9 @@ const workSpaceView: ManifestWorkspaceView = {
     {
       alias: "Umb.Condition.WorkspaceAlias",
       match: "Umb.Workspace.Document",
+    },
+    {
+      alias: "SeoToolkit.SeoEnabled",
     },
   ],
 };
@@ -42,4 +47,11 @@ const overwriteSaveAction: ManifestWorkspaceAction = {
   ],
 };
 
-export const ContentViewManifests = [workSpaceView, overwriteSaveAction];
+const seoConditionManifest: ManifestCondition = {
+  type: "condition",
+  name: "Seo Enabled Condition",
+  alias: "SeoToolkit.SeoEnabled",
+  api: SeoEnabledCondition,
+};
+
+export const ContentViewManifests = [workSpaceView, overwriteSaveAction, seoConditionManifest];

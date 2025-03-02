@@ -55,14 +55,13 @@ export default class OpenGraphPreviewer
       (item) => item.alias === "openGraphImage"
     );
     if (!foundItem) {
-      this.imageUrl = '';
+      this.imageUrl = "";
     }
     if (foundItem?.userValue) {
-      const userValue = (
-        foundItem.userValue as UmbMediaPickerPropertyValueEntry[]
-      );
-      if (userValue.length === 0){
-        this.imageUrl = '';
+      const userValue =
+        foundItem.userValue as UmbMediaPickerPropertyValueEntry[];
+      if (userValue.length === 0) {
+        this.imageUrl = foundItem?.value ?? "";
         return;
       }
       const { data } = await this.#imagingRepository.requestThumbnailUrls(
@@ -72,6 +71,8 @@ export default class OpenGraphPreviewer
       );
 
       this.imageUrl = data?.[0]?.url ?? "";
+    } else {
+      this.imageUrl = foundItem?.value ?? "";
     }
   }
 

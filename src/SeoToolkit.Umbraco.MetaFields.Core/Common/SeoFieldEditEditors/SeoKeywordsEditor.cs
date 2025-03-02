@@ -18,7 +18,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors
                 { "group", "keywords" },
                 { "storageType", "Json" }
             };
-            ValueConverter = new TextValueConverter();
+            ValueConverter = new ListValueConverter();
         }
     }
 }

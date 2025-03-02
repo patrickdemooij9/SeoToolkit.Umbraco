@@ -24,7 +24,7 @@ public class KeywordsField : ISeoField
 
     public HtmlString Render(object value)
     {
-        if (value is not string s) return null;
-        return string.IsNullOrEmpty(s) ? null : new HtmlString($"<meta name=\"keywords\" content=\"{string.Join(",", JsonConvert.DeserializeObject<string[]>(s))}\"/>");
+        if (value is not string[] s) return null;
+        return s.Length == 0 ? null : new HtmlString($"<meta name=\"keywords\" content=\"{string.Join(",", s)}\"/>");
     }
 }

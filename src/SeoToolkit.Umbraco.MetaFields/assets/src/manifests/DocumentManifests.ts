@@ -5,7 +5,7 @@ const documentView: any = {
   alias: "seoToolkit.metaFields.documentView",
   name: "SeoToolkit MetaFields document view",
   js: () => import("../workspaces/MetaFieldsDocumentView.element"),
-  weight: 300,
+  weight: 500,
   meta: {
     label: "Meta Fields",
     pathname: "metaFields",
@@ -31,7 +31,7 @@ const contentView: any = {
   alias: "seoToolkit.metaFields.contentView",
   name: "SeoToolkit MetaFields content view",
   js: () => import("../workspaces/MetaFieldsContentView.element"),
-  weight: 300,
+  weight: 500,
   meta: {
     label: "Meta Fields",
     pathname: "metaFields",
@@ -48,6 +48,9 @@ const contentWorkspaceContext: ManifestWorkspaceContext = {
       {
         alias: "Umb.Condition.WorkspaceAlias",
         match: "Umb.Workspace.Document",
+      },
+      {
+        alias: "SeoToolkit.SeoEnabled",
       },
     ],
   };

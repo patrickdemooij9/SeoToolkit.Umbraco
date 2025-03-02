@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetUmbracoSeoToolkitModulesResponse, GetUmbracoSeoToolkitTreeInfoAncestorsData, GetUmbracoSeoToolkitTreeInfoAncestorsResponse, GetUmbracoSeoToolkitTreeInfoChildrenData, GetUmbracoSeoToolkitTreeInfoChildrenResponse, GetUmbracoSeoToolkitTreeInfoRootData, GetUmbracoSeoToolkitTreeInfoRootResponse } from './types.gen';
+import type { GetUmbracoSeoToolkitModulesResponse, GetUmbracoSeoToolkitRobotsTxtResponse, PostUmbracoSeoToolkitRobotsTxtData, PostUmbracoSeoToolkitRobotsTxtResponse, GetUmbracoSeoToolkitTreeInfoAncestorsData, GetUmbracoSeoToolkitTreeInfoAncestorsResponse, GetUmbracoSeoToolkitTreeInfoChildrenData, GetUmbracoSeoToolkitTreeInfoChildrenResponse, GetUmbracoSeoToolkitTreeInfoRootData, GetUmbracoSeoToolkitTreeInfoRootResponse, GetUmbracoSeoToolkitSettingsSeoSettingsData, GetUmbracoSeoToolkitSettingsSeoSettingsResponse, PostUmbracoSeoToolkitSettingsSeoSettingsData, PostUmbracoSeoToolkitSettingsSeoSettingsResponse, GetUmbracoSeoToolkitMetaFieldsMetaFieldsData, GetUmbracoSeoToolkitMetaFieldsMetaFieldsResponse, PostUmbracoSeoToolkitMetaFieldsMetaFieldsData, PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponse, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFieldsResponse, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponse, PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData, PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponse, GetUmbracoSeoToolkitRedirectsDomainsResponse, PostUmbracoSeoToolkitRedirectsImportResponse, DeleteUmbracoSeoToolkitRedirectsRedirectData, DeleteUmbracoSeoToolkitRedirectsRedirectResponse, GetUmbracoSeoToolkitRedirectsRedirectData, GetUmbracoSeoToolkitRedirectsRedirectResponse, PostUmbracoSeoToolkitRedirectsRedirectData, PostUmbracoSeoToolkitRedirectsRedirectResponse, GetUmbracoSeoToolkitRedirectsRedirectsData, GetUmbracoSeoToolkitRedirectsRedirectsResponse, PostUmbracoSeoToolkitRedirectsValidateData, PostUmbracoSeoToolkitRedirectsValidateResponse, GetUmbracoSeoToolkitScriptManagerDefinitionsResponse, DeleteUmbracoSeoToolkitScriptManagerScriptData, DeleteUmbracoSeoToolkitScriptManagerScriptResponse, GetUmbracoSeoToolkitScriptManagerScriptData, GetUmbracoSeoToolkitScriptManagerScriptResponse, PostUmbracoSeoToolkitScriptManagerScriptData, PostUmbracoSeoToolkitScriptManagerScriptResponse, GetUmbracoSeoToolkitScriptManagerScriptsResponse, PostUmbracoSeoToolkitSiteAuditSiteAuditData, PostUmbracoSeoToolkitSiteAuditSiteAuditResponse, DeleteUmbracoSeoToolkitSiteAuditSiteAuditData, DeleteUmbracoSeoToolkitSiteAuditSiteAuditResponse, GetUmbracoSeoToolkitSiteAuditSiteAuditData, GetUmbracoSeoToolkitSiteAuditSiteAuditResponse, GetUmbracoSeoToolkitSiteAuditSiteAuditConfigurationResponse, GetUmbracoSeoToolkitSiteAuditSiteAuditsResponse, PostUmbracoSeoToolkitSiteAuditStopSiteAuditData, PostUmbracoSeoToolkitSiteAuditStopSiteAuditResponse, GetUmbracoSeoToolkitSitemapSitemapSettingsData, GetUmbracoSeoToolkitSitemapSitemapSettingsResponse, PostUmbracoSeoToolkitSitemapSitemapSettingsData, PostUmbracoSeoToolkitSitemapSitemapSettingsResponse } from './types.gen';
 
 export class SeoToolkitService {
     /**
@@ -14,6 +14,32 @@ export class SeoToolkitService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/seoToolkit/modules'
+        });
+    }
+    
+    /**
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitRobotsTxt(): CancelablePromise<GetUmbracoSeoToolkitRobotsTxtResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkit/robotsTxt'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitRobotsTxt(data: PostUmbracoSeoToolkitRobotsTxtData = {}): CancelablePromise<PostUmbracoSeoToolkitRobotsTxtResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkit/robotsTxt',
+            body: data.requestBody,
+            mediaType: 'application/json'
         });
     }
     
@@ -68,6 +94,439 @@ export class SeoToolkitService {
                 skip: data.skip,
                 take: data.take
             }
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.contentTypeId
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitSettingsSeoSettings(data: GetUmbracoSeoToolkitSettingsSeoSettingsData = {}): CancelablePromise<GetUmbracoSeoToolkitSettingsSeoSettingsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitSettings/seoSettings',
+            query: {
+                contentTypeId: data.contentTypeId
+            }
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitSettingsSeoSettings(data: PostUmbracoSeoToolkitSettingsSeoSettingsData = {}): CancelablePromise<PostUmbracoSeoToolkitSettingsSeoSettingsResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitSettings/seoSettings',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            responseHeader: 'Umb-Notifications'
+        });
+    }
+    
+}
+
+export class SeoToolkitMetaFieldsService {
+    /**
+     * @param data The data for the request.
+     * @param data.nodeGuid
+     * @param data.culture
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitMetaFieldsMetaFields(data: GetUmbracoSeoToolkitMetaFieldsMetaFieldsData = {}): CancelablePromise<GetUmbracoSeoToolkitMetaFieldsMetaFieldsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitMetaFields/metaFields',
+            query: {
+                nodeGuid: data.nodeGuid,
+                culture: data.culture
+            }
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitMetaFieldsMetaFields(data: PostUmbracoSeoToolkitMetaFieldsMetaFieldsData = {}): CancelablePromise<PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitMetaFields/metaFields',
+            body: data.requestBody,
+            mediaType: 'application/json'
+        });
+    }
+    
+    /**
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFields(): CancelablePromise<GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFieldsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitMetaFieldsSettings/metaFieldsAdditionalFields'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.nodeId
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettings(data: GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData = {}): CancelablePromise<GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitMetaFieldsSettings/metaFieldsSettings',
+            query: {
+                nodeId: data.nodeId
+            }
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettings(data: PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData = {}): CancelablePromise<PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitMetaFieldsSettings/metaFieldsSettings',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            responseHeader: 'Umb-Notifications'
+        });
+    }
+    
+}
+
+export class SeoToolkitRedirectsService {
+    /**
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitRedirectsDomains(): CancelablePromise<GetUmbracoSeoToolkitRedirectsDomainsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitRedirects/domains'
+        });
+    }
+    
+    /**
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitRedirectsImport(): CancelablePromise<PostUmbracoSeoToolkitRedirectsImportResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitRedirects/import',
+            responseHeader: 'Umb-Notifications',
+            errors: {
+                400: 'Bad Request',
+                422: 'Unprocessable Content'
+            }
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static deleteUmbracoSeoToolkitRedirectsRedirect(data: DeleteUmbracoSeoToolkitRedirectsRedirectData = {}): CancelablePromise<DeleteUmbracoSeoToolkitRedirectsRedirectResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/umbraco/seoToolkitRedirects/redirect',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            responseHeader: 'Umb-Notifications'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.id
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitRedirectsRedirect(data: GetUmbracoSeoToolkitRedirectsRedirectData = {}): CancelablePromise<GetUmbracoSeoToolkitRedirectsRedirectResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitRedirects/redirect',
+            query: {
+                id: data.id
+            }
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitRedirectsRedirect(data: PostUmbracoSeoToolkitRedirectsRedirectData = {}): CancelablePromise<PostUmbracoSeoToolkitRedirectsRedirectResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitRedirects/redirect',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            responseHeader: 'Umb-Notifications'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.pageNumber
+     * @param data.pageSize
+     * @param data.orderBy
+     * @param data.orderDirection
+     * @param data.search
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitRedirectsRedirects(data: GetUmbracoSeoToolkitRedirectsRedirectsData = {}): CancelablePromise<GetUmbracoSeoToolkitRedirectsRedirectsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitRedirects/redirects',
+            query: {
+                pageNumber: data.pageNumber,
+                pageSize: data.pageSize,
+                orderBy: data.orderBy,
+                orderDirection: data.orderDirection,
+                search: data.search
+            }
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.fileExtension
+     * @param data.domain
+     * @param data.formData
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitRedirectsValidate(data: PostUmbracoSeoToolkitRedirectsValidateData = {}): CancelablePromise<PostUmbracoSeoToolkitRedirectsValidateResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitRedirects/validate',
+            query: {
+                fileExtension: data.fileExtension,
+                domain: data.domain
+            },
+            formData: data.formData,
+            mediaType: 'multipart/form-data',
+            responseHeader: 'Umb-Notifications',
+            errors: {
+                400: 'Bad Request',
+                422: 'Unprocessable Content'
+            }
+        });
+    }
+    
+}
+
+export class SeoToolkitScriptManagerService {
+    /**
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitScriptManagerDefinitions(): CancelablePromise<GetUmbracoSeoToolkitScriptManagerDefinitionsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitScriptManager/definitions'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static deleteUmbracoSeoToolkitScriptManagerScript(data: DeleteUmbracoSeoToolkitScriptManagerScriptData = {}): CancelablePromise<DeleteUmbracoSeoToolkitScriptManagerScriptResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/umbraco/seoToolkitScriptManager/script',
+            body: data.requestBody,
+            mediaType: 'application/json'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.id
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitScriptManagerScript(data: GetUmbracoSeoToolkitScriptManagerScriptData = {}): CancelablePromise<GetUmbracoSeoToolkitScriptManagerScriptResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitScriptManager/script',
+            query: {
+                id: data.id
+            }
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitScriptManagerScript(data: PostUmbracoSeoToolkitScriptManagerScriptData = {}): CancelablePromise<PostUmbracoSeoToolkitScriptManagerScriptResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitScriptManager/script',
+            body: data.requestBody,
+            mediaType: 'application/json'
+        });
+    }
+    
+    /**
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitScriptManagerScripts(): CancelablePromise<GetUmbracoSeoToolkitScriptManagerScriptsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitScriptManager/scripts'
+        });
+    }
+    
+}
+
+export class SeoToolkitSiteAuditService {
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns number OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitSiteAuditSiteAudit(data: PostUmbracoSeoToolkitSiteAuditSiteAuditData = {}): CancelablePromise<PostUmbracoSeoToolkitSiteAuditSiteAuditResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitSiteAudit/siteAudit',
+            body: data.requestBody,
+            mediaType: 'application/json'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static deleteUmbracoSeoToolkitSiteAuditSiteAudit(data: DeleteUmbracoSeoToolkitSiteAuditSiteAuditData = {}): CancelablePromise<DeleteUmbracoSeoToolkitSiteAuditSiteAuditResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/umbraco/seoToolkitSiteAudit/siteAudit',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            responseHeader: 'Umb-Notifications'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.id
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitSiteAuditSiteAudit(data: GetUmbracoSeoToolkitSiteAuditSiteAuditData = {}): CancelablePromise<GetUmbracoSeoToolkitSiteAuditSiteAuditResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitSiteAudit/siteAudit',
+            query: {
+                id: data.id
+            }
+        });
+    }
+    
+    /**
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitSiteAuditSiteAuditConfiguration(): CancelablePromise<GetUmbracoSeoToolkitSiteAuditSiteAuditConfigurationResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitSiteAudit/siteAuditConfiguration'
+        });
+    }
+    
+    /**
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitSiteAuditSiteAudits(): CancelablePromise<GetUmbracoSeoToolkitSiteAuditSiteAuditsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitSiteAudit/siteAudits'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitSiteAuditStopSiteAudit(data: PostUmbracoSeoToolkitSiteAuditStopSiteAuditData = {}): CancelablePromise<PostUmbracoSeoToolkitSiteAuditStopSiteAuditResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitSiteAudit/stopSiteAudit',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            responseHeader: 'Umb-Notifications'
+        });
+    }
+    
+}
+
+export class SeoToolkitSitemapService {
+    /**
+     * @param data The data for the request.
+     * @param data.contentTypeGuid
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitSitemapSitemapSettings(data: GetUmbracoSeoToolkitSitemapSitemapSettingsData = {}): CancelablePromise<GetUmbracoSeoToolkitSitemapSitemapSettingsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitSitemap/sitemapSettings',
+            query: {
+                contentTypeGuid: data.contentTypeGuid
+            }
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitSitemapSitemapSettings(data: PostUmbracoSeoToolkitSitemapSitemapSettingsData = {}): CancelablePromise<PostUmbracoSeoToolkitSitemapSitemapSettingsResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitSitemap/sitemapSettings',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            responseHeader: 'Umb-Notifications'
         });
     }
     

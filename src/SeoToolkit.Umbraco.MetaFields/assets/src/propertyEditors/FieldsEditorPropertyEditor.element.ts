@@ -9,10 +9,14 @@ import {
 import { css, html, LitElement } from "lit";
 import { MetaFieldsSettingsRepository } from "../dataAccess/MetaFieldsSettingsRepository";
 import { UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/document-type";
+import { UmbDataTypeDetailRepository } from "@umbraco-cms/backoffice/data-type";
 import { UMB_MODAL_MANAGER_CONTEXT } from "@umbraco-cms/backoffice/modal";
 import { ItemGroupPickerConfig } from "../popups/ItemGroupPicker.element";
 import { UmbSorterController } from "@umbraco-cms/backoffice/sorter";
-import { UmbPropertyValueChangeEvent } from "@umbraco-cms/backoffice/property-editor";
+import {
+  UmbPropertyEditorConfigCollection,
+  UmbPropertyValueChangeEvent,
+} from "@umbraco-cms/backoffice/property-editor";
 
 interface FieldData {
   name: string;
@@ -34,6 +38,7 @@ export default class FieldsEditorPropertyEditor
   implements UmbPropertyEditorUiElement
 {
   #repository: MetaFieldsSettingsRepository;
+  #dataTypeDetailRepository = new UmbDataTypeDetailRepository(this);
   #sorter: UmbSorterController<string>;
 
   @property({ type: Array })
@@ -44,6 +49,12 @@ export default class FieldsEditorPropertyEditor
 
   @state()
   contentTypeFields: FieldData[] = [];
+
+  @state()
+  dataTypesCache: { [key: string]: string } = {};
+
+  @state()
+  dataTypesToRender: string[] = [];
 
   constructor() {
     super();
@@ -72,15 +83,47 @@ export default class FieldsEditorPropertyEditor
 
         value.forEach((field) => {
           field.properties.forEach((prop) => {
-            contentTypeFields.push({
-              name: prop.name,
-              value: prop.alias,
-              source: 1,
-              group:
-                field.containers.find((con) => con.id === prop.container!.id)
-                  ?.name ?? "",
-              onlyShowIfInherited: false,
-            });
+            if (this.dataTypesCache[prop.dataType.unique]) {
+              if (
+                !this.dataTypesToRender.includes(
+                  this.dataTypesCache[prop.dataType.unique]
+                )
+              ) {
+                return;
+              } else {
+                contentTypeFields.push({
+                  name: prop.name,
+                  value: prop.alias,
+                  source: 1,
+                  group:
+                    field.containers.find(
+                      (con) => con.id === prop.container!.id
+                    )?.name ?? "",
+                  onlyShowIfInherited: false,
+                });
+              }
+            } else {
+              this.#dataTypeDetailRepository
+                .requestByUnique(prop.dataType.unique)
+                .then((dataType) => {
+                  this.dataTypesCache[prop.dataType.unique] =
+                    dataType.data!.editorAlias!;
+                  if (
+                    this.dataTypesToRender.includes(dataType.data!.editorAlias!)
+                  ) {
+                    contentTypeFields.push({
+                      name: prop.name,
+                      value: prop.alias,
+                      source: 1,
+                      group:
+                        field.containers.find(
+                          (con) => con.id === prop.container!.id
+                        )?.name ?? "",
+                      onlyShowIfInherited: false,
+                    });
+                  }
+                });
+            }
           });
         });
         this.contentTypeFields = contentTypeFields;
@@ -96,6 +139,15 @@ export default class FieldsEditorPropertyEditor
         group: "SEO Toolkit",
       }));
     });
+  }
+
+  public set config(config: UmbPropertyEditorConfigCollection | undefined) {
+    if (!config) {
+      return;
+    }
+
+    this.dataTypesToRender =
+      config.getValueByAlias<string[]>("dataTypes") ?? [];
   }
 
   getFields() {
@@ -120,7 +172,8 @@ export default class FieldsEditorPropertyEditor
       const fields = this.getFields();
       this.value = modal
         .getValue()
-        .map((value) => fields.find((field) => field.value === value)!);
+        .map((value) => fields.find((field) => field.value === value)!)
+        .filter((value) => value !== undefined);
       this.#sorter.setModel(this.value.map((item) => item.value));
       this.dispatchEvent(new UmbPropertyValueChangeEvent());
     });
@@ -133,7 +186,11 @@ export default class FieldsEditorPropertyEditor
           this.value ?? [],
           (item) => item.value,
           (item) =>
-            html` <div data-sort-id=${item.value} class="field-item">${item.name}</div> `
+            html`
+              <div data-sort-id=${item.value} class="field-item">
+                ${item.name}
+              </div>
+            `
         )}
       </div>
       <div>
