@@ -1,4 +1,4 @@
-import { ManifestDashboard } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestDashboard } from "@umbraco-cms/backoffice/dashboard";
 import MyWelcomeDashboardElement from "./welcomeDashboard.element";
 
 export const welcomeDashboardManifest : ManifestDashboard = {

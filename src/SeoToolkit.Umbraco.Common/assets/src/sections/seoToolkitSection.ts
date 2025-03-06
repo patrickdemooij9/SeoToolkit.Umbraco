@@ -1,4 +1,4 @@
-import { ManifestSection } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestSection } from "@umbraco-cms/backoffice/section";
 
 export const seoToolkitSection : ManifestSection = {
     type: 'section',

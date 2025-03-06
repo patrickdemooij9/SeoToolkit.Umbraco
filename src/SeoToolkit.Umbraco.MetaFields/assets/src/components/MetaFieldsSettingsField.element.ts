@@ -8,11 +8,10 @@ import {
 import { html, LitElement } from "lit";
 import { SeoFieldViewModel } from "../api";
 import {
-  ManifestPropertyEditorUi,
   umbExtensionsRegistry,
 } from "@umbraco-cms/backoffice/extension-registry";
 import { createExtensionElement } from "@umbraco-cms/backoffice/extension-api";
-import { UmbPropertyEditorConfigCollection, UmbPropertyValueChangeEvent } from "@umbraco-cms/backoffice/property-editor";
+import { ManifestPropertyEditorUi, UmbPropertyEditorConfigCollection, UmbPropertyValueChangeEvent } from "@umbraco-cms/backoffice/property-editor";
 
 @customElement("st-metafield-settingsfield")
 export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {

@@ -57,7 +57,7 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
       instance.unique.subscribe((value) => {
-        this._documentUnique = value;
+        this._documentUnique = value?.toString();
 
         this.#settingsRepository.getSettings(value!).then((resp) => {
           this._seoEnabled = resp.data!.isEnabled;
@@ -76,7 +76,7 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
     new UmbExtensionsManifestInitializer(
       this,
       umbExtensionsRegistry,
-      "seoDocumentView",
+      "seoToolkitDocumentView",
       null,
       (documentViews) => {
         this._documentViews = documentViews.map(

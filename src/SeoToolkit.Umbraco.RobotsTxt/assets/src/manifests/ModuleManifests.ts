@@ -1,6 +1,8 @@
-import { ManifestModal, ManifestTreeItem, ManifestWorkspace, ManifestWorkspaceAction } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestTreeItem } from "@umbraco-cms/backoffice/tree";
 import { SEOTOOLKIT_ROBOTSTXT_ENTITY } from "../Constants";
 import { RobotsTxtSaveAction } from "../contexts/RobotsTxtSaveAction";
+import { ManifestWorkspace, ManifestWorkspaceAction } from "@umbraco-cms/backoffice/workspace";
+import { ManifestModal } from "@umbraco-cms/backoffice/modal";
 
 const RobotsTxtTreeItem: ManifestTreeItem = {
     type: 'treeItem',

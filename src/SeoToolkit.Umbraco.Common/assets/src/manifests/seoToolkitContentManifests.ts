@@ -1,9 +1,9 @@
 import { ManifestCondition } from "@umbraco-cms/backoffice/extension-api";
+import { SeoEnabledCondition } from "../conditions/SeoEnabledCondition";
 import {
   ManifestWorkspaceAction,
   ManifestWorkspaceView,
-} from "@umbraco-cms/backoffice/extension-registry";
-import { SeoEnabledCondition } from "../conditions/SeoEnabledCondition";
+} from "@umbraco-cms/backoffice/workspace";
 
 const workSpaceView: ManifestWorkspaceView = {
   type: "workspaceView",
@@ -54,4 +54,8 @@ const seoConditionManifest: ManifestCondition = {
   api: SeoEnabledCondition,
 };
 
-export const ContentViewManifests = [workSpaceView, overwriteSaveAction, seoConditionManifest];
+export const ContentViewManifests = [
+  workSpaceView,
+  overwriteSaveAction,
+  seoConditionManifest,
+];

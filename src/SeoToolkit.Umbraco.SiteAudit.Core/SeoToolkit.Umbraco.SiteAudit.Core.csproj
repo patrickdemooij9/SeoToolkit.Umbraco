@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks>net9.0</TargetFrameworks>
     <ContentTargetFolders>.</ContentTargetFolders>
     <Product>SeoToolkit SiteAudit Core</Product>
     <PackageId>SeoToolkit.Umbraco.SiteAudit.Core</PackageId>
@@ -16,8 +16,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="[14.1.0,14.999)" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[14.1.0,14.999)" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="[15.0.0,15.999)" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[15.0.0,15.999)" />
   </ItemGroup>
 
   <ItemGroup>

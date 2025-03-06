@@ -1,7 +1,8 @@
-import { ManifestWorkspaceContext } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
+
 
 const documentView: any = {
-  type: "seoDocumentView",
+  type: "seoToolkitDocumentView",
   alias: "seoToolkit.metaFields.documentView",
   name: "SeoToolkit MetaFields document view",
   js: () => import("../workspaces/MetaFieldsDocumentView.element"),
@@ -27,7 +28,7 @@ const documentWorkspaceContext: ManifestWorkspaceContext = {
 };
 
 const contentView: any = {
-  type: "seoContentView",
+  type: "seoToolkitContentView",
   alias: "seoToolkit.metaFields.contentView",
   name: "SeoToolkit MetaFields content view",
   js: () => import("../workspaces/MetaFieldsContentView.element"),

@@ -8,11 +8,11 @@ import {
 import { html, LitElement } from "lit";
 import { SeoSettingsFieldViewModel } from "../api";
 import {
-  ManifestPropertyEditorUi,
   umbExtensionsRegistry,
 } from "@umbraco-cms/backoffice/extension-registry";
 import { createExtensionElement } from "@umbraco-cms/backoffice/extension-api";
 import {
+  ManifestPropertyEditorUi,
   UmbPropertyEditorConfigCollection,
   UmbPropertyValueChangeEvent,
 } from "@umbraco-cms/backoffice/property-editor";

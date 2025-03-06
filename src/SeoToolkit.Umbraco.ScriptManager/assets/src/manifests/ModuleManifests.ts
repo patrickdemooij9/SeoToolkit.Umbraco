@@ -1,6 +1,7 @@
-import { ManifestTreeItem, ManifestWorkspace, ManifestWorkspaceAction, ManifestWorkspaceView } from '@umbraco-cms/backoffice/extension-registry';
+import { ManifestTreeItem } from '@umbraco-cms/backoffice/tree';
 import { SEOTOOLKIT_SCRIPTMANAGER_ENTITY } from '../Constants';
 import { ScriptManagerSaveAction } from '../actions/ScriptManagerSaveAction';
+import { ManifestWorkspace, ManifestWorkspaceAction, ManifestWorkspaceView } from '@umbraco-cms/backoffice/workspace';
 
 const ScriptManagerTreeItem: ManifestTreeItem = {
     type: 'treeItem',

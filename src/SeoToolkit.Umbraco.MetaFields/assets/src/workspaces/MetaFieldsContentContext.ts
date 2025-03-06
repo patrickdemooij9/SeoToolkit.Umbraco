@@ -45,7 +45,7 @@ export default class MetaFieldsContentContext
         this.#repository.get(unique!).then((resp) => {
           this.#model.update(resp.data!);
         });
-        this.#nodeId = unique;
+        this.#nodeId = unique?.toString();
       });
     });
 

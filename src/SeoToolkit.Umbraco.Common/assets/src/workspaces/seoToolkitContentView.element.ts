@@ -39,7 +39,7 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
     new UmbExtensionsManifestInitializer(
       this,
       umbExtensionsRegistry,
-      "seoContentView",
+      "seoToolkitContentView",
       null,
       (documentViews) => {
         this._contentViews = documentViews.map(

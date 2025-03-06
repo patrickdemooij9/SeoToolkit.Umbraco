@@ -1,5 +1,6 @@
-import { ManifestTreeItem, ManifestWorkspace } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestTreeItem } from "@umbraco-cms/backoffice/tree";
 import { SEOTOOLKIT_SITEAUDIT_ENTITY } from "../Constants";
+import { ManifestWorkspace } from "@umbraco-cms/backoffice/workspace";
 
 const SiteAuditTreeItem: ManifestTreeItem = {
     type: 'treeItem',

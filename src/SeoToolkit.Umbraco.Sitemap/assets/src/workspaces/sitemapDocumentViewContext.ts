@@ -29,7 +29,7 @@ export default class SitemapDocumentViewContext extends UmbContextBase<SitemapPa
             instance.unique.subscribe((unique) => {
                 this.#repository.getPageSettings(unique!).then((pageSettings) => {
                     this.#model.update({
-                        contentTypeGuid: unique,
+                        contentTypeGuid: unique?.toString(),
                         hideFromSitemap: pageSettings.data?.hideFromSitemap,
                         changeFrequency: pageSettings.data?.changeFrequency,
                         priority: pageSettings.data?.priority

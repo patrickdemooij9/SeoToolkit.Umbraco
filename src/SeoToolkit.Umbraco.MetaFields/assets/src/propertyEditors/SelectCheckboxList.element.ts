@@ -1,5 +1,4 @@
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
-import { UmbPropertyEditorUiElement } from "@umbraco-cms/backoffice/extension-registry";
 import {
   customElement,
   property,
@@ -8,6 +7,7 @@ import {
 import { html, LitElement } from "lit";
 import {
   UmbPropertyEditorConfigCollection,
+  UmbPropertyEditorUiElement,
   UmbPropertyValueChangeEvent,
 } from "@umbraco-cms/backoffice/property-editor";
 

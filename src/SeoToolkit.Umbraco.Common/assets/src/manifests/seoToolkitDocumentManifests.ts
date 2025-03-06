@@ -1,4 +1,4 @@
-import { ManifestWorkspaceAction, ManifestWorkspaceView } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestWorkspaceAction, ManifestWorkspaceView } from '@umbraco-cms/backoffice/workspace';
 
 const workSpaceView: ManifestWorkspaceView = {
     type: 'workspaceView',

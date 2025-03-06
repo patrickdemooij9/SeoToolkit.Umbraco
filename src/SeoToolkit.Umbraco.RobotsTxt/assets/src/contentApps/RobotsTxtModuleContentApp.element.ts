@@ -1,6 +1,6 @@
 import { LitElement, html, customElement } from "@umbraco-cms/backoffice/external/lit";
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
-import { ManifestWorkspaceView } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestWorkspaceView } from "@umbraco-cms/backoffice/workspace";
 
 @customElement('robotstxt-module')
 export class RobotsTxtModule extends UmbElementMixin(LitElement) {

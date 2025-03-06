@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks>net9.0</TargetFrameworks>
 		<ContentTargetFolders>.</ContentTargetFolders>
 		<Product>SeoToolkit Sitemap</Product>
 		<PackageId>SeoToolkit.Umbraco.Sitemap</PackageId>

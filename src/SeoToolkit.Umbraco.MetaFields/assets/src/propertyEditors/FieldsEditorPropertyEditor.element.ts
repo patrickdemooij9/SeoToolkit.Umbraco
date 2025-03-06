@@ -1,5 +1,4 @@
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
-import { UmbPropertyEditorUiElement } from "@umbraco-cms/backoffice/extension-registry";
 import {
   customElement,
   property,
@@ -15,6 +14,7 @@ import { ItemGroupPickerConfig } from "../popups/ItemGroupPicker.element";
 import { UmbSorterController } from "@umbraco-cms/backoffice/sorter";
 import {
   UmbPropertyEditorConfigCollection,
+  UmbPropertyEditorUiElement,
   UmbPropertyValueChangeEvent,
 } from "@umbraco-cms/backoffice/property-editor";
 

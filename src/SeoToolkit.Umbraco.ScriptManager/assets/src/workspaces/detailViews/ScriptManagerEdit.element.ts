@@ -1,10 +1,10 @@
-import { UmbWorkspaceViewElement } from "@umbraco-cms/backoffice/extension-registry";
 import { customElement, repeat, state } from "@umbraco-cms/backoffice/external/lit";
 import { UmbLitElement } from "@umbraco-cms/backoffice/lit-element";
 import { UmbPropertyDatasetElement, UmbPropertyValueData } from "@umbraco-cms/backoffice/property";
 import { css, html } from "lit";
 import { ScriptDefinitionViewModel, ScriptField } from "../../api";
 import ScriptManagerDetailContext, { ST_SCRIPTMANAGER_DETAIL_TOKEN_CONTEXT } from "../ScriptManagerDetailContext";
+import { UmbWorkspaceViewElement } from "@umbraco-cms/backoffice/workspace";
 
 @customElement("script-manager-edit")
 export class ScriptManagerEdit extends UmbLitElement implements UmbWorkspaceViewElement {

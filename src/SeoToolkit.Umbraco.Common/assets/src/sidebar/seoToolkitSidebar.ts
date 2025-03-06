@@ -1,4 +1,4 @@
-import { ManifestSectionSidebarApp } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestSectionSidebarApp } from "@umbraco-cms/backoffice/section";
 
 export const seoToolkitSidebar : ManifestSectionSidebarApp = {
     type: "sectionSidebarApp",

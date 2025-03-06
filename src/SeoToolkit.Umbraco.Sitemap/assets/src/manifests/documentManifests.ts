@@ -1,7 +1,7 @@
-import { ManifestWorkspaceContext } from '@umbraco-cms/backoffice/extension-registry';
+import { ManifestWorkspaceContext } from '@umbraco-cms/backoffice/workspace';
 
 const documentView: any = {
-    type: 'seoDocumentView',
+    type: 'seoToolkitDocumentView',
     alias: 'seoToolkit.sitemap.documentView',
     name: 'SeoToolkit Sitemap document view',
     js: () => import('../workspaces/sitemapDocumentView.element'),
@@ -16,7 +16,7 @@ const documentView: any = {
 const documentWorkspaceContext: ManifestWorkspaceContext = {
     type: 'workspaceContext',
     alias: 'seoToolkit.sitemap.documentWorkspaceContext',
-    name: 'SeoToolkit Sitemap workdpsace context',
+    name: 'SeoToolkit Sitemap workspace context',
     api: () => import('../workspaces/sitemapDocumentViewContext'),
     conditions: [
         {

@@ -1,4 +1,5 @@
-import { ManifestTreeItem } from '@umbraco-cms/backoffice/extension-registry';
+
+import { ManifestTreeItem } from '@umbraco-cms/backoffice/tree';
 import { SEOTOOLKIT_REDIRECT_ENTITY } from '../Constants';
 
 const RedirectTreeItem: ManifestTreeItem = {

@@ -1,6 +1,6 @@
-import { UMB_COLLECTION_ALIAS_CONDITION } from "@umbraco-cms/backoffice/collection";
-import { ManifestCollection, ManifestCollectionAction, ManifestCollectionView, ManifestEntityBulkAction, ManifestRepository } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestCollection, ManifestCollectionAction, ManifestCollectionView, UMB_COLLECTION_ALIAS_CONDITION } from "@umbraco-cms/backoffice/collection";
 import { SEOTOOLKIT_SCRIPTMANAGER_ENTITY } from "../Constants";
+import { ManifestEntityBulkAction, ManifestRepository } from "@umbraco-cms/backoffice/extension-registry";
 
 const ScriptManagerCollection: ManifestCollection = {
     type: 'collection',
