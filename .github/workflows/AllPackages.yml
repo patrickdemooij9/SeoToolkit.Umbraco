@@ -34,7 +34,7 @@ jobs:
 #      run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_DEPLOY_KEY }} -s https://api.nuget.org/v3/index.json
 
     - name: upload-artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: Build-Results
         path: ${{ env.OUTPUT }}/**/*
