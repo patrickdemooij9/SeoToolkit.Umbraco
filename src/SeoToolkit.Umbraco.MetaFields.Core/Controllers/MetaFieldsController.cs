@@ -138,7 +138,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
         private void EnsureLanguage(string culture)
         {
-            if (!string.IsNullOrWhiteSpace(culture))
+            if (!string.IsNullOrWhiteSpace(culture) && culture != "invariant")
                 _variationContextAccessor.VariationContext = new VariationContext(culture);
             else
                 _variationContextAccessor.VariationContext = new VariationContext(_localizationService.GetDefaultLanguageIsoCode());

@@ -12,8 +12,8 @@ export class MetaFieldsContentRepository extends UmbControllerBase {
     this.#source = new MetaFieldsContentSource(host);
   }
 
-  async get(contentGuid: string) {
-    return this.#source.get(contentGuid);
+  async get(contentGuid: string, culture: string) {
+    return this.#source.get(contentGuid, culture);
   }
 
   async save(model: MetaFieldsSettingsPostViewModel) {

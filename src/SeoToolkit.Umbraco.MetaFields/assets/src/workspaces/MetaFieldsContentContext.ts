@@ -9,11 +9,12 @@ import { MetaFieldsContentRepository } from "../dataAccess/MetaFieldsContentRepo
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/document";
 import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
-import {
-  UMB_ACTION_EVENT_CONTEXT,
-  UmbActionEventContext,
-} from "@umbraco-cms/backoffice/action";
-import { UmbRequestReloadStructureForEntityEvent } from "@umbraco-cms/backoffice/entity-action";
+
+interface MetaFieldsSettingsVariant {
+  variant: string;
+  model: UmbObjectState<MetaFieldsSettingsViewModel>;
+  lastUpdated?: string | null;
+}
 
 export default class MetaFieldsContentContext
   extends UmbContextBase<DocumentTypeValuePostViewModel>
@@ -22,55 +23,85 @@ export default class MetaFieldsContentContext
   workspaceAlias: string = "Umb.Workspace.Document";
 
   #repository: MetaFieldsContentRepository;
-  #actionEventContext?: UmbActionEventContext;
 
   #nodeId?: string;
-  #culture?: string;
+  #cultures: string[] = [];
 
-  #model = new UmbObjectState<MetaFieldsSettingsViewModel>({});
-  public readonly model = this.#model.asObservable();
+  #variants: { [key: string]: MetaFieldsSettingsVariant } =
+    {};
 
   constructor(host: UmbControllerHost) {
+    console.log("Hello world");
+
     super(host, ST_METAFIELDS_CONTENT_TOKEN_CONTEXT.toString());
 
     this.#repository = new MetaFieldsContentRepository(host);
 
     this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
       instance.splitView.activeVariantsInfo.subscribe((variants) => {
-        if (variants.length > 0) {
-          this.#culture = variants[0].culture!;
-        }
+        variants.forEach((variant) => {
+          const culture = variant.culture ?? "invariant";
+          if (!this.#cultures.includes(culture)) {
+            this.#cultures.push(culture);
+          }
+        });
+        this.#loadDataFromRepository();
       });
       instance.unique.subscribe((unique) => {
-        this.#repository.get(unique!).then((resp) => {
-          this.#model.update(resp.data!);
-        });
         this.#nodeId = unique?.toString();
+        this.#loadDataFromRepository();
+      });
+      instance.data.subscribe((item) => {
+        item?.variants.forEach((variant) => {
+          const culture = variant.culture ?? 'invariant';
+          const currentDate = this.#getVariant(culture).lastUpdated;
+          if (currentDate && currentDate !== variant.updateDate) {
+            this.save(culture);
+          }
+
+          console.log(`${variant.culture} - ${variant.publishDate} - ${variant.updateDate}`)
+          this.#getVariant(culture).lastUpdated = variant.updateDate;
+        })
       });
     });
+  }
 
-    this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
-      this.#actionEventContext = instance;
-      instance.addEventListener("document.save", () => this.#save(this));
+  #loadDataFromRepository() {
+    if (!this.#nodeId) {
+      return;
+    }
 
-      // This is quite ugly, but the only way to do it. Should be able to be changed for v15
-      instance.addEventListener(UmbRequestReloadStructureForEntityEvent.TYPE, () => this.#save(this));
+    this.#cultures.forEach((variant) => {
+      if (
+        this.#variants[variant] &&
+        this.#variants[variant].model.getValue().fields
+      ) {
+        return;
+      }
+
+      this.#repository.get(this.#nodeId!, variant).then((resp) => {
+        this.#getVariant(variant).model.update(resp.data!);
+      });
     });
   }
 
-  destroy(): void {
-    this.#actionEventContext?.removeEventListener("document.save", () =>
-      this.#save(this)
-    );
-    this.#actionEventContext?.removeEventListener(UmbRequestReloadStructureForEntityEvent.TYPE, () => this.#save(this));
+  #getVariant(variant: string) {
+    if (this.#variants[variant]) {
+      return this.#variants[variant];
+    }
+    this.#variants[variant] = {
+      variant,
+      model: new UmbObjectState<MetaFieldsSettingsViewModel>({})
+    }
+    return this.#variants[variant];
   }
 
-  #save(context: MetaFieldsContentContext) {
-    context.save();
+  getModel(variant: string) {
+    return this.#getVariant(variant).model.asObservable();
   }
 
-  save() {
-    const model = this.#model.getValue();
+  save(culture: string) {
+    const model = this.#variants[culture]!.model.getValue();
     const userValues: { [key: string]: unknown } = {};
     model.fields?.forEach((field) => {
       if (field.userValue) {
@@ -80,13 +111,14 @@ export default class MetaFieldsContentContext
 
     this.#repository.save({
       nodeId: this.#nodeId!,
-      culture: this.#culture,
+      culture: culture,
       userValues: userValues,
     });
   }
 
-  updateField(alias: string, userValue: any) {
-    const fields = [...this.#model.getValue().fields!];
+  updateField(variant: string, alias: string, userValue: any) {
+    const model = this.#variants[variant].model;
+    const fields = [...model.getValue().fields!];
 
     const foundField = fields.find((item) => item.alias === alias);
     if (!foundField) {
@@ -96,7 +128,7 @@ export default class MetaFieldsContentContext
       ...foundField,
       userValue: userValue,
     };
-    this.#model.update({
+    model.update({
       fields: fields,
     });
   }
