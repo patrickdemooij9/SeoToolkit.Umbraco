@@ -31,7 +31,6 @@ export default class MetaFieldsContentContext
     {};
 
   constructor(host: UmbControllerHost) {
-    console.log("Hello world");
 
     super(host, ST_METAFIELDS_CONTENT_TOKEN_CONTEXT.toString());
 
@@ -59,7 +58,6 @@ export default class MetaFieldsContentContext
             this.save(culture);
           }
 
-          console.log(`${variant.culture} - ${variant.publishDate} - ${variant.updateDate}`)
           this.#getVariant(culture).lastUpdated = variant.updateDate;
         })
       });
