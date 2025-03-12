@@ -12,11 +12,12 @@ export class MetaFieldsContentSource {
     this.#host = host;
   }
 
-  async get(contentGuid: string) {
+  async get(contentGuid: string, culture: string) {
     return await tryExecuteAndNotify(
       this.#host,
       SeoToolkitMetaFieldsService.getUmbracoSeoToolkitMetaFieldsMetaFields({
         nodeGuid: contentGuid,
+        culture
       })
     );
   }

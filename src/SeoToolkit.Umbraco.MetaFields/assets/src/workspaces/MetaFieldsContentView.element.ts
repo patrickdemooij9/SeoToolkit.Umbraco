@@ -14,6 +14,7 @@ import { MetaFieldsSettingsViewModel } from "../api";
 import "./../components/MetaFieldsContentField.element";
 import "./../previewers/SeoContentPreviewer.element";
 import { MetaFieldsContentField } from "./../components/MetaFieldsContentField.element";
+import { UMB_PROPERTY_DATASET_CONTEXT } from "@umbraco-cms/backoffice/property";
 
 @customElement("st-metafield-content-view")
 export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
@@ -22,14 +23,23 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
   @state()
   _model?: MetaFieldsSettingsViewModel;
 
+  @state()
+  _culture?: string;
+
   constructor() {
     super();
 
-    this.consumeContext(ST_METAFIELDS_CONTENT_TOKEN_CONTEXT, (instance) => {
-      this.#context = instance;
+    this.consumeContext(UMB_PROPERTY_DATASET_CONTEXT, (datasetContext) => {
+      this._culture = datasetContext.getVariantId().culture ?? 'invariant';
 
-      instance.model.subscribe((value) => {
-        this._model = value;
+      this.consumeContext(ST_METAFIELDS_CONTENT_TOKEN_CONTEXT, (instance) => {
+        this.#context = instance;
+        
+        instance
+          .getModel(this._culture!)
+          .subscribe((value) => {
+            this._model = value;
+          });
       });
     });
   }
@@ -40,7 +50,7 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
 
   #onPropertyDataChange(e: Event) {
     const field = (e.target as MetaFieldsContentField).field;
-    this.#context?.updateField(field!.alias!, field!.userValue);
+    this.#context?.updateField(this._culture!, field!.alias!, field!.userValue);
   }
 
   override render() {

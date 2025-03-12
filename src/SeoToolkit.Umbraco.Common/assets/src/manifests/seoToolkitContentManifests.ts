@@ -10,7 +10,7 @@ const workSpaceView: ManifestWorkspaceView = {
   alias: "seoToolkit.common.content.edit",
   name: "SeoToolkit Common Content Edit",
   js: () => import("../workspaces/seoToolkitContentView.element"),
-  weight: 200,
+  weight: -100,
   meta: {
     label: "SEO",
     pathname: "seo",
