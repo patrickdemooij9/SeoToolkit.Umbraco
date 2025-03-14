@@ -15,4 +15,11 @@ const CreateRedirectLinkModal: ManifestModal = {
     js: () => import('../modals/CreateRedirectLinkModal.element'),
 }
 
-export const ModalManifest = [CreateRedirectModal, CreateRedirectLinkModal];
+const ImportRedirectLinkModal: ManifestModal = {
+    type: 'modal',
+    alias: 'seoToolkit.modal.redirect.import',
+    name: 'SeoToolkit Redirect Import Modal',
+    js: () => import('../modals/ImportRedirectsModal.element'),
+}
+
+export const ModalManifest = [CreateRedirectModal, CreateRedirectLinkModal, ImportRedirectLinkModal];

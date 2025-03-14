@@ -27,7 +27,7 @@ public class RedirectsImportHelper
         _umbracoContextFactory = umbracoContextFactory;
     }
 
-    public Attempt<Dictionary<string,string>?, string> Validate(ImportRedirectsFileExtension fileExtension, MemoryStream memoryStream, string domain)
+    public Attempt<Dictionary<string,string>?, string> Validate(ImportRedirectsFileExtension fileExtension, MemoryStream memoryStream, int domain)
     {
         SetDomain(domain);
         Attempt<Dictionary<string,string>, string> validationResult;
@@ -51,7 +51,7 @@ public class RedirectsImportHelper
         return validationResult;
     }
 
-    public Attempt<Dictionary<string,string>?, string> Import(ImportRedirectsFileExtension fileExtension, MemoryStream memoryStream, string domain)
+    public Attempt<Dictionary<string,string>?, string> Import(ImportRedirectsFileExtension fileExtension, MemoryStream memoryStream, int domain)
     {
         SetDomain(domain);
         var validation = Validate(fileExtension, memoryStream, domain);
@@ -199,16 +199,10 @@ public class RedirectsImportHelper
         }
     }
 
-    private void SetDomain(string domain)
+    private void SetDomain(int domain)
     {
-        var parseSuccess = int.TryParse(domain, out var domainId);
-        if (!parseSuccess)
-        {
-            domainId = 0;
-        }
-
         using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
-        var foundDomain = ctx.UmbracoContext.Domains?.GetAll(false).FirstOrDefault(it => it.Id == domainId);
+        var foundDomain = ctx.UmbracoContext.Domains?.GetAll(false).FirstOrDefault(it => it.Id == domain);
         if (foundDomain is null)
         {
             return;
