@@ -1,7 +1,7 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UmbDataSourceResponse } from "@umbraco-cms/backoffice/repository";
-import { GetUmbracoSeoToolkitRedirectsRedirectsResponse, SaveRedirectPostModel, SeoToolkitRedirectsService } from "../api";
-import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { GetUmbracoSeoToolkitRedirectsRedirectsResponse, ImportRedirectsFileExtension, SaveRedirectPostModel, SeoToolkitRedirectsService } from "../api";
+import { tryExecuteAndNotify, UmbResourceController } from '@umbraco-cms/backoffice/resources';
 
 export class RedirectSource {
     #host: UmbControllerHost;
@@ -43,5 +43,17 @@ export class RedirectSource {
 
     async getDomains(){
         return await tryExecuteAndNotify(this.#host, SeoToolkitRedirectsService.getUmbracoSeoToolkitRedirectsDomains());
+    }
+
+    async verifyImport(fileExtension: string, tempFileId: string, domain?: number) {
+        return UmbResourceController.tryExecute(SeoToolkitRedirectsService.postUmbracoSeoToolkitRedirectsValidate({
+            fileExtension: fileExtension! as ImportRedirectsFileExtension,
+            domain: domain,
+            tempFileId: tempFileId
+        }));
+    }
+
+    async submitImport(){
+        return await tryExecuteAndNotify(this.#host, SeoToolkitRedirectsService.postUmbracoSeoToolkitRedirectsImport());
     }
 }

@@ -30,18 +30,21 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         private readonly ILanguageService _languageService;
         private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
         private readonly RedirectsImportHelper _redirectsImportHelper;
-
+        private readonly ITemporaryFileService _temporaryFileService;
 
         public RedirectsController(IRedirectsService redirectsService,
             IUmbracoContextFactory umbracoContextFactory,
             ILanguageService languageService,
-            IBackOfficeSecurityAccessor backOfficeSecurityAccessor, RedirectsImportHelper redirectsImportHelper)
+            IBackOfficeSecurityAccessor backOfficeSecurityAccessor,
+            RedirectsImportHelper redirectsImportHelper,
+            ITemporaryFileService temporaryFileService)
         {
             _redirectsService = redirectsService;
             _umbracoContextFactory = umbracoContextFactory;
             _languageService = languageService;
             _backOfficeSecurityAccessor = backOfficeSecurityAccessor;
             _redirectsImportHelper = redirectsImportHelper;
+            _temporaryFileService = temporaryFileService;
         }
 
         [HttpPost("redirect")]
@@ -154,26 +157,26 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 
         [HttpPost("validate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public IActionResult Validate(ImportRedirectsFileExtension fileExtension, string domain, IFormFile file)
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Validate(ImportRedirectsFileExtension fileExtension, int domain, Guid tempFileId)
         {
-            if (file.Length == 0)
+            var file = await _temporaryFileService.GetAsync(tempFileId);
+            if (file is null)
             {
                 return BadRequest("Please select a file");
             }
 
             using var memoryStream = new MemoryStream();
-            file.CopyTo(memoryStream);
+            file.OpenReadStream().CopyTo(memoryStream);
 
             var result = _redirectsImportHelper.Validate(fileExtension, memoryStream, domain);
             if (result.Success)
             {
-
                 // Storing the file contents in session for later import
                 HttpContext.Session.Set(ImportConstants.SessionAlias, memoryStream.ToArray());
                 HttpContext.Session.SetString(ImportConstants.SessionFileTypeAlias, fileExtension.ToString());
-                HttpContext.Session.SetString(ImportConstants.SessionDomainId, domain);
+                HttpContext.Session.SetString(ImportConstants.SessionDomainId, domain.ToString());
 
                 return Ok();
             }
@@ -189,7 +192,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         {
             var fileContent = HttpContext.Session.Get(ImportConstants.SessionAlias);
             var fileExtensionString = HttpContext.Session.GetString(ImportConstants.SessionFileTypeAlias);
-            var domain= HttpContext.Session.GetString(ImportConstants.SessionDomainId);
+            var domain = int.Parse(HttpContext.Session.GetString(ImportConstants.SessionDomainId));
 
             if (fileContent == null || fileExtensionString == null || domain == null)
             {

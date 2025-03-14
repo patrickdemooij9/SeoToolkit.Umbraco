@@ -270,7 +270,7 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
             >
               <div slot="editor">
                 <uui-input
-                  .value=${this.#oldUrl}
+                  .value=${this.#oldUrl ?? ""}
                   @change=${this.#onOldUrlChange}
                 >
                 </uui-input>

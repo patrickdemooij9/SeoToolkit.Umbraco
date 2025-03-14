@@ -56,6 +56,18 @@ export default class RedirectModuleContext extends UmbDefaultCollectionContext<R
         })
     }
 
+    async openImportModal(){
+        this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (instance) => {
+            const modal = instance.open(this._host, 'seoToolkit.modal.redirect.import', {
+                modal: { type: 'sidebar', size: 'medium' },
+            });
+
+            await modal.onSubmit();
+
+            this.requestCollection();
+        })
+    }
+
     getEntityType(): string {
         return SEOTOOLKIT_REDIRECT_ENTITY;
     }
