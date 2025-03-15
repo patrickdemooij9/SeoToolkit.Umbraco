@@ -8,5 +8,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Config.Models
             Array.Empty<ScriptManagerDefinitionConfigModel>();
 
         public string[] DisabledModules { get; set; } = Array.Empty<string>();
+        public bool DisableRenderCaching { get; set; } = false;
     }
 }

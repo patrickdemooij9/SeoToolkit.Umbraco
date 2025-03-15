@@ -7,6 +7,8 @@ using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 using SeoToolkit.Umbraco.ScriptManager.Core.Caching;
 using SeoToolkit.Umbraco.ScriptManager.Core.Constants;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.ScriptManager.Core.Config.Models;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 {
@@ -14,12 +16,17 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
     {
         private readonly IScriptRepository _scriptRepository;
         private readonly DistributedCache _distributedCache;
+        private readonly ISettingsService<ScriptManagerConfigModel> _settings;
         private readonly IAppPolicyCache _cache;
 
-        public ScriptManagerService(IScriptRepository scriptRepository, AppCaches appCaches, DistributedCache distributedCache)
+        public ScriptManagerService(IScriptRepository scriptRepository,
+            AppCaches appCaches,
+            DistributedCache distributedCache,
+            ISettingsService<ScriptManagerConfigModel> settings)
         {
             _scriptRepository = scriptRepository;
             _distributedCache = distributedCache;
+            _settings = settings;
             _cache = appCaches.RuntimeCache;
         }
 
@@ -66,16 +73,21 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 
         public ScriptRenderModel GetRender()
         {
-            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}GetRender", () =>
-            {
-                var renderModel = new ScriptRenderModel();
-                foreach (var script in GetAll())
-                {
-                    script.Definition.Render(renderModel, script.Config);
-                }
+            if (_settings.GetSettings().DisableRenderCaching)
+                return DoGetRender();
 
-                return renderModel;
-            });
+            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}GetRender", DoGetRender);
+        }
+
+        private ScriptRenderModel DoGetRender()
+        {
+            var renderModel = new ScriptRenderModel();
+            foreach (var script in GetAll())
+            {
+                script.Definition.Render(renderModel, script.Config);
+            }
+
+            return renderModel;
         }
 
         private void ClearCache()
