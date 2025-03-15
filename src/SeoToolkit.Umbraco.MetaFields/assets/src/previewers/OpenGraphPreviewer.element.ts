@@ -26,8 +26,10 @@ export default class OpenGraphPreviewer
   @property({ type: Array })
   public set value(value: SeoSettingsFieldViewModel[]) {
     this._value = value;
-    this.#generateImageUrl();
-    this.requestUpdate();
+    if (!this.loading) {
+      this.#generateImageUrl();
+      this.requestUpdate();
+    }
   }
 
   private _value: SeoSettingsFieldViewModel[] = [];
@@ -37,6 +39,9 @@ export default class OpenGraphPreviewer
 
   @state()
   public imageUrl: string | undefined;
+
+  @state()
+  public loading = true;
 
   public getValue(key: string) {
     const foundItem = this._value.find((item) => item.alias === key);
@@ -74,6 +79,12 @@ export default class OpenGraphPreviewer
     } else {
       this.imageUrl = foundItem?.value ?? "";
     }
+  }
+
+  override async connectedCallback() {
+    super.connectedCallback();
+    await this.#generateImageUrl();
+    this.loading = false;
   }
 
   public getDomain() {
@@ -117,7 +128,7 @@ export default class OpenGraphPreviewer
               <div class="card">
                 <div
                   class="card-image"
-                  .style="background-image: url(${this.imageUrl})"
+                  style="background-image: url(${this.imageUrl})"
                 ></div>
                 <div class="card-text">
                   <p class="card-subtitle">${this.getDomain()}</p>
@@ -141,7 +152,7 @@ export default class OpenGraphPreviewer
               <div class="card">
                 <div
                   class="card-image"
-                  .style="background-image: url(${this.imageUrl})"
+                  style="background-image: url(${this.imageUrl})"
                 ></div>
                 <div class="card-text">
                   <p class="card-subtitle">${this.getDomain()}</p>
@@ -165,7 +176,7 @@ export default class OpenGraphPreviewer
               <div class="card">
                 <div
                   class="card-image"
-                  .style="background-image: url(${this.imageUrl})"
+                  style="background-image: url(${this.imageUrl})"
                 ></div>
                 <div class="card-text">
                   <h2 class="card-title">${this.getValue("openGraphTitle")}</h2>
