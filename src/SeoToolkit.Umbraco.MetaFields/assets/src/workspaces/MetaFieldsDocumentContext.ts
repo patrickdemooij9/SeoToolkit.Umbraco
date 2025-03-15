@@ -75,7 +75,6 @@ export default class MetaFieldsDocumentContext
         value: field.value,
       };
     });
-    console.log(fields);
 
     this.#repository.save({
       nodeId: this.#nodeId!,
@@ -103,7 +102,6 @@ export default class MetaFieldsDocumentContext
     this.#model.update({
       fields: fields,
     });
-    console.log(this.#model.getValue());
   }
 
   setInheritance(id?: string) {

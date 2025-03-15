@@ -98,7 +98,6 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
       ];
       this.#oldUrl = value.oldUrl ?? "";
 
-      console.log(this.redirect?.getValue().newNodeId);
       if (value.newUrl || value.newNodeId) {
         if (value.newUrl) {
           this.newUrlName = value.newUrl;
@@ -110,14 +109,12 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
                 this.newUrlName = resp.data?.urls.find(
                   (u) => u.culture === value.newCultureIso
                 )?.url;
-                console.log(this.newUrlName);
               });
           } else {
             this.#mediaRepository
               .requestByUnique(value.newNodeId!)
               .then((resp) => {
                 this.newUrlName = resp.data?.urls[0].url;
-                console.log(this.newUrlName);
               });
           }
         }
@@ -186,7 +183,6 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
       });
       await modal.onSubmit();
       const value = modal.getValue() as RedirectSelectLinkData;
-      console.log(value);
 
       let newNodeId = undefined;
       if (value.linkType !== RedirectLinkType.Url) {

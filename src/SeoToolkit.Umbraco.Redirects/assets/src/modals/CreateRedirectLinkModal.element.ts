@@ -59,7 +59,6 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
       const culture =
         this._languages.find((lan) => lan.unique === value.culture) ??
         this._languages[0];
-      console.log(value.mediaKey);
       this._content = [
         {
           alias: "linkType",
@@ -115,7 +114,6 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
         );
       } else if (modelKeys.includes(item.alias)) {
         if (Array.isArray(item.value)) {
-          console.log(item.alias, item.value);
           if (item.alias === "mediaKey") {
             newValue[item.alias] = item.value[0]?.mediaKey;
           } else {

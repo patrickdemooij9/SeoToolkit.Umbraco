@@ -36,11 +36,9 @@ export default class MetaFieldsDocumentView extends UmbElementMixin(
       this.#context = instance;
 
       instance.model.subscribe((value) => {
-        console.log(value);
         this._fields = value.fields ?? [];
 
         this._hasInheritance = !!value.inheritance && !!value.inheritance.id;
-        console.log(this._hasInheritance);
         this._inheritanceId = value.inheritance?.id ?? undefined;
       });
     });

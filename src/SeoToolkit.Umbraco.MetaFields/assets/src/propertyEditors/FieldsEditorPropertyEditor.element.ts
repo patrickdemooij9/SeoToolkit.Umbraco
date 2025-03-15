@@ -156,7 +156,6 @@ export default class FieldsEditorPropertyEditor
 
   onItemsAddHandler() {
     this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (instance) => {
-      console.log(this.getFields());
       const modal = instance.open<ItemGroupPickerConfig, string[]>(
         this,
         "seoToolkit.modal.itemGroupPicker",
