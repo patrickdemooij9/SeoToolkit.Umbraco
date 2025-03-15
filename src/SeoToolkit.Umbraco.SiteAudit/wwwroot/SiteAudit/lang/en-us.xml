@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<language alias="en">
-	<area alias="siteAudit">
-		<key alias="create">Create Audit</key>
-		<key alias="createAndStart">Create and start</key>
-		<key alias="cancel">Cancel</key>
-	</area>
-</language>
