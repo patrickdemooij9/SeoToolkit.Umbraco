@@ -33,7 +33,7 @@ namespace SeoToolkit.Umbraco.ScriptManager
                 Id = "SeoToolkit.Umbraco.ScriptManager",
                 Name = "SeoToolkit ScriptManager",
                 AllowTelemetry = true,
-                Version = "4.0.0-beta1",
+                Version = "4.0.0-beta2",
                 Extensions = [ entrypoint!],
             }
             ];
