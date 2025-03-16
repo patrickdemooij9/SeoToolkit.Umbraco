@@ -3,6 +3,8 @@ using SeoToolkit.Umbraco.Common.Core.Models.Database;
 using Umbraco.Cms.Infrastructure.Scoping;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Common.Core.Models.Config;
+using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
 {
@@ -10,26 +12,35 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
     {
         private readonly IScopeProvider _scopeProvider;
         private readonly ISettingsService<GlobalConfig> _settingsService;
+        private readonly IContentTypeService _contentTypeService;
 
-        public SeoSettingsRepository(IScopeProvider scopeProvider, ISettingsService<GlobalConfig> settingsService)
+        public SeoSettingsRepository(IScopeProvider scopeProvider,
+            ISettingsService<GlobalConfig> settingsService,
+            IContentTypeService contentTypeService)
         {
             _scopeProvider = scopeProvider;
             _settingsService = settingsService;
+            _contentTypeService = contentTypeService;
         }
 
-        public bool IsEnabled(int contentTypeId)
+        public bool IsEnabled(IPublishedContentType contentType)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
             {
                 var entity = scope.Database.FirstOrDefault<SeoSettingsEntity>(scope.SqlContext.Sql()
                     .SelectAll()
                     .From<SeoSettingsEntity>()
-                    .Where<SeoSettingsEntity>(it => it.ContentTypeId == contentTypeId));
+                    .Where<SeoSettingsEntity>(it => it.ContentTypeId == contentType.Id));
 
                 //Default is disabled.
-                if (entity is null)
-                    return _settingsService.GetSettings().EnableSeoSettingsByDefault;
-                return entity.Enabled;
+                if (entity is null && _settingsService.GetSettings().EnableSeoSettingsByDefaultForTemplated)
+                {
+                    if (_contentTypeService.Get(contentType.Id)?.DefaultTemplate != null)
+                    {
+                        return true;
+                    }
+                }
+                return entity?.Enabled ?? false;
             }
         }
 

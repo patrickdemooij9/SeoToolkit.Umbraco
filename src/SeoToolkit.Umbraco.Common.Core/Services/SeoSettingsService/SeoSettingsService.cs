@@ -5,6 +5,7 @@ using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
@@ -24,10 +25,10 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
             _cache = appCaches.RuntimeCache;
         }
 
-        public bool IsEnabled(int contentTypeId)
+        public bool IsEnabled(IPublishedContentType contentType)
         {
-            return _cache.GetCacheItem($"{CacheConstants.SeoSettings}{contentTypeId}",
-                () => _seoSettingsRepository.IsEnabled(contentTypeId), TimeSpan.FromMinutes(10));
+            return _cache.GetCacheItem($"{CacheConstants.SeoSettings}{contentType.Id}",
+                () => _seoSettingsRepository.IsEnabled(contentType), TimeSpan.FromMinutes(10));
         }
 
         public bool SupressContentAppSavingNotification()

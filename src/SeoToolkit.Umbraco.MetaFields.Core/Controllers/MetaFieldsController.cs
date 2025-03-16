@@ -109,7 +109,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 return BadRequest($"Cannot find content by id: {postModel.NodeId}");
             }
 
-            if (!_seoSettingsService.IsEnabled(content.ContentType.Id))
+            if (!_seoSettingsService.IsEnabled(content.ContentType))
                 return BadRequest("SEO settings are turned off for this node!");
 
             EnsureLanguage(postModel.Culture);

@@ -36,7 +36,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
 
             return new JsonResult(new SeoSettingsViewModel
             {
-                IsEnabled = _seoSettingsService.IsEnabled(contentType.Id),
+                IsEnabled = _seoSettingsService.IsEnabled(contentType),
                 SupressContentAppSavingNotification = _seoSettingsService.SupressContentAppSavingNotification(),
                 //Displays = _displayCollection.Select(it => it.Get(contentTypeId)).WhereNotNull().ToArray()
             });

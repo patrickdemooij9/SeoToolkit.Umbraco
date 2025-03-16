@@ -60,7 +60,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                 _eventAggregator.Publish(new BeforeMetaTagsNotification(content, metaTags));
 
                 var settings = _documentTypeSettingsService.Get(content.ContentType.Id);
-                if (_seoSettingsService.IsEnabled(content.ContentType.Id) != true)
+                if (_seoSettingsService.IsEnabled(content.ContentType) != true)
                     return null;
                 var userValues = includeUserValues ? _seoValueService.GetUserValues(content.Id) : null;
                 var fields = allFields.Select(it =>

@@ -31,7 +31,6 @@ export default class MetaFieldsContentContext
     {};
 
   constructor(host: UmbControllerHost) {
-
     super(host, ST_METAFIELDS_CONTENT_TOKEN_CONTEXT.toString());
 
     this.#repository = new MetaFieldsContentRepository(host);
