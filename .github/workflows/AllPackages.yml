@@ -25,16 +25,16 @@ jobs:
       run: cd src
       
     - name: Restore dependencies
-      run: dotnet restore ./SeoToolkit.Umbraco.sln
+      run: dotnet restore SeoToolkit.Umbraco.sln
 
     - name: Build
-      run: dotnet build ./SeoToolkit.Umbraco.sln --configuration ${{ env.CONFIG }} --no-restore
+      run: dotnet build SeoToolkit.Umbraco.sln --configuration ${{ env.CONFIG }} --no-restore
 
     - name: Build javascript
       run: npm run start
 
     - name: Create NuGet packages
-      run: dotnet pack ./SeoToolkit.Umbraco.sln -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }}
+      run: dotnet pack SeoToolkit.Umbraco.sln -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }}
 
 #    - name: Push packages to NuGet
 #      run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_DEPLOY_KEY }} -s https://api.nuget.org/v3/index.json
