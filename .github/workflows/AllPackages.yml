@@ -20,18 +20,21 @@ jobs:
       with:
         dotnet-version: '9.x.x'
         include-prerelease: true
+
+    - name: Move to src
+      run: cd src
       
     - name: Restore dependencies
-      run: dotnet restore ./src/SeoToolkit.Umbraco.sln
+      run: dotnet restore ./SeoToolkit.Umbraco.sln
 
     - name: Build
-      run: dotnet build ./src/SeoToolkit.Umbraco.sln --configuration ${{ env.CONFIG }} --no-restore
+      run: dotnet build ./SeoToolkit.Umbraco.sln --configuration ${{ env.CONFIG }} --no-restore
 
     - name: Build javascript
       run: npm run start
 
     - name: Create NuGet packages
-      run: dotnet pack ./src/SeoToolkit.Umbraco.sln -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }}
+      run: dotnet pack ./SeoToolkit.Umbraco.sln -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }}
 
 #    - name: Push packages to NuGet
 #      run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NUGET_DEPLOY_KEY }} -s https://api.nuget.org/v3/index.json
