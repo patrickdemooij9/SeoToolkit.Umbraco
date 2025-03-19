@@ -31,7 +31,7 @@ jobs:
       run: |
         cd ./src/
         npm install
-        npm start
+        npm run deploy
 
     - name: Create NuGet packages
       run: dotnet pack ./src/SeoToolkit.Umbraco.sln -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }}
