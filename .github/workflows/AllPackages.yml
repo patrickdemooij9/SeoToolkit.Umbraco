@@ -27,17 +27,11 @@ jobs:
     - name: Build
       run: dotnet build ./src/SeoToolkit.Umbraco.sln --configuration ${{ env.CONFIG }} --no-restore
 
-    - name: Navigate to src
-      run: cd ./src/
-
-    - name: Install javascript
-      run: npm install
-
     - name: Build javascript
-      run: npm run start
-
-    - name: Navigate back
-      run: cd ./../
+      run: |
+        cd ./src/
+        npm install
+        npm start
 
     - name: Create NuGet packages
       run: dotnet pack ./src/SeoToolkit.Umbraco.sln -c ${{ env.CONFIG }} --no-build -o ${{ env.OUTPUT }}
