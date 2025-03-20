@@ -117,10 +117,6 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
     this.State?.update(newValue);
   }
 
-  #handleClose() {
-    this.modalContext?.reject();
-  }
-
   async #handleValidate() {
     const state = this.State.getValue();
     const result = await this.#redirectRepository.verifyImport(
@@ -217,42 +213,36 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
             `
           )}
         </uui-box>
-        <div class="actions">
-          <uui-button
-            slot="actions"
-            id="close"
-            label="Close"
-            look="primary"
-            color="danger"
-            @click="${this.#handleClose}"
-            >Close</uui-button
-          >
-          ${when(
-            this.State.getValue().isValid,
-            () => html`
-              <uui-button
-                slot="actions"
-                id="save"
-                label="Submit"
-                look="primary"
-                color="positive"
-                @click="${this.#handleSubmit}"
-                >Submit</uui-button
-              >
-            `,
-            () => html`
-              <uui-button
-                slot="actions"
-                id="save"
-                label="Validate"
-                look="primary"
-                color="positive"
-                @click="${this.#handleValidate}"
-                >Validate</uui-button
-              >
-            `
-          )}
-        </div>
+        <umb-workspace-footer slot="footer" data-mark="workspace:footer">
+			<slot name="footer-info"></slot>
+			<slot name="actions" slot="actions" data-mark="workspace:footer-actions">
+                ${when(
+                    this.State.getValue().isValid,
+                    () => html`
+                      <uui-button
+                        slot="actions"
+                        id="save"
+                        label="Submit"
+                        look="primary"
+                        color="positive"
+                        @click="${this.#handleSubmit}"
+                        >Submit</uui-button
+                      >
+                    `,
+                            () => html`
+                      <uui-button
+                        slot="actions"
+                        id="save"
+                        label="Validate"
+                        look="primary"
+                        color="positive"
+                        @click="${this.#handleValidate}"
+                        >Validate</uui-button
+                      >
+                    `
+                )}
+            </slot>
+		</umb-workspace-footer>
       </umb-body-layout>
     `;
   }
