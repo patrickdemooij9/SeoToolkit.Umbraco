@@ -14,7 +14,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors
 
         public SeoDropdownEditEditor(string[] items)
         {
-            ValueConverter = new TextValueConverter();
+            ValueConverter = new SingleDropdownValueConverter();
             Config = new Dictionary<string, object>
             {
                 {"items",  items}
