@@ -47,6 +47,12 @@ namespace SeoToolkit.Umbraco.Common.Core.Collections
                     Alias = "redirects",
                     Icon = "icon-trafic",
                     Link = "https://seotoolkit.gitbook.io/useotoolkit/how-to-use/redirects"
+                }, 
+                new SeoToolkitModule
+                {
+                    Title = "Not Found",
+                    Alias = "notFound",
+                    Icon = "icon-article",
                 }
             };
         }

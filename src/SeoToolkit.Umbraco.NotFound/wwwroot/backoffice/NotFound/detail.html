@@ -1,0 +1,48 @@
+﻿<div ng-controller="SeoToolkit.NotFound.DetailController as vm">
+    <umb-editor-view>
+        <umb-pane>
+            <umb-box>
+                <umb-box-header title="Page not found" title-key="seotoolkit_title" description-key="seotoolkit_description" description="Select your 404 page here"></umb-box-header>
+                <umb-box-content>
+                    <ng-form name="contentPickerForm">
+                        <div class="umb-property-editor umb-contentpicker">
+                            <div ui-sortable="sortableOptions" ng-model="sortableModel">
+                                <umb-node-preview ng-repeat="node in renderModel track by node.id"
+                                                  icon="node.icon"
+                                                  name="node.name"
+                                                  published="node.published"
+                                                  description="node.url"
+                                                  sortable="false"
+                                                  allow-remove="true"
+                                                  allow-open="true"
+                                                  on-remove="vm.remove()"
+                                                  on-open="vm.openContentPicker()">
+                                </umb-node-preview>
+                            </div>
+
+                            <button ng-show="renderModel.length === 0"
+                                    type="button"
+                                    class="umb-node-preview-add"
+                                    ng-click="vm.openContentPicker()"
+                                    ng-disabled="false">
+                                <localize key="general_add">Add</localize>
+                                <span class="sr-only">...</span>
+                            </button>
+                        </div>
+                    </ng-form>
+                </umb-box-content>
+            </umb-box>
+        </umb-pane>
+        <umb-editor-footer>
+            <umb-editor-footer-content-right>
+                <umb-button type="button"
+                            state="vm.saveButtonState"
+                            button-style="success"
+                            label-key="buttons_save"
+                            shortcut="ctrl+s"
+                            action="vm.submit()">
+                </umb-button>
+            </umb-editor-footer-content-right>
+        </umb-editor-footer>
+    </umb-editor-view>
+</div>
