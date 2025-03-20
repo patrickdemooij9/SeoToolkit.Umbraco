@@ -42,7 +42,14 @@ export default class FieldsEditorPropertyEditor
   #sorter: UmbSorterController<string>;
 
   @property({ type: Array })
-  public value: FieldItem[] = [];
+  public set value(items: FieldItem[] | undefined){
+    this._value = items ?? [];
+    this.requestUpdate();
+  }
+  public get value(){
+    return this._value;
+  }
+  private _value: FieldItem[] = [];
 
   @state()
   additionalFields: FieldData[] = [];
@@ -73,7 +80,7 @@ export default class FieldsEditorPropertyEditor
       },
     });
 
-    this.#sorter.setModel(this.value.map((item) => item.value));
+    this.#sorter.setModel(this._value.map((item) => item.value));
 
     this.#repository = new MetaFieldsSettingsRepository(this);
 
@@ -164,7 +171,7 @@ export default class FieldsEditorPropertyEditor
           data: {
             items: this.getFields(),
           },
-          value: this.value.map((item) => item.value) ?? [],
+          value: this.value!.map((item) => item.value) ?? [],
         }
       );
       await modal.onSubmit();
