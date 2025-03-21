@@ -1,4 +1,5 @@
 import {
+  css,
   customElement,
   html,
   state,
@@ -48,6 +49,9 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
 
   @state()
   _content: UmbPropertyValueData[] = [];
+
+  @state()
+  showValidationMessage: boolean = false;
 
   override async connectedCallback() {
     super.connectedCallback();
@@ -119,6 +123,7 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
           }
         }
       }
+      this.showValidationMessage = false;
     });
   }
 
@@ -200,6 +205,12 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
   }
 
   #handleSubmit() {
+    if (!this.redirect?.value.oldUrl || !this.newUrlName){
+      this.showValidationMessage = true;
+      this.requestUpdate();
+      return;
+    }
+
     this.value = {
       redirect: {
         ...this.redirect!.value,
@@ -271,6 +282,7 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
                   @change=${this.#onRegexOptionChange}
                 >
                 </uui-select>
+                ${when(this.showValidationMessage && !this.#oldUrl, () => html`<div class="error">This field is required!</div>`)}
               </div>
             </umb-property-layout>
             <umb-property-layout
@@ -295,7 +307,9 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
                     </uui-button>
                   `
                 )}
+                ${when(this.showValidationMessage && !this.newUrlName, () => html`<div class="error">This field is required!</div>`)}
               </div>
+              
             </umb-property-layout>
             <umb-property
               alias="redirectCode"
@@ -315,20 +329,32 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
         </uui-box>
 
         <umb-workspace-footer slot="footer" data-mark="workspace:footer">
-			<slot name="footer-info"></slot>
-			<slot name="actions" slot="actions" data-mark="workspace:footer-actions">
-                <uui-button
-                    slot="actions"
-                    id="save"
-                    label="Submit"
-                    look="primary"
-                    color="positive"
-                    @click="${this.#handleSubmit}"
-                    >Submit</uui-button
-                  >
-            </slot>
-		</umb-workspace-footer>
+          <slot name="footer-info"></slot>
+          <slot
+            name="actions"
+            slot="actions"
+            data-mark="workspace:footer-actions"
+          >
+            <uui-button
+              slot="actions"
+              id="save"
+              label="Submit"
+              look="primary"
+              color="positive"
+              @click="${this.#handleSubmit}"
+              >Submit</uui-button
+            >
+          </slot>
+        </umb-workspace-footer>
       </umb-body-layout>
     `;
   }
+
+  static override styles = [
+    css`
+      .error {
+        color: red;
+      }
+    `,
+  ];
 }
