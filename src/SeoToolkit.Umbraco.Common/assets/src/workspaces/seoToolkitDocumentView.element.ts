@@ -138,27 +138,35 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
     if (!this._showViews) return nothing;
     return html`
       <div class="top" slot="header">
-        <uui-tab-group class="navigation">
-          ${repeat(
-            this._documentViews,
-            (view) => view.alias,
-            (view, index) =>
-              html`
-                <uui-tab
-                  href="${this._routerPath}/view/${view.meta.pathname}"
-                  .label="${view.meta.label
-                    ? this.localize.string(view.meta.label)
-                    : view.name}"
-                  ?active=${"view/" + view.meta.pathname === this._activePath ||
-                  (index === 0 && this._activePath === "")}
-                >
-                  ${view.meta.label
-                    ? this.localize.string(view.meta.label)
-                    : view.name}
-                </uui-tab>
-              `
+        <div>
+          ${when(
+            this._seoEnabled,
+            () => html`
+              <uui-tab-group class="navigation">
+                ${repeat(
+                  this._documentViews,
+                  (view) => view.alias,
+                  (view, index) =>
+                    html`
+                      <uui-tab
+                        href="${this._routerPath}/view/${view.meta.pathname}"
+                        .label="${view.meta.label
+                          ? this.localize.string(view.meta.label)
+                          : view.name}"
+                        ?active=${"view/" + view.meta.pathname ===
+                          this._activePath ||
+                        (index === 0 && this._activePath === "")}
+                      >
+                        ${view.meta.label
+                          ? this.localize.string(view.meta.label)
+                          : view.name}
+                      </uui-tab>
+                    `
+                )}
+              </uui-tab-group>
+            `
           )}
-        </uui-tab-group>
+        </div>
         <div>
           ${when(
             this._seoEnabled,
@@ -218,6 +226,8 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
 
       .top {
         width: 100%;
+        height: 48px;
+
         display: flex;
         justify-content: space-between;
         align-items: center;
