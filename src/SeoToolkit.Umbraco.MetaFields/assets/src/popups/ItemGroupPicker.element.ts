@@ -94,26 +94,26 @@ export default class ItemGroupPicker extends UmbModalBaseElement<
           `
         )}
 
-        <div class="actions">
+        <umb-footer-layout slot="footer">
           <uui-button
-            slot="actions"
             id="close"
             label="Close"
             look="primary"
             color="danger"
+            slot="actions"
             @click="${this.#handleClose}"
             >Close</uui-button
           >
           <uui-button
-            slot="actions"
             id="save"
             label="Submit"
             look="primary"
             color="positive"
+            slot="actions"
             @click="${this.#handleSubmit}"
             >Submit</uui-button
           >
-        </div>
+        </umb-footer-layout>
       </umb-body-layout>
     `;
   }

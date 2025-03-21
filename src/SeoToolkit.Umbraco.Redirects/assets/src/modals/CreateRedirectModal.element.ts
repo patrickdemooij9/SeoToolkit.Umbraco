@@ -199,10 +199,6 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
     });
   }
 
-  #handleClose() {
-    this.modalContext?.reject();
-  }
-
   #handleSubmit() {
     this.value = {
       redirect: {
@@ -318,26 +314,20 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
           </umb-property-dataset>
         </uui-box>
 
-        <div class="actions">
-          <uui-button
-            slot="actions"
-            id="close"
-            label="Close"
-            look="primary"
-            color="danger"
-            @click="${this.#handleClose}"
-            >Close</uui-button
-          >
-          <uui-button
-            slot="actions"
-            id="save"
-            label="Submit"
-            look="primary"
-            color="positive"
-            @click="${this.#handleSubmit}"
-            >Submit</uui-button
-          >
-        </div>
+        <umb-workspace-footer slot="footer" data-mark="workspace:footer">
+			<slot name="footer-info"></slot>
+			<slot name="actions" slot="actions" data-mark="workspace:footer-actions">
+                <uui-button
+                    slot="actions"
+                    id="save"
+                    label="Submit"
+                    look="primary"
+                    color="positive"
+                    @click="${this.#handleSubmit}"
+                    >Submit</uui-button
+                  >
+            </slot>
+		</umb-workspace-footer>
       </umb-body-layout>
     `;
   }
