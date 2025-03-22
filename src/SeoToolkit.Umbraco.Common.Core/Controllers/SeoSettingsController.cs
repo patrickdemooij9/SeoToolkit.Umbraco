@@ -7,6 +7,8 @@ using Umbraco.Cms.Api.Management.Controllers;
 using System;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.Routing;
+using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Core.Models.PublishedContent;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
 {
@@ -15,15 +17,16 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
     public class SeoSettingsController : SeoToolkitControllerBase
     {
         private readonly ISeoSettingsService _seoSettingsService;
-        private readonly DisplayCollection _displayCollection;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly IContentTypeService _contentTypeService;
 
-        public SeoSettingsController(ISeoSettingsService seoSettingsService, DisplayCollection displayCollection,
-            IUmbracoContextFactory umbracoContextFactory)
+        public SeoSettingsController(ISeoSettingsService seoSettingsService,
+            IUmbracoContextFactory umbracoContextFactory,
+            IContentTypeService contentTypeService)
         {
             _seoSettingsService = seoSettingsService;
-            _displayCollection = displayCollection;
             _umbracoContextFactory = umbracoContextFactory;
+            _contentTypeService = contentTypeService;
         }
 
         [HttpGet("seoSettings")]
@@ -31,14 +34,18 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         public IActionResult Get(Guid contentTypeId)
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
-            var contentType = ctx.UmbracoContext.Content?.GetContentType(contentTypeId);
-            if (contentType is null) return NotFound();
+            var contentType = _contentTypeService.Get(contentTypeId);
+            var isEnabled = false;
+            if (contentType is not null)
+            {
+                //TODO: Refactor this to use the content type from ContentTypeService
+                isEnabled = _seoSettingsService.IsEnabled(ctx.UmbracoContext.Content?.GetContentType(contentTypeId));
+            }
 
             return new JsonResult(new SeoSettingsViewModel
             {
-                IsEnabled = _seoSettingsService.IsEnabled(contentType),
-                SupressContentAppSavingNotification = _seoSettingsService.SupressContentAppSavingNotification(),
-                //Displays = _displayCollection.Select(it => it.Get(contentTypeId)).WhereNotNull().ToArray()
+                IsEnabled = isEnabled,
+                SupressContentAppSavingNotification = _seoSettingsService.SupressContentAppSavingNotification()
             });
         }
 

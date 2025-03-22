@@ -12,6 +12,7 @@ using Umbraco.Cms.Web.Common.Routing;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using System;
 using Umbraco.Cms.Core.Web;
+using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 {
@@ -23,16 +24,19 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
         private readonly SeoFieldCollection _seoFieldCollection;
         private readonly IUmbracoMapper _umbracoMapper;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly IContentTypeService _contentTypeService;
 
         public MetaFieldsSettingsController(IMetaFieldsSettingsService documentTypeSettingsService,
             SeoFieldCollection seoFieldCollection,
             IUmbracoMapper umbracoMapper,
-            IUmbracoContextFactory umbracoContextFactory)
+            IUmbracoContextFactory umbracoContextFactory,
+            IContentTypeService contentTypeService)
         {
             _documentTypeSettingsService = documentTypeSettingsService;
             _seoFieldCollection = seoFieldCollection;
             _umbracoMapper = umbracoMapper;
             _umbracoContextFactory = umbracoContextFactory;
+            _contentTypeService = contentTypeService;
         }
 
         [HttpGet("metaFieldsSettings")]
@@ -42,8 +46,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             DocumentTypeSettingsContentViewModel content = null;
             if (nodeId != null)
             {
-                using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
-                var contentType = ctx.UmbracoContext.Content.GetContentType(nodeId.Value);
+                var contentType = _contentTypeService.Get(nodeId.Value);
                 if (contentType != null)
                 {
                     var model = _documentTypeSettingsService.Get(contentType.Id);
