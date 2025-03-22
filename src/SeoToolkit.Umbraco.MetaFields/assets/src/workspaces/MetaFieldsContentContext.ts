@@ -43,11 +43,13 @@ export default class MetaFieldsContentContext
             this.#cultures.push(culture);
           }
         });
-        this.#loadDataFromRepository();
+        this.#loadDataFromRepository(this.#nodeId);
       });
       instance.unique.subscribe((unique) => {
-        this.#nodeId = unique?.toString();
-        this.#loadDataFromRepository();
+        this.#cultures.forEach((culture) => {
+          delete this.#variants[culture];
+        })
+        this.#loadDataFromRepository(unique?.toString());
       });
       instance.data.subscribe((item) => {
         item?.variants.forEach((variant) => {
@@ -63,10 +65,11 @@ export default class MetaFieldsContentContext
     });
   }
 
-  #loadDataFromRepository() {
-    if (!this.#nodeId) {
+  #loadDataFromRepository(node: string | undefined) {
+    if (!node || node === this.#nodeId) {
       return;
     }
+    this.#nodeId = node;
 
     this.#cultures.forEach((variant) => {
       if (
@@ -76,7 +79,7 @@ export default class MetaFieldsContentContext
         return;
       }
 
-      this.#repository.get(this.#nodeId!, variant).then((resp) => {
+      this.#repository.get(node!, variant).then((resp) => {
         this.#getVariant(variant).model.update(resp.data!);
       });
     });
