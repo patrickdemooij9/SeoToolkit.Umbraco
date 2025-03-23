@@ -18,24 +18,18 @@ import {
 } from "@umbraco-cms/backoffice/router";
 import { SeoDocumentViewManifest } from "../manifests/seoDocumentViewManifest";
 import { UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/document-type";
-import { SeoToolkitSettingsRepository } from "../repositories/seoToolkitSettingsRepository";
-import {
-  UMB_ACTION_EVENT_CONTEXT,
-  UmbActionEventContext,
-} from "@umbraco-cms/backoffice/action";
+import SeoToolkitDocumentContext, {
+  ST_METAFIELDS_SETTINGSDOCUMENT_TOKEN_CONTEXT,
+} from "./SeoToolkitDocumentContext";
 
 @customElement("st-document-view")
 export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
   LitElement
 ) {
-  #settingsRepository = new SeoToolkitSettingsRepository(this);
-  #actionEventContext?: UmbActionEventContext;
+  #context?: SeoToolkitDocumentContext;
 
   @state()
   private _documentViews: Array<SeoDocumentViewManifest> = [];
-
-  @state()
-  private _documentUnique?: string;
 
   @state()
   private _routes?: UmbRoute[];
@@ -56,21 +50,17 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
     super();
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
-      instance.unique.subscribe((value) => {
-        this._documentUnique = value?.toString();
-
-        this.#settingsRepository.getSettings(value!).then((resp) => {
-          this._seoEnabled = resp.data!.isEnabled;
-        });
-      });
       instance.isElement.subscribe((value) => {
         this._showViews = !value;
       });
     });
 
-    this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
-      this.#actionEventContext = instance;
-      instance.addEventListener("document.save", () => this.#save());
+    this.consumeContext(ST_METAFIELDS_SETTINGSDOCUMENT_TOKEN_CONTEXT, (instance) => {
+      this.#context = instance;
+
+      instance.model.subscribe((value) => {
+        this._seoEnabled = value.enabled;
+      })
     });
 
     new UmbExtensionsManifestInitializer(
@@ -84,19 +74,6 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
         );
         this._createRoutes();
       }
-    );
-  }
-
-  #save() {
-    this.#settingsRepository.setSettings({
-      contentTypeId: this._documentUnique!,
-      enabled: this._seoEnabled,
-    });
-  }
-
-  destroy(): void {
-    this.#actionEventContext?.removeEventListener("document.save", () =>
-      this.#save()
     );
   }
 
@@ -123,7 +100,7 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
   }
 
   private setSeoSettings(value: boolean) {
-    this._seoEnabled = value;
+    this.#context?.setSeoSettings(value);
   }
 
   render() {

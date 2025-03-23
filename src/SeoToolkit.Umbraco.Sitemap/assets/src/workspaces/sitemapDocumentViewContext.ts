@@ -39,7 +39,12 @@ export default class SitemapDocumentViewContext extends UmbContextBase<SitemapPa
         });
 
         this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
+            if (this.#actionEventContext){
+                return;
+            }
+
             this.#actionEventContext = instance;
+            instance.removeEventListener("document.save", () => this.#save(this));
             instance.addEventListener("document.save", () => this.#save(this));
         });
     }
