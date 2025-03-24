@@ -28,5 +28,11 @@
             public const string Alias = "SiteAudit";
             public const string Title = "Site Audits";
         }
+
+        public static class NotFound
+        {
+            public const string Alias = "NotFound";
+            public const string Title = "Not Found";
+        }
     }
 }
