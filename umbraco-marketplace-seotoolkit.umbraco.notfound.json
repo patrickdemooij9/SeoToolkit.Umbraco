@@ -1,0 +1,6 @@
+{
+    "Category": "Search",
+    "IsSubPackageOf": "SeoToolkit.Umbraco",
+    "LicenseTypes": [ "Free" ],
+    "PackageType": "Package"
+}
