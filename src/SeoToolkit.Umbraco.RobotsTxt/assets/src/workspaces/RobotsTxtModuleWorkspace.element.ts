@@ -51,9 +51,9 @@ export class SeoToolkitRobotsTxtModuleElement extends
     #onPropertyDataChange(e: Event) {
         const value = (e.target as UmbPropertyDatasetElement).value;
 
-        const newValue = value.find((item) => item.alias === 'robotsTxt')?.value as string;
-        if (newValue) {
-            this.#context?.setContent(newValue);
+        const foundItem = value.find((item) => item.alias === 'robotsTxt');
+        if (foundItem) {
+            this.#context?.setContent(foundItem.value as string);
         }
     }
 
