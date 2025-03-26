@@ -115,7 +115,7 @@ export default class OpenGraphPreviewer
             ?active=${this.currentTab === "linkedin"}
             @click=${() => this.handleTabClick("linkedin")}
           >
-            Linkedin
+            LinkedIn
           </uui-tab>
         </uui-tab-group>
       </div>
@@ -199,6 +199,7 @@ export default class OpenGraphPreviewer
 
       .facebook-previewer .card-image {
         height: 157px;
+        background-size: cover;
       }
 
       .facebook-previewer .card-text {
@@ -273,6 +274,7 @@ export default class OpenGraphPreviewer
 
       .twitter-previewer .card-image {
         height: 145px;
+        background-size: cover;
         border-bottom: 1px solid #e1e8ed;
       }
 
@@ -339,6 +341,7 @@ export default class OpenGraphPreviewer
 
       .linkedin-previewer .card-image {
         height: 187px;
+        background-size: cover;
       }
 
       .linkedin-previewer .card-text {
