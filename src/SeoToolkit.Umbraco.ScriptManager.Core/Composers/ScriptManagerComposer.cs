@@ -50,7 +50,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
                 .Add<GoogleTagManagerDefinition>()
                 .Add<GoogleAnalyticsDefinition>()
                 .Add<HotjarDefinition>()
-                .Add<CustomScriptDefinition>();
+                .Add<CustomScriptDefinition>()
+                .Add<PiwikProDefinition>();
 
             builder.Components().Append<EnableModuleComponent>();
 
