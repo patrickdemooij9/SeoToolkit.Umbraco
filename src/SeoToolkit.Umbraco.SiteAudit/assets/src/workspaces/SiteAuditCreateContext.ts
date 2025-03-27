@@ -63,9 +63,14 @@ export default class SiteAuditCreateContext
   async save(start: boolean) {
     this.update({
       startAudit: start,
+      checks: this.#model.value.checks ?? []
     });
     const model = this.#model.getValue();
-    const auditId = (await this.#repository.save(model)).data;
+    const response = await this.#repository.save(model);
+    if (response.error){
+      return;
+    }
+    const auditId = response.data;
 
     this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
       instance.peek("positive", {
