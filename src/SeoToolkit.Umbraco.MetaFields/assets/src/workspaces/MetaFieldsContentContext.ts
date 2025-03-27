@@ -66,9 +66,6 @@ export default class MetaFieldsContentContext
   }
 
   #loadDataFromRepository(node: string | undefined) {
-    if (!node || node === this.#nodeId) {
-      return;
-    }
     this.#nodeId = node;
 
     this.#cultures.forEach((variant) => {
