@@ -67,6 +67,9 @@ export default class ScriptManagerDetailContext extends UmbContextBase<ScriptMan
 		const isNew = this.#script.value.id === 0;
 
 		const response = await this.#repository.saveScript(this.#script.value);
+		if (response.error){
+			return;
+		}
 		this.#script.setValue(response.data!);
 		this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
 			instance.peek('positive', {

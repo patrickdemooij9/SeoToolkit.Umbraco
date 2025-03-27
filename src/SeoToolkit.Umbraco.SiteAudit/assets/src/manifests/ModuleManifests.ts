@@ -1,6 +1,6 @@
 import { ManifestTreeItem } from "@umbraco-cms/backoffice/tree";
 import { SEOTOOLKIT_SITEAUDIT_ENTITY } from "../Constants";
-import { ManifestWorkspace } from "@umbraco-cms/backoffice/workspace";
+import { ManifestWorkspace, ManifestWorkspaceView } from "@umbraco-cms/backoffice/workspace";
 
 const SiteAuditTreeItem: ManifestTreeItem = {
     type: 'treeItem',
@@ -46,4 +46,23 @@ const SiteAuditDetailWorkspace: ManifestWorkspace = {
     }
 }
 
-export const ModuleManifests = [SiteAuditTreeItem, SiteAuditWorkspace, SiteAuditCreateWorkspace, SiteAuditDetailWorkspace];
+const SiteAuditDetailEditView: ManifestWorkspaceView = {
+    type: 'workspaceView',
+    alias: 'seoToolkit.siteaudit.detail.main',
+    name: 'SeoToolkit SiteAudit Detail Main',
+    js: () => import('../workspaces/detailViews/SiteAuditDetailMain.element'),
+    weight: 300,
+    meta: {
+        label: 'Edit',
+		pathname: 'edit',
+		icon: 'icon-document',
+    },
+    conditions: [
+        {
+            alias: 'Umb.Condition.WorkspaceAlias',
+            match: 'seoToolkit.siteAudit.detail'
+        }
+    ]
+}
+
+export const ModuleManifests = [SiteAuditTreeItem, SiteAuditWorkspace, SiteAuditCreateWorkspace, SiteAuditDetailWorkspace, SiteAuditDetailEditView];

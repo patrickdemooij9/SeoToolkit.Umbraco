@@ -94,7 +94,11 @@ export class ScriptManagerEdit extends UmbLitElement implements UmbWorkspaceView
                             .config=${[{
                                 alias: 'items',
                                 value: this._definitions.map((def) => def.name)
-                            }]}>
+                            }]}
+                            .validation=${{
+                                mandatory: true,
+                                mandatoryMessage: "This field is required"
+                            }}>
                         </umb-property>
 
                         ${repeat(

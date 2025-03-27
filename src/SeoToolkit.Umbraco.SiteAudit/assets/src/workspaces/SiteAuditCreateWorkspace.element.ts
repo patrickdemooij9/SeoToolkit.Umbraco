@@ -56,7 +56,7 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
           },
         ];
 
-        this._canSubmit = !!value.name && value.selectedNodeId !== '';
+        this._canSubmit = !!value.name && !!value.selectedNodeId && value.selectedNodeId !== '';
 
         const checkNames =
           this._config?.checks
@@ -141,6 +141,10 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
                 label="Name"
                 property-editor-ui-alias="Umb.PropertyEditorUi.TextBox"
                 val
+                .validation=${{
+                  mandatory: true,
+                  mandatoryMessage: "This field is required"
+                }}
               >
               </umb-property>
               <umb-property
@@ -154,6 +158,10 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
                     value: 1,
                   },
                 ]}
+                .validation=${{
+                  mandatory: true,
+                  mandatoryMessage: "This field is required"
+                }}
               >
               </umb-property>
               <umb-property
@@ -208,7 +216,7 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
             label="Submit"
             look="primary"
             color="positive"
-            :disabled="${!this._canSubmit}"
+            .disabled="${!this._canSubmit}"
             @click="${() => this.#handleSubmit(true)}"
           >
             Create and start
@@ -219,7 +227,7 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
             label="Cancel"
             look="primary"
             color="danger"
-            @click="${() => this.#handleSubmit(false)}"
+            href="/umbraco/section/SeoToolkit/workspace/seoToolkit-siteAudit/overview"
           >
             Cancel
           </uui-button>

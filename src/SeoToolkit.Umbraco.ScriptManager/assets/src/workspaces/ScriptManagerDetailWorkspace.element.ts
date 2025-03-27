@@ -10,7 +10,7 @@ export class ScriptManagerDetailWorkspace extends UmbLitElement {
     #context?: ScriptManagerDetailContext;
 
     @state()
-	private _name?: string = '';
+	private _name: string = '';
 
     constructor(){
         super();
@@ -43,6 +43,8 @@ export class ScriptManagerDetailWorkspace extends UmbLitElement {
 						.value=${this._name}
 						@input=${this.#onNameInput}
 						label=${this.localize.term('placeholders_entername')}
+                        required="true"
+                        required-message="Name is required"
 						${umbFocus()}>
 					</uui-input>
 				</div>

@@ -54,6 +54,9 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
     },
   ];
 
+  @state()
+  _canValidate = false;
+
   State: UmbObjectState<State> = new UmbObjectState<State>({ isValid: false });
 
   override async connectedCallback() {
@@ -81,6 +84,8 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
           value: value.file,
         },
       ];
+
+      this._canValidate = (value.file?.src?.length ?? 0) > 0;
     });
   }
 
@@ -158,7 +163,6 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
               description="If nothing is selected, redirects will be active for all domains"
               property-editor-ui-alias="Umb.PropertyEditorUi.Dropdown"
               val
-              required
               .config=${[
                 {
                   alias: "items",
@@ -180,6 +184,10 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
                   value: this._fileTypes.map((item) => item.label),
                 },
               ]}
+              .validation=${{
+                mandatory: true,
+                mandatoryMessage: "This field is required",
+              }}
             >
             </umb-property>
             ${when(
@@ -190,13 +198,16 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
                   label="File to import"
                   property-editor-ui-alias="Umb.PropertyEditorUi.UploadField"
                   val
-                  required
                   .config=${[
                     {
                       alias: "fileExtensions",
                       value: this.State.getValue().fileType!.extensions,
                     },
                   ]}
+                  .validation=${{
+                    mandatory: true,
+                    mandatoryMessage: "This field is required",
+                  }}
                 >
                 </umb-property>
               `
@@ -214,35 +225,40 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
           )}
         </uui-box>
         <umb-workspace-footer slot="footer" data-mark="workspace:footer">
-			<slot name="footer-info"></slot>
-			<slot name="actions" slot="actions" data-mark="workspace:footer-actions">
-                ${when(
-                    this.State.getValue().isValid,
-                    () => html`
-                      <uui-button
-                        slot="actions"
-                        id="save"
-                        label="Submit"
-                        look="primary"
-                        color="positive"
-                        @click="${this.#handleSubmit}"
-                        >Submit</uui-button
-                      >
-                    `,
-                            () => html`
-                      <uui-button
-                        slot="actions"
-                        id="save"
-                        label="Validate"
-                        look="primary"
-                        color="positive"
-                        @click="${this.#handleValidate}"
-                        >Validate</uui-button
-                      >
-                    `
-                )}
-            </slot>
-		</umb-workspace-footer>
+          <slot name="footer-info"></slot>
+          <slot
+            name="actions"
+            slot="actions"
+            data-mark="workspace:footer-actions"
+          >
+            ${when(
+              this.State.getValue().isValid,
+              () => html`
+                <uui-button
+                  slot="actions"
+                  id="save"
+                  label="Submit"
+                  look="primary"
+                  color="positive"
+                  @click="${this.#handleSubmit}"
+                  >Submit</uui-button
+                >
+              `,
+              () => html`
+                <uui-button
+                  slot="actions"
+                  id="save"
+                  label="Validate"
+                  look="primary"
+                  color="positive"
+                  .disabled=${!this._canValidate}
+                  @click="${this.#handleValidate}"
+                  >Validate</uui-button
+                >
+              `
+            )}
+          </slot>
+        </umb-workspace-footer>
       </umb-body-layout>
     `;
   }
