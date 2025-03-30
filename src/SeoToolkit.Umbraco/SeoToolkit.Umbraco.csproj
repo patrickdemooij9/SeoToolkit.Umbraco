@@ -13,6 +13,7 @@
 		<PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
 		<PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 		<Version>3.7.0</Version>
 		<StaticWebAssetBasePath>App_Plugins/SeoToolkit</StaticWebAssetBasePath>
 	
@@ -28,6 +29,8 @@
 		<ProjectReference Include="..\SeoToolkit.Umbraco.ScriptManager\SeoToolkit.Umbraco.ScriptManager.csproj" />
 		<ProjectReference Include="..\SeoToolkit.Umbraco.SiteAudit\SeoToolkit.Umbraco.SiteAudit.csproj" />
 		<ProjectReference Include="..\SeoToolkit.Umbraco.Sitemap\SeoToolkit.Umbraco.Sitemap.csproj" />
+
+    <None Include=".\..\..\Readme.md" Pack="true" PackagePath="\"></None>
 	</ItemGroup>
 
 	<ItemGroup>
