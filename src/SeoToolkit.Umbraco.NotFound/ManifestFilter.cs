@@ -10,7 +10,7 @@ internal class ManifestFilter : IManifestFilter
         manifests.Add(new PackageManifest
         {
             PackageName = "SeoToolkit.Umbraco.NotFound",
-            Version = "3.6.1",
+            Version = "3.7.0",
             Scripts = new[]
             {
                 "/App_Plugins/SeoToolkit/backoffice/NotFound/detail.controller.js",
