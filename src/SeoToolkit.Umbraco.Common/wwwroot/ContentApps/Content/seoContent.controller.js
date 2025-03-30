@@ -42,21 +42,30 @@
             vm.nodeId = editorState.current.id;
         }
 
-        unsubscribe.push(eventsService.on("app.tabChange",
-            (e, data) => {
-                if (data.alias !== "seoContent") {
-                    return;
-                }
-
-                if (unsubscribe.length == 1) {
-                    unsubscribe.push(eventsService.on("content.saved", () => {
-                        save();
-                    }));
-                    unsubscribe.push(eventsService.on("content.unpublished", () => {
-                        save();
-                    }));
-                }
+        function subscribeToContentEvents() {
+            unsubscribe.push(eventsService.on("content.saved", () => {
+                save();
             }));
+            unsubscribe.push(eventsService.on("content.unpublished", () => {
+                save();
+            }));
+        }
+
+        if (editorState.current.apps.find((item) => item.alias === 'seoContent' && item.active))
+        {
+            subscribeToContentEvents();
+        }
+        else
+        {
+            unsubscribe.push(eventsService.on("app.tabChange",
+                (e, data) => {
+                    if (data.alias !== "seoContent") {
+                        return;
+                    }
+
+                    subscribeToContentEvents();
+                }));
+        }
 
         vm.$onDestroy = function () {
             unsubscribe.forEach(x => x());
