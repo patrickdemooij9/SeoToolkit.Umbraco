@@ -18,6 +18,20 @@
         width: 20%;
     }
 
+.welcomeDashboard .survey {
+    margin: 10px;
+    background: white;
+    border-radius: 8px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .welcomeDashboard .survey p {
+    margin: 0;
+  }
+
 .welcomeDashboard .module-icon {
     text-align: center;
     padding-bottom: 10px;
