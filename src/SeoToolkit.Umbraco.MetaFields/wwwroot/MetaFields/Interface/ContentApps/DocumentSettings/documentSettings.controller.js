@@ -21,8 +21,7 @@
                 filter: function (item) {
                     return item.nodeType === "container" ||
                         (vm.model.inheritance != null && vm.model.inheritance.id === item.id) ||
-                        editorState.getCurrent().id === item.id ||
-                        !$scope.model.compositeContentTypes.includes(item.alias);
+                        editorState.getCurrent().id === Number.parseInt(item.id);
                 },
                 submit: function (model) {
                     if (model.selection.length > 0) {
