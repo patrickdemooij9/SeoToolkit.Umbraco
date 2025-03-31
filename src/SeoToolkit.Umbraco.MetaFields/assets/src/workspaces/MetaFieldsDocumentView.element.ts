@@ -68,7 +68,7 @@ export default class MetaFieldsDocumentView extends UmbElementMixin(
             <umb-input-document-type
               slot="editor"
               @change=${this.#onInheritanceSelect}
-              .selection=${[]}
+              .selection=${this._inheritanceId ? [this._inheritanceId] : []}
               .max=${1}
               .documentTypesOnly=${true}
               .value=${this._inheritanceId!}
