@@ -7,6 +7,7 @@
     "sitemap": "cd SeoToolkit.Umbraco.Sitemap/assets && npm run build",
     "siteAudit": "cd SeoToolkit.Umbraco.SiteAudit/assets && npm run build",
     "metaFields": "cd SeoToolkit.Umbraco.MetaFields/assets && npm run build",
+    "notFound": "cd SeoToolkit.Umbraco.NotFound/assets && npm run build",
     "commonDeploy": "cd SeoToolkit.Umbraco.Common/assets && npm run deploy",
     "robotsTxtDeploy": "cd SeoToolkit.Umbraco.RobotsTxt/assets && npm run deploy",
     "scriptManagerDeploy": "cd SeoToolkit.Umbraco.ScriptManager/assets && npm run deploy",
@@ -14,8 +15,9 @@
     "sitemapDeploy": "cd SeoToolkit.Umbraco.Sitemap/assets && npm run deploy",
     "siteAuditDeploy": "cd SeoToolkit.Umbraco.SiteAudit/assets && npm run deploy",
     "metaFieldsDeploy": "cd SeoToolkit.Umbraco.MetaFields/assets && npm run deploy",
-    "start": "concurrently \"npm run common\" \"npm run robotsTxt\" \"npm run scriptManager\" \"npm run redirect\" \"npm run sitemap\" \"npm run siteAudit\" \"npm run metaFields\"",
-    "deploy": "concurrently \"npm run commonDeploy\" \"npm run robotsTxtDeploy\" \"npm run scriptManagerDeploy\" \"npm run redirectDeploy\" \"npm run sitemapDeploy\" \"npm run siteAuditDeploy\" \"npm run metaFieldsDeploy\""
+    "notFoundDeploy": "cd SeoToolkit.Umbraco.NotFound/assets && npm run deploy",
+    "start": "concurrently \"npm run common\" \"npm run robotsTxt\" \"npm run scriptManager\" \"npm run redirect\" \"npm run sitemap\" \"npm run siteAudit\" \"npm run metaFields\" \"npm run notFound\"",
+    "deploy": "concurrently \"npm run commonDeploy\" \"npm run robotsTxtDeploy\" \"npm run scriptManagerDeploy\" \"npm run redirectDeploy\" \"npm run sitemapDeploy\" \"npm run siteAuditDeploy\" \"npm run metaFieldsDeploy\" \"npm run notFoundDeploy\""
   },
   "dependencies": {
     "concurrently": "^9.0.1"

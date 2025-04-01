@@ -1,0 +1,1 @@
+export const SEOTOOLKIT_NOTFOUND_ENTITY = "seoToolkit-notFound";

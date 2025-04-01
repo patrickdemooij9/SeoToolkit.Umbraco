@@ -12,6 +12,7 @@ import {
   SEOTOOLKIT_ROBOTSTXT_ENTITY,
   SEOTOOLKIT_SCRIPTMANAGER_ENTITY,
   SEOTOOLKIT_SITEAUDIT_ENTITY,
+  SEOTOOLKIT_NOTFOUND_ENTITY,
   SEOTOOLKIT_TREE_ROOT,
 } from "../constants/seoToolkitConstants";
 import { SeoToolkitTreeItemModel } from "../trees/types";
@@ -58,6 +59,8 @@ const mapper = (
 ): SeoToolkitTreeItemModel => {
   let entity = SEOTOOLKIT_MODULE_ENTITY;
   let icon = "icon-book";
+
+  //TODO: Reword this
   switch (item.id) {
     case "20A2086E-7D72-44BA-B97B-5836CAF6E28E".toLowerCase():
       entity = SEOTOOLKIT_ROBOTSTXT_ENTITY;
@@ -74,6 +77,10 @@ const mapper = (
     case "B0D1C655-472B-40E7-9AC4-C6328EA9CF32".toLowerCase():
       entity = SEOTOOLKIT_SITEAUDIT_ENTITY;
       icon = "icon-diagnostics";
+      break;
+    case "a9b6dec6-e045-476a-ba3f-742355e18e33".toLowerCase():
+      entity = SEOTOOLKIT_NOTFOUND_ENTITY;
+      icon = "icon-article";
       break;
     default:
       entity = SEOTOOLKIT_MODULE_ENTITY;
