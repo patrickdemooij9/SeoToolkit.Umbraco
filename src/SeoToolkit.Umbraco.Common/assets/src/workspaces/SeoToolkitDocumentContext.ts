@@ -46,12 +46,12 @@ export default class SeoToolkitDocumentContext
       }
 
       this.#actionEventContext = instance;
-      instance.addEventListener("document.save", () => this.#save(this));
+      instance.addEventListener("document.save", this.#save);
     });
   }
 
-  #save(context: SeoToolkitDocumentContext){
-    context.save(); 
+  #save = () => {
+    this.save();
   }
 
   public save() {
@@ -69,7 +69,7 @@ export default class SeoToolkitDocumentContext
   }
 
   destroy(): void {
-    this.#actionEventContext?.removeEventListener("document.save", () => this.#save(this));
+    this.#actionEventContext?.removeEventListener("document.save", this.#save);
   }
 }
 
