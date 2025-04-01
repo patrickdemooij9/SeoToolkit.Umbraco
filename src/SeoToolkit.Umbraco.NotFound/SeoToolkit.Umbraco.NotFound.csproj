@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <ContentTargetFolders>.</ContentTargetFolders>
+    <Product>SeoToolkit NotFound</Product>
+    <PackageId>SeoToolkit.Umbraco.NotFound</PackageId>
+    <Title>SeoToolkit NotFound</Title>
+    <Description>An Umbraco plugin to help you to easily setup a not found page for your website</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>umbraco plugin package umbraco-marketplace</PackageTags>
+    <RootNamespace>SeoToolkit.Umbraco.NotFound</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
+    <Version>4.0.0-beta4</Version>
+    <StaticWebAssetBasePath>App_Plugins/SeoToolkit</StaticWebAssetBasePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco.NotFound.Core\SeoToolkit.Umbraco.NotFound.Core.csproj" />
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
+  </ItemGroup>
+
+</Project>

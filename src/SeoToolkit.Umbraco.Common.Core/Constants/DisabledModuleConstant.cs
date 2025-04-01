@@ -5,6 +5,7 @@
         public const string Middleware = "Middleware";
         public const string DocumentTypeContextApp = "DocumentTypeContextApp";
         public const string SectionTree = "SectionTree";
+        public const string LastChanceContentFinder = "LastChanceContentFinder";
         public const string All = "All";
     }
 }

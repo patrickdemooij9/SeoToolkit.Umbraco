@@ -23,6 +23,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         private Guid _scriptManagerGuid = new Guid("94E95F4A-2ECB-4038-BCFD-8357B7C41F1A");
         private Guid _redirectsGuid = new Guid("1147F58D-D2D5-425B-AEDE-DB537BDAC9EF");
         private Guid _siteAuditGuid = new Guid("B0D1C655-472B-40E7-9AC4-C6328EA9CF32");
+        private Guid _notFoundGuid = new Guid("a9b6dec6-e045-476a-ba3f-742355e18e33");
 
         [HttpGet("root")]
         [ProducesResponseType(typeof(PagedViewModel<NamedEntityTreeItemResponseModel>), StatusCodes.Status200OK)]
@@ -44,6 +45,9 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             }, new NamedEntityTreeItemResponseModel{
                 Id = _siteAuditGuid,
                 Name = "Site Audits"
+            }, new NamedEntityTreeItemResponseModel{
+                Id = _notFoundGuid,
+                Name = "Not Found"
             } };
             var result = new PagedViewModel<NamedEntityTreeItemResponseModel>()
             {
