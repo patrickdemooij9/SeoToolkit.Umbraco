@@ -33,7 +33,7 @@ namespace SeoToolkit.Umbraco.Sitemap
                 Id = "SeoToolkit.Umbraco.Sitemap",
                 Name = "SeoToolkit Sitemap",
                 AllowTelemetry = true,
-                Version = "4.0.0-beta4",
+                Version = "4.0.0-beta5",
                 Extensions = [ entrypoint!],
             }
             ];
