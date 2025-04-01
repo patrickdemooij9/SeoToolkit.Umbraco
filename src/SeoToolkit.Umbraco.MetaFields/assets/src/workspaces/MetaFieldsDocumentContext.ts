@@ -47,8 +47,7 @@ export default class MetaFieldsDocumentContext
       }
 
       this.#actionEventContext = instance;
-      instance?.removeEventListener("document.save", () => this.#save(this));
-      instance.addEventListener("document.save", () => this.#save(this));
+      instance.addEventListener("document.save", this.#save);
     });
   }
 
@@ -62,14 +61,12 @@ export default class MetaFieldsDocumentContext
   }
 
   destroy(): void {
-    this.#actionEventContext?.removeEventListener("document.save", () =>
-      this.#save(this)
-    );
+    this.#actionEventContext?.removeEventListener("document.save", this.#save);
   }
 
-  #save(context: MetaFieldsDocumentContext) {
-    context.save();
-  }
+  #save = () => {
+    this.save();
+  };
 
   save() {
     const model = this.#model.getValue();
