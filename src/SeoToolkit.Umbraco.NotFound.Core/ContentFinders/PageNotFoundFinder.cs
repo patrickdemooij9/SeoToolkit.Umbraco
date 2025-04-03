@@ -23,12 +23,12 @@ public class PageNotFoundFinder : IContentLastChanceFinder
 
         var pageNotFoundId = _keyValueService.GetValue(NotFoundConstants.NotFoundKeyValueKey);
 
-        if (string.IsNullOrWhiteSpace(pageNotFoundId))
+        if (string.IsNullOrWhiteSpace(pageNotFoundId) || !Guid.TryParse(pageNotFoundId, out var pageNotFoundGuid))
         {
             return Task.FromResult(false);
         }
 
-        var page = context?.Content?.GetById(Convert.ToInt32(pageNotFoundId));
+        var page = context?.Content?.GetById(pageNotFoundGuid);
 
         if (page == null || !page.IsPublished())
         {
