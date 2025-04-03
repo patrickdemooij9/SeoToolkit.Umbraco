@@ -56,7 +56,8 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
           },
         ];
 
-        this._canSubmit = !!value.name && !!value.selectedNodeId && value.selectedNodeId !== '';
+        this._canSubmit =
+          !!value.name && !!value.selectedNodeId && value.selectedNodeId !== "";
 
         const checkNames =
           this._config?.checks
@@ -125,7 +126,7 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
 
   override render() {
     return html`
-      <div class="audit-pane">
+      <umb-body-layout>
         <div class="create-panels">
           <uui-box
             headline="1. Audit information"
@@ -143,7 +144,7 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
                 val
                 .validation=${{
                   mandatory: true,
-                  mandatoryMessage: "This field is required"
+                  mandatoryMessage: "This field is required",
                 }}
               >
               </umb-property>
@@ -160,7 +161,7 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
                 ]}
                 .validation=${{
                   mandatory: true,
-                  mandatoryMessage: "This field is required"
+                  mandatoryMessage: "This field is required",
                 }}
               >
               </umb-property>
@@ -209,7 +210,17 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
             </umb-property-dataset>
           </uui-box>
         </div>
-        <div class="button-bar">
+        <umb-footer-layout slot="footer">
+        <uui-button
+            slot="actions"
+            id="cancel"
+            label="Cancel"
+            look="primary"
+            color="danger"
+            href="/umbraco/section/SeoToolkit/workspace/seoToolkit-siteAudit/overview"
+          >
+            Cancel
+          </uui-button>
           <uui-button
             slot="actions"
             id="submit"
@@ -221,27 +232,13 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
           >
             Create and start
           </uui-button>
-          <uui-button
-            slot="actions"
-            id="cancel"
-            label="Cancel"
-            look="primary"
-            color="danger"
-            href="/umbraco/section/SeoToolkit/workspace/seoToolkit-siteAudit/overview"
-          >
-            Cancel
-          </uui-button>
-        </div>
-      </div>
+        </umb-footer-layout>
+      </umb-body-layout>
     `;
   }
 
   static override styles = [
     css`
-      .audit-pane {
-        padding: 20px;
-      }
-
       .create-panels {
         display: flex;
         gap: 14px;
