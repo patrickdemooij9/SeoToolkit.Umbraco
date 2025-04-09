@@ -4,6 +4,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditors;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
+using System.Web;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
@@ -28,7 +29,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 
         protected override HtmlString Render(string value)
         {
-            return string.IsNullOrWhiteSpace(value) ? null : new HtmlString($"<link rel=\"canonical\" href=\"{value}\"/>");
+            return string.IsNullOrWhiteSpace(value) ? null : new HtmlString($"<link rel=\"canonical\" href=\"{HttpUtility.HtmlEncode(value)}\"/>");
         }
     }
 }

@@ -5,6 +5,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditors;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using Umbraco.Extensions;
+using System.Web;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
 
@@ -32,6 +33,6 @@ public class TwitterSiteField : SeoField<string>
         if (value.StartsWith("@")) {
             value = value[1..];
         }
-        return new HtmlString(value.IsNullOrWhiteSpace() ? string.Empty : $"<meta name=\"twitter:site\" content=\"@{value}\"/>");
+        return new HtmlString(value.IsNullOrWhiteSpace() ? string.Empty : $"<meta name=\"twitter:site\" content=\"@{HttpUtility.HtmlEncode(value)}\"/>");
     }
 }

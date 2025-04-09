@@ -8,6 +8,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Models.Converters;
 using Umbraco.Extensions;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
 
@@ -45,6 +46,6 @@ public class TwitterCardTypeField : SeoField<string>
         if (value is null) {
             return HtmlString.Empty;
         }
-        return new HtmlString(value.IsNullOrWhiteSpace() ? null : $"<meta name=\"twitter:card\" content=\"{value}\"/>");
+        return new HtmlString(value.IsNullOrWhiteSpace() ? null : $"<meta name=\"twitter:card\" content=\"{HttpUtility.HtmlEncode(value)}\"/>");
     }
 }
