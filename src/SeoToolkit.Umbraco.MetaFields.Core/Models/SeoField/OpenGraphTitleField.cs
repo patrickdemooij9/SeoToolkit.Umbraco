@@ -5,6 +5,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
+using System.Web;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
@@ -22,7 +23,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 
         public HtmlString Render(object value)
         {
-            return new HtmlString($"<meta property=\"og:title\" content=\"{value}\"/>");
+            return new HtmlString($"<meta property=\"og:title\" content=\"{HttpUtility.HtmlEncode(value)}\"/>");
         }
     }
 }
