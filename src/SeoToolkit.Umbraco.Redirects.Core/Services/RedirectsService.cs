@@ -10,6 +10,8 @@ using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Redirects.Core.Extensions;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
+using Umbraco.Cms.Core.Configuration.Models;
+using Microsoft.Extensions.Options;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Services
 {
@@ -17,12 +19,16 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
     {
         private readonly IRedirectsRepository _redirectsRepository;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private RequestHandlerSettings _requestHandlerSettings;
 
         public RedirectsService(IRedirectsRepository redirectsRepository,
-            IUmbracoContextFactory umbracoContextFactory)
+            IUmbracoContextFactory umbracoContextFactory,
+            IOptionsMonitor<RequestHandlerSettings> requestHandlerSettings)
         {
             _redirectsRepository = redirectsRepository;
             _umbracoContextFactory = umbracoContextFactory;
+            _requestHandlerSettings = requestHandlerSettings.CurrentValue;
+            requestHandlerSettings.OnChange(settings => _requestHandlerSettings = settings);
         }
 
         public PagedResult<Redirect> GetAll(int pageNumber, int pageSize, string orderBy = null, string orderDirection = null, string search = "")
@@ -51,9 +57,15 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
 
             if (redirect.NewNode is null)
             {
-                newUrl = Uri.IsWellFormedUriString(newUrl, UriKind.Absolute) ?
-                    newUrl :
-                    newUrl.EnsureEndsWith("/").ToLower();
+                newUrl = newUrl.EnsureStartsWith('/');
+                if (_requestHandlerSettings.AddTrailingSlash)
+                {
+                    newUrl = newUrl.EnsureEndsWith('/');
+                }
+                else
+                {
+                    newUrl = newUrl.TrimEnd('/');
+                }
             }
 
             var existingRedirects = _redirectsRepository.GetByUrls(oldUrl).Where(it => it.Id != redirect.Id).ToArray();
