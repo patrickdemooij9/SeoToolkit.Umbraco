@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Web;
 using Microsoft.AspNetCore.Html;
 using Newtonsoft.Json;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors;
@@ -25,6 +27,6 @@ public class KeywordsField : ISeoField
     public HtmlString Render(object value)
     {
         if (value is not string s) return null;
-        return string.IsNullOrEmpty(s) ? null : new HtmlString($"<meta name=\"keywords\" content=\"{string.Join(",", JsonConvert.DeserializeObject<string[]>(s))}\"/>");
+        return string.IsNullOrEmpty(s) ? null : new HtmlString($"<meta name=\"keywords\" content=\"{string.Join(",", JsonConvert.DeserializeObject<string[]>(s).Select(HttpUtility.HtmlEncode))}\"/>");
     }
 }
