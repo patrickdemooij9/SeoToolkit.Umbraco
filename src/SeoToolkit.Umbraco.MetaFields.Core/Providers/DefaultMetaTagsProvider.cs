@@ -98,11 +98,15 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
 
                     if (intermediateObject is null)
                         return new SeoValue(it, null);
-                    var converter = _seoConverterCollection.GetConverter(intermediateObject.GetType(), it.FieldType);
+                    var fromType = intermediateObject.GetType();
+                    var converter = _seoConverterCollection.GetConverter(fromType, it.FieldType);
                     if (converter is not null)
                         return new SeoValue(it, converter.Convert(intermediateObject, content, it.Alias));
 
-                    _logger.LogWarning("No converter found for conversion {0} to {1}", intermediateObject.GetType(), it.FieldType);
+                    if (fromType != it.FieldType)
+                    {
+                        _logger.LogWarning("No converter found for conversion {0} to {1}", fromType, it.FieldType);
+                    }
                     return new SeoValue(it, intermediateObject);
                 }).WhereNotNull().ToArray();
 
