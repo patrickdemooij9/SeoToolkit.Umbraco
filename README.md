@@ -2,7 +2,7 @@
 
 # SeoToolkit
 
-SeoToolkit is a SEO package for Umbraco 9 & 10 & 11. This package features most functionalities needed for your SEO needs like meta fields, sitemap, robots.txt and much more.
+SeoToolkit is a SEO package for Umbraco 9 & 10 & 11 & 12 & 13, and 15. This package features most functionalities needed for your SEO needs like meta fields, sitemap, robots.txt and much more.
 
 ## Installation
 
