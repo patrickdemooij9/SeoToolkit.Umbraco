@@ -12,7 +12,8 @@ Installation of that package can be done through the NuGet command:
 
 If you are installing SeoToolkit for Umbraco 9, use the 1.x versions. 
 If you are installing for Umbraco 10, use the 2.x versions.
-If you are installing for Umbraco 11, use the 3.x versions
+If you are installing for Umbraco 11-13, use the 3.x versions
+If you are installing for Umbraco 15, use the 4.x versions.
 
 After installing, you'll want to add the following lines to the _ViewImports.cshtml file:
 
