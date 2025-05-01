@@ -164,7 +164,10 @@
                 vm.newUrlProperty.value = urlData.value;
             } else if (urlData.linkType === '2') {
                 contentResource.getById(urlData.value).then(function (content) {
-                    languageResource.getById(urlData.culture).then(function (language) {
+                    languageResource.getAll().then(function (data) {
+                        var language = data.find(function(item) {
+                            return item.id === urlData.culture;
+                        });
                         const url = content.urls.find(function (url) {
                             return url.culture === language.culture;
                         });
