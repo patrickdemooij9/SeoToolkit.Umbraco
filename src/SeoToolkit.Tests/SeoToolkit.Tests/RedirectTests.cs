@@ -1,8 +1,10 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Options;
+using Moq;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using SeoToolkit.Umbraco.Redirects.Core.Services;
 using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
@@ -24,7 +26,7 @@ namespace SeoToolkit.Tests
             });
 
             var umbracoContextFactory = GetContextFactoryWithDomain();
-            var redirectService = new RedirectsService(redirectRepository.Object, umbracoContextFactory);
+            var redirectService = new RedirectsService(redirectRepository.Object, umbracoContextFactory, Mock.Of<IOptionsMonitor<RequestHandlerSettings>>());
 
             // Act
             var redirect = redirectService.GetByUrl(new Uri("https://test.nl/test123"));
