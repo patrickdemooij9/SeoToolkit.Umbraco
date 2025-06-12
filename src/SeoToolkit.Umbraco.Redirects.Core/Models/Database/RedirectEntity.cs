@@ -27,6 +27,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Database
         public bool IsEnabled { get; set; }
 
         [Column("OldUrl")]
+        [Index(IndexTypes.UniqueNonClustered, Name = "IX_SeoToolkitOldUrl", ForColumns = "OldUrl, Domain, CustomDomain")]
         public string OldUrl { get; set; }
 
         [Column("NewUrl")]

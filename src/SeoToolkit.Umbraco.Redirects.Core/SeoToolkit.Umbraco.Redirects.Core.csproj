@@ -16,6 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BloomFilter.NetCore" Version="2.5.2" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.7.0" />
     <PackageReference Include="ExcelDataReader" Version="3.7.0" />
   </ItemGroup>
