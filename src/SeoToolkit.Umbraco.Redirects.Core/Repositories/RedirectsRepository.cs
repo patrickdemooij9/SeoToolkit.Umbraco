@@ -41,10 +41,11 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
             {
-                scope.Database.Save(ToEntity(redirect));
-            }
+                var entity = ToEntity(redirect);
+                scope.Database.Save(entity);
 
-            ClearCache();
+                ClearCache(entity.Id);
+            }
         }
 
         public void Delete(Redirect redirect)
@@ -54,17 +55,18 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 scope.Database.Delete(ToEntity(redirect));
             }
 
-            ClearCache();
+            ClearCache(redirect.Id);
         }
 
         public Redirect Get(int id)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
             {
-                return ToModel(scope.Database.FirstOrDefault<RedirectEntity>(scope.SqlContext.Sql()
+                var entity = scope.Database.FirstOrDefault<RedirectEntity>(scope.SqlContext.Sql()
                     .SelectAll()
                     .From<RedirectEntity>()
-                    .Where<RedirectEntity>(it => it.Id == id)));
+                    .Where<RedirectEntity>(it => it.Id == id));
+                return entity is null ? null : ToModel(entity);
             }
         }
 
@@ -169,9 +171,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             }
         }
 
-        private void ClearCache()
+        private void ClearCache(int redirectId)
         {
-            _distributedCache.RefreshAll(RedirectsCacheRefresher.CacheGuid);
+            _distributedCache.Refresh(RedirectsCacheRefresher.CacheGuid, redirectId);
         }
 
         private Expression<Func<RedirectEntity, object>> GetOrderingColumn(string orderBy)

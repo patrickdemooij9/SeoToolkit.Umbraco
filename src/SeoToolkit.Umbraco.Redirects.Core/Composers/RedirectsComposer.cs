@@ -18,6 +18,8 @@ using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Middleware;
 using SeoToolkit.Umbraco.Redirects.Core.Repositories;
 using SeoToolkit.Umbraco.Redirects.Core.Services;
+using SeoToolkit.Umbraco.Redirects.Core.Caching;
+using SeoToolkit.Umbraco.Redirects.Core.BackgroundTasks;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Composers
 {
@@ -47,7 +49,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Composers
 
             builder.Services.AddUnique<IRedirectsRepository, RedirectsRepository>();
             builder.Services.AddUnique<IRedirectsService, RedirectsService>();
+            builder.Services.AddUnique<IRedirectsBloomFilter, RedirectsBloomFilter>();
             builder.Services.AddTransient<RedirectsImportHelper>();
+
+            builder.Services.AddHostedService<RebuildBloomFilterTask>();
 
             if (!disabledModules.Contains(DisabledModuleConstant.Middleware))
             {

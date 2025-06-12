@@ -5,5 +5,6 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Config.Models
     public class RedirectsConfigModel
     {
         public string[] DisabledModules { get; set; } = Array.Empty<string>();
+        public bool EnableBloomFilter { get; set; } = true;
     }
 }
