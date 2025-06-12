@@ -15,6 +15,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
             {
                 CreateIndex<RedirectEntity>("IX_SeoToolkitOldUrl");
             }
+            if (!IndexExists("IX_SeoToolkitRegex"))
+            {
+                CreateIndex<RedirectEntity>("IX_SeoToolkitRegex");
+            }
         }
     }
 }
