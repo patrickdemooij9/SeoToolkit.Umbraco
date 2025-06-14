@@ -30,4 +30,13 @@ export class MetaFieldsContentSource {
       })
     );
   }
+
+  async getImagePreview(mediaId: string) {
+    return await tryExecuteAndNotify(
+      this.#host,
+      SeoToolkitMetaFieldsService.getUmbracoSeoToolkitMetaFieldsImagePreview({
+        mediaId,
+      })
+    )
+  }
 }

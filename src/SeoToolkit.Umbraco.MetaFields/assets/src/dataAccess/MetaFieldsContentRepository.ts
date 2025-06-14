@@ -19,4 +19,8 @@ export class MetaFieldsContentRepository extends UmbControllerBase {
   async save(model: MetaFieldsSettingsPostViewModel) {
     return this.#source.save(model);
   }
+
+  async getImagePreview(mediaId: string) {
+    return this.#source.getImagePreview(mediaId);
+  }
 }
