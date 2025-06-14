@@ -54,7 +54,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
 
         public bool IsEmpty(object value)
         {
-            return value != null;
+            return value is null;
         }
 
         private class MediaEditorModel
