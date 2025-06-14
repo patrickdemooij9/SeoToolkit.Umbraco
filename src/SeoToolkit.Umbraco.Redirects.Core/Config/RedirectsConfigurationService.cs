@@ -18,7 +18,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Config
             var settings = _config.CurrentValue;
             return new RedirectsConfigModel
             {
-                DisabledModules = settings.DisabledModules
+                DisabledModules = settings.DisabledModules,
+                EnableBloomFilter = settings.EnableBloomFilter
             };
         }
     }

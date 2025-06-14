@@ -7,6 +7,7 @@ using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
+using System.Diagnostics;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
 {
@@ -53,7 +54,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
         private bool HandleRedirect(HttpContext context)
         {
             var url = new Uri(context.Request.GetEncodedUrl());
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             var matchedRedirectResult = _redirectsService.GetByUrl(url);
+            stopwatch.Stop();
             if (matchedRedirectResult is null)
             {
                 return false;
