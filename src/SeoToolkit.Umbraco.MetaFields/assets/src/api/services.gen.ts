@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetUmbracoSeoToolkitModulesResponse, GetUmbracoSeoToolkitRobotsTxtResponse, PostUmbracoSeoToolkitRobotsTxtData, PostUmbracoSeoToolkitRobotsTxtResponse, GetUmbracoSeoToolkitTreeInfoAncestorsData, GetUmbracoSeoToolkitTreeInfoAncestorsResponse, GetUmbracoSeoToolkitTreeInfoChildrenData, GetUmbracoSeoToolkitTreeInfoChildrenResponse, GetUmbracoSeoToolkitTreeInfoRootData, GetUmbracoSeoToolkitTreeInfoRootResponse, GetUmbracoSeoToolkitMetaFieldsMetaFieldsData, GetUmbracoSeoToolkitMetaFieldsMetaFieldsResponse, PostUmbracoSeoToolkitMetaFieldsMetaFieldsData, PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponse, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFieldsResponse, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponse, PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData, PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponse, GetUmbracoSeoToolkitRedirectsDomainsResponse, PostUmbracoSeoToolkitRedirectsImportResponse, DeleteUmbracoSeoToolkitRedirectsRedirectData, DeleteUmbracoSeoToolkitRedirectsRedirectResponse, GetUmbracoSeoToolkitRedirectsRedirectData, GetUmbracoSeoToolkitRedirectsRedirectResponse, PostUmbracoSeoToolkitRedirectsRedirectData, PostUmbracoSeoToolkitRedirectsRedirectResponse, GetUmbracoSeoToolkitRedirectsRedirectsData, GetUmbracoSeoToolkitRedirectsRedirectsResponse, PostUmbracoSeoToolkitRedirectsValidateData, PostUmbracoSeoToolkitRedirectsValidateResponse, GetUmbracoSeoToolkitScriptManagerDefinitionsResponse, DeleteUmbracoSeoToolkitScriptManagerScriptData, DeleteUmbracoSeoToolkitScriptManagerScriptResponse, GetUmbracoSeoToolkitScriptManagerScriptData, GetUmbracoSeoToolkitScriptManagerScriptResponse, PostUmbracoSeoToolkitScriptManagerScriptData, PostUmbracoSeoToolkitScriptManagerScriptResponse, GetUmbracoSeoToolkitScriptManagerScriptsResponse, PostUmbracoSeoToolkitSiteAuditSiteAuditData, PostUmbracoSeoToolkitSiteAuditSiteAuditResponse, DeleteUmbracoSeoToolkitSiteAuditSiteAuditData, DeleteUmbracoSeoToolkitSiteAuditSiteAuditResponse, GetUmbracoSeoToolkitSiteAuditSiteAuditData, GetUmbracoSeoToolkitSiteAuditSiteAuditResponse, GetUmbracoSeoToolkitSiteAuditSiteAuditConfigurationResponse, GetUmbracoSeoToolkitSiteAuditSiteAuditsResponse, PostUmbracoSeoToolkitSiteAuditStopSiteAuditData, PostUmbracoSeoToolkitSiteAuditStopSiteAuditResponse, GetUmbracoSeoToolkitSitemapSitemapSettingsData, GetUmbracoSeoToolkitSitemapSitemapSettingsResponse, PostUmbracoSeoToolkitSitemapSitemapSettingsData, PostUmbracoSeoToolkitSitemapSitemapSettingsResponse } from './types.gen';
+import type { GetUmbracoSeoToolkitModulesResponse, GetUmbracoSeoToolkitRobotsTxtResponse, PostUmbracoSeoToolkitRobotsTxtData, PostUmbracoSeoToolkitRobotsTxtResponse, GetUmbracoSeoToolkitTreeInfoAncestorsData, GetUmbracoSeoToolkitTreeInfoAncestorsResponse, GetUmbracoSeoToolkitTreeInfoChildrenData, GetUmbracoSeoToolkitTreeInfoChildrenResponse, GetUmbracoSeoToolkitTreeInfoRootData, GetUmbracoSeoToolkitTreeInfoRootResponse, GetUmbracoSeoToolkitSettingsSeoSettingsData, GetUmbracoSeoToolkitSettingsSeoSettingsResponse, PostUmbracoSeoToolkitSettingsSeoSettingsData, PostUmbracoSeoToolkitSettingsSeoSettingsResponse, GetUmbracoSeoToolkitMetaFieldsImagePreviewData, GetUmbracoSeoToolkitMetaFieldsImagePreviewResponse, GetUmbracoSeoToolkitMetaFieldsMetaFieldsData, GetUmbracoSeoToolkitMetaFieldsMetaFieldsResponse, PostUmbracoSeoToolkitMetaFieldsMetaFieldsData, PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponse, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFieldsResponse, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponse, PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData, PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponse, GetUmbracoSeoToolkitNotFoundNotFoundResponse, PostUmbracoSeoToolkitNotFoundNotFoundData, PostUmbracoSeoToolkitNotFoundNotFoundResponse, GetUmbracoSeoToolkitRedirectsDomainsResponse, PostUmbracoSeoToolkitRedirectsImportResponse, DeleteUmbracoSeoToolkitRedirectsRedirectData, DeleteUmbracoSeoToolkitRedirectsRedirectResponse, GetUmbracoSeoToolkitRedirectsRedirectData, GetUmbracoSeoToolkitRedirectsRedirectResponse, PostUmbracoSeoToolkitRedirectsRedirectData, PostUmbracoSeoToolkitRedirectsRedirectResponse, GetUmbracoSeoToolkitRedirectsRedirectsData, GetUmbracoSeoToolkitRedirectsRedirectsResponse, PostUmbracoSeoToolkitRedirectsValidateData, PostUmbracoSeoToolkitRedirectsValidateResponse, GetUmbracoSeoToolkitScriptManagerDefinitionsResponse, DeleteUmbracoSeoToolkitScriptManagerScriptData, DeleteUmbracoSeoToolkitScriptManagerScriptResponse, GetUmbracoSeoToolkitScriptManagerScriptData, GetUmbracoSeoToolkitScriptManagerScriptResponse, PostUmbracoSeoToolkitScriptManagerScriptData, PostUmbracoSeoToolkitScriptManagerScriptResponse, GetUmbracoSeoToolkitScriptManagerScriptsResponse, PostUmbracoSeoToolkitSiteAuditSiteAuditData, PostUmbracoSeoToolkitSiteAuditSiteAuditResponse, DeleteUmbracoSeoToolkitSiteAuditSiteAuditData, DeleteUmbracoSeoToolkitSiteAuditSiteAuditResponse, GetUmbracoSeoToolkitSiteAuditSiteAuditData, GetUmbracoSeoToolkitSiteAuditSiteAuditResponse, GetUmbracoSeoToolkitSiteAuditSiteAuditConfigurationResponse, GetUmbracoSeoToolkitSiteAuditSiteAuditsResponse, PostUmbracoSeoToolkitSiteAuditStopSiteAuditData, PostUmbracoSeoToolkitSiteAuditStopSiteAuditResponse, GetUmbracoSeoToolkitSitemapSitemapSettingsData, GetUmbracoSeoToolkitSitemapSitemapSettingsResponse, PostUmbracoSeoToolkitSitemapSitemapSettingsData, PostUmbracoSeoToolkitSitemapSitemapSettingsResponse } from './types.gen';
 
 export class SeoToolkitService {
     /**
@@ -97,9 +97,57 @@ export class SeoToolkitService {
         });
     }
     
+    /**
+     * @param data The data for the request.
+     * @param data.contentTypeId
+     * @returns unknown OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitSettingsSeoSettings(data: GetUmbracoSeoToolkitSettingsSeoSettingsData = {}): CancelablePromise<GetUmbracoSeoToolkitSettingsSeoSettingsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitSettings/seoSettings',
+            query: {
+                contentTypeId: data.contentTypeId
+            }
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitSettingsSeoSettings(data: PostUmbracoSeoToolkitSettingsSeoSettingsData = {}): CancelablePromise<PostUmbracoSeoToolkitSettingsSeoSettingsResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitSettings/seoSettings',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            responseHeader: 'Umb-Notifications'
+        });
+    }
+    
 }
 
 export class SeoToolkitMetaFieldsService {
+    /**
+     * @param data The data for the request.
+     * @param data.mediaId
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitMetaFieldsImagePreview(data: GetUmbracoSeoToolkitMetaFieldsImagePreviewData = {}): CancelablePromise<GetUmbracoSeoToolkitMetaFieldsImagePreviewResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitMetaFields/imagePreview',
+            query: {
+                mediaId: data.mediaId
+            }
+        });
+    }
+    
     /**
      * @param data The data for the request.
      * @param data.nodeGuid
@@ -172,6 +220,37 @@ export class SeoToolkitMetaFieldsService {
             url: '/umbraco/seoToolkitMetaFieldsSettings/metaFieldsSettings',
             body: data.requestBody,
             mediaType: 'application/json',
+            responseHeader: 'Umb-Notifications'
+        });
+    }
+    
+}
+
+export class SeoToolkitNotFoundService {
+    /**
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static getUmbracoSeoToolkitNotFoundNotFound(): CancelablePromise<GetUmbracoSeoToolkitNotFoundNotFoundResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/seoToolkitNotFound/notFound'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.data
+     * @returns string OK
+     * @throws ApiError
+     */
+    public static postUmbracoSeoToolkitNotFoundNotFound(data: PostUmbracoSeoToolkitNotFoundNotFoundData = {}): CancelablePromise<PostUmbracoSeoToolkitNotFoundNotFoundResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/seoToolkitNotFound/notFound',
+            query: {
+                data: data.data
+            },
             responseHeader: 'Umb-Notifications'
         });
     }
@@ -282,7 +361,7 @@ export class SeoToolkitRedirectsService {
      * @param data The data for the request.
      * @param data.fileExtension
      * @param data.domain
-     * @param data.formData
+     * @param data.tempFileId
      * @returns string OK
      * @throws ApiError
      */
@@ -292,10 +371,9 @@ export class SeoToolkitRedirectsService {
             url: '/umbraco/seoToolkitRedirects/validate',
             query: {
                 fileExtension: data.fileExtension,
-                domain: data.domain
+                domain: data.domain,
+                tempFileId: data.tempFileId
             },
-            formData: data.formData,
-            mediaType: 'multipart/form-data',
             responseHeader: 'Umb-Notifications',
             errors: {
                 400: 'Bad Request',
