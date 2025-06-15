@@ -91,10 +91,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             if (postModel.Id == 0)
             {
                 redirect.CreatedBy = -1;
-                var getUserAttempt = _backOfficeSecurityAccessor.BackOfficeSecurity?.GetUserId();
-                if (getUserAttempt?.Success is true)
+                var userId = _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser?.Id;
+                if (userId.HasValue)
                 {
-                    redirect.CreatedBy = getUserAttempt.Value.Result;
+                    redirect.CreatedBy = userId.Value;
                 }
             }
 

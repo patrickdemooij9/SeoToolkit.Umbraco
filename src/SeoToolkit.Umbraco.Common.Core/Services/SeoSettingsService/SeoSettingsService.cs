@@ -5,6 +5,7 @@ using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
 
@@ -25,7 +26,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
             _cache = appCaches.RuntimeCache;
         }
 
-        public bool IsEnabled(IPublishedContentType contentType)
+        public bool IsEnabled(IContentType contentType)
         {
             return _cache.GetCacheItem($"{CacheConstants.SeoSettings}{contentType.Id}",
                 () => _seoSettingsRepository.IsEnabled(contentType), TimeSpan.FromMinutes(10));

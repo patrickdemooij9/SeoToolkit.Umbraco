@@ -2,24 +2,34 @@ import { UmbEntryPointOnInit } from '@umbraco-cms/backoffice/extension-api';
 import { seoToolkitSection } from './sections/seoToolkitSection';
 import { welcomeDashboardManifest } from './dashboards/welcome/welcomeDashboardManifest';
 import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
-import { OpenAPI } from './api';
 import { seoToolkitSidebar } from './sidebar/seoToolkitSidebar';
 import { TreeManifests } from './trees/seoToolkitTree';
 import { manifest } from './conditions/workspaceEntityIdCondition';
 import { Manifests as DocumentManifests } from './manifests/seoToolkitDocumentManifests';
 import { ContentViewManifests } from './manifests/seoToolkitContentManifests';
+import { client } from '@umbraco-cms/backoffice/external/backend-api';
 
 export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
 
     host.consumeContext(UMB_AUTH_CONTEXT,(auth)=> {
+        if (!auth) {
+            return;
+        }
 
         const config = auth.getOpenApiConfiguration();
-  
-        OpenAPI.BASE = config.base;
-        OpenAPI.WITH_CREDENTIALS = config.withCredentials;
-        OpenAPI.CREDENTIALS = config.credentials;
-        OpenAPI.TOKEN = config.token;
-  
+
+        client.setConfig({
+			auth: config.token,
+			baseUrl: config.base,
+			credentials: config.credentials,
+		});
+
+		client.interceptors.request.use(async (request, _options) => {
+			const token = await auth.getLatestToken();
+			request.headers.set('Authorization', `Bearer ${token}`);
+			return request;
+		});
+
     });
 
     extensionRegistry.register(seoToolkitSection);

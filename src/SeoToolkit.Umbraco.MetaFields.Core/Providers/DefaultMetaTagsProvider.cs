@@ -13,6 +13,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoService;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 using Umbraco.Cms.Core.Events;
 using SeoToolkit.Umbraco.MetaFields.Core.Notifications;
+using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
 {
@@ -25,6 +26,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
         private readonly ILogger<DefaultMetaTagsProvider> _logger;
         private readonly IProfiler _profiler;
         private readonly ISeoSettingsService _seoSettingsService;
+        private readonly IContentTypeService _contentTypeService;
         private readonly IEventAggregator _eventAggregator;
 
         [Obsolete("Doesn't work, use the notification variant instead! Remove in V3")]
@@ -37,6 +39,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
             ILogger<DefaultMetaTagsProvider> logger,
             IProfiler profiler,
             ISeoSettingsService seoSettingsService,
+            IContentTypeService contentTypeService,
             IEventAggregator eventAggregator)
         {
             _documentTypeSettingsService = documentTypeSettingsService;
@@ -46,6 +49,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
             _logger = logger;
             _profiler = profiler;
             _seoSettingsService = seoSettingsService;
+            _contentTypeService = contentTypeService;
             _eventAggregator = eventAggregator;
         }
 
@@ -59,8 +63,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                 var metaTags = new MetaTagsModel(allFields.ToDictionary(it => it, it => (object)null));
                 _eventAggregator.Publish(new BeforeMetaTagsNotification(content, metaTags));
 
+                var contentType = _contentTypeService.Get(content.ContentType.Id);
                 var settings = _documentTypeSettingsService.Get(content.ContentType.Id);
-                if (_seoSettingsService.IsEnabled(content.ContentType) != true)
+                if (_seoSettingsService.IsEnabled(contentType) != true)
                     return null;
                 var userValues = includeUserValues ? _seoValueService.GetUserValues(content.Id) : null;
                 var fields = allFields.Select(it =>

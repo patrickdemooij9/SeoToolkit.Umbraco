@@ -17,6 +17,6 @@ export default class SaveDocumentAction extends UmbWorkspaceActionBase<UmbSubmit
         await this.#submitAction.execute();
 
         const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-        eventContext.dispatchEvent(new SaveDocumentEvent("document.save"));
+        eventContext?.dispatchEvent(new SaveDocumentEvent("document.save"));
     }
 }

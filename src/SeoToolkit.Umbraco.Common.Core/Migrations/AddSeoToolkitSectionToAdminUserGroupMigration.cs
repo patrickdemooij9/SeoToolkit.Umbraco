@@ -1,29 +1,31 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using Umbraco.Cms.Core.Models.Membership;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations;
 using UmbConstants = Umbraco.Cms.Core.Constants;
 
 namespace SeoToolkit.Umbraco.Common.Core.Migrations
 {
-    public class AddSeoToolkitSectionToAdminUserGroupMigration : MigrationBase
+    public class AddSeoToolkitSectionToAdminUserGroupMigration : AsyncMigrationBase
     {
-        private readonly IUserService _userService;
+        private readonly IUserGroupService _userGroupService;
 
-        public AddSeoToolkitSectionToAdminUserGroupMigration(IMigrationContext context, IUserService userService)
+        public AddSeoToolkitSectionToAdminUserGroupMigration(IMigrationContext context, IUserGroupService userGroupService)
            : base(context)
         {
-            _userService = userService;
+            _userGroupService = userGroupService;
         }
 
-        protected override void Migrate()
+        protected override async Task MigrateAsync()
         {
-            var userGroup = _userService.GetUserGroupByAlias(UmbConstants.Security.AdminGroupAlias);
+            var userGroup = (await _userGroupService.GetAllAsync(0, int.MaxValue)).Items.FirstOrDefault(it => it.Alias == UmbConstants.Security.AdminGroupAlias);
 
             if (userGroup != null && !userGroup.AllowedSections.Contains("SeoToolkit"))
             {
                 userGroup.AddAllowedSection("SeoToolkit");
 
-                _userService.Save(userGroup);
+                await _userGroupService.UpdateAsync(userGroup, UmbConstants.Security.SuperUserKey);
             }
         }
     }

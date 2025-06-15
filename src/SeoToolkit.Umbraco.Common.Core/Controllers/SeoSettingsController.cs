@@ -39,7 +39,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             if (contentType is not null)
             {
                 //TODO: Refactor this to use the content type from ContentTypeService
-                isEnabled = _seoSettingsService.IsEnabled(ctx.UmbracoContext.Content?.GetContentType(contentTypeId));
+                isEnabled = _seoSettingsService.IsEnabled(contentType);
             }
 
             return new JsonResult(new SeoSettingsViewModel
@@ -52,8 +52,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         [HttpPost("seoSettings")]
         public IActionResult Set(SeoSettingsPostModel postModel)
         {
-            using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
-            var contentType = ctx.UmbracoContext.Content?.GetContentType(postModel.ContentTypeId);
+            var contentType = _contentTypeService.Get(postModel.ContentTypeId);
             if (contentType is null) return NotFound();
 
             _seoSettingsService.ToggleSeoSettings(contentType.Id, postModel.Enabled);

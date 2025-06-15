@@ -25,13 +25,13 @@ export class SeoEnabledCondition
     super(host, args);
 
     this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (context) => {
-      context.contentTypeUnique.subscribe((value) => {
+      context?.contentTypeUnique.subscribe((value) => {
         if (!value) {
           return;
         }
 
         this.#repository.getSettings(value).then((resp) => {
-          this.permitted = resp.data?.isEnabled ?? false;
+          this.permitted = resp.isEnabled ?? false;
         });
       });
     });
