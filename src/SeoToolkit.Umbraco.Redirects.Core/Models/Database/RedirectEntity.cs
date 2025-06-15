@@ -21,12 +21,14 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Database
         public string CustomDomain { get; set; }
 
         [Column("IsRegex")]
+        [Index(IndexTypes.NonClustered, Name = "IX_SeoToolkitRegex", ForColumns = "IsRegex")]
         public bool IsRegex { get; set; }
 
         [Column("IsEnabled")]
         public bool IsEnabled { get; set; }
 
         [Column("OldUrl")]
+        [Index(IndexTypes.NonClustered, Name = "IX_SeoToolkitOldUrl", ForColumns = "OldUrl, IsEnabled")]
         public string OldUrl { get; set; }
 
         [Column("NewUrl")]

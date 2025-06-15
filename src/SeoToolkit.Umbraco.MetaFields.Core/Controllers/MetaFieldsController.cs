@@ -1,23 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Web;
-using Umbraco.Cms.Web.Common.Attributes;
+using SeoToolkit.Umbraco.Common.Core.Controllers;
 using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldPreviewers;
+using SeoToolkit.Umbraco.MetaFields.Core.Config.Models;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsValue.ViewModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.PostModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
-using Umbraco.Cms.Api.Management.Controllers;
-using SeoToolkit.Umbraco.Common.Core.Controllers;
-using Umbraco.Cms.Web.Common.Routing;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Core.Web;
+using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 {
@@ -35,6 +36,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly ISeoSettingsService _seoSettingsService;
         private readonly SeoGroupCollection _groupCollection;
+        private readonly ISettingsService<MetaFieldsConfigModel> _settingsService;
         private readonly IContentTypeService _contentTypeService;
 
         public MetaFieldsController(IMetaFieldsService seoService,
@@ -47,6 +49,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             ILocalizationService localizationService,
             ISeoSettingsService seoSettingsService,
             SeoGroupCollection groupCollection,
+            ISettingsService<MetaFieldsConfigModel> settingsService,
             IContentTypeService contentTypeService)
         {
             _seoService = seoService;
@@ -59,6 +62,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             _localizationService = localizationService;
             _seoSettingsService = seoSettingsService;
             _groupCollection = groupCollection;
+            _settingsService = settingsService;
             _contentTypeService = contentTypeService;
         }
 
@@ -141,6 +145,20 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             }
 
             return Get(postModel.NodeId, postModel.Culture);
+        }
+
+        [HttpGet("imagePreview")]
+        [ProducesResponseType(typeof(string), 200)]
+        public IActionResult ImagePreview(Guid mediaId)
+        {
+            using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
+            var mediaItem = ctx.UmbracoContext.Media.GetById(true, mediaId);
+            if (mediaItem is null)
+            {
+                return NotFound();
+            }
+            var converter = new PublishedContentSeoValueConverter(_settingsService);
+            return Ok(converter.Convert(mediaItem));
         }
 
         private void EnsureLanguage(string culture)

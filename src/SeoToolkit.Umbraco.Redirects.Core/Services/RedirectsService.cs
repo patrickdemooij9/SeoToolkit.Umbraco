@@ -12,20 +12,24 @@ using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using Umbraco.Cms.Core.Configuration.Models;
 using Microsoft.Extensions.Options;
+using SeoToolkit.Umbraco.Redirects.Core.Caching;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Services
 {
     public class RedirectsService : IRedirectsService
     {
         private readonly IRedirectsRepository _redirectsRepository;
+        private readonly IRedirectsBloomFilter _redirectsBloomFilter;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private RequestHandlerSettings _requestHandlerSettings;
 
         public RedirectsService(IRedirectsRepository redirectsRepository,
+            IRedirectsBloomFilter redirectsBloomFilter,
             IUmbracoContextFactory umbracoContextFactory,
             IOptionsMonitor<RequestHandlerSettings> requestHandlerSettings)
         {
             _redirectsRepository = redirectsRepository;
+            _redirectsBloomFilter = redirectsBloomFilter;
             _umbracoContextFactory = umbracoContextFactory;
             _requestHandlerSettings = requestHandlerSettings.CurrentValue;
             requestHandlerSettings.OnChange(settings => _requestHandlerSettings = settings);
@@ -100,91 +104,112 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
 
         public RedirectFindResult GetByUrl(Uri uri)
         {
-            using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
-            {
-                var domain = DomainUtilities.SelectDomain(ctx.UmbracoContext.Domains.GetAll(false), uri);
+            using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
+            var domain = DomainUtilities.SelectDomain(ctx.UmbracoContext.Domains.GetAll(false), uri);
 
-                var pathAndQuery = uri.PathAndQuery.CleanUrl();
-                var globalUrls = new List<string>
+            var redirectResult = FindExactUrlByUrl(uri, domain);
+            if (redirectResult != null) return redirectResult;
+
+            redirectResult = FindByRegex(uri, domain);
+            return redirectResult;
+        }
+
+        private RedirectFindResult FindExactUrlByUrl(Uri uri, DomainAndUri domain)
+        {
+            var globalUrls = new List<string>
                 {
                     WebUtility.UrlDecode(uri.AbsolutePath.CleanUrl()),
-                    WebUtility.UrlDecode(pathAndQuery)
+                    WebUtility.UrlDecode(uri.PathAndQuery.CleanUrl())
                 };
-                List<string> domainUrls = null;
+            List<string> domainUrls = null;
 
-                if (domain != null)
-                {
-                    //We do this to ensure that we support subdirectories. So if you have domain domain.com/en and relative path /test123, you don't also need to include the subdirectory /en/test123.
-                    var domainUrl = uri.AbsolutePath.CleanUrl().TrimStart(domain.Uri.LocalPath);
+            if (domain != null)
+            {
+                //We do this to ensure that we support subdirectories. So if you have domain domain.com/en and relative path /test123, you don't also need to include the subdirectory /en/test123.
+                var domainUrl = uri.AbsolutePath.CleanUrl().TrimStart(domain.Uri.LocalPath);
 
-                    domainUrls = new List<string>
+                domainUrls = new List<string>
                     {
                         domainUrl,
                         $"{domainUrl}{uri.Query}"
                     };
-                }
+            }
 
-                var customDomainWithoutScheme = uri.Host;
-                var customDomainWithScheme = $"{uri.Scheme}://{uri.Host}";
+            var customDomainWithoutScheme = uri.Host;
+            var customDomainWithScheme = $"{uri.Scheme}://{uri.Host}";
 
-                var urlsToSearch = new List<string>();
-                urlsToSearch.AddRange(globalUrls);
-                if (domainUrls != null)
+            var urlsToSearch = new List<string>();
+            urlsToSearch.AddRange(globalUrls);
+            if (domainUrls != null)
+            {
+                urlsToSearch.AddRange(domainUrls);
+            }
+            var urlsToSearchArray = urlsToSearch.Distinct().ToArray();
+
+            var shouldContinue = urlsToSearchArray.Any(_redirectsBloomFilter.Contains);
+            if (!shouldContinue)
+            {
+                //If the bloom filter does not contain any of the urls, we can stop here.
+                return null;
+            }
+
+            //Because we are checking both the url with and without query, we might get two urls.
+            var redirects = _redirectsRepository.GetByUrls(urlsToSearchArray).ToArray();
+            if (redirects.Length > 0)
+            {
+                Redirect foundRedirect = null;
+                if (domain != null)
                 {
-                    urlsToSearch.AddRange(domainUrls);
+                    //See if we can find a redirect with the same domain
+                    foundRedirect = redirects.FirstOrDefault(it => it.Domain?.Id == domain.Id);
+                    if (foundRedirect != null)
+                        return new RedirectFindResult(uri, foundRedirect);
                 }
-
-                //Because we are checking both the url with and without query, we might get two urls.
-                var redirects = _redirectsRepository.GetByUrls(urlsToSearch.Distinct().ToArray()).ToArray();
-                if (redirects.Length > 0)
+                else
                 {
-                    Redirect foundRedirect = null;
-                    if (domain != null)
-                    {
-                        //See if we can find a redirect with the same domain
-                        foundRedirect = redirects.FirstOrDefault(it => it.Domain?.Id == domain.Id);
-                        if (foundRedirect != null)
-                            return new RedirectFindResult(uri, foundRedirect);
-                    }
-                    else
-                    {
-                        //Else check if we can find a redirect on the custom domain
-                        foundRedirect = redirects.FirstOrDefault(it => it.CustomDomain != null && (it.CustomDomain.Equals(customDomainWithoutScheme, StringComparison.InvariantCultureIgnoreCase) || it.CustomDomain.Equals(customDomainWithScheme)));
-                        if (foundRedirect != null) return new RedirectFindResult(uri, foundRedirect);
-                    }                 
-
-                    //Else check if we can find a redirect on the global level
-                    foundRedirect = redirects.FirstOrDefault(it =>
-                        it.Domain is null &&
-                        string.IsNullOrWhiteSpace(it.CustomDomain) &&
-                        globalUrls.Contains(it.OldUrl, StringComparer.InvariantCultureIgnoreCase));
+                    //Else check if we can find a redirect on the custom domain
+                    foundRedirect = redirects.FirstOrDefault(it => it.CustomDomain != null && (it.CustomDomain.Equals(customDomainWithoutScheme, StringComparison.InvariantCultureIgnoreCase) || it.CustomDomain.Equals(customDomainWithScheme)));
                     if (foundRedirect != null) return new RedirectFindResult(uri, foundRedirect);
                 }
 
-                var regexRedirects = _redirectsRepository.GetAllRegexRedirects().Where(it =>
-                {
-                    // Any site
-                    if (it.Domain == null && string.IsNullOrWhiteSpace(it.CustomDomain)) return true;
-                    
-                    // Find by domain
-                    if (it.Domain != null && domain != null && it.Domain.Id == domain.Id) return true;
-                    
-                    // Find by Custom domain
-                    if (!string.IsNullOrWhiteSpace(it.CustomDomain) &&
-                        (it.CustomDomain.Equals(customDomainWithoutScheme,
-                             StringComparison.InvariantCultureIgnoreCase) ||
-                         it.CustomDomain.Equals(customDomainWithScheme))) return true;
-
-                    return false;
-                });
-
-                foreach (var regexRedirect in regexRedirects)
-                {
-                    if (Regex.IsMatch(pathAndQuery, regexRedirect.OldUrl)) return new RedirectFindResult(uri, regexRedirect);
-                }
-
-                return null;
+                //Else check if we can find a redirect on the global level
+                foundRedirect = redirects.FirstOrDefault(it =>
+                    it.Domain is null &&
+                    string.IsNullOrWhiteSpace(it.CustomDomain) &&
+                    globalUrls.Contains(it.OldUrl, StringComparer.InvariantCultureIgnoreCase));
+                if (foundRedirect != null) return new RedirectFindResult(uri, foundRedirect);
             }
+            return null;
+        }
+
+        private RedirectFindResult FindByRegex(Uri uri, DomainAndUri domain)
+        {
+            var pathAndQuery = uri.PathAndQuery.CleanUrl();
+            var customDomainWithoutScheme = uri.Host;
+            var customDomainWithScheme = $"{uri.Scheme}://{uri.Host}";
+
+            var regexRedirects = _redirectsRepository.GetAllRegexRedirects().Where(it =>
+            {
+                // Any site
+                if (it.Domain == null && string.IsNullOrWhiteSpace(it.CustomDomain)) return true;
+
+                // Find by domain
+                if (it.Domain != null && domain != null && it.Domain.Id == domain.Id) return true;
+
+                // Find by Custom domain
+                if (!string.IsNullOrWhiteSpace(it.CustomDomain) &&
+                    (it.CustomDomain.Equals(customDomainWithoutScheme,
+                         StringComparison.InvariantCultureIgnoreCase) ||
+                     it.CustomDomain.Equals(customDomainWithScheme))) return true;
+
+                return false;
+            });
+
+            foreach (var regexRedirect in regexRedirects)
+            {
+                if (Regex.IsMatch(pathAndQuery, regexRedirect.OldUrl)) return new RedirectFindResult(uri, regexRedirect);
+            }
+            return null;
         }
     }
 }

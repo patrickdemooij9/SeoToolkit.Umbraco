@@ -27,6 +27,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
         {
             if (value is not IPublishedContent content) return null;
 
+            return Convert(content);
+        }
+
+        public string Convert(IPublishedContent content)
+        {
             var settings = _settingsService.GetSettings();
             if (content.ItemType == PublishedItemType.Media)
             {

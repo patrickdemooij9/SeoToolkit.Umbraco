@@ -10,7 +10,7 @@ import { SeoSettingsFieldViewModel } from "../api";
 import { ISeoContentPreviewer } from "./ISeoContentPreviewer";
 
 import "@umbraco-cms/backoffice/imaging";
-import { UmbImagingRepository } from "@umbraco-cms/backoffice/imaging";
+import { MetaFieldsContentRepository } from "../dataAccess/MetaFieldsContentRepository";
 
 interface UmbMediaPickerPropertyValueEntry {
   mediaKey: string;
@@ -21,7 +21,7 @@ export default class OpenGraphPreviewer
   extends UmbElementMixin(LitElement)
   implements ISeoContentPreviewer
 {
-  #imagingRepository = new UmbImagingRepository(this);
+  #imagingRepository = new MetaFieldsContentRepository(this);
 
   @property({ type: Array })
   public set value(value: SeoSettingsFieldViewModel[]) {
@@ -69,13 +69,9 @@ export default class OpenGraphPreviewer
         this.imageUrl = foundItem?.value ?? "";
         return;
       }
-      const { data } = await this.#imagingRepository.requestThumbnailUrls(
-        [userValue[0].mediaKey],
-        200,
-        300
-      );
+      const { data } = await this.#imagingRepository.getImagePreview(userValue[0].mediaKey);
 
-      this.imageUrl = data?.[0]?.url ?? "";
+      this.imageUrl = data;
     } else {
       this.imageUrl = foundItem?.value ?? "";
     }
@@ -198,7 +194,7 @@ export default class OpenGraphPreviewer
       }
 
       .facebook-previewer .card-image {
-        height: 157px;
+        aspect-ratio: 1.91 / 1;
         background-size: cover;
       }
 
@@ -273,7 +269,7 @@ export default class OpenGraphPreviewer
       }
 
       .twitter-previewer .card-image {
-        height: 145px;
+        aspect-ratio: 16 / 9;
         background-size: cover;
         border-bottom: 1px solid #e1e8ed;
       }
@@ -340,7 +336,7 @@ export default class OpenGraphPreviewer
       }
 
       .linkedin-previewer .card-image {
-        height: 187px;
+        aspect-ratio: 1.91 / 1;
         background-size: cover;
       }
 
