@@ -22,8 +22,8 @@ import {
 } from "@umbraco-cms/backoffice/external/uui";
 import { RedirectLinkType } from "../types/RedirectLinkType";
 import { RedirectSelectLinkData } from "../models/RedirectSelectLinkData";
-import { UmbDocumentDetailRepository } from "@umbraco-cms/backoffice/document";
-import { UmbMediaDetailRepository } from "@umbraco-cms/backoffice/media";
+import { UmbDocumentUrlRepository } from "@umbraco-cms/backoffice/document";
+import { UmbMediaUrlRepository } from "@umbraco-cms/backoffice/media";
 import RedirectRepository from "../dataLayer/RedirectRepository";
 import { DomainViewModel } from "../api";
 
@@ -32,8 +32,8 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
   RedirectModalData,
   RedirectModalData
 > {
-  #documentRepository = new UmbDocumentDetailRepository(this);
-  #mediaRepository = new UmbMediaDetailRepository(this);
+  #umbMediaUrlRepository = new UmbMediaUrlRepository(this);
+  #documentUrlRepository = new UmbDocumentUrlRepository(this);
   #redirectRepository = new RedirectRepository(this);
   #options: Array<Option> = [];
   #oldUrl?: string;
@@ -56,7 +56,7 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
   override async connectedCallback() {
     super.connectedCallback();
 
-    this.domains = (await this.#redirectRepository.getDomains()).data!;
+    this.domains = (await this.#redirectRepository.getDomains()).data;
     this.domains.splice(0, 0, { id: 0, name: "All Sites" });
     this.domains.push({ id: -1, name: "Custom Domain" });
 
@@ -107,18 +107,18 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
           this.newUrlName = value.newUrl;
         } else {
           if (value.newCultureIso) {
-            this.#documentRepository
-              .requestByUnique(value.newNodeId!)
+            this.#documentUrlRepository
+              .requestItems([value.newNodeId!])
               .then((resp) => {
-                this.newUrlName = resp.data?.urls.find(
+                this.newUrlName = resp.data![0].urls.find(
                   (u) => u.culture === value.newCultureIso
                 )?.url;
               });
           } else {
-            this.#mediaRepository
-              .requestByUnique(value.newNodeId!)
+            this.#umbMediaUrlRepository
+              .requestItems([value.newNodeId!])
               .then((resp) => {
-                this.newUrlName = resp.data?.urls[0].url;
+                this.newUrlName = resp.data![0].url
               });
           }
         }
@@ -164,6 +164,10 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
 
   #onSetLinkClick() {
     this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (instance) => {
+      if (!instance) {
+        return;
+      }
+
       let linkType = RedirectLinkType.Url;
       if (this.redirect?.value.newNodeId) {
         linkType = this.redirect.value.newCultureIso
@@ -271,7 +275,7 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
               label="From url"
               description="Relative url of where the redirect starts"
             >
-              <div slot="editor">
+              <div slot="editor" class="from-url">
                 <uui-input
                   .value=${this.#oldUrl ?? ""}
                   @change=${this.#onOldUrlChange}
@@ -354,6 +358,11 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
     css`
       .error {
         color: red;
+      }
+
+      .from-url {
+        display: flex;
+        gap: 8px;
       }
     `,
   ];

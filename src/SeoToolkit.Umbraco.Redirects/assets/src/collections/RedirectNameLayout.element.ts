@@ -10,7 +10,7 @@ export class RedirectNameLayout extends UmbLitElement {
 	#clickItem(event: Event) {
 		event.stopPropagation();
 		this.consumeContext(ST_REDIRECT_MODULE_TOKEN_CONTEXT, (instance) => {
-			instance.openCreateModal(this.value?.unique);
+			instance?.openCreateModal(this.value?.unique);
 		})
 	}
 

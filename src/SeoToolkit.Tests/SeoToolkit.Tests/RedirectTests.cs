@@ -25,11 +25,11 @@ namespace SeoToolkit.Tests
             {
                 new Redirect { Domain = null, IsRegex = true, Id = redirectId, OldUrl = "^/test" }
             });
-            var bloomFilter = new Mock<IRedirectsBloomFilter>();
-            bloomFilter.Setup(it => it.Contains(It.IsAny<string>())).Returns(true);
+            var bloomFilterMock = new Mock<IRedirectsBloomFilter>();
+            bloomFilterMock.Setup(it => it.Contains(It.IsAny<string>())).Returns(true);
 
             var umbracoContextFactory = GetContextFactoryWithDomain();
-            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, new Mock<IOptionsMonitor<RequestHandlerSettings>>().Object);
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilterMock.Object, umbracoContextFactory, new Mock<IOptionsMonitor<RequestHandlerSettings>>().Object);
 
             // Act
             var redirect = redirectService.GetByUrl(new Uri("https://test.nl/test123"));

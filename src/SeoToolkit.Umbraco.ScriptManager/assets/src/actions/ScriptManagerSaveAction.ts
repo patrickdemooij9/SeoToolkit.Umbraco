@@ -4,6 +4,6 @@ import ScriptManagerDetailContext, { ST_SCRIPTMANAGER_DETAIL_TOKEN_CONTEXT } fro
 export class ScriptManagerSaveAction extends UmbWorkspaceActionBase<ScriptManagerDetailContext>{
     override async execute() {
         const workspaceContext = await this.getContext(ST_SCRIPTMANAGER_DETAIL_TOKEN_CONTEXT);
-        return await workspaceContext.save();
+        return await workspaceContext?.save();
     }
 }

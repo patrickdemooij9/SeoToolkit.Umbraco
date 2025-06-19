@@ -63,6 +63,9 @@ export default class SiteAuditDetailMain
     super();
 
     this.consumeContext(ST_SITEAUDIT_DETAIL_TOKEN_CONTEXT, (instance) => {
+      if (!instance) {
+        return;
+      }
       this.#context = instance;
 
       this.#context.model.subscribe((value) => {

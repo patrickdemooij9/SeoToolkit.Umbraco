@@ -8,7 +8,7 @@ import { ScriptDefinitionViewModel, ScriptDetailViewModel } from "../api";
 import ScriptManagerRepository from "../repositories/ScriptManagerRepository";
 import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
 
-export default class ScriptManagerDetailContext extends UmbContextBase<ScriptManagerDetailContext> implements UmbWorkspaceContext, UmbRoutableWorkspaceContext {
+export default class ScriptManagerDetailContext extends UmbContextBase implements UmbWorkspaceContext, UmbRoutableWorkspaceContext {
     workspaceAlias = 'seoToolkit.scriptManager.detail';
 
     routes = new UmbWorkspaceRouteManager(this);
@@ -58,7 +58,7 @@ export default class ScriptManagerDetailContext extends UmbContextBase<ScriptMan
 
 		if (scriptId){
 			this.#repository.getScript(scriptId).then((resp) => {
-				this.#script.update(resp.data!);
+				this.#script.update(resp.data);
 			})
 		}
 	}
@@ -70,9 +70,9 @@ export default class ScriptManagerDetailContext extends UmbContextBase<ScriptMan
 		if (response.error){
 			return;
 		}
-		this.#script.setValue(response.data!);
+		this.#script.setValue(response.data);
 		this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
-			instance.peek('positive', {
+			instance?.peek('positive', {
 				data: {
 					headline: 'Saved',
 					message: 'Script successfully saved!'

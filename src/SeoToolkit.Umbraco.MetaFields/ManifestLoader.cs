@@ -24,7 +24,7 @@ namespace SeoToolkit.Umbraco.MetaFields
         {
             var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.metaFields.entrypoint"",
             ""alias"": ""SeoToolkit.MetaFields.EntryPoint"",
-            ""type"": ""entryPoint"",
+            ""type"": ""backofficeEntryPoint"",
             ""js"": ""/App_Plugins/SeoToolkit/entry/metaFields/metaFields.js""}");
 
             List<PackageManifest> manifest = [

@@ -24,7 +24,7 @@ namespace SeoToolkit.Umbraco.ScriptManager
         {
             var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.scriptManager.entrypoint"",
             ""alias"": ""SeoToolkit.ScriptManager.EntryPoint"",
-            ""type"": ""entryPoint"",
+            ""type"": ""backofficeEntryPoint"",
             ""js"": ""/App_Plugins/SeoToolkit/entry/scriptManager/scriptManager.js""}");
 
             List<PackageManifest> manifest = [

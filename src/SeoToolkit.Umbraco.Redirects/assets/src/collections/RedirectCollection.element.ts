@@ -54,6 +54,9 @@ export default class RedirectCollection extends UmbLitElement {
 
     async loadItems(){
         this.consumeContext(ST_REDIRECT_MODULE_TOKEN_CONTEXT, (instance) => {
+            if (!instance) {
+                return;
+            }
             this.#context = instance;
 
             this.observe(this.#context.selection.selection, (selection) => this._selection = selection.filter(it => it) as string[]);

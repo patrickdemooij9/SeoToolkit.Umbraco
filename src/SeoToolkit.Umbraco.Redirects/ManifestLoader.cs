@@ -24,7 +24,7 @@ namespace SeoToolkit.Umbraco.Redirects
         {
             var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.redirects.entrypoint"",
             ""alias"": ""SeoToolkit.Redirects.EntryPoint"",
-            ""type"": ""entryPoint"",
+            ""type"": ""backofficeEntryPoint"",
             ""js"": ""/App_Plugins/SeoToolkit/entry/redirects/redirects.js""}");
 
             List<PackageManifest> manifest = [

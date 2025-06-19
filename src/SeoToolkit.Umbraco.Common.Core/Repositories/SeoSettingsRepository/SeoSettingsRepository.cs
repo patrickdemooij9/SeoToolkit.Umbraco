@@ -5,6 +5,7 @@ using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Core.Models;
 
 namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
 {
@@ -23,7 +24,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
             _contentTypeService = contentTypeService;
         }
 
-        public bool IsEnabled(IPublishedContentType contentType)
+        public bool IsEnabled(IContentType contentType)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
             {
@@ -35,7 +36,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
                 //Default is disabled.
                 if (entity is null && _settingsService.GetSettings().EnableSeoSettingsByDefaultForTemplated)
                 {
-                    if (_contentTypeService.Get(contentType.Id)?.DefaultTemplate != null)
+                    if (contentType.DefaultTemplate != null)
                     {
                         return true;
                     }

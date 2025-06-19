@@ -17,7 +17,7 @@ export class WorkspaceEntityIdCondition extends UmbConditionBase<WorkspaceEntity
 
         if (args.config.match === 'Yes') {
             this.permitted = true;
-            args.onChange();
+            args.onChange(true);
         }
     }
 }

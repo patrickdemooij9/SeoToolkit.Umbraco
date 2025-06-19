@@ -3,6 +3,7 @@ import { NamedEntityTreeItemResponseModel } from "@umbraco-cms/backoffice/extern
 import {
   UmbTreeAncestorsOfRequestArgs,
   UmbTreeChildrenOfRequestArgs,
+  UmbTreeRootItemsRequestArgs,
   UmbTreeServerDataSourceBase,
 } from "@umbraco-cms/backoffice/tree";
 import { SeoToolkitService } from "../api";
@@ -31,27 +32,36 @@ export class seoToolkitTreeSource extends UmbTreeServerDataSourceBase<
   }
 }
 
-const getRootItems = () => {
-  return SeoToolkitService.getUmbracoSeoToolkitTreeInfoRoot();
+const getRootItems = async (_args: UmbTreeRootItemsRequestArgs) => {
+  const data = await SeoToolkitService.getUmbracoSeoToolkitTreeInfoRoot();
+  return data;
 };
 
-const getChildrenOf = (args: UmbTreeChildrenOfRequestArgs) => {
+const getChildrenOf = async (args: UmbTreeChildrenOfRequestArgs) => {
   if (args.parent.unique === null) {
-    return getRootItems();
+    return getRootItems(args);
   } else {
     // eslint-disable-next-line local-rules/no-direct-api-import
-    return SeoToolkitService.getUmbracoSeoToolkitTreeInfoChildren({
-      parentId: args.parent.unique,
-      skip: args.skip,
-      take: args.take,
+    const data = await SeoToolkitService.getUmbracoSeoToolkitTreeInfoChildren({
+      query: {
+        parentId: args.parent.unique,
+        skip: args.skip,
+        take: args.take,
+      },
     });
+    return data;
   }
 };
 
-const getAncestorsOf = (args: UmbTreeAncestorsOfRequestArgs) => {
-  return SeoToolkitService.getUmbracoSeoToolkitTreeInfoAncestors({
-    descendantId: args.treeItem.unique,
-  });
+const getAncestorsOf = async (args: UmbTreeAncestorsOfRequestArgs) => {
+  const response =
+    await SeoToolkitService.getUmbracoSeoToolkitTreeInfoAncestors({
+      query: {
+        descendantId: args.treeItem.unique,
+      }
+    });
+  // Assuming response is an array of NamedEntityTreeItemResponseModel
+  return response;
 };
 
 const mapper = (

@@ -28,6 +28,9 @@ export default class RedirectModuleContext extends UmbDefaultCollectionContext<R
         }
 
         this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (instance) => {
+            if (!instance) {
+                return;
+            }
             const modal = instance.open(this._host, 'seoToolkit.modal.redirect.create', {
                 modal: { type: 'sidebar', size: 'medium' },
                 data: {
@@ -38,10 +41,14 @@ export default class RedirectModuleContext extends UmbDefaultCollectionContext<R
             await modal.onSubmit();
 
             const data = (modal.getValue() as RedirectModalData).redirect;
-            
+            let domain = data.domain;
+            if (!domain || domain <= 0) {
+                domain = null;
+            }
+
             await new RedirectRepository(this).save({
                 id: unique ? Number.parseInt(unique) : 0,
-                domain: data.domain,
+                domain: domain,
                 customDomain: data.customDomain,
                 isEnabled: data.isEnabled,
                 isRegex: data.isRegex,
@@ -58,6 +65,9 @@ export default class RedirectModuleContext extends UmbDefaultCollectionContext<R
 
     async openImportModal(){
         this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (instance) => {
+            if (!instance) {
+                return;
+            }
             const modal = instance.open(this._host, 'seoToolkit.modal.redirect.import', {
                 modal: { type: 'sidebar', size: 'medium' },
             });

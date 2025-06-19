@@ -1,5 +1,5 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
-import { tryExecuteAndNotify } from "@umbraco-cms/backoffice/resources";
+import { tryExecute } from "@umbraco-cms/backoffice/resources";
 import { SeoToolkitNotFoundService } from "../api";
 
 export default class NotFoundSource {
@@ -10,17 +10,19 @@ export default class NotFoundSource {
   }
 
   async get() {
-    return await tryExecuteAndNotify(
+    return await tryExecute(
       this.#host,
       SeoToolkitNotFoundService.getUmbracoSeoToolkitNotFoundNotFound()
     );
   }
 
   async save(data: string) {
-    return await tryExecuteAndNotify(
+    return await tryExecute(
       this.#host,
       SeoToolkitNotFoundService.postUmbracoSeoToolkitNotFoundNotFound({
-        data,
+        query: {
+          data
+        },
       })
     );
   }

@@ -1,5 +1,5 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
-import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { tryExecute } from '@umbraco-cms/backoffice/resources';
 import { SeoToolkitSitemapService, SitemapPageTypeSettingsPostModel } from "../api";
 
 export class PageSettingsSource {
@@ -10,14 +10,16 @@ export class PageSettingsSource {
     }
 
     async getPageSettings(contentTypeGuid: string) {
-        return await tryExecuteAndNotify(this.#host, SeoToolkitSitemapService.getUmbracoSeoToolkitSitemapSitemapSettings({
-            contentTypeGuid: contentTypeGuid
+        return await tryExecute(this.#host, SeoToolkitSitemapService.getUmbracoSeoToolkitSitemapSitemapSettings({
+            query: {
+                contentTypeGuid: contentTypeGuid
+            }
         }));
     };
 
     async setPageSettings(settings: SitemapPageTypeSettingsPostModel){
-        await tryExecuteAndNotify(this.#host, SeoToolkitSitemapService.postUmbracoSeoToolkitSitemapSitemapSettings({
-            requestBody: settings
+        await tryExecute(this.#host, SeoToolkitSitemapService.postUmbracoSeoToolkitSitemapSitemapSettings({
+            body: settings
         }));
     };
 }

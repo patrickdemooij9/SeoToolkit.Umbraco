@@ -1,7 +1,7 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { GetUmbracoSeoToolkitRobotsTxtResponse, PostUmbracoSeoToolkitRobotsTxtResponse, SeoToolkitService } from "../api";
 import { UmbDataSourceResponse } from "@umbraco-cms/backoffice/repository";
-import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { tryExecute } from '@umbraco-cms/backoffice/resources';
 
 export class RobotsTxtSource {
     #host: UmbControllerHost;
@@ -11,12 +11,12 @@ export class RobotsTxtSource {
     }
 
     async getContent(): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitRobotsTxtResponse>>{
-        return await tryExecuteAndNotify(this.#host, SeoToolkitService.getUmbracoSeoToolkitRobotsTxt());
+        return await tryExecute(this.#host, SeoToolkitService.getUmbracoSeoToolkitRobotsTxt());
     }
 
     async saveContent(content: string, skipValidation: boolean): Promise<UmbDataSourceResponse<PostUmbracoSeoToolkitRobotsTxtResponse>>{
-        return await tryExecuteAndNotify(this.#host, SeoToolkitService.postUmbracoSeoToolkitRobotsTxt({
-            requestBody: {
+        return await tryExecute(this.#host, SeoToolkitService.postUmbracoSeoToolkitRobotsTxt({
+            body: {
                 skipValidation: skipValidation,
                 content: content
             }

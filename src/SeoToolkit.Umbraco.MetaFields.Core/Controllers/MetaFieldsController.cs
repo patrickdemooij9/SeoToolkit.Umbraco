@@ -37,6 +37,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
         private readonly ISeoSettingsService _seoSettingsService;
         private readonly SeoGroupCollection _groupCollection;
         private readonly ISettingsService<MetaFieldsConfigModel> _settingsService;
+        private readonly IContentTypeService _contentTypeService;
 
         public MetaFieldsController(IMetaFieldsService seoService,
             IMetaFieldsSettingsService documentTypeSettingsService,
@@ -48,7 +49,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             ILocalizationService localizationService,
             ISeoSettingsService seoSettingsService,
             SeoGroupCollection groupCollection,
-            ISettingsService<MetaFieldsConfigModel> settingsService)
+            ISettingsService<MetaFieldsConfigModel> settingsService,
+            IContentTypeService contentTypeService)
         {
             _seoService = seoService;
             _documentTypeSettingsService = documentTypeSettingsService;
@@ -61,6 +63,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             _seoSettingsService = seoSettingsService;
             _groupCollection = groupCollection;
             _settingsService = settingsService;
+            _contentTypeService = contentTypeService;
         }
 
         [HttpGet("metaFields")]
@@ -116,7 +119,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 return BadRequest($"Cannot find content by id: {postModel.NodeId}");
             }
 
-            if (!_seoSettingsService.IsEnabled(content.ContentType))
+            var contentType = _contentTypeService.Get(content.ContentType.Id);
+            if (!_seoSettingsService.IsEnabled(contentType))
                 return BadRequest("SEO settings are turned off for this node!");
 
             EnsureLanguage(postModel.Culture);

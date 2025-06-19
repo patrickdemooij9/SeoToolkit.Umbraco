@@ -26,12 +26,12 @@ export default class SiteAuditRepository
   async requestCollection(
     _filter?: UmbCollectionFilterModel | undefined
   ): Promise<UmbRepositoryResponse<UmbPagedModel<any>>> {
-    const resp = (await this.#source.getSiteAudits()).data!;
+    const resp = (await this.#source.getSiteAudits())!;
 
     const result: UmbRepositoryResponse<UmbPagedModel<any>> = {
       data: {
-        total: resp.length,
-        items: resp.map((item) => ({
+        total: resp.data.length,
+        items: resp.data.map((item) => ({
           entityType: "st-siteAudit",
           ...item,
         })),

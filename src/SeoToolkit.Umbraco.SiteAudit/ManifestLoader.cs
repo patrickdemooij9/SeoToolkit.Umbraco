@@ -24,7 +24,7 @@ namespace SeoToolkit.Umbraco.SiteAudit
         {
             var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.siteAudit.entrypoint"",
             ""alias"": ""SeoToolkit.SiteAudit.EntryPoint"",
-            ""type"": ""entryPoint"",
+            ""type"": ""backofficeEntryPoint"",
             ""js"": ""/App_Plugins/SeoToolkit/entry/siteAudit/siteAudit.js""}");
 
             List<PackageManifest> manifest = [

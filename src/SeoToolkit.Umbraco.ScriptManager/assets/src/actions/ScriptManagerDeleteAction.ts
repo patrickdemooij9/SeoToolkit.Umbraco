@@ -8,6 +8,6 @@ export default class ScriptManagerDeleteAction extends UmbEntityBulkActionBase<o
         await repository.deleteScripts(this.selection.map((item => Number.parseInt(item))));
 
         const context = await this.getContext(ST_SCRIPTMANAGER_MODULE_TOKEN_CONTEXT);
-        context.requestCollection();
+        context?.requestCollection();
     }
 }

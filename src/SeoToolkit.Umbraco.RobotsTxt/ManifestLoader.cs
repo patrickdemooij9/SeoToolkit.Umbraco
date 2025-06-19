@@ -24,7 +24,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt
         {
             var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.robotstxt.entrypoint"",
             ""alias"": ""SeoToolkit.RobotsTxt.EntryPoint"",
-            ""type"": ""entryPoint"",
+            ""type"": ""backofficeEntryPoint"",
             ""js"": ""/App_Plugins/SeoToolkit/entry/robotstxt/robotstxt.js""}");
 
             List<PackageManifest> manifest = [

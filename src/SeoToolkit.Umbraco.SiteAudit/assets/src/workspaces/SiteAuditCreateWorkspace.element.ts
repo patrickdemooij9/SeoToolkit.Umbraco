@@ -35,6 +35,9 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
     super();
 
     this.consumeContext(ST_SITEAUDIT_CREATE_TOKEN_CONTEXT, (instance) => {
+      if (!instance) {
+        return;
+      }
       this.#context = instance;
       instance.model.subscribe((value) => {
         this._auditInformationProps = [

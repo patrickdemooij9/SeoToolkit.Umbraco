@@ -8,6 +8,6 @@ export default class DeleteRedirectAction extends UmbEntityBulkActionBase<object
         await repository.delete(this.selection.map((item => Number.parseInt(item))));
 
         const context = await this.getContext(ST_REDIRECT_MODULE_TOKEN_CONTEXT);
-        context.requestCollection();
+        context?.requestCollection();
     }
 }

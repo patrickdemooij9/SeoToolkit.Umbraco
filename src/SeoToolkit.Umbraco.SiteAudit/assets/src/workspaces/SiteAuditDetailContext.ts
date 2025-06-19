@@ -13,7 +13,7 @@ import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import SiteAuditRepository from "../dataAccess/SiteAuditRepository";
 
 export default class SiteAuditDetailContext
-  extends UmbContextBase<SiteAuditDetailContext>
+  extends UmbContextBase
   implements UmbWorkspaceContext, UmbRoutableWorkspaceContext
 {
   #repository: SiteAuditRepository;
@@ -59,8 +59,8 @@ export default class SiteAuditDetailContext
 
   loadData(unique: string) {
     this.#repository.get(Number.parseInt(unique)).then((res) => {
-      this.#model.update(res.data!);
-      if (res.data?.status === 'Finished'){
+      this.#model.update(res.data);
+      if (res.data.status === 'Finished'){
         this.runHeartbeat = false;
       }
     });
