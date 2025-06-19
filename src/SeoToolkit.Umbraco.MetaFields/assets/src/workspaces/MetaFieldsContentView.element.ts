@@ -30,9 +30,15 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
     super();
 
     this.consumeContext(UMB_PROPERTY_DATASET_CONTEXT, (datasetContext) => {
+      if (!datasetContext) {
+        return;
+      }
       this._culture = datasetContext.getVariantId().culture ?? 'invariant';
 
       this.consumeContext(ST_METAFIELDS_CONTENT_TOKEN_CONTEXT, (instance) => {
+        if (!instance) {
+          return;
+        }
         this.#context = instance;
         
         instance

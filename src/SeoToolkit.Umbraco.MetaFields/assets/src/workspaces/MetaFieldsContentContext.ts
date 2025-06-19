@@ -1,6 +1,5 @@
 import { UmbContextBase } from "@umbraco-cms/backoffice/class-api";
 import {
-  DocumentTypeValuePostViewModel,
   MetaFieldsSettingsViewModel,
 } from "../api";
 import { UmbWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
@@ -17,7 +16,7 @@ interface MetaFieldsSettingsVariant {
 }
 
 export default class MetaFieldsContentContext
-  extends UmbContextBase<DocumentTypeValuePostViewModel>
+  extends UmbContextBase
   implements UmbWorkspaceContext
 {
   workspaceAlias: string = "Umb.Workspace.Document";
@@ -36,7 +35,7 @@ export default class MetaFieldsContentContext
     this.#repository = new MetaFieldsContentRepository(host);
 
     this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
-      instance.splitView.activeVariantsInfo.subscribe((variants) => {
+      instance?.splitView.activeVariantsInfo.subscribe((variants) => {
         variants.forEach((variant) => {
           const culture = variant.culture ?? "invariant";
           if (!this.#cultures.includes(culture)) {
@@ -45,13 +44,13 @@ export default class MetaFieldsContentContext
         });
         this.#loadDataFromRepository(this.#nodeId);
       });
-      instance.unique.subscribe((unique) => {
+      instance?.unique.subscribe((unique) => {
         this.#cultures.forEach((culture) => {
           delete this.#variants[culture];
         })
         this.#loadDataFromRepository(unique?.toString());
       });
-      instance.data.subscribe((item) => {
+      instance?.data.subscribe((item) => {
         item?.variants.forEach((variant) => {
           const culture = variant.culture ?? 'invariant';
           const currentDate = this.#getVariant(culture).lastUpdated;
@@ -77,7 +76,7 @@ export default class MetaFieldsContentContext
       }
 
       this.#repository.get(node!, variant).then((resp) => {
-        this.#getVariant(variant).model.update(resp.data!);
+        this.#getVariant(variant).model.update(resp.data);
       });
     });
   }

@@ -24,7 +24,7 @@ namespace SeoToolkit.Umbraco.Sitemap
         {
             var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.sitemap.entrypoint"",
             ""alias"": ""SeoToolkit.Sitemap.EntryPoint"",
-            ""type"": ""entryPoint"",
+            ""type"": ""backofficeEntryPoint"",
             ""js"": ""/App_Plugins/SeoToolkit/entry/sitemap/sitemap.js""}");
 
             List<PackageManifest> manifest = [

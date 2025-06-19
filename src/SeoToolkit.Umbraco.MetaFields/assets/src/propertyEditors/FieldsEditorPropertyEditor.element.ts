@@ -85,7 +85,7 @@ export default class FieldsEditorPropertyEditor
     this.#repository = new MetaFieldsSettingsRepository(this);
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
-      instance.structure.contentTypes.subscribe((value) => {
+      instance?.structure.contentTypes.subscribe((value) => {
         const contentTypeFields: FieldData[] = [];
 
         value.forEach((field) => {
@@ -138,7 +138,7 @@ export default class FieldsEditorPropertyEditor
     });
 
     this.#repository.getAdditionalFields().then((resp) => {
-      this.additionalFields = resp.data!.map<FieldData>((item) => ({
+      this.additionalFields = resp.data.map<FieldData>((item) => ({
         name: item.name!,
         value: item.value!,
         onlyShowIfInherited: item.onlyShowIfInherited,
@@ -163,6 +163,9 @@ export default class FieldsEditorPropertyEditor
 
   onItemsAddHandler() {
     this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (instance) => {
+      if (!instance) {
+        return;
+      }
       const modal = instance.open<ItemGroupPickerConfig, string[]>(
         this,
         "seoToolkit.modal.itemGroupPicker",

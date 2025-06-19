@@ -24,7 +24,7 @@ namespace SeoToolkit.Umbraco.NotFound
         {
             var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.notFound.entrypoint"",
             ""alias"": ""SeoToolkit.NotFound.EntryPoint"",
-            ""type"": ""entryPoint"",
+            ""type"": ""backofficeEntryPoint"",
             ""js"": ""/App_Plugins/SeoToolkit/entry/notFound/notFound.js""}");
 
             List<PackageManifest> manifest = [

@@ -8,6 +8,6 @@ export default class SiteAuditDeleteAction extends UmbEntityBulkActionBase<objec
         await repository.delete(this.selection.map((item => Number.parseInt(item))));
 
         const context = await this.getContext(ST_SITEAUDIT_MODULE_TOKEN_CONTEXT);
-        context.requestCollection();
+        context?.requestCollection();
     }
 }

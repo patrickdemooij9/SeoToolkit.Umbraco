@@ -27,6 +27,9 @@ export class SeoToolkitRobotsTxtModuleElement extends
         super();
 
         this.consumeContext(ST_ROBOTSTXT_MODULE_TOKEN_CONTEXT, (instance) => {
+            if (!instance) {
+                return;
+            }
             this.#context = instance;
 
             this.observe(instance.content, (val) => {

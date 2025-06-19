@@ -7,10 +7,9 @@ import { TreeManifests } from './trees/seoToolkitTree';
 import { manifest } from './conditions/workspaceEntityIdCondition';
 import { Manifests as DocumentManifests } from './manifests/seoToolkitDocumentManifests';
 import { ContentViewManifests } from './manifests/seoToolkitContentManifests';
-import { client } from '@umbraco-cms/backoffice/external/backend-api';
+import { client } from './api';
 
 export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
-
     host.consumeContext(UMB_AUTH_CONTEXT,(auth)=> {
         if (!auth) {
             return;

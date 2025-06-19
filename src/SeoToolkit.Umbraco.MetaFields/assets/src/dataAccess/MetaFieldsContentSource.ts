@@ -1,5 +1,5 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
-import { tryExecuteAndNotify } from "@umbraco-cms/backoffice/resources";
+import { tryExecute } from "@umbraco-cms/backoffice/resources";
 import {
   MetaFieldsSettingsPostViewModel,
   SeoToolkitMetaFieldsService,
@@ -13,30 +13,34 @@ export class MetaFieldsContentSource {
   }
 
   async get(contentGuid: string, culture: string) {
-    return await tryExecuteAndNotify(
+    return await tryExecute(
       this.#host,
       SeoToolkitMetaFieldsService.getUmbracoSeoToolkitMetaFieldsMetaFields({
-        nodeGuid: contentGuid,
-        culture
+        query: {
+          nodeGuid: contentGuid,
+          culture,
+        },
       })
     );
   }
 
   async save(model: MetaFieldsSettingsPostViewModel) {
-    return await tryExecuteAndNotify(
+    return await tryExecute(
       this.#host,
       SeoToolkitMetaFieldsService.postUmbracoSeoToolkitMetaFieldsMetaFields({
-        requestBody: model,
+        body: model,
       })
     );
   }
 
   async getImagePreview(mediaId: string) {
-    return await tryExecuteAndNotify(
+    return await tryExecute(
       this.#host,
       SeoToolkitMetaFieldsService.getUmbracoSeoToolkitMetaFieldsImagePreview({
-        mediaId,
+        query: {
+          mediaId,
+        },
       })
-    )
+    );
   }
 }

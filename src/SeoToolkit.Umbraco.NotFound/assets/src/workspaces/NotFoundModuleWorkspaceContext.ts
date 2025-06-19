@@ -32,7 +32,7 @@ export default class NotFoundModuleWorkspaceContext
       if (resp.data === "-1") {
         return;
       }
-      this.#content.setValue(resp.data!);
+      this.#content.setValue(resp.data);
     });
   }
 
@@ -48,7 +48,7 @@ export default class NotFoundModuleWorkspaceContext
     }
 
     this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
-      instance.peek("positive", {
+      instance?.peek("positive", {
         data: {
           headline: "Saved",
           message: "Not found page successfully saved!",

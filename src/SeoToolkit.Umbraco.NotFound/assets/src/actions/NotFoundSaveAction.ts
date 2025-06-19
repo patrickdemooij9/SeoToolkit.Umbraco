@@ -8,6 +8,9 @@ export class NotFoundSaveAction extends UmbWorkspaceActionBase<NotFoundModuleWor
     const workspaceContext = await this.getContext(
       ST_NOTFOUND_MODULE_TOKEN_CONTEXT
     );
+    if (!workspaceContext) {
+      return;
+    }
     return await workspaceContext.save();
   }
 }

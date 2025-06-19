@@ -50,7 +50,7 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
     super();
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
-      instance.isElement.subscribe((value) => {
+      instance?.isElement.subscribe((value) => {
         this._showViews = !value;
       });
     });
@@ -58,7 +58,7 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
     this.consumeContext(ST_METAFIELDS_SETTINGSDOCUMENT_TOKEN_CONTEXT, (instance) => {
       this.#context = instance;
 
-      instance.model.subscribe((value) => {
+      instance?.model.subscribe((value) => {
         this._seoEnabled = value.enabled;
       })
     });

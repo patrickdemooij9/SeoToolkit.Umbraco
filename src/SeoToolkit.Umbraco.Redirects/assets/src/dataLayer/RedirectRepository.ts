@@ -47,7 +47,7 @@ export default class RedirectRepository
   }
 
   async get(unique: number): Promise<Redirect> {
-    const data = (await this.#source.get(unique)).data!;
+    const { data } = (await this.#source.get(unique));
 
     return {
       unique: data.id.toString(),

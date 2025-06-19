@@ -23008,7 +23008,7 @@ header.masthead .site-heading .h1 {
 }
 
 .youtube-player .play:hover {
-  background: url(/clean-assets/css/circle-play-red.png) no-repeat;
+  background: url(/assets/css/circle-play-red.png) no-repeat;
 }
 
 .youtube-player iframe {

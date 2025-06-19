@@ -12,7 +12,7 @@ import {
 } from "@umbraco-cms/backoffice/action";
 
 export default class SitemapDocumentViewContext
-  extends UmbContextBase<SitemapPageTypeSettingsPostModel>
+  extends UmbContextBase
   implements UmbWorkspaceContext
 {
   workspaceAlias: string = "Umb.Workspace.DocumentType";
@@ -32,20 +32,23 @@ export default class SitemapDocumentViewContext
     this.#repository = new PageSettingsRepository(this);
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
+      if (!instance) {
+        return;
+      }
       instance.unique.subscribe((unique) => {
         this.#repository.getPageSettings(unique!).then((pageSettings) => {
           this.#model.update({
             contentTypeGuid: unique?.toString(),
-            hideFromSitemap: pageSettings.data?.hideFromSitemap,
-            changeFrequency: pageSettings.data?.changeFrequency,
-            priority: pageSettings.data?.priority,
+            hideFromSitemap: pageSettings?.data?.hideFromSitemap,
+            changeFrequency: pageSettings?.data?.changeFrequency,
+            priority: pageSettings?.data?.priority,
           });
         });
       });
     });
 
     this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
-      if (this.#actionEventContext) {
+      if (this.#actionEventContext || !instance) {
         return;
       }
 

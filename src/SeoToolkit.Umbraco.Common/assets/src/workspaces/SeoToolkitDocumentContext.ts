@@ -12,7 +12,7 @@ import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import { SeoToolkitSettingsRepository } from "../repositories/seoToolkitSettingsRepository";
 
 export default class SeoToolkitDocumentContext
-  extends UmbContextBase<SeoSettingsPostModel>
+  extends UmbContextBase
   implements UmbWorkspaceContext
 {
   workspaceAlias: string = "Umb.Workspace.DocumentType";
@@ -30,18 +30,18 @@ export default class SeoToolkitDocumentContext
     super(host, ST_METAFIELDS_SETTINGSDOCUMENT_TOKEN_CONTEXT.toString());
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
-      instance.unique.subscribe((value) => {
+      instance?.unique.subscribe((value) => {
         this.#settingsRepository.getSettings(value!).then((resp) => {
           this.#model.update({
             contentTypeId: value?.toString(),
-            enabled: resp.data!.isEnabled,
+            enabled: resp.data.isEnabled,
           });
         });
       });
     });
 
     this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
-      if (this.#actionEventContext) {
+      if (this.#actionEventContext || !instance) {
         return;
       }
 

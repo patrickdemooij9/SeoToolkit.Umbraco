@@ -31,7 +31,7 @@ export class SeoEnabledCondition
         }
 
         this.#repository.getSettings(value).then((resp) => {
-          this.permitted = resp.isEnabled ?? false;
+          this.permitted = resp.data.isEnabled ?? false;
         });
       });
     });

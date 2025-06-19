@@ -5,7 +5,6 @@ import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import { UmbWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
 import {
   DocumentTypeSettingsContentViewModel,
-  DocumentTypeSettingsPostViewModel,
   DocumentTypeValuePostViewModel,
 } from "../api";
 import { MetaFieldsSettingsRepository } from "../dataAccess/MetaFieldsSettingsRepository";
@@ -16,7 +15,7 @@ import {
 } from "@umbraco-cms/backoffice/action";
 
 export default class MetaFieldsDocumentContext
-  extends UmbContextBase<DocumentTypeSettingsPostViewModel>
+  extends UmbContextBase
   implements UmbWorkspaceContext
 {
   workspaceAlias: string = "Umb.Workspace.DocumentType";
@@ -35,14 +34,14 @@ export default class MetaFieldsDocumentContext
     this.#repository = new MetaFieldsSettingsRepository(host);
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
-      instance.unique.subscribe((unique) => {
+      instance?.unique.subscribe((unique) => {
         this.#nodeId = unique?.toString();
         this.fetchFromServer(unique!);
       });
     });
 
     this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
-      if (this.#actionEventContext) {
+      if (this.#actionEventContext || !instance) {
         return;
       }
 
@@ -54,8 +53,8 @@ export default class MetaFieldsDocumentContext
   fetchFromServer(unique: string) {
     this.#repository.get(unique!).then((metaFieldSettings) => {
       this.#model.update({
-        fields: metaFieldSettings.data?.contentModel?.fields,
-        inheritance: metaFieldSettings.data?.contentModel?.inheritance,
+        fields: metaFieldSettings?.data?.contentModel?.fields,
+        inheritance: metaFieldSettings?.data?.contentModel?.inheritance,
       });
     });
   }

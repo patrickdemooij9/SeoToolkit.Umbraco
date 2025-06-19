@@ -42,6 +42,9 @@ export default class SiteAuditCollection extends UmbLitElement {
         super();
 
         this.consumeContext(ST_SITEAUDIT_MODULE_TOKEN_CONTEXT, (instance) => {
+            if (!instance) {
+                return;
+            }
             this.#context = instance;
 
             this.observe(this.#context.selection.selection, (selection) => this._selection = selection.filter(it => it) as string[]);

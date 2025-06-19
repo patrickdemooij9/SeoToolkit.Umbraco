@@ -109,7 +109,7 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
         this.modalContext?.consumeContext(
           UMB_APP_LANGUAGE_CONTEXT,
           (instance) => {
-            instance.setLanguage(culture.unique);
+            instance?.setLanguage(culture.unique);
           }
         );
       } else if (modelKeys.includes(item.alias)) {

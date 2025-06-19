@@ -1,19 +1,29 @@
 import { UmbEntryPointOnInit } from '@umbraco-cms/backoffice/extension-api';
 import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
-import { OpenAPI } from './api';
 import { Manifests } from './manifests/ModuleManifests';
 import { CollectionManifests } from './manifests/CollectionManifests';
+import { client } from './api';
 
 export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
 
-    host.consumeContext(UMB_AUTH_CONTEXT, (auth) => {
+host.consumeContext(UMB_AUTH_CONTEXT,(auth)=> {
+        if (!auth) {
+            return;
+        }
 
         const config = auth.getOpenApiConfiguration();
 
-        OpenAPI.BASE = config.base;
-        OpenAPI.WITH_CREDENTIALS = config.withCredentials;
-        OpenAPI.CREDENTIALS = config.credentials;
-        OpenAPI.TOKEN = config.token;
+        client.setConfig({
+			auth: config.token,
+			baseUrl: config.base,
+			credentials: config.credentials,
+		});
+
+		client.interceptors.request.use(async (request, _options) => {
+			const token = await auth.getLatestToken();
+			request.headers.set('Authorization', `Bearer ${token}`);
+			return request;
+		});
 
     });
 

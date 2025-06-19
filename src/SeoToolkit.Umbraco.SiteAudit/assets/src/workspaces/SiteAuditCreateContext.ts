@@ -14,7 +14,7 @@ import SiteAuditRepository from "../dataAccess/SiteAuditRepository";
 import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
 
 export default class SiteAuditCreateContext
-  extends UmbContextBase<SiteAuditCreateContext>
+  extends UmbContextBase
   implements UmbWorkspaceContext, UmbRoutableWorkspaceContext
 {
   #repository: SiteAuditRepository;
@@ -23,6 +23,7 @@ export default class SiteAuditCreateContext
   workspaceAlias = "seoToolkit.siteAudit.create";
 
   #model = new UmbObjectState<CreateAuditPostModel>({
+    name: "",
     selectedNodeId: "",
     startAudit: false,
     maxPagesToCrawl: 10,
@@ -43,9 +44,9 @@ export default class SiteAuditCreateContext
     this.#repository = new SiteAuditRepository(host);
     this.#repository.getConfiguration().then((resp) => {
       this.#model.update({
-        delayBetweenRequests: resp.data!.minimumDelayBetweenRequest,
+        delayBetweenRequests: resp.data.minimumDelayBetweenRequest,
       });
-      this.#config.update(resp.data!);
+      this.#config.update(resp.data);
     });
 
     this.routes.setRoutes([
@@ -70,10 +71,10 @@ export default class SiteAuditCreateContext
     if (response.error){
       return;
     }
-    const auditId = response.data;
+    const auditId = response;
 
     this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
-      instance.peek("positive", {
+      instance?.peek("positive", {
         data: {
           headline: "Created",
           message: "Site audit successfully created!",

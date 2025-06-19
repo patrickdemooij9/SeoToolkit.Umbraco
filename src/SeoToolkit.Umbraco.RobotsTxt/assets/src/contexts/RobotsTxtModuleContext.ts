@@ -43,11 +43,11 @@ export default class RobotsTxtModuleContext extends UmbControllerBase implements
             })));
 
             this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (manager) =>{
-                manager.open(this._host, 'seoToolkit.modal.robotstxt.validation', {});
+                manager?.open(this._host, 'seoToolkit.modal.robotstxt.validation', {});
             });
         }else{
             this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
-                instance.peek('positive', {
+                instance?.peek('positive', {
                     data: {
                         headline: 'Saved',
                         message: 'Robots.txt successfully saved!'
@@ -63,7 +63,8 @@ export default class RobotsTxtModuleContext extends UmbControllerBase implements
 
     load() {
         this.#repository!.getContent().then((result) => {
-            this.#content.setValue(result.data!);
+            const value = Object.keys(result.data!).length === 0 ? '' : result.data!;
+            this.#content.setValue(value);
         });
     }
 }

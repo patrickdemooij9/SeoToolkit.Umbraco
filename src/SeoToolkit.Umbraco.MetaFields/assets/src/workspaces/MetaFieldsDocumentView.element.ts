@@ -33,6 +33,9 @@ export default class MetaFieldsDocumentView extends UmbElementMixin(
     super();
 
     this.consumeContext(ST_METAFIELDS_DOCUMENT_TOKEN_CONTEXT, (instance) => {
+      if (!instance) {
+        return;
+      }
       this.#context = instance;
 
       instance.model.subscribe((value) => {

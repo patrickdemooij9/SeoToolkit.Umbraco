@@ -12,7 +12,6 @@ import { css, html } from "lit";
 import { DomainViewModel } from "../api";
 import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import RedirectRepository from "../dataLayer/RedirectRepository";
-import { ApiError } from "@umbraco-cms/backoffice/external/backend-api";
 
 interface ImportFileType {
   label: string;
@@ -62,7 +61,7 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
   override async connectedCallback() {
     super.connectedCallback();
 
-    this._domains = (await this.#redirectRepository.getDomains()).data!;
+    this._domains = (await this.#redirectRepository.getDomains()).data;
     this._domains.splice(0, 0, { id: 0, name: "All Sites" });
 
     this.State.asObservable().subscribe((value) => {
@@ -132,7 +131,7 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
     if (result.error) {
       this.State.update({
         notification:
-          ((result.error as ApiError)?.body as string) ??
+          ((result.error)?.message as string) ??
           "Something went wrong",
       });
       return;

@@ -24,6 +24,9 @@ export class ScriptManagerEdit extends UmbLitElement implements UmbWorkspaceView
         super();
 
         this.consumeContext(ST_SCRIPTMANAGER_DETAIL_TOKEN_CONTEXT, (instance) => {
+            if (!instance) {
+                return;
+            }
             this.#context = instance;
 
             this.observe(this.#context.definitions, (value) => {

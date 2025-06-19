@@ -42,6 +42,9 @@ export default class SitemapDocumentViewElement extends UmbElementMixin(LitEleme
         super();
 
         this.consumeContext(ST_SITEMAP_DOCUMENT_TOKEN_CONTEXT, (instance) => {
+            if (!instance) {
+                return;
+            }
             this.#context = instance;
             instance.model.subscribe((item) => {
                 const changeFrequence = this.#changeFrequences.find((f) => f.value == item.changeFrequency)?.name;
