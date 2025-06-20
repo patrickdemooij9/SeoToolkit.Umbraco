@@ -22,7 +22,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Caching
 
         public bool ShouldRebuild => _forceRebuild || _spaceLeft <= 0;
 
-        public RedirectsBloomFilter(IRedirectsRepository redirectsRepository, ISettingsService<RedirectsConfigModel> settingsService, IRuntimeState runtimeState, IUmbracoDatabaseFactory umbracoDatabaseFactory)
+        public RedirectsBloomFilter(IRedirectsRepository redirectsRepository, ISettingsService<RedirectsConfigModel> settingsService)
         {
             _redirectsRepository = redirectsRepository;
             _settingsService = settingsService;
