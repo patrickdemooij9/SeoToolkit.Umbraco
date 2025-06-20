@@ -4,6 +4,10 @@ using SeoToolkit.Umbraco.Redirects.Core.Config.Models;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using System;
 using System.Linq;
+using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Infrastructure.Persistence;
+using static SeoToolkit.Umbraco.Common.Core.Constants.TreeControllerConstants;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Caching
 {
@@ -18,18 +22,23 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Caching
 
         public bool ShouldRebuild => _forceRebuild || _spaceLeft <= 0;
 
-        public RedirectsBloomFilter(IRedirectsRepository redirectsRepository, ISettingsService<RedirectsConfigModel> settingsService)
+        public RedirectsBloomFilter(IRedirectsRepository redirectsRepository, ISettingsService<RedirectsConfigModel> settingsService, IRuntimeState runtimeState, IUmbracoDatabaseFactory umbracoDatabaseFactory)
         {
             _redirectsRepository = redirectsRepository;
             _settingsService = settingsService;
-
-            Rebuild();
+            _forceRebuild = true;
         }
 
         public void Add(string url)
         {
             if (!IsEnabled())
             {
+                return;
+            }
+
+            if (_bloomFilter is null)
+            {
+                _forceRebuild = true;
                 return;
             }
 
@@ -49,7 +58,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Caching
 
         public bool Contains(string url)
         {
-            if (!IsEnabled())
+            if (!IsEnabled() || _bloomFilter is null)
             {
                 return true;
             }
