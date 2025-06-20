@@ -20,6 +20,7 @@
     "deploy": "npm run commonDeploy && npm run robotsTxtDeploy && npm run scriptManagerDeploy && npm run redirectDeploy && npm run sitemapDeploy && npm run siteAuditDeploy && npm run metaFieldsDeploy && npm run notFoundDeploy"
   },
   "dependencies": {
+    "@lit/context": "^1.1.5",
     "concurrently": "^9.0.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
