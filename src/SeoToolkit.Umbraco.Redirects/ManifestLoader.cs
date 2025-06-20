@@ -20,7 +20,7 @@ namespace SeoToolkit.Umbraco.Redirects
             manifests.Add(new PackageManifest
             {
                 PackageName = "SeoToolkit.Umbraco.Redirects",
-                Version = "3.7.1",
+                Version = "3.7.2",
                 Scripts = new[]
                 {
                     "/App_Plugins/SeoToolkit/backoffice/Redirects/list.controller.js",
