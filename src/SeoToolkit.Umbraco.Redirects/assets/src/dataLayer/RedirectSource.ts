@@ -82,15 +82,18 @@ export class RedirectSource {
     domain?: number
   ) {
     return tryExecute(
-      this.#host,
-      SeoToolkitRedirectsService.postUmbracoSeoToolkitRedirectsValidate({
-        query: {
-          fileExtension: fileExtension! as ImportRedirectsFileExtension,
-          domain: domain!,
-          tempFileId: tempFileId!,
-        },
-      })
-    );
+        this.#host,
+        SeoToolkitRedirectsService.postUmbracoSeoToolkitRedirectsValidate({
+          query: {
+            fileExtension: fileExtension! as ImportRedirectsFileExtension,
+            domain: domain!,
+            tempFileId: tempFileId!,
+          },
+        }),
+        {
+          disableNotifications: true
+        }
+      );
   }
 
   async submitImport() {

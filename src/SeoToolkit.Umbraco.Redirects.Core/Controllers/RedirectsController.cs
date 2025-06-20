@@ -1,23 +1,25 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SeoToolkit.Umbraco.Common.Core.Controllers;
 using SeoToolkit.Umbraco.Redirects.Core.Constants;
 using SeoToolkit.Umbraco.Redirects.Core.Enumerators;
 using SeoToolkit.Umbraco.Redirects.Core.Helpers;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Web;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using SeoToolkit.Umbraco.Redirects.Core.Models.PostModels;
 using SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels;
-using Umbraco.Cms.Core.Security;
-using Umbraco.Extensions;
-using SeoToolkit.Umbraco.Common.Core.Controllers;
-using Umbraco.Cms.Web.Common.Routing;
-using Umbraco.Cms.Api.Common.ViewModels.Pagination;
+using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Umbraco.Cms.Api.Common.Builders;
+using Umbraco.Cms.Api.Common.ViewModels.Pagination;
+using Umbraco.Cms.Core.Security;
+using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Core.Services.OperationStatus;
+using Umbraco.Cms.Core.Web;
+using Umbraco.Cms.Web.Common.Routing;
+using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 {
@@ -181,7 +183,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
                 return Ok();
             }
 
-            return UnprocessableEntity(!string.IsNullOrWhiteSpace(result.Status) ? result.Status : "Something went wrong during the validation");
+            var problemDetailsBuilder = new ProblemDetailsBuilder();
+            return UnprocessableEntity(problemDetailsBuilder.WithOperationStatus(ContentEditingOperationStatus.Unknown).WithTitle(!string.IsNullOrWhiteSpace(result.Status) ? result.Status : "Something went wrong during the validation").Build());
         }
 
         [HttpPost("import")]

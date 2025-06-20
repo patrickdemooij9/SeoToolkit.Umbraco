@@ -131,8 +131,7 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
     if (result.error) {
       this.State.update({
         notification:
-          ((result.error)?.message as string) ??
-          "Something went wrong",
+          result.error.message ?? "Something went wrong",
       });
       return;
     }
