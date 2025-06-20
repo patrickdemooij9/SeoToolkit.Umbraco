@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Moq;
+using SeoToolkit.Umbraco.Redirects.Core.Caching;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using SeoToolkit.Umbraco.Redirects.Core.Services;
@@ -25,8 +26,11 @@ namespace SeoToolkit.Tests
                 new Redirect { Domain = null, IsRegex = true, Id = redirectId, OldUrl = "^/test" }
             });
 
+            var bloomFilter = new Mock<IRedirectsBloomFilter>();
+            bloomFilter.Setup(it => it.Contains(It.IsAny<string>())).Returns(true);
+
             var umbracoContextFactory = GetContextFactoryWithDomain();
-            var redirectService = new RedirectsService(redirectRepository.Object, umbracoContextFactory, Mock.Of<IOptionsMonitor<RequestHandlerSettings>>());
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, Mock.Of<IOptionsMonitor<RequestHandlerSettings>>());
 
             // Act
             var redirect = redirectService.GetByUrl(new Uri("https://test.nl/test123"));

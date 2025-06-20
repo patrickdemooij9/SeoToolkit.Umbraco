@@ -13,11 +13,18 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
         {
             if (!IndexExists("IX_SeoToolkitOldUrl"))
             {
-                CreateIndex<RedirectEntity>("IX_SeoToolkitOldUrl");
+                Create.Index("IX_SeoToolkitOldUrl").OnTable("SeoToolkitRedirects")
+                    .WithOptions().NonClustered()
+                    .OnColumn(nameof(RedirectEntity.OldUrl)).Ascending()
+                    .OnColumn(nameof(RedirectEntity.IsEnabled)).Ascending()
+                    .Do();
             }
             if (!IndexExists("IX_SeoToolkitRegex"))
             {
-                CreateIndex<RedirectEntity>("IX_SeoToolkitRegex");
+                Create.Index("IX_SeoToolkitRegex").OnTable("SeoToolkitRedirects")
+                    .WithOptions().NonClustered()
+                    .OnColumn(nameof(RedirectEntity.IsRegex)).Ascending()
+                    .Do();
             }
         }
     }
