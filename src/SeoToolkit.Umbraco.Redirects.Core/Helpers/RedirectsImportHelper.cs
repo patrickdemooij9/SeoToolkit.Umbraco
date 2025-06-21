@@ -116,7 +116,11 @@ public class RedirectsImportHelper
                 var toUrl = Uri.IsWellFormedUriString(fields[1], UriKind.Absolute)
                     ? fields[1]
                     : fields[1].EnsureEndsWith("/").ToLower();
-                var redirectCode = GetRedirectCode(fields[2]);
+                var redirectCode = HttpStatusCode.MovedPermanently;
+                if (fields.Length is 3)
+                {
+                    redirectCode = GetRedirectCode(fields[2]);
+                }
                 if (!string.IsNullOrWhiteSpace(fromUrl) && !string.IsNullOrWhiteSpace(toUrl))
                 {
                     var urlValidation = ValidateRedirectUrl(fromUrl, parsedData, parser.LineNumber);
