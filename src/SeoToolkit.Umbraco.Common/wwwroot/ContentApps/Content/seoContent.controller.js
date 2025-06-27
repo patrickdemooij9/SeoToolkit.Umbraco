@@ -39,11 +39,15 @@
                     }
                 });
 
-            vm.nodeId = editorState.current.id;
+            vm.nodeId = editorState.current?.id ?? 0;
         }
 
         function subscribeToContentEvents() {
             unsubscribe.push(eventsService.on("content.saved", () => {
+                if (vm.nodeId === 0) {
+                    vm.nodeId = editorState.current.id;
+                }
+
                 save();
             }));
             unsubscribe.push(eventsService.on("content.unpublished", () => {
@@ -59,7 +63,7 @@
         {
             unsubscribe.push(eventsService.on("app.tabChange",
                 (e, data) => {
-                    if (data.alias !== "seoContent") {
+                    if (data.alias !== "seoContent" || vm.nodeId !== editorState.current.id) {
                         return;
                     }
 
