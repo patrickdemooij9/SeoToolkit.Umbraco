@@ -25,7 +25,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Config
                     Enabled = it.Value.Enabled
                 }).ToArray(),
                 DisabledModules = settings.DisabledModules,
-                DisableRenderCaching = settings.DisableRenderCaching
+                DisableRenderCaching = settings.DisableRenderCaching,
+                RenderScriptsInApi = settings.RenderScriptsInApi
             };
         }
     }

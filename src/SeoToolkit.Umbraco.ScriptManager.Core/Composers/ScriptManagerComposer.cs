@@ -22,6 +22,8 @@ using SeoToolkit.Umbraco.ScriptManager.Core.Repositories;
 using SeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions;
 using SeoToolkit.Umbraco.ScriptManager.Core.Services;
 using Umbraco.Cms.Core.Services;
+using SeoToolkit.Umbraco.Common.Core.Collections;
+using SeoToolkit.Umbraco.ScriptManager.Core.Api;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
 {
@@ -44,6 +46,11 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
             if (disabledModules.Contains(DisabledModuleConstant.SectionTree))
             {
                 builder.Trees().RemoveTreeController(typeof(ScriptManagerTreeController));
+            }
+
+            if (!disabledModules.Contains(DisabledModuleConstant.Api))
+            {
+                builder.Services.AddScoped<IApiDataHandler, ScriptManagerApiHandler>();
             }
 
             builder.ScriptDefinitions()
