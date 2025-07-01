@@ -12,9 +12,9 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkit")]
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit")]
     [BackOfficeRoute("seoToolkitSettings")]
-    public class SeoSettingsController : SeoToolkitControllerBase
+    public class SeoSettingsController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly ISeoSettingsService _seoSettingsService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;

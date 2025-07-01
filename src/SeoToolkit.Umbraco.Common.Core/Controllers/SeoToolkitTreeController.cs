@@ -11,10 +11,9 @@ using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
 {
-    //This controller is only here to prevent single node trees if you only download one package
-    [ApiExplorerSettings(GroupName = "seoToolkit")]
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit")]
     [BackOfficeRoute("seoToolkit/tree/info")]
-    public class SeoToolkitTreeController : SeoToolkitControllerBase
+    public class SeoToolkitTreeController : SeoToolkitAuthenticatedControllerBase
     {
         public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
 

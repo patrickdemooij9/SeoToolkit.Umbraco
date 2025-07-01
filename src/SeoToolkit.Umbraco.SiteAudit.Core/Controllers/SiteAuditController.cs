@@ -21,9 +21,9 @@ using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkitSiteAudit")]
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit SiteAudit")]
     [BackOfficeRoute("seoToolkitSiteAudit")]
-    public class SiteAuditController : SeoToolkitControllerBase
+    public class SiteAuditController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly SiteAuditService _siteAuditService;
         private readonly ISiteCheckService _siteCheckService;

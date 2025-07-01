@@ -16,9 +16,9 @@ using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkitMetaFields")]
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit MetaFields")]
     [BackOfficeRoute("seoToolkitMetaFieldsSettings")]
-    public class MetaFieldsSettingsController : SeoToolkitControllerBase
+    public class MetaFieldsSettingsController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly IMetaFieldsSettingsService _documentTypeSettingsService;
         private readonly SeoFieldCollection _seoFieldCollection;

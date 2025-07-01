@@ -30,6 +30,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.MetaFieldsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService;
 using Umbraco.Cms.Core.Services;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.Api;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
 {
@@ -59,6 +60,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.Services.AddTransient(typeof(IMetaFieldsValueService), typeof(MetaFieldsValueService));
             builder.Services.AddTransient(typeof(IMetaFieldsValueRepository), typeof(MetaFieldsDatabaseRepository));
             builder.Services.AddTransient(typeof(IMetaFieldsSettingsService), typeof(MetaFieldsSettingsService));
+
+            if (!disabledModules.Contains(DisabledModuleConstant.Api))
+            {
+                builder.Services.AddSingleton<IApiDataHandler, MetaFieldsApiHandler>();
+            }
 
             builder.WithCollectionBuilder<SeoFieldCollectionBuilder>()
                 .Add<SeoTitleField>()

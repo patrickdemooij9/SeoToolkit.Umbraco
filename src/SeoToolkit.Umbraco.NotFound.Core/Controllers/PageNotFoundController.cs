@@ -5,9 +5,9 @@ using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.NotFound.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkitNotFound")]
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit NotFound")]
     [BackOfficeRoute("seoToolkitNotFound")]
-    public class PageNotFoundController : SeoToolkitControllerBase
+    public class PageNotFoundController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly IKeyValueService _keyValueService;
 

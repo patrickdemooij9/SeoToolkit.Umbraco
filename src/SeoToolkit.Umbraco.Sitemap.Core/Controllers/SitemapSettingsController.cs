@@ -10,9 +10,9 @@ using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkitSitemap")]
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit Sitemap")]
     [BackOfficeRoute("seoToolkitSitemap")]
-    public class SitemapSettingsController : SeoToolkitControllerBase
+    public class SitemapSettingsController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly ISitemapService _sitemapService;
         private readonly IContentTypeService _contentTypeService;

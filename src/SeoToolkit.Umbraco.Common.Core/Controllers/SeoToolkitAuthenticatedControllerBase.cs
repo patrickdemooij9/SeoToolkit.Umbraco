@@ -10,7 +10,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
     [BackOfficeRoute("seoToolkit")]
     [Authorize(Policy = AuthorizationPolicies.BackOfficeAccess)]
     [MapToApi("seoToolkit")]
-    public abstract class SeoToolkitControllerBase : Controller
+    public abstract class SeoToolkitAuthenticatedControllerBase : Controller
     {
     }
 }

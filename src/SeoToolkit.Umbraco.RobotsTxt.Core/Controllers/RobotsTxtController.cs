@@ -8,8 +8,8 @@ using SeoToolkit.Umbraco.RobotsTxt.Core.Models.ResponseModel;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkit")]
-    public class RobotsTxtController : SeoToolkitControllerBase
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit RobotsTxt")]
+    public class RobotsTxtController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly IRobotsTxtService _robotsTxtService;
 

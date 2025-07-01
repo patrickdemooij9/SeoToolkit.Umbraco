@@ -24,6 +24,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Config
                     Alias = it.Key,
                     Enabled = it.Value.Enabled
                 }).ToArray(),
+                RenderScriptsInApi = settings.RenderScriptsInApi,
                 DisabledModules = settings.DisabledModules,
                 DisableRenderCaching = settings.DisableRenderCaching
             };

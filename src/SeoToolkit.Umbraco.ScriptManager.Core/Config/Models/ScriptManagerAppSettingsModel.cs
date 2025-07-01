@@ -8,6 +8,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Config.Models
         public Dictionary<string, ScriptManagerDefinitionAppSettingsModel> Definitions { get; set; }
             = new Dictionary<string, ScriptManagerDefinitionAppSettingsModel>();
 
+        public bool RenderScriptsInApi { get; set; }
+
         public string[] DisabledModules { get; set; } = Array.Empty<string>();
         public bool DisableRenderCaching { get; set; } = false;
     }
