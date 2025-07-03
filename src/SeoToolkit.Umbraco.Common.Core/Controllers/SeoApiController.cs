@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SeoToolkit.Umbraco.Common.Core.Collections;
+using SeoToolkit.Umbraco.Common.Core.Models.Config;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +16,14 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
     {
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly IVariationContextAccessor _variationContextAccessor;
+        private readonly ISettingsService<GlobalConfig> _config;
         private readonly IApiDataHandler[] _dataHandlers;
 
-        public SeoApiController(IUmbracoContextFactory umbracoContextFactory, IVariationContextAccessor variationContextAccessor, IEnumerable<IApiDataHandler> dataHandlers)
+        public SeoApiController(IUmbracoContextFactory umbracoContextFactory, IVariationContextAccessor variationContextAccessor, ISettingsService<GlobalConfig> config, IEnumerable<IApiDataHandler> dataHandlers)
         {
             _umbracoContextFactory = umbracoContextFactory;
             _variationContextAccessor = variationContextAccessor;
+            _config = config;
             _dataHandlers = dataHandlers?.ToArray() ?? Array.Empty<IApiDataHandler>();
         }
 
@@ -27,6 +31,11 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         [ProducesResponseType(typeof(Dictionary<string, object>), 200)]
         public IActionResult Get(Guid contentGuid, string? culture = null)
         {
+            if (!_config.GetSettings().EnableApiEndpoints)
+            {
+                return NotFound();
+            }
+
             if (!string.IsNullOrWhiteSpace(culture))
             {
                 _variationContextAccessor.VariationContext = new VariationContext(culture);
