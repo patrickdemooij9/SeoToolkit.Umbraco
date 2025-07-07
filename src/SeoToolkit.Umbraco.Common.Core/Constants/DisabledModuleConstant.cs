@@ -6,6 +6,7 @@
         public const string DocumentTypeContextApp = "DocumentTypeContextApp";
         public const string SectionTree = "SectionTree";
         public const string LastChanceContentFinder = "LastChanceContentFinder";
+        public const string Api = "Api";
         public const string All = "All";
     }
 }

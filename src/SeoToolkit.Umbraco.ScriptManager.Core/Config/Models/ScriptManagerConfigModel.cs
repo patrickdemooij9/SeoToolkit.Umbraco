@@ -9,5 +9,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Config.Models
 
         public string[] DisabledModules { get; set; } = Array.Empty<string>();
         public bool DisableRenderCaching { get; set; } = false;
+
+        public bool RenderScriptsInApi { get; set; }
     }
 }
