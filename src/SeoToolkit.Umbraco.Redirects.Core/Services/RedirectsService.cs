@@ -61,7 +61,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
 
             if (redirect.NewNode is null)
             {
-                newUrl = newUrl.EnsureStartsWith('/');
+                newUrl = Uri.IsWellFormedUriString(newUrl, UriKind.Absolute) ?
+                    newUrl :
+                    newUrl.EnsureStartsWith("/").ToLower();
                 if (_requestHandlerSettings.AddTrailingSlash)
                 {
                     newUrl = newUrl.EnsureEndsWith('/');
