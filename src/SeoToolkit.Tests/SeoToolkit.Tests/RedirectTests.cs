@@ -4,6 +4,7 @@ using SeoToolkit.Umbraco.Redirects.Core.Caching;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using SeoToolkit.Umbraco.Redirects.Core.Services;
+using System.Net;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.PublishedCache;
@@ -37,6 +38,39 @@ namespace SeoToolkit.Tests
 
             // Assert
             Assert.IsNotNull(redirect);
+        }
+
+        [TestCase("hello-world", true)]
+        [TestCase("/hello-world", true)]
+        [TestCase("https://sw-unlimited-db.com", false)]
+        public void TestEnsureNewRedirectStartsWithSlash(string url, bool shouldHaveSlash)
+        {
+            // Arrange
+            var redirectRepository = new Mock<IRedirectsRepository>();
+            var bloomFilter = new Mock<IRedirectsBloomFilter>();
+
+            var umbracoContextFactory = GetContextFactoryWithDomain();
+
+            var requestHandlerSettings = new RequestHandlerSettings { AddTrailingSlash = true };
+            var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
+            optionsMonitor.Setup(it => it.CurrentValue).Returns(requestHandlerSettings);
+
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+
+            // Act
+            var redirect = new Redirect
+            {
+                Id = 1,
+                IsEnabled = true,
+                IsRegex = false,
+                OldUrl = "test",
+                NewUrl = url,
+                RedirectCode = (int)HttpStatusCode.MovedPermanently
+            };
+            redirectService.Save(redirect);
+
+            // Assert
+            redirectRepository.Verify(it => it.Save(It.Is<Redirect>(r => r.NewUrl.StartsWith("/") == shouldHaveSlash)), Times.Once);
         }
 
         private IUmbracoContextFactory GetContextFactoryWithDomain()
