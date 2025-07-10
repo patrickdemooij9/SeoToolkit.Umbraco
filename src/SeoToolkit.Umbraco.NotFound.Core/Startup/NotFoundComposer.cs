@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
+using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.NotFound.Core.Components;
 using SeoToolkit.Umbraco.NotFound.Core.Config;
 using SeoToolkit.Umbraco.NotFound.Core.ContentFinders;
+using SeoToolkit.Umbraco.NotFound.Core.Startup;
 using System;
 using System.Linq;
 using Umbraco.Cms.Core.Composing;
@@ -28,6 +30,12 @@ public class NotFoundComposer : IComposer
         if (!disabledModules.Contains(DisabledModuleConstant.LastChanceContentFinder))
         {
             builder.SetContentLastChanceFinder<PageNotFoundFinder>();
+        }
+
+        if (!disabledModules.Contains(DisabledModuleConstant.SectionTree))
+        {
+            builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
+            .Add<NotFoundTreeSection>();
         }
 
         builder.Components().Append<EnableModuleComponent>();

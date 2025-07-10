@@ -8,6 +8,7 @@ using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using SeoToolkit.Umbraco.Common.Core.Swagger;
+using SeoToolkit.Umbraco.Common.Core.Startup;
 
 namespace SeoToolkit.Umbraco.Common.Core.Composers
 {
@@ -21,13 +22,13 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
 
             builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 
-            //builder.ContentApps().Append<SeoSettingsContentAppFactory>();
-            //builder.ContentApps().Append<SeoContentAppFactory>();
-
             builder.Services.AddSingleton<ModuleCollection>();
 
             builder.Services.AddUnique<ISeoSettingsRepository, SeoSettingsRepository>();
             builder.Services.AddUnique<ISeoSettingsService, SeoSettingsService>();
+
+            builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
+                .Add<SeoToolkitInfoSection>();
         }
     }
 }

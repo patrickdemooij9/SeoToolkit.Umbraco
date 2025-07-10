@@ -19,6 +19,8 @@ using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Middleware;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Repositories;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Services;
+using SeoToolkit.Umbraco.Common.Core.Collections;
+using SeoToolkit.Umbraco.RobotsTxt.Core.Startup;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Composers
 {
@@ -35,12 +37,14 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Composers
             if (disabledModules.Contains(DisabledModuleConstant.All))
             {
                 builder.Components().Append<DisableModuleComponent>();
-                //builder.Trees().RemoveTreeController<RobotsTxtTreeController>();
                 return;
             }
 
-            if (disabledModules.Contains(DisabledModuleConstant.SectionTree)) { }
-                //builder.Trees().RemoveTreeController<RobotsTxtTreeController>();
+            if (!disabledModules.Contains(DisabledModuleConstant.SectionTree)) 
+            {
+                builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
+                    .Add<RobotsTxtTreeSection>();
+            }
 
             builder.Services.AddSingleton<IRobotsTxtRepository, RobotsTxtRepository>();
             builder.Services.AddSingleton<IRobotsTxtService, RobotsTxtService>();

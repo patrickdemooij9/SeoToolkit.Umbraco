@@ -2,15 +2,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
-using SeoToolkit.Umbraco.SiteAudit.Core.BackgroundTasks;
 using SeoToolkit.Umbraco.SiteAudit.Core.Checks;
 using SeoToolkit.Umbraco.SiteAudit.Core.Collections;
 using SeoToolkit.Umbraco.SiteAudit.Core.Common.Scheduler;
 using SeoToolkit.Umbraco.SiteAudit.Core.Config;
 using SeoToolkit.Umbraco.SiteAudit.Core.Config.Models;
-using SeoToolkit.Umbraco.SiteAudit.Core.Extensions;
 using SeoToolkit.Umbraco.SiteAudit.Core.Factories.SiteCrawler;
 using SeoToolkit.Umbraco.SiteAudit.Core.Hubs;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
@@ -19,6 +16,8 @@ using SeoToolkit.Umbraco.SiteAudit.Core.NotificationHandlers;
 using SeoToolkit.Umbraco.SiteAudit.Core.Notifications;
 using SeoToolkit.Umbraco.SiteAudit.Core.Repositories;
 using SeoToolkit.Umbraco.SiteAudit.Core.Services;
+using SeoToolkit.Umbraco.Common.Core.Collections;
+using SeoToolkit.Umbraco.SiteAudit.Core.Startup;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
 {
@@ -38,6 +37,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
             //builder.Services.AddHostedService<ScheduledSiteAuditTask>();
             //builder.Services.AddHostedService<SiteAuditHubClientCleanup>();
 
+            builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
+                .Add<SiteAuditTreeSection>();
+
             builder.WithCollectionBuilder<SiteAuditCheckCollectionBuilder>()
                 .Append<BrokenLinkCheck>()
                 .Append<MissingTitleCheck>()
@@ -48,10 +50,6 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
             builder.AddNotificationHandler<SiteAuditUpdatedNotification, SiteAuditUpdateNotificationHandler>();
 
             builder.Services.Configure<SiteAuditAppSettingsModel>(builder.Config.GetSection("SeoToolkit:SiteAudit"));
-
-            //builder.Services.AddSingleton<SiteAuditHubRoutes>();
-            //builder.Services.AddSignalR();
-            //builder.Services.AddHubSignalR();
 
             builder.Services.AddHttpClient<BrokenImageCheck>()
                 .ConfigurePrimaryHttpMessageHandler(x =>
