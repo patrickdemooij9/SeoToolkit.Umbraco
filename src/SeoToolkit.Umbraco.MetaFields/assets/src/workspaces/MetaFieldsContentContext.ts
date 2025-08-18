@@ -35,6 +35,8 @@ export default class MetaFieldsContentContext
     this.#repository = new MetaFieldsContentRepository(host);
 
     this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
+      this.#nodeId = instance?.getUnique()?.toString();
+
       instance?.splitView.activeVariantsInfo.subscribe((variants) => {
         variants.forEach((variant) => {
           const culture = variant.culture ?? "invariant";

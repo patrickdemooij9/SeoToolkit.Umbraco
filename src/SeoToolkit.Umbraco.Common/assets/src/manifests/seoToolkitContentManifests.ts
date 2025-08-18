@@ -1,7 +1,6 @@
 import { ManifestCondition } from "@umbraco-cms/backoffice/extension-api";
 import { SeoEnabledCondition } from "../conditions/SeoEnabledCondition";
 import {
-  ManifestWorkspaceAction,
   ManifestWorkspaceView,
 } from "@umbraco-cms/backoffice/workspace";
 
@@ -27,7 +26,7 @@ const workSpaceView: ManifestWorkspaceView = {
   ],
 };
 
-const overwriteSaveAction: ManifestWorkspaceAction = {
+/*const overwriteSaveAction: ManifestWorkspaceAction = {
   type: "workspaceAction",
   kind: "default",
   overwrites: "Umb.WorkspaceAction.Document.Save",
@@ -45,7 +44,7 @@ const overwriteSaveAction: ManifestWorkspaceAction = {
       match: "Umb.Workspace.Document",
     },
   ],
-};
+};*/
 
 const seoConditionManifest: ManifestCondition = {
   type: "condition",
@@ -56,6 +55,5 @@ const seoConditionManifest: ManifestCondition = {
 
 export const ContentViewManifests = [
   workSpaceView,
-  overwriteSaveAction,
   seoConditionManifest,
 ];

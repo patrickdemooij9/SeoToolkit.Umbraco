@@ -46,7 +46,7 @@ export default class SeoToolkitDocumentContext
       }
 
       this.#actionEventContext = instance;
-      instance.addEventListener("document.save", this.#save);
+      instance.addEventListener("request-reload-structure-for-entity", this.#save);
     });
   }
 
@@ -69,7 +69,7 @@ export default class SeoToolkitDocumentContext
   }
 
   destroy(): void {
-    this.#actionEventContext?.removeEventListener("document.save", this.#save);
+    this.#actionEventContext?.removeEventListener("request-reload-structure-for-entity", this.#save);
   }
 }
 
