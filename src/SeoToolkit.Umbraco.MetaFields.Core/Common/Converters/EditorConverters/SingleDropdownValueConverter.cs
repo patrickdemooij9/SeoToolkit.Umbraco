@@ -1,4 +1,5 @@
-﻿using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
+﻿using SeoToolkit.Umbraco.Common.Core.Helpers;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +13,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
     {
         public object ConvertEditorToDatabaseValue(object value)
         {
-            if (value is JsonElement element)
-            {
-                if (element.ValueKind != JsonValueKind.Array)
-                {
-                    return value?.ToString();
-                }
-                return element.EnumerateArray().FirstOrDefault().ToString();
-            }
-
-            return value?.ToString();
+            var items = JsonHelpers.DeserializeArray<string>(value);
+            return items?.FirstOrDefault() ?? value?.ToString();
         }
 
         public object ConvertObjectToEditorValue(object value)

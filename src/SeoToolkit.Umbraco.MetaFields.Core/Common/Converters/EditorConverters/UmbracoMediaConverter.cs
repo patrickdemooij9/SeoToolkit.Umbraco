@@ -1,4 +1,5 @@
-﻿using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
+﻿using SeoToolkit.Umbraco.Common.Core.Helpers;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -27,11 +28,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
 
         public object ConvertEditorToDatabaseValue(object value)
         {
-            if (value is not JsonElement element || element.ValueKind != JsonValueKind.Array)
-                return null;
-
-            var images = JsonSerializer.Deserialize<MediaEditorModel[]>(element);
-            if (images.Length == 0)
+            var images = JsonHelpers.DeserializeArray<MediaEditorModel>(value?.ToString());
+            if (images is null || images.Length == 0)
                 return null;
 
             return images[0].MediaKey;
