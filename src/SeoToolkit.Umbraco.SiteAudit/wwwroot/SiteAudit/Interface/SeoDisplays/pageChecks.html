@@ -1,0 +1,21 @@
+﻿<div ng-controller="SeoToolkit.SiteAuditPageChecksController as vm">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3>Page checks</h3>
+        <umb-button type="button" state="vm.saveButtonState" button-style="success btn-sm" size="xs" label="Start checks" action="vm.startChecks()">Start checks</umb-button>
+    </div>
+    <div class="umb-panel-group__details-checks">
+        <div class="umb-panel-group__details-check-title flex" style="flex-direction: column; gap: 4px" ng-repeat="item in vm.pageChecks">
+            <div class="flex" style="align-items: center;gap: 12px">
+                <umb-icon icon="icon-check" class="color-green" ng-if="vm.hasRan && !item.hasError"></umb-icon>
+                <umb-icon icon="icon-delete" class="color-red" ng-if="vm.hasRan && item.hasError"></umb-icon>
+                <div>
+                    <div class="umb-panel-group__details-check-name ng-binding">{{item.check.name}}</div>
+                    <div class="umb-panel-group__details-check-description ng-binding">{{item.check.description}}</div>
+                </div>
+            </div>
+            <div ng-if="vm.hasRan && item.hasError" class="color-red">
+                {{ item.errorMessage }}
+            </div>
+        </div>
+    </div>
+</div>

@@ -64,8 +64,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
             }
             siteCrawler.OnPageCrawlCompleted -= HandleChecks;
             CurrentlyRunningSiteAudits.TryRemove(siteCrawler, out _);
-                
+
             Save(model);
+
             await _eventAggregator.PublishAsync(new SiteAuditUpdatedNotification(model));
 
             return model;
@@ -85,6 +86,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
 
         public SiteAuditDto Save(SiteAuditDto model)
         {
+            if (!model.Persistent) return model;
+
             using var scope = _scopeProvider.CreateScope();
             model = model.Id == 0 ? _siteAuditRepository.Add(model) : _siteAuditRepository.Update(model);
             scope.Complete();
@@ -129,10 +132,13 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
             };
             crawledPage.Results.AddRange(auditModel.SiteChecks?.SelectMany(it => it.Check.RunCheck(args.Page, args.Context).Select(p => new PageCrawlResult(it, p))) ?? Enumerable.Empty<PageCrawlResult>());
 
-            using (var scope = _scopeProvider.CreateScope())
+            if (auditModel.Persistent)
             {
-                _siteAuditRepository.SaveCrawledPage(auditModel, crawledPage);
-                scope.Complete();
+                using (var scope = _scopeProvider.CreateScope())
+                {
+                    _siteAuditRepository.SaveCrawledPage(auditModel, crawledPage);
+                    scope.Complete();
+                }
             }
             auditModel.AddPage(crawledPage);
 

@@ -8,6 +8,16 @@
     color: #515054;
 }
 
+.field-suggestion {
+    font-size: 0.9em;
+    color: #f44336;
+    margin-top: 2px;
+}
+
+.field-suggestion > .valid {
+    color: #4caf50;
+}
+
 .seo-content .groups {
     display: flex;
 }
@@ -15,6 +25,7 @@
 .seo-content .groups .properties{
     width: 60%;
     padding-right: 60px;
+    flex-shrink: 0;
 }
 
 /* Previewers */

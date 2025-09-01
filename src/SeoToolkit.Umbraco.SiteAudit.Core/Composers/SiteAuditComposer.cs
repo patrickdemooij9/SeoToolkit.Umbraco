@@ -19,6 +19,7 @@ using SeoToolkit.Umbraco.SiteAudit.Core.NotificationHandlers;
 using SeoToolkit.Umbraco.SiteAudit.Core.Notifications;
 using SeoToolkit.Umbraco.SiteAudit.Core.Repositories;
 using SeoToolkit.Umbraco.SiteAudit.Core.Services;
+using SeoToolkit.Umbraco.Common.Core.Collections;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
 {
@@ -44,6 +45,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
                 .Append<MissingDescriptionCheck>()
                 .Append<BrokenImageCheck>()
                 .Append<MissingImageAltCheck>();
+
+            builder.WithCollectionBuilder<SeoDisplayCollectionBuilder>()
+                .Add<SiteAuditDisplayProvider>();
 
             builder.AddNotificationHandler<SiteAuditUpdatedNotification, SiteAuditUpdateNotificationHandler>();
 

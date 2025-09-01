@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Html;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 
@@ -10,6 +11,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public abstract string Alias { get; }
         public abstract string Description { get; }
         public abstract string GroupAlias { get; }
+        public List<ISeoFieldSuggestion> Suggestions { get; } = new List<ISeoFieldSuggestion>();
         public Type FieldType => typeof(T);
         public abstract ISeoFieldEditor Editor { get; }
         public abstract ISeoFieldEditEditor EditEditor { get; }

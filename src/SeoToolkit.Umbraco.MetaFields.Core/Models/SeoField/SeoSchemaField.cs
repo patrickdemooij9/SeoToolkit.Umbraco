@@ -6,6 +6,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
 using System.Web;
+using System.Collections.Generic;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
@@ -16,6 +17,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Alias => SeoFieldAliasConstants.Schema;
         public string Description => "The schemas are a set of 'types', each associated with a set of properties. The types are arranged in a hierarchy.";
         public string GroupAlias => SeoFieldGroupConstants.Others;
+        public List<ISeoFieldSuggestion> Suggestions { get; } = new List<ISeoFieldSuggestion>();
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.TextBox", "Umbraco.TextArea", "Umbraco.TinyMCE" });

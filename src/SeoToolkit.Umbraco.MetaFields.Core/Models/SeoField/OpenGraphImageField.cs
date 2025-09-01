@@ -8,6 +8,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
+using System.Collections.Generic;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
@@ -19,6 +20,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Alias => SeoFieldAliasConstants.OpenGraphImage;
         public string Description => "Image for Open Graph";
         public string GroupAlias => SeoFieldGroupConstants.SocialMediaGroup;
+        public List<ISeoFieldSuggestion> Suggestions { get; } = new List<ISeoFieldSuggestion>();
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.MediaPicker", "Umbraco.MediaPicker3" });

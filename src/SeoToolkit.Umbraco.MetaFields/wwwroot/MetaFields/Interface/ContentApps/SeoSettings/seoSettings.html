@@ -26,6 +26,13 @@
                                         </umb-property-editor>
                                         <small class="property-fallback-info" ng-if="field.value">Fallback value: <strong>{{vm.getValue(field)}}</strong></small>
                                         <small class="property-fallback-info" ng-if="!field.value">No fallback value found!</small>
+                                        <div ng-if="field.suggestions.length > 0">
+                                            <div ng-repeat="suggestion in field.suggestions" class="field-suggestion">
+                                                <p ng-if="suggestion.alias === 'maxLength'" ng-class="{'valid': !field.getValue() || field.getValue().length < suggestion.config.maxLength }">
+                                                    Best practice: Length of the text to be lower than {{ suggestion.config.maxLength }} characters.
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

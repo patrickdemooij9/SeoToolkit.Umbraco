@@ -6,6 +6,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
 using System.Web;
+using System.Collections.Generic;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
@@ -16,6 +17,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Alias => SeoFieldAliasConstants.OpenGraphDescription;
         public string Description => "Description for Open Graph";
         public string GroupAlias => SeoFieldGroupConstants.SocialMediaGroup;
+        public List<ISeoFieldSuggestion> Suggestions { get; } = new List<ISeoFieldSuggestion>();
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] {

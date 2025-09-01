@@ -27,10 +27,11 @@ namespace SeoToolkit.Umbraco.SiteAudit
                     "/App_Plugins/SeoToolkit/SiteAudit/Interface/SiteAudit/create.controller.js",
                     "/App_Plugins/SeoToolkit/SiteAudit/Interface/SiteAudit/detail.controller.js",
                     "/App_Plugins/SeoToolkit/SiteAudit/Interface/SiteAudit/overview.controller.js",
+                    "/App_Plugins/SeoToolkit/SiteAudit/Interface/SeoDisplays/pageChecks.controller.js",
                     "/App_Plugins/SeoToolkit/SiteAudit/js/siteAuditHub.js",
                     "/App_Plugins/SeoToolkit/backoffice/SiteAudit/list.controller.js",
                     "/App_Plugins/SeoToolkit/backoffice/SiteAudit/detail.controller.js",
-                    "/App_Plugins/SeoToolkit/backoffice/SiteAudit/create.controller.js"
+                    "/App_Plugins/SeoToolkit/backoffice/SiteAudit/create.controller.js",
                 },
                 Stylesheets = new[]
                 {

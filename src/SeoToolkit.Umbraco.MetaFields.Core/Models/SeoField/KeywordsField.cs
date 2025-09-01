@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNetCore.Html;
@@ -19,6 +20,7 @@ public class KeywordsField : ISeoField
     public string Alias => SeoFieldAliasConstants.Keywords;
     public string Description => "Keywords for the page";
     public string GroupAlias => SeoFieldGroupConstants.MetaFieldsGroup;
+    public List<ISeoFieldSuggestion> Suggestions { get; } = new List<ISeoFieldSuggestion>();
     public Type FieldType => typeof(string);
 
     public ISeoFieldEditor Editor => new KeywordsFieldPropertyEditor();

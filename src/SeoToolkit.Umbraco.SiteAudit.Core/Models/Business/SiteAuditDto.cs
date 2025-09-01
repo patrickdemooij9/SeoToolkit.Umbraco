@@ -19,6 +19,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Models.Business
         public int DelayBetweenRequests { get; set; }
         public List<SiteCheckDto> SiteChecks { get; set; }
         public ConcurrentQueue<CrawledPageDto> CrawledPages { get; set; }
+        public bool Persistent { get; set; } = true;
 
         public SiteAuditDto()
         {

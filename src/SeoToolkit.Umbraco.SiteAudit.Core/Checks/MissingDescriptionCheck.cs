@@ -11,7 +11,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
         public string Name => "Missing Description Check";
         public string Alias => "MissingDescriptionCheck";
         public string Description => "Checks if you are missing any descriptions";
-        public string ErrorMessage => "Your site has invalid descriptions!";
+        public string ErrorMessage => "Your site has missing meta descriptions!";
         public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page, SiteAuditContext context)
         {
             if (page.Content == null) yield break;

@@ -84,6 +84,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                         Title = key.Title,
                         Description = key.Description,
                         GroupAlias = key.GroupAlias,
+                        Suggestions = key.Suggestions.Select(it => it.ToViewModel()).ToArray(),
                         Value = humanReadableValue?.ToString(),
                         UserValue = userValue,
                         EditView = key.EditEditor.View,

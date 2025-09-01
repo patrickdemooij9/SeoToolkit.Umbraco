@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
+using System.Collections.Generic;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels
 {
@@ -8,6 +9,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels
         public string Title { get; set; }
         public string Description { get; set; }
         public string GroupAlias { get; set; }
+        public SeoSuggestionViewModel[] Suggestions { get; set; }
         public string Value { get; set; }
         public object UserValue { get; set; }
         public string EditView { get; set; }

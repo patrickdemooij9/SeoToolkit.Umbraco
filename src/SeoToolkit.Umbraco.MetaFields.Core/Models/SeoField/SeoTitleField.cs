@@ -6,6 +6,8 @@ using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
 using System.Web;
+using System.Collections.Generic;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldSuggestions;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
@@ -16,6 +18,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Alias => SeoFieldAliasConstants.Title;
         public string Description => "Title for the page";
         public string GroupAlias => SeoFieldGroupConstants.MetaFieldsGroup;
+        public List<ISeoFieldSuggestion> Suggestions { get; } = new List<ISeoFieldSuggestion>
+        {
+            new SeoFieldMaxLengthSuggestion() { MaxLength = 60 }
+        };
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.TextBox", "Umbraco.TextArea", "Umbraco.TinyMCE" });
