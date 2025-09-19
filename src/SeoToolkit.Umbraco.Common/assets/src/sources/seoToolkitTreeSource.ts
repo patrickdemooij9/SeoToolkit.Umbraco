@@ -15,6 +15,7 @@ import {
   SEOTOOLKIT_SITEAUDIT_ENTITY,
   SEOTOOLKIT_NOTFOUND_ENTITY,
   SEOTOOLKIT_TREE_ROOT,
+  SEOTOOLKIT_DOMAIN_ENTITY,
 } from "../constants/seoToolkitConstants";
 import { SeoToolkitTreeItemModel } from "../trees/types";
 
@@ -91,6 +92,10 @@ const mapper = (
     case "a9b6dec6-e045-476a-ba3f-742355e18e33".toLowerCase():
       entity = SEOTOOLKIT_NOTFOUND_ENTITY;
       icon = "icon-article";
+      break;
+    case "ab248b43-9757-432a-9821-22f9eeb513e7".toLowerCase():
+      entity = SEOTOOLKIT_DOMAIN_ENTITY;
+      icon = "icon-world-globe";
       break;
     default:
       entity = SEOTOOLKIT_MODULE_ENTITY;

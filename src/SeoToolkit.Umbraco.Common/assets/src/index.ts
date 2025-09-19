@@ -8,6 +8,7 @@ import { manifest } from './conditions/workspaceEntityIdCondition';
 import { Manifests as DocumentManifests } from './manifests/seoToolkitDocumentManifests';
 import { ContentViewManifests } from './manifests/seoToolkitContentManifests';
 import { client } from './api';
+import { SeoDomainsManifest } from './manifests/seoDomainsManifest';
 
 export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
     host.consumeContext(UMB_AUTH_CONTEXT,(auth)=> {
@@ -39,4 +40,5 @@ export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
     extensionRegistry.registerMany(TreeManifests);
     extensionRegistry.registerMany(DocumentManifests);
     extensionRegistry.registerMany(ContentViewManifests);
+    extensionRegistry.registerMany(SeoDomainsManifest);
 };
