@@ -28,7 +28,8 @@ export default class NotFoundModuleWorkspaceElement extends UmbElementMixin(
 
     this.consumeContext(ST_NOTFOUND_MODULE_TOKEN_CONTEXT, (instance) => {
       this.#context = instance;
-      instance?.content.subscribe((value) => {
+
+      this.observe(instance?.content, (value) => {
         this._content = {
           alias: "contentNode",
           value,

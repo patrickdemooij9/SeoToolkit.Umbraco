@@ -34,7 +34,7 @@ export default class MetaFieldsDocumentContext
     this.#repository = new MetaFieldsSettingsRepository(host);
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
-      instance?.unique.subscribe((unique) => {
+      this.observe(instance?.unique, (unique) => {
         this.#nodeId = unique?.toString();
         this.fetchFromServer(unique!);
       });

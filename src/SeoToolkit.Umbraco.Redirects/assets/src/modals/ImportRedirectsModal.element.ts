@@ -64,7 +64,7 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
     this._domains = (await this.#redirectRepository.getDomains()).data;
     this._domains.splice(0, 0, { id: 0, name: "All Sites" });
 
-    this.State.asObservable().subscribe((value) => {
+    this.observe(this.State.asObservable(), (value) => {
       const domain = value.domain
         ? this._domains.find((item) => item.id === value.domain)
         : undefined;
