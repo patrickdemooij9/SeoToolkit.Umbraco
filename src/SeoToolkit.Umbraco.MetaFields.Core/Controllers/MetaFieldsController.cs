@@ -22,9 +22,9 @@ using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkitMetaFields")]
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit MetaFields")]
     [BackOfficeRoute("seoToolkitMetaFields")]
-    public class MetaFieldsController : SeoToolkitControllerBase
+    public class MetaFieldsController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly IMetaFieldsService _seoService;
         private readonly IMetaFieldsSettingsService _documentTypeSettingsService;

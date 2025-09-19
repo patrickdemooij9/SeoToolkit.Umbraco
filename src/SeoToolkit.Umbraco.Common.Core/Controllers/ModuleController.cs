@@ -6,8 +6,8 @@ using System.Linq;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkit")]
-    public class ModuleController : SeoToolkitControllerBase
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit")]
+    public class ModuleController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly ModuleCollection _moduleCollection;
 

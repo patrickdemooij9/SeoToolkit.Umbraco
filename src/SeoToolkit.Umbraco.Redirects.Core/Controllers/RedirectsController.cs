@@ -23,9 +23,9 @@ using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkitRedirects")]
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit Redirects")]
     [BackOfficeRoute("seoToolkitRedirects")]
-    public class RedirectsController : SeoToolkitControllerBase
+    public class RedirectsController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly IRedirectsService _redirectsService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;

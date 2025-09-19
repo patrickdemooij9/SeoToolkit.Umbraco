@@ -11,9 +11,9 @@ using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkitScriptManager")]
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit ScriptManager")]
     [BackOfficeRoute("seoToolkitScriptManager")]
-    public class ScriptManagerController : SeoToolkitControllerBase
+    public class ScriptManagerController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly ScriptDefinitionCollection _scriptDefinitionCollection;
         private readonly IScriptManagerService _scriptManagerService;
