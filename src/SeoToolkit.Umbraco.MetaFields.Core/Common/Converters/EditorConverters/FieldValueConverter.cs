@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json;
 using Newtonsoft.Json.Linq;
+using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.Converters;
 
@@ -11,12 +12,13 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
     {
         public object ConvertEditorToDatabaseValue(object value)
         {
-            if (value is not JsonElement element || element.ValueKind != JsonValueKind.Array)
+            var fields = JsonHelpers.DeserializeArray<FieldsItem>(value);
+            if (fields is null)
                 return null;
 
             return new FieldsModel
             {
-                Fields = JsonSerializer.Deserialize<FieldsItem[]>(element)
+                Fields = fields
             };
         }
 

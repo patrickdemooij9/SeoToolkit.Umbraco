@@ -41,11 +41,9 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
         }
         this.#context = instance;
         
-        instance
-          .getModel(this._culture!)
-          .subscribe((value) => {
-            this._model = value;
-          });
+        this.observe(instance.getModel(this._culture!), (value) => {
+          this._model = value;
+        });
       });
     });
   }

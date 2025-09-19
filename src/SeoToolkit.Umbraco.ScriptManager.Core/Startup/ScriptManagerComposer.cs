@@ -1,15 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Umbraco.Cms.Core.Composing;
-using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Extensions;
+using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.ScriptManager.Core.Api;
 using SeoToolkit.Umbraco.ScriptManager.Core.Components;
 using SeoToolkit.Umbraco.ScriptManager.Core.Config;
 using SeoToolkit.Umbraco.ScriptManager.Core.Config.Models;
@@ -21,9 +17,15 @@ using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.ScriptManager.Core.Repositories;
 using SeoToolkit.Umbraco.ScriptManager.Core.ScriptDefinitions;
 using SeoToolkit.Umbraco.ScriptManager.Core.Services;
+using System;
+using System.IO;
+using System.Linq;
+using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Services;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.ScriptManager.Core.Startup;
+using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
 {
@@ -46,6 +48,11 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
             {
                 builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
                     .Add<ScriptManagerTreeSection>();
+            }
+
+            if (!disabledModules.Contains(DisabledModuleConstant.Api))
+            {
+                builder.Services.AddScoped<IApiDataHandler, ScriptManagerApiHandler>();
             }
 
             builder.ScriptDefinitions()

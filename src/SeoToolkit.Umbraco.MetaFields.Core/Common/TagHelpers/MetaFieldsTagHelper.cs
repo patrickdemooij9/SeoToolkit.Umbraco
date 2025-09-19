@@ -31,8 +31,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.TagHelpers
                 //TODO: We should probably have a special IsEmpty check here?
                 if (string.IsNullOrWhiteSpace(value?.ToString()))
                     continue;
-                if (key.Render(value) is null) continue;
-                stringBuilder.AppendLine(key.Render(value).ToString());
+                var renderedValue = key.Render(value);
+                if (renderedValue is null)
+                    continue;
+
+                stringBuilder.AppendLine(renderedValue.ToString());
             }
 
             output.PreContent.SetHtmlContent(new HtmlString(stringBuilder.ToString()));

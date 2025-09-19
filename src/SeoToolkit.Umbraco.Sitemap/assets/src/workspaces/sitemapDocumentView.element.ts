@@ -46,7 +46,8 @@ export default class SitemapDocumentViewElement extends UmbElementMixin(LitEleme
                 return;
             }
             this.#context = instance;
-            instance.model.subscribe((item) => {
+
+            this.observe(instance.model, (item) => {
                 const changeFrequence = this.#changeFrequences.find((f) => f.value == item.changeFrequency)?.name;
                 const priority = this.#priorities.find((p) => p.value == item.priority)?.name;
                 this._content = [

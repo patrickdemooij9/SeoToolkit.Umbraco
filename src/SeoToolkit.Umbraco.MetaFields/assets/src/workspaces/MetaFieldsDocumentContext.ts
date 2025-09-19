@@ -34,7 +34,7 @@ export default class MetaFieldsDocumentContext
     this.#repository = new MetaFieldsSettingsRepository(host);
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
-      instance?.unique.subscribe((unique) => {
+      this.observe(instance?.unique, (unique) => {
         this.#nodeId = unique?.toString();
         this.fetchFromServer(unique!);
       });
@@ -46,7 +46,7 @@ export default class MetaFieldsDocumentContext
       }
 
       this.#actionEventContext = instance;
-      instance.addEventListener("document.save", this.#save);
+      instance.addEventListener("request-reload-structure-for-entity", this.#save);
     });
   }
 
@@ -60,7 +60,7 @@ export default class MetaFieldsDocumentContext
   }
 
   destroy(): void {
-    this.#actionEventContext?.removeEventListener("document.save", this.#save);
+    this.#actionEventContext?.removeEventListener("request-reload-structure-for-entity", this.#save);
   }
 
   #save = () => {

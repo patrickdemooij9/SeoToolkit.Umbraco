@@ -30,7 +30,7 @@ export default class SeoToolkitDocumentContext
     super(host, ST_METAFIELDS_SETTINGSDOCUMENT_TOKEN_CONTEXT.toString());
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
-      instance?.unique.subscribe((value) => {
+      this.observe(instance?.unique, (value) => {
         this.#settingsRepository.getSettings(value!).then((resp) => {
           this.#model.update({
             contentTypeId: value?.toString(),
@@ -46,7 +46,7 @@ export default class SeoToolkitDocumentContext
       }
 
       this.#actionEventContext = instance;
-      instance.addEventListener("document.save", this.#save);
+      instance.addEventListener("request-reload-structure-for-entity", this.#save);
     });
   }
 
@@ -69,7 +69,7 @@ export default class SeoToolkitDocumentContext
   }
 
   destroy(): void {
-    this.#actionEventContext?.removeEventListener("document.save", this.#save);
+    this.#actionEventContext?.removeEventListener("request-reload-structure-for-entity", this.#save);
   }
 }
 

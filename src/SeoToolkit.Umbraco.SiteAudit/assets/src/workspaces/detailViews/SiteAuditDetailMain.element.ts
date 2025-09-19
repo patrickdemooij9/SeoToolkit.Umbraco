@@ -68,7 +68,7 @@ export default class SiteAuditDetailMain
       }
       this.#context = instance;
 
-      this.#context.model.subscribe((value) => {
+      this.observe(instance.model, (value) => {
         this._model = value;
 
         let errors = 0;

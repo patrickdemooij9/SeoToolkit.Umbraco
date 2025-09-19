@@ -12,9 +12,9 @@ using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
 {
-    [ApiExplorerSettings(GroupName = "seoToolkit")]
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit")]
     [BackOfficeRoute("seoToolkit/tree/info")]
-    public class SeoToolkitTreeController : SeoToolkitControllerBase
+    public class SeoToolkitTreeController : SeoToolkitAuthenticatedControllerBase
     {
         public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
         private readonly SeoTreeSectionCollection _seoTreeSections;

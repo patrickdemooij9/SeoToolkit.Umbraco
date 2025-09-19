@@ -85,10 +85,10 @@ export default class FieldsEditorPropertyEditor
     this.#repository = new MetaFieldsSettingsRepository(this);
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
-      instance?.structure.contentTypes.subscribe((value) => {
+      this.observe(instance?.structure.contentTypes, (value) => {
         const contentTypeFields: FieldData[] = [];
 
-        value.forEach((field) => {
+        value?.forEach((field) => {
           field.properties.forEach((prop) => {
             if (this.dataTypesCache[prop.dataType.unique]) {
               if (

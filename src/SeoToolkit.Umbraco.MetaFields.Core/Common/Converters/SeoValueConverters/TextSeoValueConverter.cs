@@ -16,7 +16,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
             {
                 var url = currentContent.Url(mode: UrlMode.Absolute);
                 if (url.Equals("#")) return ""; //No URL yet.
-                if (new Uri(url).PathAndQuery.Equals("/"))
+                if (Uri.TryCreate(url, UriKind.Absolute, out var uri) && uri.PathAndQuery.Equals("/"))
                 {
                     url = url.TrimEnd('/');
                 }

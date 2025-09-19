@@ -1,7 +1,5 @@
 import { UmbContextBase } from "@umbraco-cms/backoffice/class-api";
-import {
-  MetaFieldsSettingsViewModel,
-} from "../api";
+import { MetaFieldsSettingsViewModel } from "../api";
 import { UmbWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
 import { UmbContextToken } from "@umbraco-cms/backoffice/context-api";
 import { MetaFieldsContentRepository } from "../dataAccess/MetaFieldsContentRepository";
@@ -26,8 +24,7 @@ export default class MetaFieldsContentContext
   #nodeId?: string;
   #cultures: string[] = [];
 
-  #variants: { [key: string]: MetaFieldsSettingsVariant } =
-    {};
+  #variants: { [key: string]: MetaFieldsSettingsVariant } = {};
 
   constructor(host: UmbControllerHost) {
     super(host, ST_METAFIELDS_CONTENT_TOKEN_CONTEXT.toString());
@@ -35,8 +32,10 @@ export default class MetaFieldsContentContext
     this.#repository = new MetaFieldsContentRepository(host);
 
     this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
-      instance?.splitView.activeVariantsInfo.subscribe((variants) => {
-        variants.forEach((variant) => {
+      this.#nodeId = instance?.getUnique()?.toString();
+
+      this.observe(instance?.splitView.activeVariantsInfo, (variants) => {
+        variants?.forEach((variant) => {
           const culture = variant.culture ?? "invariant";
           if (!this.#cultures.includes(culture)) {
             this.#cultures.push(culture);
@@ -44,22 +43,22 @@ export default class MetaFieldsContentContext
         });
         this.#loadDataFromRepository(this.#nodeId);
       });
-      instance?.unique.subscribe((unique) => {
+      this.observe(instance?.unique, (unique) => {
         this.#cultures.forEach((culture) => {
           delete this.#variants[culture];
-        })
+        });
         this.#loadDataFromRepository(unique?.toString());
       });
-      instance?.data.subscribe((item) => {
+      this.observe(instance?.data, (item) => {
         item?.variants.forEach((variant) => {
-          const culture = variant.culture ?? 'invariant';
+          const culture = variant.culture ?? "invariant";
           const currentDate = this.#getVariant(culture).lastUpdated;
           if (currentDate && currentDate !== variant.updateDate) {
             this.save(culture);
           }
 
           this.#getVariant(culture).lastUpdated = variant.updateDate;
-        })
+        });
       });
     });
   }
@@ -87,8 +86,8 @@ export default class MetaFieldsContentContext
     }
     this.#variants[variant] = {
       variant,
-      model: new UmbObjectState<MetaFieldsSettingsViewModel>({})
-    }
+      model: new UmbObjectState<MetaFieldsSettingsViewModel>({}),
+    };
     return this.#variants[variant];
   }
 

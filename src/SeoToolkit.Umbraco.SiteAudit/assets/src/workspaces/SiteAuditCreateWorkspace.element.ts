@@ -39,7 +39,8 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
         return;
       }
       this.#context = instance;
-      instance.model.subscribe((value) => {
+
+      this.observe(instance.model, (value) => {
         this._auditInformationProps = [
           {
             alias: "name",
@@ -74,7 +75,7 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
         ];
       });
 
-      instance.config.subscribe((value) => {
+      this.observe(instance.config, (value) => {
         this._config = value;
       });
     });
