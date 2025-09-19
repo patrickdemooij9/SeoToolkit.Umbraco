@@ -30,7 +30,7 @@ export default class SeoToolkitDocumentContext
     super(host, ST_METAFIELDS_SETTINGSDOCUMENT_TOKEN_CONTEXT.toString());
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
-      instance?.unique.subscribe((value) => {
+      this.observe(instance?.unique, (value) => {
         this.#settingsRepository.getSettings(value!).then((resp) => {
           this.#model.update({
             contentTypeId: value?.toString(),

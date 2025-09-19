@@ -35,7 +35,7 @@ export default class SitemapDocumentViewContext
       if (!instance) {
         return;
       }
-      instance.unique.subscribe((unique) => {
+      this.observe(instance?.unique, (unique) => {
         this.#repository.getPageSettings(unique!).then((pageSettings) => {
           this.#model.update({
             contentTypeGuid: unique?.toString(),

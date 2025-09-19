@@ -25,7 +25,7 @@ export class SeoEnabledCondition
     super(host, args);
 
     this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (context) => {
-      context?.contentTypeUnique.subscribe((value) => {
+      this.observe(context?.contentTypeUnique, (value) => {
         if (!value) {
           return;
         }
