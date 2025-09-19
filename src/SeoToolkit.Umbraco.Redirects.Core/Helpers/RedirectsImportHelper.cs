@@ -1,14 +1,14 @@
+using ExcelDataReader;
+using Microsoft.VisualBasic.FileIO;
+using SeoToolkit.Umbraco.Redirects.Core.Enumerators;
+using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
+using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using ExcelDataReader;
-using Microsoft.VisualBasic.FileIO;
-using SeoToolkit.Umbraco.Redirects.Core.Enumerators;
-using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
-using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
@@ -170,7 +170,11 @@ public class RedirectsImportHelper
                 var toUrl = Uri.IsWellFormedUriString(row[1].ToString(), UriKind.Absolute)
                     ? row[1].ToString()
                     : row[1].ToString()?.EnsureEndsWith("/").ToLower();
-                var redirectCode = GetRedirectCode(row[2].ToString());
+                var redirectCode = HttpStatusCode.MovedPermanently;
+                if (row.ItemArray?.Length is 3)
+                {
+                    redirectCode = GetRedirectCode(row[2].ToString());
+                }
                 if (!string.IsNullOrWhiteSpace(fromUrl) && !string.IsNullOrWhiteSpace(toUrl))
                 {
                     var urlValidation = ValidateRedirectUrl(fromUrl, parsedData, i + 1);
