@@ -6,7 +6,7 @@ import {
   UmbTreeRootItemsRequestArgs,
   UmbTreeServerDataSourceBase,
 } from "@umbraco-cms/backoffice/tree";
-import { SeoToolkitService } from "../api";
+import { BackofficeSeoToolkitService } from "../api";
 import {
   SEOTOOLKIT_MODULE_ENTITY,
   SEOTOOLKIT_REDIRECT_ENTITY,
@@ -34,7 +34,7 @@ export class seoToolkitTreeSource extends UmbTreeServerDataSourceBase<
 }
 
 const getRootItems = async (_args: UmbTreeRootItemsRequestArgs) => {
-  const data = await SeoToolkitService.getUmbracoSeoToolkitTreeInfoRoot();
+  const data = await BackofficeSeoToolkitService.getUmbracoSeoToolkitTreeInfoRoot();
   return data;
 };
 
@@ -43,7 +43,7 @@ const getChildrenOf = async (args: UmbTreeChildrenOfRequestArgs) => {
     return getRootItems(args);
   } else {
     // eslint-disable-next-line local-rules/no-direct-api-import
-    const data = await SeoToolkitService.getUmbracoSeoToolkitTreeInfoChildren({
+    const data = await BackofficeSeoToolkitService.getUmbracoSeoToolkitTreeInfoChildren({
       query: {
         parentId: args.parent.unique,
         skip: args.skip,
@@ -56,7 +56,7 @@ const getChildrenOf = async (args: UmbTreeChildrenOfRequestArgs) => {
 
 const getAncestorsOf = async (args: UmbTreeAncestorsOfRequestArgs) => {
   const response =
-    await SeoToolkitService.getUmbracoSeoToolkitTreeInfoAncestors({
+    await BackofficeSeoToolkitService.getUmbracoSeoToolkitTreeInfoAncestors({
       query: {
         descendantId: args.treeItem.unique,
       }
@@ -95,7 +95,7 @@ const mapper = (
       break;
     case "ab248b43-9757-432a-9821-22f9eeb513e7".toLowerCase():
       entity = SEOTOOLKIT_DOMAIN_ENTITY;
-      icon = "icon-world-globe";
+      icon = "icon-globe";
       break;
     default:
       entity = SEOTOOLKIT_MODULE_ENTITY;

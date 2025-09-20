@@ -13,6 +13,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
             To<SeoSettingsInitialMigration>("state-1");
             To<AddSeoToolkitSectionToAdminUserGroupMigration>("state-2");
             To<CreateSeoToolkitUserGroupMigration>("state-3");
+            To<SeoToolkitDomainMigration>("state-4");
         }
     }
 }

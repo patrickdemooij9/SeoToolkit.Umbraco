@@ -9,6 +9,8 @@ using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using SeoToolkit.Umbraco.Common.Core.Swagger;
 using SeoToolkit.Umbraco.Common.Core.Startup;
+using SeoToolkit.Umbraco.Common.Core.Repositories.Domains;
+using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 
 namespace SeoToolkit.Umbraco.Common.Core.Composers
 {
@@ -26,6 +28,9 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
 
             builder.Services.AddUnique<ISeoSettingsRepository, SeoSettingsRepository>();
             builder.Services.AddUnique<ISeoSettingsService, SeoSettingsService>();
+
+            builder.Services.AddUnique<ISeoDomainsRepository, SeoDomainsRepository>();
+            builder.Services.AddUnique<ISeoDomainsService, SeoDomainsService>();
 
             builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
                 .Add<SeoToolkitInfoSection>();
