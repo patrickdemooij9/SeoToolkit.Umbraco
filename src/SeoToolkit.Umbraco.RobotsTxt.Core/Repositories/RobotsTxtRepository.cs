@@ -64,7 +64,8 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Repositories
             return new RobotsTxtModel
             {
                 Id = entity.Id,
-                Content = entity.Content
+                Content = entity.Content,
+                DomainId = entity.DomainId
             };
         }
 
@@ -73,7 +74,8 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Repositories
             return new RobotsTxtEntity
             {
                 Id = model.Id,
-                Content = model.Content
+                Content = model.Content,
+                DomainId = model.DomainId
             };
         }
     }

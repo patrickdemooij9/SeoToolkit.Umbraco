@@ -1,7 +1,7 @@
 import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbDataSourceResponse } from '@umbraco-cms/backoffice/repository';
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
-import { GetUmbracoSeoToolkitModulesResponse, SeoToolkitService } from '../api';
+import { GetUmbracoSeoToolkitModulesResponse, BackofficeSeoToolkitService } from '../api';
 
 export interface IModuleSource {
     getModules(): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitModulesResponse>>;
@@ -16,6 +16,6 @@ export class ModuleSource implements IModuleSource {
     }
 
     async getModules(): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitModulesResponse>> {
-        return await tryExecute(this.#host, SeoToolkitService.getUmbracoSeoToolkitModules())
+        return await tryExecute(this.#host, BackofficeSeoToolkitService.getUmbracoSeoToolkitModules())
     }
 }

@@ -20,6 +20,8 @@ using SeoToolkit.Umbraco.Redirects.Core.Repositories;
 using SeoToolkit.Umbraco.Redirects.Core.Services;
 using SeoToolkit.Umbraco.Redirects.Core.Caching;
 using SeoToolkit.Umbraco.Redirects.Core.BackgroundTasks;
+using SeoToolkit.Umbraco.Common.Core.Collections;
+using SeoToolkit.Umbraco.Redirects.Core.Startup;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Composers
 {
@@ -36,13 +38,13 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Composers
             if (disabledModules.Contains(DisabledModuleConstant.All))
             {
                 builder.Components().Append<DisableModuleComponent>();
-                //builder.Trees().RemoveTreeController<RedirectsTreeController>();
                 return;
             }
 
-            if (disabledModules.Contains(DisabledModuleConstant.SectionTree))
+            if (!disabledModules.Contains(DisabledModuleConstant.SectionTree))
             {
-                //builder.Trees().RemoveTreeController<RedirectsTreeController>();
+                builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
+                    .Add<RedirectsTreeSection>();
             }
 
             builder.Components().Append<EnableModuleComponent>();

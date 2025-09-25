@@ -1,75 +1,116 @@
-import { UMB_WORKSPACE_CONTEXT, UmbWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
+import {
+  UMB_WORKSPACE_CONTEXT,
+  UmbRoutableWorkspaceContext,
+  UmbWorkspaceContext,
+  UmbWorkspaceRouteManager,
+} from "@umbraco-cms/backoffice/workspace";
 import { UmbControllerBase } from "@umbraco-cms/backoffice/class-api";
 import { SEOTOOLKIT_ROBOTSTXT_ENTITY } from "../Constants";
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
-import { UmbArrayState, UmbStringState } from "@umbraco-cms/backoffice/observable-api";
+import {
+  UmbArrayState,
+  UmbStringState,
+} from "@umbraco-cms/backoffice/observable-api";
 import { UmbContextToken } from "@umbraco-cms/backoffice/context-api";
 import { ValidationError } from "../types/ValidationError";
 import { RobotsTxtRepository } from "../dataAccess/RobotsTxtRepository";
 import { UMB_MODAL_MANAGER_CONTEXT } from "@umbraco-cms/backoffice/modal";
 import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
+import SeoToolkitRobotsTxtModuleElement from "../workspaces/RobotsTxtModuleWorkspace.element";
 
-export default class RobotsTxtModuleContext extends UmbControllerBase implements UmbWorkspaceContext {
-    workspaceAlias = "seoToolkit.module.workspace.robotsTxt";
-    #repository?: RobotsTxtRepository;
+export default class RobotsTxtModuleContext
+  extends UmbControllerBase
+  implements UmbWorkspaceContext, UmbRoutableWorkspaceContext
+{
+  workspaceAlias = "seoToolkit.module.workspace.robotsTxt";
+  #repository?: RobotsTxtRepository;
 
-    #content = new UmbStringState("");
-    public readonly content = this.#content.asObservable();
+  routes = new UmbWorkspaceRouteManager(this);
 
-    #validationErrors = new UmbArrayState<ValidationError>([], (item) => item.error);
-    public readonly validationErrors = this.#validationErrors.asObservable();
+  #domainId : number | undefined = undefined;
 
-    constructor(host: UmbControllerHost){
-        super(host);
+  #content = new UmbStringState("");
+  public readonly content = this.#content.asObservable();
 
-        this.provideContext(ST_ROBOTSTXT_MODULE_TOKEN_CONTEXT, this);
-        this.provideContext(UMB_WORKSPACE_CONTEXT, this);
+  #validationErrors = new UmbArrayState<ValidationError>(
+    [],
+    (item) => item.error
+  );
+  public readonly validationErrors = this.#validationErrors.asObservable();
 
-        this.#repository = new RobotsTxtRepository(host);        
-    }
+  constructor(host: UmbControllerHost) {
+    super(host);
 
-    setContent(content: string){
-        this.#content.setValue(content);
-    }
+    this.provideContext(ST_ROBOTSTXT_MODULE_TOKEN_CONTEXT, this);
+    this.provideContext(UMB_WORKSPACE_CONTEXT, this);
 
-    async submit(skipValidation: boolean){
-        this.#validationErrors.setValue([]);
-        const response = await this.#repository?.saveContent(this.#content.value, skipValidation);
+    this.routes.setRoutes([
+      {
+        path: "edit/:unique",
+        component: SeoToolkitRobotsTxtModuleElement,
+        setup: (_component, info) => {
+            this.#domainId = undefined;
+            // This is a bit ugly, but the tree system is so difficult to understand
+            if (info.match.params.unique.includes('~')){
+                const parts = info.match.params.unique.split('~');
+                if(parts.length === 2){
+                    this.#domainId = Number.parseInt(parts[1]);
+                }
+            }
+            this.load();
+        },
+      },
+    ]);
 
-        if (response?.data?.errors){
-            this.#validationErrors.setValue(response.data.errors.map<ValidationError>((err) => ({
-                lineNumber: err.lineNumber,
-                error: err.error!
-            })));
+    this.#repository = new RobotsTxtRepository(host);
+  }
 
-            this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (manager) =>{
-                manager?.open(this._host, 'seoToolkit.modal.robotstxt.validation', {});
-            });
-        }else{
-            this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
-                instance?.peek('positive', {
-                    data: {
-                        headline: 'Saved',
-                        message: 'Robots.txt successfully saved!'
-                    }
-                })
-            });
-        }
-    }
+  setContent(content: string) {
+    this.#content.setValue(content);
+  }
 
-    getEntityType(): string {
-        return SEOTOOLKIT_ROBOTSTXT_ENTITY;
-    }
+  async submit(skipValidation: boolean) {
+    this.#validationErrors.setValue([]);
+    const response = await this.#repository?.saveContent(
+      this.#content.value,
+      this.#domainId,
+      skipValidation
+    );
 
-    load() {
-        this.#repository!.getContent().then((result) => {
-            const value = Object.keys(result.data!).length === 0 ? '' : result.data!;
-            this.#content.setValue(value);
+    if (response?.data?.errors) {
+      this.#validationErrors.setValue(
+        response.data.errors.map<ValidationError>((err) => ({
+          lineNumber: err.lineNumber,
+          error: err.error!,
+        }))
+      );
+
+      this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (manager) => {
+        manager?.open(this._host, "seoToolkit.modal.robotstxt.validation", {});
+      });
+    } else {
+      this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
+        instance?.peek("positive", {
+          data: {
+            headline: "Saved",
+            message: "Robots.txt successfully saved!",
+          },
         });
+      });
     }
+  }
+
+  getEntityType(): string {
+    return SEOTOOLKIT_ROBOTSTXT_ENTITY;
+  }
+
+  load() {
+    this.#repository!.getContent(this.#domainId).then((result) => {
+      const value = Object.keys(result.data!).length === 0 ? "" : result.data!;
+      this.#content.setValue(value);
+    });
+  }
 }
 
-
-export const ST_ROBOTSTXT_MODULE_TOKEN_CONTEXT = new UmbContextToken<RobotsTxtModuleContext>(
-	'robotsTxtModuleContext',
-);
+export const ST_ROBOTSTXT_MODULE_TOKEN_CONTEXT =
+  new UmbContextToken<RobotsTxtModuleContext>("robotsTxtModuleContext");

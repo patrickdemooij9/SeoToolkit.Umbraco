@@ -11,6 +11,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Migrations
         protected override void DefinePlan()
         {
             To<InitialRobotsTxtMigration>("state-1");
+            To<RobotsTxtDomainMigration>("state-2");
         }
     }
 }

@@ -1,13 +1,17 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SeoToolkit.Umbraco.Common.Core.Collections;
+using SeoToolkit.Umbraco.Common.Core.Helpers;
+using SeoToolkit.Umbraco.Common.Core.Models.Config;
+using SeoToolkit.Umbraco.Common.Core.Repositories.Domains;
+using SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository;
+using SeoToolkit.Umbraco.Common.Core.Services.Domains;
+using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.Common.Core.Startup;
+using SeoToolkit.Umbraco.Common.Core.Swagger;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
-using SeoToolkit.Umbraco.Common.Core.Collections;
-using SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository;
-using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
-using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
-using SeoToolkit.Umbraco.Common.Core.Models.Config;
-using SeoToolkit.Umbraco.Common.Core.Swagger;
 
 namespace SeoToolkit.Umbraco.Common.Core.Composers
 {
@@ -21,13 +25,17 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
 
             builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 
-            //builder.ContentApps().Append<SeoSettingsContentAppFactory>();
-            //builder.ContentApps().Append<SeoContentAppFactory>();
-
             builder.Services.AddSingleton<ModuleCollection>();
 
             builder.Services.AddUnique<ISeoSettingsRepository, SeoSettingsRepository>();
             builder.Services.AddUnique<ISeoSettingsService, SeoSettingsService>();
+
+            builder.Services.AddUnique<ISeoDomainsRepository, SeoDomainsRepository>();
+            builder.Services.AddUnique<ISeoDomainsService, SeoDomainsService>();
+            builder.Services.AddUnique<ISeoDomainResolver, SeoDomainResolver>();
+
+            builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
+                .Add<SeoToolkitInfoSection>();
         }
     }
 }

@@ -1,15 +1,16 @@
 ﻿using Umbraco.Cms.Infrastructure.Migrations;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.Database;
+using System.Threading.Tasks;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Migrations
 {
-    public class InitialRobotsTxtMigration : MigrationBase
+    public class InitialRobotsTxtMigration : AsyncMigrationBase
     {
         public InitialRobotsTxtMigration(IMigrationContext context) : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             if (TableExists("uSeoToolkitRobotsTxt"))
             {
@@ -19,6 +20,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Migrations
             {
                 Create.Table<RobotsTxtEntity>().Do();
             }
+            return Task.CompletedTask;
         }
     }
 }

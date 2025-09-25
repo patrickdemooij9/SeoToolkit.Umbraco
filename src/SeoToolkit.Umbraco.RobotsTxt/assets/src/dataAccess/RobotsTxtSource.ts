@@ -1,5 +1,5 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
-import { GetUmbracoSeoToolkitRobotsTxtResponse, PostUmbracoSeoToolkitRobotsTxtResponse, SeoToolkitService } from "../api";
+import { BackofficeSeoToolkitRobotsTxtService, GetUmbracoSeoToolkitRobotsTxtResponse, PostUmbracoSeoToolkitRobotsTxtResponse } from "../api";
 import { UmbDataSourceResponse } from "@umbraco-cms/backoffice/repository";
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
 
@@ -10,15 +10,20 @@ export class RobotsTxtSource {
         this.#host = host;
     }
 
-    async getContent(): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitRobotsTxtResponse>>{
-        return await tryExecute(this.#host, SeoToolkitService.getUmbracoSeoToolkitRobotsTxt());
+    async getContent(domainId: number | undefined): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitRobotsTxtResponse>>{
+        return await tryExecute(this.#host, BackofficeSeoToolkitRobotsTxtService.getUmbracoSeoToolkitRobotsTxt({
+            query: {
+                domainId: domainId
+            }
+        }));
     }
 
-    async saveContent(content: string, skipValidation: boolean): Promise<UmbDataSourceResponse<PostUmbracoSeoToolkitRobotsTxtResponse>>{
-        return await tryExecute(this.#host, SeoToolkitService.postUmbracoSeoToolkitRobotsTxt({
+    async saveContent(content: string, domainId: number | undefined, skipValidation: boolean): Promise<UmbDataSourceResponse<PostUmbracoSeoToolkitRobotsTxtResponse>>{
+        return await tryExecute(this.#host, BackofficeSeoToolkitRobotsTxtService.postUmbracoSeoToolkitRobotsTxt({
             body: {
                 skipValidation: skipValidation,
-                content: content
+                content: content,
+                domainId: domainId
             }
         }))
     }

@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using SeoToolkit.Umbraco.Common.Core.Helpers;
+using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.Business;
+using SeoToolkit.Umbraco.RobotsTxt.Core.Startup;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Services
 {
@@ -12,35 +15,43 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Services
     {
         private readonly IRobotsTxtRepository _robotsTxtRepository;
         private readonly IRobotsTxtValidator _robotsTxtValidator;
+        private readonly ISeoDomainResolver _seoDomainResolver;
         private readonly IRobotsTxtSitemapProvider _sitemapProvider;
 
         public RobotsTxtService(IRobotsTxtRepository robotsTxtRepository,
             IRobotsTxtValidator robotsTxtValidator,
+            ISeoDomainResolver seoDomainResolver,
             IRobotsTxtSitemapProvider sitemapProvider = null)
         {
             _robotsTxtRepository = robotsTxtRepository;
             _robotsTxtValidator = robotsTxtValidator;
+            _seoDomainResolver = seoDomainResolver;
             _sitemapProvider = sitemapProvider;
         }
 
-        public string GetContent()
+        public string GetContent(int? domainId = null)
         {
-            return _robotsTxtRepository.GetAll().FirstOrDefault()?.Content ?? string.Empty;
+            return _robotsTxtRepository.GetAll().FirstOrDefault(it => it.DomainId == domainId)?.Content ?? string.Empty;
         }
 
         public string GetContentWithSitemaps(HttpRequest request)
         {
-            string[] sitemaps = Array.Empty<string>();
+            string[] sitemaps = [];
             if (_sitemapProvider != null)
-                sitemaps = _sitemapProvider.GetSitemapUrls(request).ToArray();
+                sitemaps = [.. _sitemapProvider.GetSitemapUrls(request)];
 
-            //This will probably support multiple domains later on, but for now we can just take the only one
-            var content = _robotsTxtRepository.GetAll().FirstOrDefault()?.Content ?? string.Empty;
+            var seoDomain = _seoDomainResolver.ResolveSeoDomain(new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}"));
+            var allRobotsTxt = _robotsTxtRepository.GetAll();
+
+            var useDomainSpecific = seoDomain != null && seoDomain.HasFunctionality($"Module.{RobotsTxtTreeSection.RobotsTxtSectionGuid}");
+            var robotsTxt = allRobotsTxt.FirstOrDefault(it => useDomainSpecific ? it.DomainId == seoDomain.Id : it.DomainId is null);
+
+            var content = _robotsTxtRepository.GetAll().FirstOrDefault(it => it.DomainId == seoDomain?.Id)?.Content ?? string.Empty;
 
             if (sitemaps.Length > 0)
             {
                 var sitemapStringBuilder = new StringBuilder();
-                if (!string.IsNullOrWhiteSpace(content)) sitemapStringBuilder.Append("\n");
+                if (!string.IsNullOrWhiteSpace(content)) sitemapStringBuilder.Append('\n');
                 foreach(var sitemap in sitemaps)
                 {
                     sitemapStringBuilder.Append($"Sitemap: {sitemap}\n");
@@ -51,13 +62,14 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Services
             return content;
         }
 
-        public void SetContent(string content)
+        public void SetContent(string content, int? domainId = null)
         {
-            var model = _robotsTxtRepository.GetAll().FirstOrDefault();
+            var model = _robotsTxtRepository.GetAll().FirstOrDefault(it => it.DomainId == domainId);
             if (model is null)
                 model = new RobotsTxtModel();
 
             model.Content = content;
+            model.DomainId = domainId;
             _robotsTxtRepository.Update(model);
         }
 

@@ -45,12 +45,6 @@ export class SeoToolkitRobotsTxtModuleElement extends
         });
     }
 
-    connectedCallback(): void {
-        super.connectedCallback();
-
-        this.#context?.load();
-      }
-
     #onPropertyDataChange(e: Event) {
         const value = (e.target as UmbPropertyDatasetElement).value;
 

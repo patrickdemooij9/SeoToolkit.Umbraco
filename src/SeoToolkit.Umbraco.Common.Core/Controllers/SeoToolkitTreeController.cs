@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
+using SeoToolkit.Umbraco.Common.Core.Models.Business;
+using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,19 +19,37 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
     public class SeoToolkitTreeController : SeoToolkitAuthenticatedControllerBase
     {
         public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
+        private readonly SeoTreeSectionCollection _seoTreeSections;
+        private readonly ISeoDomainsService _seoDomainsService;
+        private Guid _domainGuid = new Guid("ab248b43-9757-432a-9821-22f9eeb513e7");
 
-        private Guid _infoGuid = new Guid("CDF429D1-2380-4AC2-AC3E-22D619EE4529");
-        private Guid _robotsGuid = new Guid("20A2086E-7D72-44BA-B97B-5836CAF6E28E");
-        private Guid _scriptManagerGuid = new Guid("94E95F4A-2ECB-4038-BCFD-8357B7C41F1A");
-        private Guid _redirectsGuid = new Guid("1147F58D-D2D5-425B-AEDE-DB537BDAC9EF");
-        private Guid _siteAuditGuid = new Guid("B0D1C655-472B-40E7-9AC4-C6328EA9CF32");
-        private Guid _notFoundGuid = new Guid("a9b6dec6-e045-476a-ba3f-742355e18e33");
+        public SeoToolkitTreeController(SeoTreeSectionCollection seoTreeSections, ISeoDomainsService seoDomainsService)
+        {
+            _seoTreeSections = seoTreeSections;
+            _seoDomainsService = seoDomainsService;
+        }
 
         [HttpGet("root")]
-        [ProducesResponseType(typeof(PagedViewModel<NamedEntityTreeItemResponseModel>), StatusCodes.Status200OK)]
-        public ActionResult<PagedViewModel<NamedEntityTreeItemResponseModel>> GetRoot(int skip = 0, int take = 100)
+        [ProducesResponseType(typeof(PagedViewModel<SeoToolkitTreeItemApiModel>), StatusCodes.Status200OK)]
+        public ActionResult<PagedViewModel<SeoToolkitTreeItemApiModel>> GetRoot(int skip = 0, int take = 100)
         {
-            var items = new[] { new NamedEntityTreeItemResponseModel
+            var hasDomainSpecific = _seoTreeSections.Any(it => it.CanBeDomainSpecific);
+            var items = _seoTreeSections.Select(it => new SeoToolkitTreeItemApiModel
+            {
+                Id = it.Id.ToString(),
+                Name = it.Name
+            }).ToList();
+            if (hasDomainSpecific)
+            {
+                items.Add(new SeoToolkitTreeItemApiModel
+                {
+                    Id = _domainGuid.ToString(),
+                    Name = "Domains",
+                    HasChildren = _seoDomainsService.GetAll().Length > 0
+                });
+            }
+
+            /*var items = new[] { new NamedEntityTreeItemResponseModel
             {
                 Id = _infoGuid,
                 Name = "Info",
@@ -47,21 +68,54 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             }, new NamedEntityTreeItemResponseModel{
                 Id = _notFoundGuid,
                 Name = "Not Found"
-            } };
-            var result = new PagedViewModel<NamedEntityTreeItemResponseModel>()
+            } };*/
+            var result = new PagedViewModel<SeoToolkitTreeItemApiModel>()
             {
                 Items = items,
-                Total = items.Length
+                Total = items.Count
             };
 
             return Ok(result);
         }
 
         [HttpGet("children")]
-        [ProducesResponseType(typeof(PagedViewModel<NamedEntityTreeItemResponseModel>), StatusCodes.Status200OK)]
-        public ActionResult<PagedViewModel<NamedEntityTreeItemResponseModel>> GetChildren(Guid parentId, int skip = 0, int take = 100)
+        [ProducesResponseType(typeof(PagedViewModel<SeoToolkitTreeItemApiModel>), StatusCodes.Status200OK)]
+        public ActionResult<PagedViewModel<SeoToolkitTreeItemApiModel>> GetChildren(string parentUnique, int skip = 0, int take = 100)
         {
-            var result = new PagedViewModel<NamedEntityTreeItemResponseModel>()
+            if (Guid.TryParse(parentUnique, out var resultGuid) && resultGuid == _domainGuid)
+            {
+                var allItems = _seoDomainsService.GetAll();
+                var items = allItems.Skip(skip).Take(take).Select(it => new SeoToolkitTreeItemApiModel
+                {
+                    Id = $"{_domainGuid}~{it.Id}",
+                    Name = it.Name,
+                    HasChildren = GetSectionsForDomain(it.Id).Length > 0
+                }).ToArray();
+                return Ok(new PagedViewModel<SeoToolkitTreeItemApiModel>()
+                {
+                    Items = items,
+                    Total = allItems.Length
+                });
+            }
+            else if (parentUnique.StartsWith($"{_domainGuid}~"))
+            {
+                if (!int.TryParse(parentUnique.Replace($"{_domainGuid}~", ""), out var domainId))
+                {
+                    var sections = GetSectionsForDomain(domainId);
+                    return new PagedViewModel<SeoToolkitTreeItemApiModel>
+                    {
+                        Items = sections.Select(it => new SeoToolkitTreeItemApiModel
+                        {
+                            Id = $"{it.Id}~{domainId}".ToLower(),
+                            Name = it.Name,
+                            ParentId = parentUnique,
+                        }).ToArray(),
+                        Total = sections.Length
+                    };
+                }
+            }
+
+            var result = new PagedViewModel<SeoToolkitTreeItemApiModel>()
             {
                 Items = [],
                 Total = 0
@@ -71,10 +125,17 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         }
 
         [HttpGet("ancestors")]
-        [ProducesResponseType(typeof(IEnumerable<NamedEntityTreeItemResponseModel>), StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<NamedEntityTreeItemResponseModel>> GetAncestors(Guid descendantId)
+        [ProducesResponseType(typeof(IEnumerable<SeoToolkitTreeItemApiModel>), StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<SeoToolkitTreeItemApiModel>> GetAncestors(Guid descendantId)
         {
-            return Ok(Enumerable.Empty<NamedEntityTreeItemResponseModel>());
+            return Ok(Enumerable.Empty<SeoToolkitTreeItemApiModel>());
+        }
+
+        private ISeoTreeSection[] GetSectionsForDomain(int domainId)
+        {
+            var domain = _seoDomainsService.GetAll().FirstOrDefault(it => it.Id == domainId);
+            if (domain is null) return [];
+            return _seoTreeSections.Where(it => it.CanBeDomainSpecific && domain.Settings.ContainsKey($"Module.{it.Id}")).ToArray();
         }
     }
 }
