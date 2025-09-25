@@ -16,9 +16,9 @@ const RobotsTxtTreeItem: ManifestTreeItem = {
 
 const RobotsTxtWorkspace: ManifestWorkspace = {
     type: 'workspace',
+    kind: 'routable',
     alias: 'seoToolkit.module.workspace.robotsTxt',
     name: 'SeoToolkit RobotsTxt Workspace',
-    element: () => import('../workspaces/RobotsTxtModuleWorkspace.element'),
     api: () => import('../contexts/RobotsTxtModuleContext'),
     meta: {
         entityType: SEOTOOLKIT_ROBOTSTXT_ENTITY

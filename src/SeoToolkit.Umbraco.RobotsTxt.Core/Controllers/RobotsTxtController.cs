@@ -20,9 +20,9 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
 
         [HttpGet("robotsTxt")]
         [ProducesResponseType(typeof(string), 200)]
-        public IActionResult Get()
+        public IActionResult Get(int? domainId = null)
         {
-            return Ok(_robotsTxtService.GetContent());
+            return Ok(_robotsTxtService.GetContent(domainId));
         }
 
         [HttpPost("robotsTxt")]
@@ -45,7 +45,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
                 }
             }
 
-            _robotsTxtService.SetContent(content);
+            _robotsTxtService.SetContent(content, model.DomainId);
             return Ok(new RobotsTxtSaveResponseModel
             {
                 Content = content

@@ -8,7 +8,7 @@ import {
 } from "@umbraco-cms/backoffice/workspace";
 import SeoToolkitDomainViewElement from "./SeoToolkitDomainView.element";
 import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
-import { SeoDomainCollection } from "../api";
+import { SeoDomainCollection, SeoDomainConfigViewModel } from "../api";
 import { SeoToolkitDomainRepository } from "../repositories/SeoToolkitDomainRepository";
 
 export default class SeoToolkitDomainContext
@@ -17,6 +17,7 @@ export default class SeoToolkitDomainContext
 {
   workspaceAlias = "seoToolkit.domain.detail";
 
+  repository = new SeoToolkitDomainRepository(this);
   routes = new UmbWorkspaceRouteManager(this);
 
   #domain = new UmbObjectState<SeoDomainCollection>({
@@ -27,14 +28,21 @@ export default class SeoToolkitDomainContext
   });
   public readonly domain = this.#domain.asObservable();
 
+  #config = new UmbObjectState<SeoDomainConfigViewModel>({
+    domains: [],
+    moduleSettings: []
+  });
+  public readonly config = this.#config.asObservable();
+
   getEntityType(): string {
-    return "st-domain";
+    return "seoToolkit-domain";
   }
 
   constructor(host: UmbControllerHost) {
     super(host, UMB_WORKSPACE_CONTEXT.toString());
     this.provideContext(ST_DOMAIN_DETAIL_TOKEN_CONTEXT, this);
 
+    this.loadConfig();
     this.routes.setRoutes([
       {
         path: "create",
@@ -44,14 +52,28 @@ export default class SeoToolkitDomainContext
         path: "edit/:unique",
         component: SeoToolkitDomainViewElement,
         setup: (_component, info) => {
-          this.load(Number.parseInt(info.match.params.unique));
+          // This is a bit ugly, but the tree system is so difficult to understand
+          if (info.match.params.unique.includes("~")) {
+            const parts = info.match.params.unique.split("~");
+            if (parts.length === 2) {
+              this.load(Number.parseInt(parts[1]));
+            }
+          }
         },
       },
     ]);
   }
 
-  load(domainId?: number) {
-    console.log("Load domain with id", domainId);
+  load(domainId: number) {
+    this.repository.get(domainId).then((resp) => {
+      this.#domain.setValue(resp.data);
+    });
+  }
+
+  loadConfig(){
+    this.repository.getConfig().then(resp => {
+      this.#config.setValue(resp.data);
+    });
   }
 
   save() {

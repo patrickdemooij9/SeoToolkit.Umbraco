@@ -1,4 +1,4 @@
-import { html } from "lit";
+import { css, html } from "lit";
 import SeoToolkitDomainContext, {
   ST_DOMAIN_DETAIL_TOKEN_CONTEXT,
 } from "./SeoToolkitDomainContext";
@@ -53,4 +53,16 @@ export default class SeoToolkitDomainViewElement extends UmbLitElement {
       </div>
     </umb-workspace-editor>`;
   }
+
+  static styles = [
+    css`
+      #workspace-header {
+        width: 100%;
+      }
+
+      uui-input {
+        width: 100%;
+      }
+    `,
+  ];
 }

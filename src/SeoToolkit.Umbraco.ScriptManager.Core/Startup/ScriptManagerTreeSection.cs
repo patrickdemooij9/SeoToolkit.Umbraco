@@ -9,6 +9,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Startup
 
         public string Name => "Script Manager"; 
         
-        public bool CanBeDomainSpecific => true;
+        public bool CanBeDomainSpecific => false;
     }
 }

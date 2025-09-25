@@ -9,5 +9,8 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Models.PostModel
 
         [JsonPropertyName("content")]
         public string Content { get; set; }
+
+        [JsonPropertyName("domainId")]
+        public int? DomainId { get; set; }
     }
 }

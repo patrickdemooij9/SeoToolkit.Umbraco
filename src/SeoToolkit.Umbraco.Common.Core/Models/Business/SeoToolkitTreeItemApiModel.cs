@@ -2,9 +2,10 @@
 
 namespace SeoToolkit.Umbraco.Common.Core.Models.Business
 {
-    public class DomainRootTreeItemModel : TreeItemPresentationModel
+    public class SeoToolkitTreeItemApiModel : TreeItemPresentationModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
+        public string? ParentId { get; set; }
     }
 }

@@ -9,12 +9,30 @@ export class SeoToolkitDomainSource {
     this.#host = host;
   }
 
+  async get(domainId: number) {
+    return await tryExecute(
+      this.#host,
+      BackofficeSeoToolkitService.getUmbracoSeoToolkitDomainsGet({
+        query: {
+          domainId: domainId,
+        },
+      })
+    );
+  }
+
   async saveDomain(domain: SeoDomainCollection) {
     return await tryExecute(
       this.#host,
       BackofficeSeoToolkitService.postUmbracoSeoToolkitDomainsSave({
         body: domain,
       })
+    );
+  }
+
+  async getConfig() {
+    return await tryExecute(
+      this.#host,
+      BackofficeSeoToolkitService.getUmbracoSeoToolkitDomainsConfig()
     );
   }
 }

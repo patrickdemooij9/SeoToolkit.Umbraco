@@ -19,6 +19,33 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
             _scopeProvider = scopeProvider;
         }
 
+        public SeoDomainCollection? Get(int id)
+        {
+            using var scope = _scopeProvider.CreateScope();
+            var collection = scope.Database.FirstOrDefault<SeoDomainCollectionEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SeoDomainCollectionEntity>()
+                .Where<SeoDomainCollectionEntity>(it => it.Id == id));
+            if (collection is null) return null;
+
+            var domains = scope.Database.Fetch<SeoDomainEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SeoDomainEntity>()
+                .Where<SeoDomainEntity>(it => it.CollectionId == collection.Id)).Select(x => x.DomainId).ToList();
+            var settings = scope.Database.Fetch<SeoDomainSettingEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SeoDomainSettingEntity>()
+                .Where<SeoDomainSettingEntity>(it => it.CollectionId == collection.Id)).ToDictionary(x => x.Key, x => x.Value);
+
+            return new SeoDomainCollection
+            {
+                Name = collection.Name,
+                Id = collection.Id,
+                DomainIds = domains,
+                Settings = settings
+            };
+        }
+
         public SeoDomainCollection[] GetAll()
         {
             using var scope = _scopeProvider.CreateScope();

@@ -14,5 +14,10 @@ namespace SeoToolkit.Umbraco.Common.Core.Models.Business
             DomainIds = [];
             Settings = [];
         }
+
+        public bool HasFunctionality(string key)
+        {
+            return Settings.ContainsKey(key) && Settings[key] == "true";
+        }
     }
 }

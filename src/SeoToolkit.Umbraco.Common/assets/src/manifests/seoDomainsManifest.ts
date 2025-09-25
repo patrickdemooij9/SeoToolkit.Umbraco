@@ -36,7 +36,7 @@ const DomainDetailWorkspace: ManifestWorkspace = {
     name: 'SeoToolkit Domain Detail',
     api: SeoToolkitDomainContext,
     meta: {
-        entityType: 'st-domain'
+        entityType: 'seoToolkit-domain'
     }
 } 
 

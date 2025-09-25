@@ -7,9 +7,9 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces
 {
     public interface IRobotsTxtService
     {
-        string GetContent();
+        string GetContent(int? domainId = null);
         string GetContentWithSitemaps(HttpRequest request);
-        void SetContent(string content);
+        void SetContent(string content, int? domainId = null);
 
         IEnumerable<RobotsTxtValidation> Validate(string content);
     }
