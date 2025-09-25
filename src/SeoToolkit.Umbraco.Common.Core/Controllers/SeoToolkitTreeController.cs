@@ -99,18 +99,20 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             }
             else if (parentUnique.StartsWith($"{_domainGuid}~"))
             {
-                var domainId = int.Parse(parentUnique.Replace($"{_domainGuid}~", ""));
-                var sections = GetSectionsForDomain(domainId);
-                return new PagedViewModel<SeoToolkitTreeItemApiModel>
+                if (!int.TryParse(parentUnique.Replace($"{_domainGuid}~", ""), out var domainId))
                 {
-                    Items = sections.Select(it => new SeoToolkitTreeItemApiModel
+                    var sections = GetSectionsForDomain(domainId);
+                    return new PagedViewModel<SeoToolkitTreeItemApiModel>
                     {
-                        Id = $"{it.Id}~{domainId}".ToLower(),
-                        Name = it.Name,
-                        ParentId = parentUnique,
-                    }).ToArray(),
-                    Total = sections.Length
-                };
+                        Items = sections.Select(it => new SeoToolkitTreeItemApiModel
+                        {
+                            Id = $"{it.Id}~{domainId}".ToLower(),
+                            Name = it.Name,
+                            ParentId = parentUnique,
+                        }).ToArray(),
+                        Total = sections.Length
+                    };
+                }
             }
 
             var result = new PagedViewModel<SeoToolkitTreeItemApiModel>()

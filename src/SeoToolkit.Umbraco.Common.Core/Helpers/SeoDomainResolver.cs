@@ -25,6 +25,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Helpers
         public SeoDomainCollection? ResolveSeoDomain(Uri requestUrl)
         {
             using var contextReference = _umbracoContextFactory.EnsureUmbracoContext();
+            if (contextReference.UmbracoContext is null) return null;
+
             var domains = contextReference.UmbracoContext.Domains.GetAll(includeWildcards: false);
             var domain = DomainUtilities.SelectDomain(domains, requestUrl);
             if (domain is null) return null;
