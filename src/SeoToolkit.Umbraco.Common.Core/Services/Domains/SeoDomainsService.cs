@@ -38,10 +38,11 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
             return GetAll().FirstOrDefault(it => it.DomainIds.Contains(umbracoDomainId));
         }
 
-        public void Save(SeoDomainCollection collection)
+        public int Save(SeoDomainCollection collection)
         {
-            _seoDomainsRepository.Save(collection);
+            var id =  _seoDomainsRepository.Save(collection);
             _distributedCache.RefreshAll(SeoDomainsCacheRefresher.CacheRefreshGuid);
+            return id;
         }
     }
 }

@@ -8,6 +8,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
         SeoDomainCollection? Get(int id);
         SeoDomainCollection? GetByDomain(int umbracoDomain);
 
-        void Save(SeoDomainCollection collection);
+        int Save(SeoDomainCollection collection);
     }
 }

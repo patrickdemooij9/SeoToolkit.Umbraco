@@ -1,5 +1,5 @@
 import { ManifestTreeItem } from "@umbraco-cms/backoffice/tree";
-import { SEOTOOLKIT_DOMAIN_ENTITY } from "../constants/seoToolkitConstants";
+import { SEOTOOLKIT_DOMAIN_ENTITY, SEOTOOLKIT_DOMAIN_ROOT_ENTITY } from "../constants/seoToolkitConstants";
 import { CreateDomainTreeAction } from "../actions/createDomainTreeAction";
 import { ManifestWorkspace, ManifestWorkspaceAction, ManifestWorkspaceView } from "@umbraco-cms/backoffice/workspace";
 import SeoToolkitDomainContext from "../workspaces/SeoToolkitDomainContext";
@@ -12,7 +12,8 @@ const DomainsTreeItem: ManifestTreeItem = {
     alias: 'seoToolkit.module.domains',
     name: 'SeoToolkit Domains',
     forEntityTypes: [
-        SEOTOOLKIT_DOMAIN_ENTITY
+        SEOTOOLKIT_DOMAIN_ENTITY,
+        SEOTOOLKIT_DOMAIN_ROOT_ENTITY
     ]
 }
 
@@ -22,7 +23,7 @@ const CreateDomainTreeActionManifest = {
 	name: 'SeoToolkit Create Domain',
 	weight: 10,
 	api: CreateDomainTreeAction,
-	forEntityTypes: [SEOTOOLKIT_DOMAIN_ENTITY],
+	forEntityTypes: [SEOTOOLKIT_DOMAIN_ROOT_ENTITY],
 	meta: {
 		icon: 'icon-add',
 		label: 'Create domain',

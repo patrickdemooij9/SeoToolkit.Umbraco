@@ -7,6 +7,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
         SeoDomainCollection[] GetAll();
         SeoDomainCollection? Get(int id);
 
-        void Save(SeoDomainCollection collection);
+        int Save(SeoDomainCollection collection);
     }
 }

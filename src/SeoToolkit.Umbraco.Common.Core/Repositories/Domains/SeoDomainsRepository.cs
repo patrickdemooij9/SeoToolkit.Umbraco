@@ -71,7 +71,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
             return collections;
         }
 
-        public void Save(SeoDomainCollection collection)
+        public int Save(SeoDomainCollection collection)
         {
             using var scope = _scopeProvider.CreateScope();
 
@@ -136,6 +136,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
             }
 
             scope.Complete();
+            return collectionEntity.Id;
         }
     }
 }

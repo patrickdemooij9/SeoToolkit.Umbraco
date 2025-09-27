@@ -33,10 +33,10 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         }
 
         [HttpPost("save")]
+        [ProducesResponseType(typeof(int), 200)]
         public IActionResult Save(SeoDomainCollection collection)
         {
-            _seoDomainsService.Save(collection); //TODO: Return ID
-            return Ok();
+            return Ok(_seoDomainsService.Save(collection));
         }
 
         [HttpGet("config")]

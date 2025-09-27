@@ -10,6 +10,9 @@ import SeoToolkitDomainViewElement from "./SeoToolkitDomainView.element";
 import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import { SeoDomainCollection, SeoDomainConfigViewModel } from "../api";
 import { SeoToolkitDomainRepository } from "../repositories/SeoToolkitDomainRepository";
+import { UMB_ACTION_EVENT_CONTEXT } from "@umbraco-cms/backoffice/action";
+import { UmbRequestReloadChildrenOfEntityEvent } from "@umbraco-cms/backoffice/entity-action";
+import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
 
 export default class SeoToolkitDomainContext
   extends UmbContextBase
@@ -76,8 +79,36 @@ export default class SeoToolkitDomainContext
     });
   }
 
-  save() {
-    new SeoToolkitDomainRepository(this).saveDomain(this.#domain.getValue());
+  async save() {
+    const isNew = this.#domain.getValue().id === 0;
+    const id = (await new SeoToolkitDomainRepository(this).saveDomain(this.#domain.getValue())).data;
+    this.updateDomain({
+      id: id,
+    });
+
+    const actionEventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
+		if (!actionEventContext) throw new Error('Action Event Context is not available');
+
+		actionEventContext.dispatchEvent(new UmbRequestReloadChildrenOfEntityEvent({
+			unique: 'ab248b43-9757-432a-9821-22f9eeb513e7',
+			entityType: 'seoToolkit-domain-root',
+		}));
+    actionEventContext.dispatchEvent(new UmbRequestReloadChildrenOfEntityEvent({
+			unique: 'ab248b43-9757-432a-9821-22f9eeb513e7~' + id,
+			entityType: 'seoToolkit-domain',
+		}));
+
+    this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
+			instance?.peek('positive', {
+				data: {
+					headline: 'Saved',
+					message: 'Domain successfully saved!'
+				}
+			})
+		});
+		if (isNew){
+			history.replaceState(null, '', location.href.replace("create", "edit/ab248b43-9757-432a-9821-22f9eeb513e7~" + id));
+		}
   }
 
   updateDomain(domain: Partial<SeoDomainCollection>) {
