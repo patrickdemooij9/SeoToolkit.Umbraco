@@ -8,7 +8,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
 {
     public class DefaultLinkParser : ILinkParser
     {
-        private string[] _ignorePrefixesList = ["mailto:", "tel:", "file:", "javascript:"];
+        private static string[] _ignorePrefixesList = ["mailto:", "tel:", "file:", "javascript:"];
 
         public IEnumerable<Uri> GetLinks(CrawledPageModel page)
         {
@@ -22,11 +22,13 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.SiteCrawler
             var baseUri = page.Url;
             foreach (var link in links)
             {
-                var hrefValue = link.Attributes["href"].Value;
+                var hrefValue = link.Attributes["href"].Value.Trim();
                 if (_ignorePrefixesList.Any(it => hrefValue.StartsWith(it, StringComparison.InvariantCultureIgnoreCase)))
                     continue;
+                if (!Uri.TryCreate(baseUri, hrefValue, out var uriResult))
+                    continue;
 
-                yield return new Uri(baseUri, hrefValue);
+                yield return uriResult;
             }
         }
     }
