@@ -1,18 +1,22 @@
-﻿using System;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using NPoco;
+using Polly;
+using SeoToolkit.Umbraco.Redirects.Core.Caching;
+using SeoToolkit.Umbraco.Redirects.Core.Constants;
+using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
+using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
+using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
-using Umbraco.Extensions;
-using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
-using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
-using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
+using Umbraco.Cms.Infrastructure.Persistence;
+using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 using Umbraco.Cms.Infrastructure.Scoping;
-using SeoToolkit.Umbraco.Redirects.Core.Constants;
-using Microsoft.Extensions.Caching.Distributed;
-using SeoToolkit.Umbraco.Redirects.Core.Caching;
+using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 {
@@ -48,6 +52,17 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             }
         }
 
+        public void UpdateRedirectCodes(int[] ids, int redirectCode)
+        {
+            using var scope = _scopeProvider.CreateScope();
+
+            var sql = scope.Database.SqlContext.Sql()
+                .Update<RedirectEntity>(it => it.Set(e => e.RedirectCode, redirectCode))
+                .Where<RedirectEntity>(it => ids.Contains(it.Id));
+            scope.Database.Execute(sql);
+            scope.Complete();
+        }
+
         public void Delete(Redirect redirect)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
@@ -67,6 +82,18 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                     .From<RedirectEntity>()
                     .Where<RedirectEntity>(it => it.Id == id));
                 return entity is null ? null : ToModel(entity);
+            }
+        }
+
+        public Redirect[] Get(params int[] ids)
+        {
+            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+            {
+                var entities = scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
+                    .SelectAll()
+                    .From<RedirectEntity>()
+                    .Where<RedirectEntity>(it => ids.Contains(it.Id)));
+                return [.. entities.Select(ToModel)];
             }
         }
 

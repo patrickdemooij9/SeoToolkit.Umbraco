@@ -37,6 +37,10 @@ export default class RedirectCollection extends UmbLitElement {
         {
             name: 'Last updated',
             alias: 'lastUpdated'
+        },
+        {
+            name: 'Enabled',
+            alias: 'enabled'
         }
     ];
 
@@ -81,6 +85,9 @@ export default class RedirectCollection extends UmbLitElement {
                         },{
                             columnAlias: 'redirectCode',
                             value: item.statusCode
+                        },{
+                            columnAlias: 'enabled',
+                            value: item.isEnabled
                         },{
                             columnAlias: 'lastUpdated',
                             value: item.lastUpdated
