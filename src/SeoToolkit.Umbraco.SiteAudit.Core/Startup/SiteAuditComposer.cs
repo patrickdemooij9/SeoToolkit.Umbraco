@@ -1,11 +1,12 @@
-﻿using System.Net.Http;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Umbraco.Cms.Core.Composing;
-using Umbraco.Cms.Core.DependencyInjection;
+using SeoToolkit.Umbraco.Common.Core.Collections;
+using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.SiteAudit.Core.Checks;
 using SeoToolkit.Umbraco.SiteAudit.Core.Collections;
 using SeoToolkit.Umbraco.SiteAudit.Core.Common.Scheduler;
+using SeoToolkit.Umbraco.SiteAudit.Core.Components;
 using SeoToolkit.Umbraco.SiteAudit.Core.Config;
 using SeoToolkit.Umbraco.SiteAudit.Core.Config.Models;
 using SeoToolkit.Umbraco.SiteAudit.Core.Factories.SiteCrawler;
@@ -16,8 +17,12 @@ using SeoToolkit.Umbraco.SiteAudit.Core.NotificationHandlers;
 using SeoToolkit.Umbraco.SiteAudit.Core.Notifications;
 using SeoToolkit.Umbraco.SiteAudit.Core.Repositories;
 using SeoToolkit.Umbraco.SiteAudit.Core.Services;
-using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.SiteAudit.Core.Startup;
+using System;
+using System.Linq;
+using System.Net.Http;
+using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DependencyInjection;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
 {
@@ -25,6 +30,17 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
+            var section = builder.Config.GetSection("SeoToolkit:SiteAudit");
+            builder.Services.Configure<SiteAuditAppSettingsModel>(section);
+
+            var disabledModules = section?.Get<SiteAuditAppSettingsModel>()?.DisabledModules ?? Array.Empty<string>();
+
+            if (disabledModules.Contains(DisabledModuleConstant.All))
+            {
+                builder.Components().Append<DisableModuleComponent>();
+                return;
+            }
+
             builder.Services.AddSingleton(typeof(ISiteAuditRepository), typeof(SiteAuditDatabaseRepository));
             builder.Services.AddSingleton(typeof(ISiteCrawlerFactory), typeof(DefaultSiteCrawlerFactory));
             builder.Services.AddSingleton(typeof(SiteAuditService), typeof(SiteAuditService));
@@ -34,11 +50,11 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
             builder.Services.AddSingleton(typeof(ISiteCheckRepository), typeof(SiteCheckDatabaseRepository));
             builder.Services.AddSingleton(typeof(ISiteAuditScheduler), typeof(SiteAuditScheduler));
 
-            //builder.Services.AddHostedService<ScheduledSiteAuditTask>();
-            //builder.Services.AddHostedService<SiteAuditHubClientCleanup>();
-
-            builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
+            if (!disabledModules.Contains(DisabledModuleConstant.SectionTree))
+            {
+                builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
                 .Add<SiteAuditTreeSection>();
+            }
 
             builder.WithCollectionBuilder<SiteAuditCheckCollectionBuilder>()
                 .Append<BrokenLinkCheck>()
@@ -48,8 +64,6 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
                 .Append<MissingImageAltCheck>();
 
             builder.AddNotificationHandler<SiteAuditUpdatedNotification, SiteAuditUpdateNotificationHandler>();
-
-            builder.Services.Configure<SiteAuditAppSettingsModel>(builder.Config.GetSection("SeoToolkit:SiteAudit"));
 
             builder.Services.AddHttpClient<BrokenImageCheck>()
                 .ConfigurePrimaryHttpMessageHandler(x =>
@@ -72,6 +86,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
                         ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => allowInvalidCerts
                     };
                 });
+
+            builder.Components().Append<EnableModuleComponent>();
         }
     }
 }
