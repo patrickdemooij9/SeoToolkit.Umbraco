@@ -18,6 +18,7 @@ import {
   SEOTOOLKIT_NOTFOUND_ENTITY,
   SEOTOOLKIT_TREE_ROOT,
   SEOTOOLKIT_DOMAIN_ENTITY,
+  SEOTOOLKIT_DOMAIN_ROOT_ENTITY,
 } from "../constants/seoToolkitConstants";
 import { SeoToolkitTreeItemModel } from "../trees/types";
 
@@ -100,6 +101,9 @@ const mapper = (item: SeoToolkitTreeItemApiModel): SeoToolkitTreeItemModel => {
   ) {
     entity = SEOTOOLKIT_NOTFOUND_ENTITY;
     icon = "icon-article";
+  } else if (item.id == "ab248b43-9757-432a-9821-22f9eeb513e7".toLowerCase()){
+    entity = SEOTOOLKIT_DOMAIN_ROOT_ENTITY;
+    icon = "icon-globe";
   } else if (
     item.id.startsWith("ab248b43-9757-432a-9821-22f9eeb513e7".toLowerCase())
   ) {

@@ -99,7 +99,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             }
             else if (parentUnique.StartsWith($"{_domainGuid}~"))
             {
-                if (!int.TryParse(parentUnique.Replace($"{_domainGuid}~", ""), out var domainId))
+                if (int.TryParse(parentUnique.Replace($"{_domainGuid}~", ""), out var domainId))
                 {
                     var sections = GetSectionsForDomain(domainId);
                     return new PagedViewModel<SeoToolkitTreeItemApiModel>

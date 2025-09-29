@@ -998,8 +998,10 @@ export type PostUmbracoSeoToolkitDomainsSaveResponses = {
     /**
      * OK
      */
-    200: unknown;
+    200: number;
 };
+
+export type PostUmbracoSeoToolkitDomainsSaveResponse = PostUmbracoSeoToolkitDomainsSaveResponses[keyof PostUmbracoSeoToolkitDomainsSaveResponses];
 
 export type GetUmbracoSeoToolkitSettingsSeoSettingsData = {
     body?: never;
