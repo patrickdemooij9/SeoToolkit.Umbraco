@@ -8,6 +8,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Interfaces
     {
         PagedResult<Redirect> GetAll(int pageNumber, int pageSize, string orderBy = null, string orderDirection = null, string search = "");
         Redirect Get(int id);
+        Redirect[] Get(params int[] ids);
         void Save(Redirect redirect);
         void Delete(int[] ids);
 

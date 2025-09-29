@@ -46,6 +46,11 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             return _redirectsRepository.Get(id);
         }
 
+        public Redirect[] Get(params int[] ids)
+        {
+            return _redirectsRepository.Get(ids);
+        }
+
         public void Save(Redirect redirect)
         {
             if (redirect is null) throw new ArgumentNullException(nameof(redirect));

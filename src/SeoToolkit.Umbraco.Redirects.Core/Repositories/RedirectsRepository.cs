@@ -70,6 +70,18 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             }
         }
 
+        public Redirect[] Get(params int[] ids)
+        {
+            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+            {
+                var entities = scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
+                    .SelectAll()
+                    .From<RedirectEntity>()
+                    .Where<RedirectEntity>(it => ids.Contains(it.Id)));
+                return [.. entities.Select(ToModel)];
+            }
+        }
+
         public IEnumerable<Redirect> GetAll(int pageNumber, int pageSize, out long totalRecords, string orderBy = null, string orderDirection = null, string search = "")
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
