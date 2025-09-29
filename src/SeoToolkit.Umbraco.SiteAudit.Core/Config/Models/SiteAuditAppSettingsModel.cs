@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Config.Models
 {
@@ -8,5 +9,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Config.Models
         public bool AllowMinimumDelayBetweenRequestSetting { get; set; } = false;
         public bool AllowInvalidCerts { get; set; } = false;
         public Dictionary<string, CheckAppSettingsModel> Checks { get; set; } = new Dictionary<string, CheckAppSettingsModel>();
+
+        public string[] DisabledModules { get; set; } = Array.Empty<string>();
     }
 }

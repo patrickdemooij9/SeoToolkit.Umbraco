@@ -54,6 +54,13 @@ namespace SeoToolkit.Umbraco.Common.Core.Collections
                     Alias = "notFound",
                     Icon = "icon-article",
                     Link = "https://seotoolkit.gitbook.io/useotoolkit/notfound"
+                },
+                new SeoToolkitModule
+                {
+                    Title = "Site audit",
+                    Alias = "siteAudit",
+                    Icon = "icon-diagnostics",
+                    Link = "https://seotoolkit.gitbook.io/useotoolkit/site-audit"
                 }
             };
         }
