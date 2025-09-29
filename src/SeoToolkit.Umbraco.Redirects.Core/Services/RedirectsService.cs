@@ -104,6 +104,11 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             _redirectsRepository.Save(redirect);
         }
 
+        public void UpdateRedirectCodes(int[] ids, int redirectCode)
+        {
+            _redirectsRepository.UpdateRedirectCodes(ids, redirectCode);
+        }
+
         public void Delete(int[] ids)
         {
             foreach (var id in ids)

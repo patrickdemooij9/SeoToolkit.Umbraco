@@ -10,6 +10,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Interfaces
         Redirect Get(int id);
         Redirect[] Get(params int[] ids);
         void Save(Redirect redirect);
+        void UpdateRedirectCodes(int[] ids, int redirectCode);
         void Delete(int[] ids);
 
         RedirectFindResult GetByUrl(Uri url);

@@ -107,14 +107,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         [HttpPost("updateStatusCodes")]
         public IActionResult UpdateStatusCodes(UpdateStatusCodesRedirectPostModel postModel)
         {
-            var redirects = _redirectsService.Get(postModel.RedirectIds);
-            foreach (var redirect in redirects)
-            {
-                if (redirect.RedirectCode == postModel.RedirectCode) continue;
-
-                redirect.RedirectCode = postModel.RedirectCode;
-                _redirectsService.Save(redirect);
-            }
+            _redirectsService.UpdateRedirectCodes(postModel.RedirectIds, postModel.RedirectCode);
             return Ok();
         }
 

@@ -96,7 +96,7 @@ export default class RedirectStatusCodeModalElement extends UmbModalBaseElement<
               label="Validate"
               look="primary"
               color="positive"
-              .disabled=${!this.redirectStatusCode}
+              .disabled=${!this.redirectStatusCode.value}
               @click="${this.#handleSubmit}"
               >Submit</uui-button
             >

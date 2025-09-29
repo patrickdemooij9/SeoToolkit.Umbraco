@@ -6,6 +6,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Interfaces
     public interface IRedirectsRepository
     {
         void Save(Redirect redirect);
+        void UpdateRedirectCodes(int[] ids, int redirectCode);
         void Delete(Redirect redirect);
 
         Redirect Get(int id);
