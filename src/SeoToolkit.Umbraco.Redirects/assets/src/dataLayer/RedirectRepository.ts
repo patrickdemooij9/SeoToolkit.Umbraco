@@ -10,7 +10,7 @@ import {
 import { RedirectSource } from "./RedirectSource";
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { Redirect } from "../models/Redirect";
-import { SaveRedirectPostModel } from "../api";
+import { SaveRedirectPostModel, UpdateStatusCodesRedirectPostModel } from "../api";
 import { RedirectOverviewItem } from "../models/RedirectOverviewItem";
 
 export default class RedirectRepository
@@ -78,5 +78,9 @@ export default class RedirectRepository
 
   async submitImport() {
     return this.#source.submitImport();
+  }
+
+  async updateStatusCodes(model: UpdateStatusCodesRedirectPostModel){
+    return this.#source.updateStatusCodes(model);
   }
 }

@@ -1,10 +1,11 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UmbDataSourceResponse } from "@umbraco-cms/backoffice/repository";
 import {
+  BackofficeSeoToolkitRedirectsService,
   GetUmbracoSeoToolkitRedirectsRedirectsResponse,
   ImportRedirectsFileExtension,
   SaveRedirectPostModel,
-  SeoToolkitRedirectsService,
+  UpdateStatusCodesRedirectPostModel,
 } from "../api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
 
@@ -26,7 +27,7 @@ export class RedirectSource {
   > {
     return await tryExecute(
       this.#host,
-      SeoToolkitRedirectsService.getUmbracoSeoToolkitRedirectsRedirects({
+      BackofficeSeoToolkitRedirectsService.getUmbracoSeoToolkitRedirectsRedirects({
         query: {
           pageNumber,
           pageSize,
@@ -41,7 +42,7 @@ export class RedirectSource {
   async get(id: number) {
     return await tryExecute(
       this.#host,
-      SeoToolkitRedirectsService.getUmbracoSeoToolkitRedirectsRedirect({
+      BackofficeSeoToolkitRedirectsService.getUmbracoSeoToolkitRedirectsRedirect({
         query: {
           id: id,
         },
@@ -52,7 +53,7 @@ export class RedirectSource {
   async save(redirect: SaveRedirectPostModel) {
     await tryExecute(
       this.#host,
-      SeoToolkitRedirectsService.postUmbracoSeoToolkitRedirectsRedirect({
+      BackofficeSeoToolkitRedirectsService.postUmbracoSeoToolkitRedirectsRedirect({
         body: redirect,
       })
     );
@@ -61,7 +62,7 @@ export class RedirectSource {
   async delete(ids: number[]) {
     await tryExecute(
       this.#host,
-      SeoToolkitRedirectsService.deleteUmbracoSeoToolkitRedirectsRedirect({
+      BackofficeSeoToolkitRedirectsService.deleteUmbracoSeoToolkitRedirectsRedirect({
         body: {
           ids: ids,
         },
@@ -72,7 +73,7 @@ export class RedirectSource {
   async getDomains() {
     return await tryExecute(
       this.#host,
-      SeoToolkitRedirectsService.getUmbracoSeoToolkitRedirectsDomains()
+      BackofficeSeoToolkitRedirectsService.getUmbracoSeoToolkitRedirectsDomains()
     );
   }
 
@@ -82,24 +83,35 @@ export class RedirectSource {
     domain?: number
   ) {
     return tryExecute(
-        this.#host,
-        SeoToolkitRedirectsService.postUmbracoSeoToolkitRedirectsValidate({
-          query: {
-            fileExtension: fileExtension! as ImportRedirectsFileExtension,
-            domain: domain!,
-            tempFileId: tempFileId!,
-          },
-        }),
-        {
-          disableNotifications: true
-        }
-      );
+      this.#host,
+      BackofficeSeoToolkitRedirectsService.postUmbracoSeoToolkitRedirectsValidate({
+        query: {
+          fileExtension: fileExtension! as ImportRedirectsFileExtension,
+          domain: domain!,
+          tempFileId: tempFileId!,
+        },
+      }),
+      {
+        disableNotifications: true,
+      }
+    );
   }
 
   async submitImport() {
     return await tryExecute(
       this.#host,
-      SeoToolkitRedirectsService.postUmbracoSeoToolkitRedirectsImport()
+      BackofficeSeoToolkitRedirectsService.postUmbracoSeoToolkitRedirectsImport()
+    );
+  }
+
+  async updateStatusCodes(model: UpdateStatusCodesRedirectPostModel) {
+    return await tryExecute(
+      this.#host,
+      BackofficeSeoToolkitRedirectsService.postUmbracoSeoToolkitRedirectsUpdateStatusCodes(
+        {
+          body: model,
+        }
+      )
     );
   }
 }

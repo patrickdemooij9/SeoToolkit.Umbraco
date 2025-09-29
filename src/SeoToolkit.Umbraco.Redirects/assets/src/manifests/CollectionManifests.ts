@@ -83,6 +83,24 @@ const RedirectCollectionTrashBulkAction: ManifestEntityBulkAction = {
 	],
 }
 
+const RedirectUpdateStatusCodeBulkAction: ManifestEntityBulkAction = {
+    type: 'entityBulkAction',
+	alias: 'seoToolkit.collections.redirects.updateStatusCode',
+	name: 'Redirect Collection Overview Update Status Code',
+	weight: 20,
+    api: () => import('../actions/UpdateStatusCodeRedirectAction'),
+	forEntityTypes: [SEOTOOLKIT_REDIRECT_ENTITY],
+	meta: {
+		label: 'Update status code'
+	},
+	conditions: [
+		{
+			alias: UMB_COLLECTION_ALIAS_CONDITION,
+			match: 'seoToolkit.collections.redirects',
+		}
+	],
+}
+
 const RedirectRepository: ManifestRepository = {
     type: 'repository',
     alias: 'seoToolkit.repositories.redirects',
@@ -90,4 +108,4 @@ const RedirectRepository: ManifestRepository = {
     api: () => import('../dataLayer/RedirectRepository')
 }
 
-export const CollectionManifests = [RedirectCollection, RedirectCollectionView, RedirectCollectionCreateAction, RedirectCollectionTrashBulkAction, RedirectRepository, RedirectCollectionImportAction];
+export const CollectionManifests = [RedirectCollection, RedirectCollectionView, RedirectCollectionCreateAction, RedirectCollectionTrashBulkAction, RedirectUpdateStatusCodeBulkAction, RedirectRepository, RedirectCollectionImportAction];

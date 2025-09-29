@@ -46,6 +46,11 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             return _redirectsRepository.Get(id);
         }
 
+        public Redirect[] Get(params int[] ids)
+        {
+            return _redirectsRepository.Get(ids);
+        }
+
         public void Save(Redirect redirect)
         {
             if (redirect is null) throw new ArgumentNullException(nameof(redirect));
@@ -97,6 +102,11 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             redirect.NewUrl = newUrl;
             redirect.LastUpdated = DateTime.Now;
             _redirectsRepository.Save(redirect);
+        }
+
+        public void UpdateRedirectCodes(int[] ids, int redirectCode)
+        {
+            _redirectsRepository.UpdateRedirectCodes(ids, redirectCode);
         }
 
         public void Delete(int[] ids)

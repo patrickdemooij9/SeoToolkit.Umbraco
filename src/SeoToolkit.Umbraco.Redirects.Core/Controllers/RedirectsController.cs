@@ -104,6 +104,13 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             return Ok();
         }
 
+        [HttpPost("updateStatusCodes")]
+        public IActionResult UpdateStatusCodes(UpdateStatusCodesRedirectPostModel postModel)
+        {
+            _redirectsService.UpdateRedirectCodes(postModel.RedirectIds, postModel.RedirectCode);
+            return Ok();
+        }
+
         [HttpGet("redirects")]
         [ProducesResponseType(typeof(PagedViewModel<RedirectListViewModel>), 200)]
         public IActionResult GetAll(int pageNumber, int pageSize, string orderBy = null, string orderDirection = null, string search = "")
