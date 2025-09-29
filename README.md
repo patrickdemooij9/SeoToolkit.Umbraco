@@ -2,7 +2,9 @@
 
 # SeoToolkit
 
-SeoToolkit is a SEO package for Umbraco 9 & 10 & 11 & 12 & 13, and 15. This package features most functionalities needed for your SEO needs like meta fields, sitemap, robots.txt and much more.
+SeoToolkit is a SEO package for Umbraco 9 to 16. This package features most functionalities needed for your SEO needs like meta fields, sitemap, robots.txt and much more.
+
+SeoToolkit is also an award winning Umbraco package, winning the Umbraco Package Award 2025!
 
 ## Installation
 
@@ -12,8 +14,9 @@ Installation of that package can be done through the NuGet command:
 
 If you are installing SeoToolkit for Umbraco 9, use the 1.x versions. 
 If you are installing for Umbraco 10, use the 2.x versions.
-If you are installing for Umbraco 11-13, use the 3.x versions
+If you are installing for Umbraco 11-13, use the 3.x versions.
 If you are installing for Umbraco 15, use the 4.x versions.
+If you are installing for Umbraco 16, use the 5.x versions.
 
 After installing, you'll want to add the following lines to the _ViewImports.cshtml file:
 
@@ -39,13 +42,15 @@ After that, your installation is complete and you can get started with the packa
 
 ## Features
 
-SeoToolkit has many features that are very important for your SEO needs. The SeoToolkit has these features:
+SeoToolkit has many features that are very important for your SEO needs. This package also supports multi-language websites out of the box. The SeoToolkit has these features:
 
-- Meta Fields
+- Meta fields
 - Sitemap
 - Robots.txt
-- Script Manager
+- Script manager
 - Redirects
+- Site audit
+- Not found handling
 
 Each of these functionalities can also be found in separate packages. So if you only want to use the sitemap functionality and the robots.txt functionality then you can do that!
 
@@ -63,6 +68,12 @@ Script manager easily allows your users to add new scripts to the website. They 
 
 ### Redirects
 Redirects allow you with an easy interface to create redirects from content/media to other nodes. You are also able to use regex redirects to handle a lot of redirects at once.
+
+### Site audit
+Site audits crawl your website and find issues that could impact the user experience.
+
+### Not found handling
+Easily select a page which is used for your 404 pages. No need to develop anything custom, just select your content node and everything will be working out of the box.
 
 ## Documentation
 All documentation about the package can be found here: https://seotoolkit.gitbook.io/useotoolkit/
