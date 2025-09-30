@@ -61,22 +61,25 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
 
             if (redirect.NewNode is null)
             {
-                if (Uri.TryCreate(newUrl, UriKind.Relative, out Uri uri))
+                if (!Uri.TryCreate(newUrl, UriKind.Absolute, out _))
                 {
-                    var path = uri.GetSafeAbsolutePath();
-                    var queryAndFragment = newUrl[path.Length..];
-                    path = path.EnsureStartsWith("/")
-                        .ToLower();
-                    if (_requestHandlerSettings.AddTrailingSlash)
+                    if (Uri.TryCreate(newUrl, UriKind.Relative, out Uri uri))
                     {
-                        path = path.EnsureEndsWith('/');
-                    }
-                    else
-                    {
-                        path = path.TrimEnd('/');
-                    }
+                        var path = uri.GetSafeAbsolutePath();
+                        var queryAndFragment = newUrl[path.Length..];
+                        path = path.EnsureStartsWith("/")
+                            .ToLower();
+                        if (_requestHandlerSettings.AddTrailingSlash)
+                        {
+                            path = path.EnsureEndsWith('/');
+                        }
+                        else
+                        {
+                            path = path.TrimEnd('/');
+                        }
 
-                    newUrl = $"{path}{queryAndFragment}";
+                        newUrl = $"{path}{queryAndFragment}";
+                    }
                 }
             }
 
