@@ -73,6 +73,39 @@ namespace SeoToolkit.Tests
             redirectRepository.Verify(it => it.Save(It.Is<Redirect>(r => r.NewUrl.StartsWith("/") == shouldHaveSlash)), Times.Once);
         }
 
+        [TestCase("/hello-world", "/hello-world/")]
+        [TestCase("https://sw-unlimited-db.com", "https://sw-unlimited-db.com")]
+        [TestCase("/test?hello=1", "/test/?hello=1")]
+        public void TestEnsureTrailingSlash(string url, string expectedUrl)
+        {
+            // Arrange
+            var redirectRepository = new Mock<IRedirectsRepository>();
+            var bloomFilter = new Mock<IRedirectsBloomFilter>();
+
+            var umbracoContextFactory = GetContextFactoryWithDomain();
+
+            var requestHandlerSettings = new RequestHandlerSettings { AddTrailingSlash = true };
+            var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
+            optionsMonitor.Setup(it => it.CurrentValue).Returns(requestHandlerSettings);
+
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+
+            // Act
+            var redirect = new Redirect
+            {
+                Id = 1,
+                IsEnabled = true,
+                IsRegex = false,
+                OldUrl = "/test",
+                NewUrl = url,
+                RedirectCode = (int)HttpStatusCode.MovedPermanently
+            };
+            redirectService.Save(redirect);
+
+            // Assert
+            redirectRepository.Verify(it => it.Save(It.Is<Redirect>(r => r.NewUrl == expectedUrl)), Times.Once);
+        }
+
         private IUmbracoContextFactory GetContextFactoryWithDomain()
         {
             var umbracoContextFactory = new Mock<IUmbracoContextFactory>();
