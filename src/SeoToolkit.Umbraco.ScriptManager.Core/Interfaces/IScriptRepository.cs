@@ -10,6 +10,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces
         void Delete(Script script);
 
         Script Get(int id);
-        IEnumerable<Script> GetAll();
+        IEnumerable<Script> GetAll(int? domainId);
     }
 }

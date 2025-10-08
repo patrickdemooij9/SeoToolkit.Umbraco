@@ -14,5 +14,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.PostModels
         public string DefinitionAlias { get; set; }
 
         public Dictionary<string, string> Fields { get; set; }
+
+        public int? DomainId { get; set; }
     }
 }

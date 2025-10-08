@@ -11,6 +11,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Migrations
         protected override void DefinePlan()
         {
             To<ScriptManagerInitialMigration>("state-1");
+            To<ScriptManagerDomainMigration>("state-2");
         }
     }
 }

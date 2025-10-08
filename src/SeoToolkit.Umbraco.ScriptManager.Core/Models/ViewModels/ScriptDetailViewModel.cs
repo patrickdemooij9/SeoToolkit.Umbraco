@@ -9,6 +9,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels
         public string Name { get; set; }
         public string DefinitionAlias { get; set; }
         public Dictionary<string, string> Config { get; set; }
+        public int? DomainId { get; set; }
 
         public ScriptDetailViewModel(Script script)
         {
@@ -16,6 +17,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels
             Name = script.Name;
             DefinitionAlias = script.Definition.Alias;
             Config = script.Config;
+            DomainId = script.DomainId;
         }
     }
 }

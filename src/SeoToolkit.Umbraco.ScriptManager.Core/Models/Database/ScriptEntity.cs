@@ -21,5 +21,9 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Database
         [Column("Config")]
         [SpecialDbType(SpecialDbTypes.NVARCHARMAX)]
         public string Config { get; set; }
+
+        [Column("DomainId")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public int? DomainId { get; set; }
     }
 }

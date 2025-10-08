@@ -66,13 +66,22 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
             }
         }
 
-        public IEnumerable<Script> GetAll()
+        public IEnumerable<Script> GetAll(int? domainId)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
             {
-                return scope.Database.Fetch<ScriptEntity>(scope.SqlContext.Sql()
+                var sql = scope.SqlContext.Sql()
                     .SelectAll()
-                    .From<ScriptEntity>()).Select(ToModel);
+                    .From<ScriptEntity>();
+                if (domainId.HasValue)
+                {
+                    sql = sql.Where<ScriptEntity>(it => it.DomainId == domainId.Value);
+                }
+                else
+                {
+                    sql = sql.Where<ScriptEntity>(it => it.DomainId == null);
+                }
+                return scope.Database.Fetch<ScriptEntity>(sql).Select(ToModel);
             }
         }
 
@@ -84,7 +93,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
                 Id = script.Id,
                 Name = script.Name,
                 DefinitionAlias = script.Definition?.Alias,
-                Config = JsonSerializer.Serialize(script.Config)
+                Config = JsonSerializer.Serialize(script.Config),
+                DomainId = script.DomainId
             };
         }
 
@@ -95,7 +105,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
                 Id = entity.Id,
                 Name = entity.Name,
                 Definition = _scriptDefinitionCollection.Get(entity.DefinitionAlias),
-                Config = JsonSerializer.Deserialize<Dictionary<string, string>>(entity.Config)
+                Config = JsonSerializer.Deserialize<Dictionary<string, string>>(entity.Config),
+                DomainId = entity.DomainId
             };
         }
     }

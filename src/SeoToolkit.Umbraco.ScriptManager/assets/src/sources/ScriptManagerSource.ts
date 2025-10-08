@@ -1,7 +1,7 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UmbDataSourceResponse } from "@umbraco-cms/backoffice/repository";
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
-import { GetUmbracoSeoToolkitScriptManagerDefinitionsResponse, GetUmbracoSeoToolkitScriptManagerScriptsResponse, ScriptDetailViewModel, SeoToolkitScriptManagerService } from "../api";
+import { BackofficeSeoToolkitScriptManagerService, GetUmbracoSeoToolkitScriptManagerDefinitionsResponse, GetUmbracoSeoToolkitScriptManagerScriptsResponse, ScriptDetailViewModel } from "../api";
 
 export class ScriptManagerSource {
     #host: UmbControllerHost;
@@ -11,30 +11,35 @@ export class ScriptManagerSource {
     }
 
     async getScript(id: number){
-        return await tryExecute(this.#host, SeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerScript({
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerScript({
             query: {
                 id: id
             }
         }));
     }
 
-    async getScripts(): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitScriptManagerScriptsResponse>>{
-        return await tryExecute(this.#host, SeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerScripts());
+    async getScripts(domainId?: number): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitScriptManagerScriptsResponse>>{
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerScripts({
+            query: {
+                domainId
+            }
+        }));
     }
 
     async saveScript(model: ScriptDetailViewModel){
-        return await tryExecute(this.#host, SeoToolkitScriptManagerService.postUmbracoSeoToolkitScriptManagerScript({
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.postUmbracoSeoToolkitScriptManagerScript({
             body: {
                 id: model.id,
                 name: model.name!,
                 definitionAlias: model.definitionAlias!,
-                fields: model.config
+                fields: model.config,
+                domainId: model.domainId
             }
         }));
     }
 
     async deleteScripts(ids: number[]){
-        return await tryExecute(this.#host, SeoToolkitScriptManagerService.deleteUmbracoSeoToolkitScriptManagerScript({
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.deleteUmbracoSeoToolkitScriptManagerScript({
             body: {
                 ids: ids
             }
@@ -42,6 +47,6 @@ export class ScriptManagerSource {
     }
 
     async getScriptDefinitions(): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitScriptManagerDefinitionsResponse>>{
-        return await tryExecute(this.#host, SeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerDefinitions());
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerDefinitions());
     }
 }

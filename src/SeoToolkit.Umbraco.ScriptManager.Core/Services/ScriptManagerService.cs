@@ -58,11 +58,11 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
             ClearCache();
         }
 
-        public IEnumerable<Script> GetAll()
+        public IEnumerable<Script> GetAll(int? domainId)
         {
-            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}GetAll", () =>
+            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}GetAll_{domainId}", () =>
             {
-                return _scriptRepository.GetAll().Where(it => it.Definition != null).ToArray();
+                return _scriptRepository.GetAll(domainId).Where(it => it.Definition != null).ToArray();
             });
         }
 
@@ -71,18 +71,18 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
             return _cache.GetCacheItem($"{CacheConstants.ScriptManager}Get_{id}", () => _scriptRepository.Get(id));
         }
 
-        public ScriptRenderModel GetRender()
+        public ScriptRenderModel GetRender(int? domainId)
         {
             if (_settings.GetSettings().DisableRenderCaching)
-                return DoGetRender();
+                return DoGetRender(domainId);
 
-            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}GetRender", DoGetRender);
+            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}GetRender_{domainId}", () => DoGetRender(domainId));
         }
 
-        private ScriptRenderModel DoGetRender()
+        private ScriptRenderModel DoGetRender(int? domainId)
         {
             var renderModel = new ScriptRenderModel();
-            foreach (var script in GetAll())
+            foreach (var script in GetAll(domainId))
             {
                 script.Definition.Render(renderModel, script.Config);
             }

@@ -38,8 +38,7 @@ export class ScriptManagerDetailWorkspace extends UmbLitElement {
     override render(){
         return html`
             <umb-workspace-editor
-				alias="seoToolkit.scriptManager.detail"
-				back-path="section/SeoToolkit/workspace/seoToolkit-scriptManager/edit/94e95f4a-2ecb-4038-bcfd-8357b7c41f1a">
+				alias="seoToolkit.scriptManager.detail">
                 <div id="workspace-header" slot="header">
 					<uui-input
 						placeholder=${this.localize.term('placeholders_entername')}

@@ -47,7 +47,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
                 Id = postModel.Id,
                 Name = postModel.Name,
                 Definition = definition,
-                Config = postModel.Fields.ToDictionary(it => it.Key, it => it.Value)
+                Config = postModel.Fields.ToDictionary(it => it.Key, it => it.Value),
+                DomainId = postModel.DomainId
             };
             script = _scriptManagerService.Save(script);
             return Ok(new ScriptDetailViewModel(script));
@@ -55,9 +56,9 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 
         [HttpGet("scripts")]
         [ProducesResponseType(typeof(ScriptListViewModel[]), 200)]
-        public IActionResult GetAllScripts()
+        public IActionResult GetAllScripts(int? domainId)
         {
-            return Ok(_scriptManagerService.GetAll().Select(it => new ScriptListViewModel(it)));
+            return Ok(_scriptManagerService.GetAll(domainId).Select(it => new ScriptListViewModel(it)));
 
         }
 
@@ -72,8 +73,10 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
         [ProducesResponseType(typeof(ScriptListViewModel[]), 200)]
         public IActionResult Delete(DeleteScriptPostModel postModel)
         {
+            var domainId = _scriptManagerService.Get(postModel.Ids.FirstOrDefault())?.DomainId;
+
             _scriptManagerService.Delete(postModel.Ids);
-            return GetAllScripts();
+            return GetAllScripts(domainId);
         }
     }
 }

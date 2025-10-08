@@ -7,8 +7,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services
     {
         Script Save(Script script);
         void Delete(int[] ids);
-        IEnumerable<Script> GetAll();
+        IEnumerable<Script> GetAll(int? domainId);
         Script Get(int id);
-        ScriptRenderModel GetRender();
+        ScriptRenderModel GetRender(int? domainId);
     }
 }
