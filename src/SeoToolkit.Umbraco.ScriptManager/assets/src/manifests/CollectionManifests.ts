@@ -1,13 +1,13 @@
 import { ManifestCollection, ManifestCollectionAction, ManifestCollectionView, UMB_COLLECTION_ALIAS_CONDITION } from "@umbraco-cms/backoffice/collection";
 import { SEOTOOLKIT_SCRIPTMANAGER_ENTITY } from "../Constants";
 import { ManifestEntityBulkAction, ManifestRepository } from "@umbraco-cms/backoffice/extension-registry";
+import { ScriptManagerCreateAction } from "../actions/ScriptManagerCreateAction";
 
 const ScriptManagerCollection: ManifestCollection = {
     type: 'collection',
     kind: 'default',
     alias: 'seoToolkit.collections.scripts',
     name: 'ScriptManager Collection',
-    api: () => import('../workspaces/ScriptManagerModuleContext'),
     meta: {
         repositoryAlias: 'seoToolkit.repositories.scripts'
     }
@@ -36,9 +36,9 @@ const ScriptManagerCollectionCreateAction: ManifestCollectionAction = {
     kind: 'button',
     name: 'ScriptManager Collection Overview Create',
     alias: 'seoToolkit.collections.script.createAction',
+    api: ScriptManagerCreateAction,
     meta: {
         label: '#general_create',
-        href: '/umbraco/section/SeoToolkit/workspace/st-script/create',
     },
     conditions: [
         {

@@ -6,5 +6,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Helpers
     public interface ISeoDomainResolver
     {
         SeoDomainCollection? ResolveSeoDomain(Uri requestUrl);
+        SeoDomainCollection? ResolveDomain();
     }
 }

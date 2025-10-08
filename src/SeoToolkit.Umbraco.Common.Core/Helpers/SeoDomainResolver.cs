@@ -1,13 +1,9 @@
-﻿using SeoToolkit.Umbraco.Common.Core.Models.Business;
+﻿using Microsoft.AspNetCore.Http;
+using SeoToolkit.Umbraco.Common.Core.Models.Business;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
-using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace SeoToolkit.Umbraco.Common.Core.Helpers
 {
@@ -15,11 +11,13 @@ namespace SeoToolkit.Umbraco.Common.Core.Helpers
     {
         private readonly ISeoDomainsService _seoDomainsService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SeoDomainResolver(ISeoDomainsService seoDomainsService, IUmbracoContextFactory umbracoContextFactory)
+        public SeoDomainResolver(ISeoDomainsService seoDomainsService, IUmbracoContextFactory umbracoContextFactory, IHttpContextAccessor httpContextAccessor)
         {
             _seoDomainsService = seoDomainsService;
             _umbracoContextFactory = umbracoContextFactory;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public SeoDomainCollection? ResolveSeoDomain(Uri requestUrl)
@@ -32,6 +30,14 @@ namespace SeoToolkit.Umbraco.Common.Core.Helpers
             if (domain is null) return null;
 
             return _seoDomainsService.GetByDomain(domain.Id);
+        }
+
+        public SeoDomainCollection? ResolveDomain()
+        {
+            var request = _httpContextAccessor.HttpContext?.Request;
+            if (request is null) return null;
+            var uri = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
+            return ResolveSeoDomain(uri);
         }
     }
 }
