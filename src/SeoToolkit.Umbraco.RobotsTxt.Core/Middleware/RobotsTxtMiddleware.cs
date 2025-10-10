@@ -30,9 +30,10 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Middleware
             }
 
             var robotsTxt = _robotsTxtService.GetContentWithSitemaps(context.Request);
-            
+
             // Fire notification so content can be changed before returning
-            await notificationPublisher.PublishAsync(new RobotsTxtRenderedNotification(robotsTxt, context));
+            var notification = new RobotsTxtRenderedNotification(robotsTxt, context);
+            await notificationPublisher.PublishAsync(notification);
             robotsTxt = notification.Content;
 
             if (string.IsNullOrWhiteSpace(robotsTxt))
