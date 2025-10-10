@@ -21,7 +21,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Middleware
             _robotsTxtService = robotsTxtService;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context, IEventAggregator notificationPublisher)
         {
             if (!context.Request.Path.Equals("/robots.txt", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -32,13 +32,8 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Middleware
             var robotsTxt = _robotsTxtService.GetContentWithSitemaps(context.Request);
             
             // Fire notification so content can be changed before returning
-            var notification = new RobotsTxtRenderedNotification(robotsTxt, context);
-            var notificationPublisher = context.RequestServices.GetService<IEventAggregator>();
-            if (notificationPublisher != null)
-            {
-                await notificationPublisher.PublishAsync(notification);
-                robotsTxt = notification.Content;
-            }
+            await notificationPublisher.PublishAsync(new RobotsTxtRenderedNotification(robotsTxt, context));
+            robotsTxt = notification.Content;
 
             if (string.IsNullOrWhiteSpace(robotsTxt))
             {

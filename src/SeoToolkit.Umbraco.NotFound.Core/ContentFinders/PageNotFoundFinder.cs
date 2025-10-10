@@ -42,7 +42,7 @@ public class PageNotFoundFinder : IContentLastChanceFinder
         var notification = new PageNotFoundNotification(page);
         await _eventAggregator.PublishAsync(notification);
 
-        if (page == null || !page.IsPublished())
+        if (notification.Page == null || !notification.Page.IsPublished())
         {
             return false;
         }
