@@ -42,7 +42,7 @@ After that, your installation is complete and you can get started with the packa
 
 ## Features
 
-SeoToolkit has many features that are very important for your SEO needs. This package also supports multi-language websites out of the box. The SeoToolkit has these features:
+SeoToolkit has many features that are very important for your SEO needs. This package also supports multi-language and multi-domain websites out of the box. The SeoToolkit has these features:
 
 - Meta fields
 - Sitemap
