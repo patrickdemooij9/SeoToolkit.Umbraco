@@ -19,7 +19,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Models.Database
 
         [Column("CollectionId")]
         [ForeignKey(typeof(SeoDomainCollectionEntity), Name = "FK_SeoToolkitDomainSettings_SeoToolkitDomainCollections", Column = "Id")]
-        [Index(IndexTypes.NonClustered, Name = "IX_SeoToolkitCollectionId")]
+        [Index(IndexTypes.NonClustered, Name = "IX_SeoToolkitSettingsCollectionId")]
         public int CollectionId { get; set; }
     }
 }
