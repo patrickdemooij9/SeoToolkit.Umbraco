@@ -6,21 +6,25 @@
 	"image": "mcr.microsoft.com/devcontainers/dotnet:1-9.0-bookworm",
 	"features": {
 		"ghcr.io/devcontainers/features/dotnet:2": {}
-	}
+	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [5000, 5001],
-	// "portsAttributes": {
-	//		"5001": {
-	//			"protocol": "https"
-	//		}
-	// }
+	"portsAttributes": {
+		"57441": {
+			"label": "Dev HTTP",
+			"onAutoForward": "notify"
+		},
+		"44324": {
+            "label": "Dev HTTPS",
+			"protocol": "https"
+		}
+	},
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "dotnet restore",
+	"postCreateCommand": "dotnet restore && dotnet dev-certs https --trust",
 
 	// Configure tool-specific properties.
 	// "customizations": {},
