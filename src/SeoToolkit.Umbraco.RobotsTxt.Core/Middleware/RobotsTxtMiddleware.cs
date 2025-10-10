@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Services;
+using SeoToolkit.Umbraco.RobotsTxt.Core.Notifications;
+using Umbraco.Cms.Core.Events;
+using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Middleware
 {
@@ -26,6 +30,16 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Middleware
             }
 
             var robotsTxt = _robotsTxtService.GetContentWithSitemaps(context.Request);
+            
+            // Fire notification so content can be changed before returning
+            var notification = new RobotsTxtRenderedNotification(robotsTxt, context);
+            var notificationPublisher = context.RequestServices.GetService<IEventAggregator>();
+            if (notificationPublisher != null)
+            {
+                await notificationPublisher.PublishAsync(notification);
+                robotsTxt = notification.Content;
+            }
+
             if (string.IsNullOrWhiteSpace(robotsTxt))
             {
                 await _next.Invoke(context);
