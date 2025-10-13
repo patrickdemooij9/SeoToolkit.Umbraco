@@ -4,6 +4,7 @@ using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.NotFound.Core.Components;
 using SeoToolkit.Umbraco.NotFound.Core.Config;
 using SeoToolkit.Umbraco.NotFound.Core.ContentFinders;
+using SeoToolkit.Umbraco.NotFound.Core.Services;
 using SeoToolkit.Umbraco.NotFound.Core.Startup;
 using System;
 using System.Linq;
@@ -35,8 +36,10 @@ public class NotFoundComposer : IComposer
         if (!disabledModules.Contains(DisabledModuleConstant.SectionTree))
         {
             builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
-            .Add<NotFoundTreeSection>();
+                .Add<NotFoundTreeSection>();
         }
+
+        builder.Services.AddUnique<IPageNotFoundService, PageNotFoundService>();
 
         builder.Components().Append<EnableModuleComponent>();
     }

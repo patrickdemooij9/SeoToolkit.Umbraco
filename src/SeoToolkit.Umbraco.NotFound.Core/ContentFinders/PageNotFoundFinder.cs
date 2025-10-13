@@ -1,19 +1,22 @@
-﻿using System;
+﻿using SeoToolkit.Umbraco.Common.Core.Helpers;
+using SeoToolkit.Umbraco.NotFound.Core.Services;
+using SeoToolkit.Umbraco.NotFound.Core.Startup;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Routing;
-using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 
 namespace SeoToolkit.Umbraco.NotFound.Core.ContentFinders;
 
 public class PageNotFoundFinder : IContentLastChanceFinder
 {
-    private readonly IKeyValueService _keyValueService;
+    private readonly IPageNotFoundService _pageNotFoundService;
+    private readonly ISeoDomainResolver _seoDomainResolver;
     private readonly IUmbracoContextAccessor _umbracoContextAccessor;
 
-    public PageNotFoundFinder(IKeyValueService keyValueService, IUmbracoContextAccessor umbracoContextAccessor)
+    public PageNotFoundFinder(IPageNotFoundService pageNotFoundService, ISeoDomainResolver seoDomainResolver, IUmbracoContextAccessor umbracoContextAccessor)
     {
-        _keyValueService = keyValueService;
+        _pageNotFoundService = pageNotFoundService;
+        _seoDomainResolver = seoDomainResolver;
         _umbracoContextAccessor = umbracoContextAccessor;
     }
 
@@ -21,14 +24,19 @@ public class PageNotFoundFinder : IContentLastChanceFinder
     {
         _umbracoContextAccessor.TryGetUmbracoContext(out var context);
 
-        var pageNotFoundId = _keyValueService.GetValue(NotFoundConstants.NotFoundKeyValueKey);
+        var seoDomain = _seoDomainResolver.ResolveDomain();
+        if (seoDomain != null && !seoDomain.HasFunctionality($"Module.{NotFoundTreeSection.SectionGuid}"))
+        {
+            seoDomain = null;
+        }
 
-        if (string.IsNullOrWhiteSpace(pageNotFoundId) || !Guid.TryParse(pageNotFoundId, out var pageNotFoundGuid))
+        var pageNotFoundGuid = _pageNotFoundService.GetPageNotFound(seoDomain?.Id);
+        if (pageNotFoundGuid is null)
         {
             return Task.FromResult(false);
         }
 
-        var page = context?.Content?.GetById(pageNotFoundGuid);
+        var page = context?.Content?.GetById(pageNotFoundGuid.Value);
 
         if (page == null || !page.IsPublished())
         {
