@@ -51,7 +51,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository
 
             existingEntity.Value = value;
 
-            scope.Database.Insert(existingEntity);
+            scope.Database.Save(existingEntity);
         }
 
         public void Delete(string key, int? domainId)
