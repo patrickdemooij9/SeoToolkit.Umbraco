@@ -2,6 +2,9 @@
 using SeoToolkit.Umbraco.NotFound.Core.Services;
 using SeoToolkit.Umbraco.NotFound.Core.Startup;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using SeoToolkit.Umbraco.NotFound.Core.Notifications;
+using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
 
@@ -12,15 +15,17 @@ public class PageNotFoundFinder : IContentLastChanceFinder
     private readonly IPageNotFoundService _pageNotFoundService;
     private readonly ISeoDomainResolver _seoDomainResolver;
     private readonly IUmbracoContextAccessor _umbracoContextAccessor;
+    private readonly IEventAggregator _eventAggregator;
 
-    public PageNotFoundFinder(IPageNotFoundService pageNotFoundService, ISeoDomainResolver seoDomainResolver, IUmbracoContextAccessor umbracoContextAccessor)
+    public PageNotFoundFinder(IPageNotFoundService pageNotFoundService, ISeoDomainResolver seoDomainResolver, IUmbracoContextAccessor umbracoContextAccessor, IEventAggregator eventAggregator)
     {
         _pageNotFoundService = pageNotFoundService;
         _seoDomainResolver = seoDomainResolver;
         _umbracoContextAccessor = umbracoContextAccessor;
+        _eventAggregator = eventAggregator;
     }
 
-    public Task<bool> TryFindContent(IPublishedRequestBuilder request)
+    public async Task<bool> TryFindContent(IPublishedRequestBuilder request)
     {
         _umbracoContextAccessor.TryGetUmbracoContext(out var context);
 
@@ -33,18 +38,22 @@ public class PageNotFoundFinder : IContentLastChanceFinder
         var pageNotFoundGuid = _pageNotFoundService.GetPageNotFound(seoDomain?.Id);
         if (pageNotFoundGuid is null)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         var page = context?.Content?.GetById(pageNotFoundGuid.Value);
 
-        if (page == null || !page.IsPublished())
+        // Fire notification so the page can be changed before returning
+        var notification = new PageNotFoundNotification(page);
+        await _eventAggregator.PublishAsync(notification);
+
+        if (notification.Page == null || !notification.Page.IsPublished())
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         request.SetResponseStatus(404);
-        request.SetPublishedContent(page);
-        return Task.FromResult(true);
+        request.SetPublishedContent(notification.Page);
+        return true;
     }
 }
