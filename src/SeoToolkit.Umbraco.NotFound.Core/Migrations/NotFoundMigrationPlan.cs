@@ -11,6 +11,7 @@ namespace SeoToolkit.Umbraco.NotFound.Core.Migrations
         protected override void DefinePlan()
         {
             To<NotFoundUmbraco13Migration>("state-1");
+            To<NotFoundDomainMigration>("state-2");
         }
     }
 }

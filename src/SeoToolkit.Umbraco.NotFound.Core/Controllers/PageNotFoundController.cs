@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SeoToolkit.Umbraco.Common.Core.Controllers;
-using Umbraco.Cms.Core.Services;
+using SeoToolkit.Umbraco.NotFound.Core.Services;
+using System;
 using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.NotFound.Core.Controllers
@@ -9,24 +10,24 @@ namespace SeoToolkit.Umbraco.NotFound.Core.Controllers
     [BackOfficeRoute("seoToolkitNotFound")]
     public class PageNotFoundController : SeoToolkitAuthenticatedControllerBase
     {
-        private readonly IKeyValueService _keyValueService;
+        private readonly IPageNotFoundService _pageNotFoundService;
 
-        public PageNotFoundController(IKeyValueService keyValueService)
+        public PageNotFoundController(IPageNotFoundService pageNotFoundService)
         {
-            _keyValueService = keyValueService;
+            _pageNotFoundService = pageNotFoundService;
         }
 
         [HttpPost("notFound")]
-        public void SetKeyValue(string data)
+        public void SetKeyValue(Guid? data, int? domainId)
         {
-            _keyValueService.SetValue(NotFoundConstants.NotFoundKeyValueKey, data);
+            _pageNotFoundService.SetPageNotFound(data, domainId);
         }
 
         [HttpGet("notFound")]
-        [ProducesResponseType(typeof(string), 200)]
-        public string GetValue()
+        [ProducesResponseType(typeof(Guid), 200)]
+        public Guid? GetValue(int? domainId)
         {
-            return _keyValueService.GetValue(NotFoundConstants.NotFoundKeyValueKey) ?? "-1";
+            return _pageNotFoundService.GetPageNotFound(domainId);
         }
     }
 }

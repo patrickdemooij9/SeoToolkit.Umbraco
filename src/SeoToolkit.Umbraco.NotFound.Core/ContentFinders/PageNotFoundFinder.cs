@@ -1,26 +1,26 @@
-﻿using System;
+﻿using SeoToolkit.Umbraco.Common.Core.Helpers;
+using SeoToolkit.Umbraco.NotFound.Core.Services;
+using SeoToolkit.Umbraco.NotFound.Core.Startup;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using SeoToolkit.Umbraco.NotFound.Core.Notifications;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Routing;
-using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 
 namespace SeoToolkit.Umbraco.NotFound.Core.ContentFinders;
 
 public class PageNotFoundFinder : IContentLastChanceFinder
 {
-    private readonly IKeyValueService _keyValueService;
+    private readonly IPageNotFoundService _pageNotFoundService;
+    private readonly ISeoDomainResolver _seoDomainResolver;
     private readonly IUmbracoContextAccessor _umbracoContextAccessor;
     private readonly IEventAggregator _eventAggregator;
 
-    public PageNotFoundFinder(
-        IKeyValueService keyValueService, 
-        IUmbracoContextAccessor umbracoContextAccessor,
-        IEventAggregator eventAggregator)
+    public PageNotFoundFinder(IPageNotFoundService pageNotFoundService, ISeoDomainResolver seoDomainResolver, IUmbracoContextAccessor umbracoContextAccessor, IEventAggregator eventAggregator)
     {
-        _keyValueService = keyValueService;
+        _pageNotFoundService = pageNotFoundService;
+        _seoDomainResolver = seoDomainResolver;
         _umbracoContextAccessor = umbracoContextAccessor;
         _eventAggregator = eventAggregator;
     }
@@ -29,14 +29,19 @@ public class PageNotFoundFinder : IContentLastChanceFinder
     {
         _umbracoContextAccessor.TryGetUmbracoContext(out var context);
 
-        var pageNotFoundId = _keyValueService.GetValue(NotFoundConstants.NotFoundKeyValueKey);
+        var seoDomain = _seoDomainResolver.ResolveDomain();
+        if (seoDomain != null && !seoDomain.HasFunctionality($"Module.{NotFoundTreeSection.SectionGuid}"))
+        {
+            seoDomain = null;
+        }
 
-        if (string.IsNullOrWhiteSpace(pageNotFoundId) || !Guid.TryParse(pageNotFoundId, out var pageNotFoundGuid))
+        var pageNotFoundGuid = _pageNotFoundService.GetPageNotFound(seoDomain?.Id);
+        if (pageNotFoundGuid is null)
         {
             return false;
         }
 
-        var page = context?.Content?.GetById(pageNotFoundGuid);
+        var page = context?.Content?.GetById(pageNotFoundGuid.Value);
 
         // Fire notification so the page can be changed before returning
         var notification = new PageNotFoundNotification(page);
@@ -46,7 +51,7 @@ public class PageNotFoundFinder : IContentLastChanceFinder
         {
             return false;
         }
-        
+
         request.SetResponseStatus(404);
         request.SetPublishedContent(notification.Page);
         return true;

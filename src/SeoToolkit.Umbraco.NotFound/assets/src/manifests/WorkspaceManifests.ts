@@ -15,9 +15,9 @@ const NotFoundTreeItem: ManifestTreeItem = {
 
 const NotFoundWorkspace: ManifestWorkspace = {
     type: 'workspace',
+    kind: 'routable',
     alias: 'seoToolkit.module.workspace.notFound',
     name: 'SeoToolkit NotFound Workspace',
-    element: () => import('../workspaces/NotFoundModuleWorkspace.element'),
     api: () => import('../workspaces/NotFoundModuleWorkspaceContext'),
     meta: {
         entityType: SEOTOOLKIT_NOTFOUND_ENTITY
