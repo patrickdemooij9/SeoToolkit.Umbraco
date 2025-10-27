@@ -21,7 +21,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SettingsService
                 AutomaticSitemapsInRobotsTxt = settings.AutomaticSitemapsInRobotsTxt,
                 EnableSeoSettingsByDefaultForTemplated = settings.EnableSeoSettingsByDefaultForTemplated,
                 SupressContentAppSavingNotification = settings.SupressContentAppSavingNotification,
-                EnableApiEndpoints = settings.EnableApiEndpoints
+                EnableApiEndpoints = settings.EnableApiEndpoints,
+                SyncContentDomains = settings.SyncContentDomains
             };
         }
     }

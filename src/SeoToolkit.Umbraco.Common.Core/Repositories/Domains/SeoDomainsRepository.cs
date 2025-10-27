@@ -1,10 +1,6 @@
 ﻿using SeoToolkit.Umbraco.Common.Core.Models.Business;
 using SeoToolkit.Umbraco.Common.Core.Models.Database;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Extensions;
 

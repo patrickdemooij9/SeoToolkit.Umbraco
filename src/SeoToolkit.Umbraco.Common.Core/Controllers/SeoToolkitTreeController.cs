@@ -1,15 +1,20 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Lucene.Net.Util;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Models.Business;
+using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Umbraco.Cms.Api.Common.ViewModels.Pagination;
 using Umbraco.Cms.Api.Management.ViewModels.Tree;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
@@ -19,19 +24,25 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
     public class SeoToolkitTreeController : SeoToolkitAuthenticatedControllerBase
     {
         public const string TreeGroupAlias = TreeControllerConstants.SeoToolkitTreeGroupAlias;
+
         private readonly SeoTreeSectionCollection _seoTreeSections;
         private readonly ISeoDomainsService _seoDomainsService;
+        private readonly IDomainService _domainService;
+        private readonly ISettingsService<GlobalConfig> _config;
+
         private Guid _domainGuid = new Guid("ab248b43-9757-432a-9821-22f9eeb513e7");
 
-        public SeoToolkitTreeController(SeoTreeSectionCollection seoTreeSections, ISeoDomainsService seoDomainsService)
+        public SeoToolkitTreeController(SeoTreeSectionCollection seoTreeSections, ISeoDomainsService seoDomainsService, IDomainService domainService, ISettingsService<GlobalConfig> config)
         {
             _seoTreeSections = seoTreeSections;
             _seoDomainsService = seoDomainsService;
+            _domainService = domainService;
+            _config = config;
         }
 
         [HttpGet("root")]
         [ProducesResponseType(typeof(PagedViewModel<SeoToolkitTreeItemApiModel>), StatusCodes.Status200OK)]
-        public ActionResult<PagedViewModel<SeoToolkitTreeItemApiModel>> GetRoot(int skip = 0, int take = 100)
+        public async Task<ActionResult<PagedViewModel<SeoToolkitTreeItemApiModel>>> GetRoot(int skip = 0, int take = 100)
         {
             var hasDomainSpecific = _seoTreeSections.Any(it => it.CanBeDomainSpecific);
             var items = _seoTreeSections.Select(it => new SeoToolkitTreeItemApiModel
@@ -39,36 +50,18 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
                 Id = it.Id.ToString(),
                 Name = it.Name
             }).ToList();
-            if (hasDomainSpecific)
+
+            var umbracoDomains = await _domainService.GetAllAsync(false);
+            if (hasDomainSpecific && umbracoDomains.Any())
             {
                 items.Add(new SeoToolkitTreeItemApiModel
                 {
                     Id = _domainGuid.ToString(),
                     Name = "Domains",
-                    HasChildren = _seoDomainsService.GetAll().Length > 0
+                    HasChildren = (_config.GetSettings().SyncContentDomains && umbracoDomains.Any()) || _seoDomainsService.GetAll().Length > 0
                 });
             }
 
-            /*var items = new[] { new NamedEntityTreeItemResponseModel
-            {
-                Id = _infoGuid,
-                Name = "Info",
-            }, new NamedEntityTreeItemResponseModel{
-                Id = _robotsGuid,
-                Name = "Robots.txt",
-            }, new NamedEntityTreeItemResponseModel{
-                Id = _scriptManagerGuid,
-                Name = "Script Manager"
-            }, new NamedEntityTreeItemResponseModel{
-                Id = _redirectsGuid,
-                Name = "Redirects",
-            }, new NamedEntityTreeItemResponseModel{
-                Id = _siteAuditGuid,
-                Name = "Site Audits"
-            }, new NamedEntityTreeItemResponseModel{
-                Id = _notFoundGuid,
-                Name = "Not Found"
-            } };*/
             var result = new PagedViewModel<SeoToolkitTreeItemApiModel>()
             {
                 Items = items,
@@ -80,7 +73,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
 
         [HttpGet("children")]
         [ProducesResponseType(typeof(PagedViewModel<SeoToolkitTreeItemApiModel>), StatusCodes.Status200OK)]
-        public ActionResult<PagedViewModel<SeoToolkitTreeItemApiModel>> GetChildren(string parentUnique, int skip = 0, int take = 100)
+        public async Task<ActionResult<PagedViewModel<SeoToolkitTreeItemApiModel>>> GetChildren(string parentUnique, int skip = 0, int take = 100)
         {
             if (Guid.TryParse(parentUnique, out var resultGuid) && resultGuid == _domainGuid)
             {
@@ -90,7 +83,22 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
                     Id = $"{_domainGuid}~{it.Id}",
                     Name = it.Name,
                     HasChildren = GetSectionsForDomain(it.Id).Length > 0
-                }).ToArray();
+                }).ToList();
+                if (_config.GetSettings().SyncContentDomains)
+                {
+                    var domains = (await _domainService.GetAllAsync(false))
+                        .Where(it => it.DomainName.StartsWith("https"))
+                        .Select(it => new SeoToolkitTreeItemApiModel
+                        {
+                            Id = $"{_domainGuid}~d~{it.Id}",
+                            Name = it.DomainName,
+                            HasChildren = false
+                        }).ToArray();
+
+                    if (domains.Length > 0)
+                        items.AddRange();
+                }
+
                 return Ok(new PagedViewModel<SeoToolkitTreeItemApiModel>()
                 {
                     Items = items,

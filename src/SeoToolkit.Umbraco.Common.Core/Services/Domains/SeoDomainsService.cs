@@ -6,6 +6,7 @@ using SeoToolkit.Umbraco.Common.Core.Repositories.Domains;
 using System;
 using System.Linq;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
