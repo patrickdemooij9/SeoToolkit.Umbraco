@@ -8,5 +8,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
         SeoDomainCollection? Get(int id);
 
         int Save(SeoDomainCollection collection);
+        void Delete(int domainId);
     }
 }

@@ -15,8 +15,16 @@ export class SeoToolkitDomainRepository extends UmbControllerBase {
     return this.#source.get(domainId);
   }
 
+  async getPredefined(umbracoDomainId: number) {
+    return this.#source.getPredefined(umbracoDomainId);
+  }
+
   async saveDomain(domain: SeoDomainCollection) {
     return this.#source.saveDomain(domain);
+  }
+
+  async delete(domainId: number) {
+    return this.#source.delete(domainId);
   }
 
   async getConfig() {

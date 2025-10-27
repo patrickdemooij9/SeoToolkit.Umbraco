@@ -20,6 +20,14 @@ export class SeoToolkitDomainSource {
     );
   }
 
+  async getPredefined(umbracoDomainId: number) {
+    return BackofficeSeoToolkitService.getUmbracoSeoToolkitDomainsGetPredefined({
+      query: {
+        umbracoDomainId: umbracoDomainId
+      }
+    })
+  }
+
   async saveDomain(domain: SeoDomainCollection) {
     return await tryExecute(
       this.#host,
@@ -27,6 +35,14 @@ export class SeoToolkitDomainSource {
         body: domain,
       })
     );
+  }
+
+  async delete(domainId: number) {
+    return await tryExecute(this.#host, BackofficeSeoToolkitService.deleteUmbracoSeoToolkitDomainsDelete({
+      query: {
+        domainId: domainId
+      }
+    }))
   }
 
   async getConfig() {

@@ -70,6 +70,7 @@ export class SeoToolkitDomainEditViewElement
     event: CustomEvent & { target: UmbInputCheckboxListElement }
   ) {
     let newValue = event.target.selection.map((it) => Number.parseInt(it));
+    console.log(newValue);
     this.#context?.updateDomain({ domainIds: newValue });
   }
 
@@ -98,7 +99,7 @@ export class SeoToolkitDomainEditViewElement
             <div slot="editor">
               <umb-input-checkbox-list
                 .list=${this.domainList}
-                .selection=${this.model?.domainIds ?? []}
+                .selection=${this.model?.domainIds.map((item) => item.toString()) ?? []}
                 @change=${this.#onDomainChange}
               ></umb-input-checkbox-list></div
           ></umb-property-layout>

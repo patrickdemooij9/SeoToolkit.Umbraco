@@ -91,7 +91,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
                 .SelectAll()
                 .From<SeoDomainEntity>()
                 .Where<SeoDomainEntity>(it => it.CollectionId == collectionEntity.Id))
-                .ToDictionary(x => x.Id, x => x);
+                .ToDictionary(x => x.DomainId, x => x);
             foreach (var domainId in collection.DomainIds)
             {
                 if (existingDomains.ContainsKey(domainId)) continue;
@@ -133,6 +133,41 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
 
             scope.Complete();
             return collectionEntity.Id;
+        }
+
+        public void Delete(int domainId)
+        {
+            using var scope = _scopeProvider.CreateScope();
+
+            var entity = scope.Database.FirstOrDefault<SeoDomainCollectionEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SeoDomainCollectionEntity>()
+                .Where<SeoDomainCollectionEntity>(it => it.Id == domainId));
+            if (entity is null)
+            {
+                return;
+            }
+
+            var domainEntities = scope.Database.Fetch<SeoDomainEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SeoDomainEntity>()
+                .Where<SeoDomainEntity>(it => it.CollectionId == domainId));
+            var settingEntities = scope.Database.Fetch<SeoDomainSettingEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SeoDomainSettingEntity>()
+                .Where<SeoDomainSettingEntity>(it => it.CollectionId == domainId));
+
+            foreach (var domainEntity in domainEntities)
+            {
+                scope.Database.Delete(domainEntity);
+            }
+            foreach (var settingEntity in settingEntities)
+            {
+                scope.Database.Delete(settingEntity);
+            }
+            scope.Database.Delete(entity);
+
+            scope.Complete();
         }
     }
 }

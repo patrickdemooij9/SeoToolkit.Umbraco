@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Umbraco.Cms.Api.Common.ViewModels.Pagination;
 using Umbraco.Cms.Api.Management.ViewModels.Tree;
+using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common.Routing;
 
@@ -51,14 +52,15 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
                 Name = it.Name
             }).ToList();
 
-            var umbracoDomains = await _domainService.GetAllAsync(false);
-            if (hasDomainSpecific && umbracoDomains.Any())
+            var seoDomains = _seoDomainsService.GetAll();
+            var umbracoDomains = await FindMissingUmbracoDomains(seoDomains);
+            if (hasDomainSpecific && (umbracoDomains.Length > 0 || seoDomains.Length > 0))
             {
                 items.Add(new SeoToolkitTreeItemApiModel
                 {
                     Id = _domainGuid.ToString(),
                     Name = "Domains",
-                    HasChildren = (_config.GetSettings().SyncContentDomains && umbracoDomains.Any()) || _seoDomainsService.GetAll().Length > 0
+                    HasChildren = (_config.GetSettings().SyncContentDomains && umbracoDomains.Length > 0) || seoDomains.Length > 0
                 });
             }
 
@@ -86,17 +88,17 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
                 }).ToList();
                 if (_config.GetSettings().SyncContentDomains)
                 {
-                    var domains = (await _domainService.GetAllAsync(false))
-                        .Where(it => it.DomainName.StartsWith("https"))
+                    var domains = (await FindMissingUmbracoDomains(allItems))
                         .Select(it => new SeoToolkitTreeItemApiModel
                         {
                             Id = $"{_domainGuid}~d~{it.Id}",
-                            Name = it.DomainName,
-                            HasChildren = false
+                            Name = it.DomainName.Replace("https://", ""),
+                            HasChildren = false,
+                            IsDraft = true
                         }).ToArray();
 
                     if (domains.Length > 0)
-                        items.AddRange();
+                        items.AddRange(domains);
                 }
 
                 return Ok(new PagedViewModel<SeoToolkitTreeItemApiModel>()
@@ -144,6 +146,13 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             var domain = _seoDomainsService.GetAll().FirstOrDefault(it => it.Id == domainId);
             if (domain is null) return [];
             return _seoTreeSections.Where(it => it.CanBeDomainSpecific && domain.Settings.ContainsKey($"Module.{it.Id}")).ToArray();
+        }
+
+        private async Task<IDomain[]> FindMissingUmbracoDomains(SeoDomainCollection[] seoDomains)
+        {
+            var currentlyUsedDomains = seoDomains.SelectMany(it => it.DomainIds).Distinct().ToArray();
+            var domains = await _domainService.GetAllAsync(false);
+            return domains.Where(it => it.DomainName.StartsWith("http") && !currentlyUsedDomains.Contains(it.Id)).ToArray();
         }
     }
 }

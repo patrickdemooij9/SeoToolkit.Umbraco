@@ -9,5 +9,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
         SeoDomainCollection? GetByDomain(int umbracoDomain);
 
         int Save(SeoDomainCollection collection);
+        void Delete(int domainId);
     }
 }

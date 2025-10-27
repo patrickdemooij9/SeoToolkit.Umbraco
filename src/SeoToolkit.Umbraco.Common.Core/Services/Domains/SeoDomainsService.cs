@@ -45,5 +45,11 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
             _distributedCache.RefreshAll(SeoDomainsCacheRefresher.CacheRefreshGuid);
             return id;
         }
+
+        public void Delete(int domainId)
+        {
+            _seoDomainsRepository.Delete(domainId);
+            _distributedCache.RefreshAll(SeoDomainsCacheRefresher.CacheRefreshGuid);
+        }
     }
 }

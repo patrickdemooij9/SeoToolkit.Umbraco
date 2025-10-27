@@ -3,6 +3,7 @@ import { SeoToolkitTreeRootType } from '../constants/seoToolkitConstants';
 
 export interface SeoToolkitTreeItemModel extends UmbTreeItemModel {
 	entityType: string;
+	isDraft: boolean;
 }
 
 export interface SeoToolkitTreeRootModel extends UmbTreeRootModel {
