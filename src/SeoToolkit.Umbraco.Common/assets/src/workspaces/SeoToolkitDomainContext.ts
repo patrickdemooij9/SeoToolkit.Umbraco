@@ -126,7 +126,6 @@ export default class SeoToolkitDomainContext
         history.replaceState(null, '', location.href.replace("create", "edit/ab248b43-9757-432a-9821-22f9eeb513e7~" + id));
       } else {
         var lastSegmentStart = location.href.lastIndexOf('/');
-        location.href.substring(0, lastSegmentStart);
         history.replaceState(null, '', location.href.substring(0, lastSegmentStart) + '/ab248b43-9757-432a-9821-22f9eeb513e7~' + id);
       }
     }

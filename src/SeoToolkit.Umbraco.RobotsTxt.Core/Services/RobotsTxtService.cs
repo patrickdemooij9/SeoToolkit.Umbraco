@@ -46,7 +46,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Services
             var useDomainSpecific = seoDomain != null && seoDomain.HasFunctionality($"Module.{RobotsTxtTreeSection.RobotsTxtSectionGuid}");
             var robotsTxt = allRobotsTxt.FirstOrDefault(it => useDomainSpecific ? it.DomainId == seoDomain.Id : it.DomainId is null);
 
-            var content = _robotsTxtRepository.GetAll().FirstOrDefault(it => it.DomainId == seoDomain?.Id)?.Content ?? string.Empty;
+            var content = robotsTxt?.Content ?? string.Empty;
 
             if (sitemaps.Length > 0)
             {

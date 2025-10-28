@@ -70,7 +70,6 @@ export class SeoToolkitDomainEditViewElement
     event: CustomEvent & { target: UmbInputCheckboxListElement }
   ) {
     let newValue = event.target.selection.map((it) => Number.parseInt(it));
-    console.log(newValue);
     this.#context?.updateDomain({ domainIds: newValue });
   }
 
