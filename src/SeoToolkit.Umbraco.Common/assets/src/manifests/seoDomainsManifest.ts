@@ -5,12 +5,17 @@ import { ManifestWorkspace, ManifestWorkspaceAction, ManifestWorkspaceView } fro
 import SeoToolkitDomainContext from "../workspaces/SeoToolkitDomainContext";
 import { SeoToolkitDomainEditViewElement } from "../workspaces/SeoToolkitDomainEditView.element";
 import { SaveDomainAction } from "../actions/saveDomainAction";
+import { SeoDomainDeletableCondition } from "../conditions/SeoDomainDeleteableCondition";
+import { ManifestCondition } from "@umbraco-cms/backoffice/extension-api";
+import { DeleteDomainAction } from "../actions/deleteDomainAction";
+import SeoToolkitTreeItemElement from "../trees/SeoToolkitTreeItem.element";
 
 const DomainsTreeItem: ManifestTreeItem = {
     type: 'treeItem',
     kind: 'default',
     alias: 'seoToolkit.module.domains',
     name: 'SeoToolkit Domains',
+    element: SeoToolkitTreeItemElement,
     forEntityTypes: [
         SEOTOOLKIT_DOMAIN_ENTITY,
         SEOTOOLKIT_DOMAIN_ROOT_ENTITY
@@ -79,4 +84,29 @@ const DomainSaveActionManifest: ManifestWorkspaceAction = {
     ],
 }
 
-export const SeoDomainsManifest = [ DomainsTreeItem, CreateDomainTreeActionManifest, DomainDetailWorkspace, DomainDetailEditView, DomainSaveActionManifest ];
+const DomainDeleteAction: ManifestWorkspaceAction = {
+    type: 'workspaceAction',
+    kind: 'default',
+    alias: 'seoToolkit.domain.detail.delete',
+    name: 'SeoToolkit Domain Workspace Delete',
+    api: DeleteDomainAction,
+    meta: {
+        look: 'secondary',
+        color: 'danger',
+        label: 'Delete'
+    },
+    conditions: [
+        {
+            alias: 'SeoToolkit.DomainDeleteCondition'
+        }
+    ]
+}
+
+const DomainsDeleteCondition: ManifestCondition = {
+  type: "condition",
+  name: "Seo Delete Domain Condition",
+  alias: "SeoToolkit.DomainDeleteCondition",
+  api: SeoDomainDeletableCondition,
+};
+
+export const SeoDomainsManifest = [ DomainsTreeItem, CreateDomainTreeActionManifest, DomainDetailWorkspace, DomainDetailEditView, DomainSaveActionManifest, DomainDeleteAction, DomainsDeleteCondition ];

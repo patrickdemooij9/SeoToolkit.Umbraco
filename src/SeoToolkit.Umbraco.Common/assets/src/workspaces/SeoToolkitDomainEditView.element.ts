@@ -98,7 +98,7 @@ export class SeoToolkitDomainEditViewElement
             <div slot="editor">
               <umb-input-checkbox-list
                 .list=${this.domainList}
-                .selection=${this.model?.domainIds ?? []}
+                .selection=${this.model?.domainIds.map((item) => item.toString()) ?? []}
                 @change=${this.#onDomainChange}
               ></umb-input-checkbox-list></div
           ></umb-property-layout>

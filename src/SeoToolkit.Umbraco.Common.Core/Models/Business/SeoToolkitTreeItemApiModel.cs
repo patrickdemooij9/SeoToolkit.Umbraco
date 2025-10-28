@@ -7,5 +7,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Models.Business
         public string Id { get; set; }
         public string Name { get; set; }
         public string? ParentId { get; set; }
+        public bool IsDraft { get; set; }
     }
 }

@@ -32,11 +32,33 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             return Ok(_seoDomainsService.GetAll().FirstOrDefault(it => it.Id == domainId));
         }
 
+        [HttpGet("getPredefined")]
+        [ProducesResponseType(typeof(SeoDomainCollection), 200)]
+        public IActionResult GetPredefined(int umbracoDomainId)
+        {
+            var umbracoDomain = _domainService.GetById(umbracoDomainId);
+            if (umbracoDomain is null) return NotFound();
+
+            return Ok(new SeoDomainCollection
+            {
+                Name = umbracoDomain.DomainName.Replace("https://", ""),
+                DomainIds = [umbracoDomainId]
+            });
+        }
+
         [HttpPost("save")]
         [ProducesResponseType(typeof(int), 200)]
         public IActionResult Save(SeoDomainCollection collection)
         {
             return Ok(_seoDomainsService.Save(collection));
+        }
+
+        [HttpDelete("delete")]
+        [ProducesResponseType(200)]
+        public IActionResult Delete(int domainId)
+        {
+            _seoDomainsService.Delete(domainId);
+            return Ok();
         }
 
         [HttpGet("config")]

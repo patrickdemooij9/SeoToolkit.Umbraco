@@ -122,5 +122,6 @@ const mapper = (item: SeoToolkitTreeItemApiModel): SeoToolkitTreeItemModel => {
     hasChildren: item.hasChildren,
     isFolder: false,
     icon: icon,
+    isDraft: item.isDraft
   };
 };

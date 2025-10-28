@@ -16,8 +16,7 @@ import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
 
 export default class SeoToolkitDomainContext
   extends UmbContextBase
-  implements UmbWorkspaceContext
-{
+  implements UmbWorkspaceContext {
   workspaceAlias = "seoToolkit.domain.detail";
 
   repository = new SeoToolkitDomainRepository(this);
@@ -50,6 +49,14 @@ export default class SeoToolkitDomainContext
       {
         path: "create",
         component: SeoToolkitDomainViewElement,
+        setup: () => {
+          this.#domain.setValue({
+            id: 0,
+            name: '',
+            domainIds: [],
+            settings: {}
+          })
+        }
       },
       {
         path: "edit/:unique",
@@ -60,11 +67,19 @@ export default class SeoToolkitDomainContext
             const parts = info.match.params.unique.split("~");
             if (parts.length === 2) {
               this.load(Number.parseInt(parts[1]));
+            } else if (parts.length === 3) {
+              this.loadUmbracoDomain(Number.parseInt(parts[2]));
             }
           }
         },
       },
     ]);
+  }
+
+  loadUmbracoDomain(domainId: number) {
+    this.repository.getPredefined(domainId).then((resp) => {
+      this.#domain.setValue(resp.data);
+    })
   }
 
   load(domainId: number) {
@@ -73,7 +88,7 @@ export default class SeoToolkitDomainContext
     });
   }
 
-  loadConfig(){
+  loadConfig() {
     this.repository.getConfig().then(resp => {
       this.#config.setValue(resp.data);
     });
@@ -87,28 +102,47 @@ export default class SeoToolkitDomainContext
     });
 
     const actionEventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-		if (!actionEventContext) throw new Error('Action Event Context is not available');
+    if (!actionEventContext) throw new Error('Action Event Context is not available');
 
-		actionEventContext.dispatchEvent(new UmbRequestReloadChildrenOfEntityEvent({
-			unique: 'ab248b43-9757-432a-9821-22f9eeb513e7',
-			entityType: 'seoToolkit-domain-root',
-		}));
     actionEventContext.dispatchEvent(new UmbRequestReloadChildrenOfEntityEvent({
-			unique: 'ab248b43-9757-432a-9821-22f9eeb513e7~' + id,
-			entityType: 'seoToolkit-domain',
-		}));
+      unique: 'ab248b43-9757-432a-9821-22f9eeb513e7',
+      entityType: 'seoToolkit-domain-root',
+    }));
+    actionEventContext.dispatchEvent(new UmbRequestReloadChildrenOfEntityEvent({
+      unique: 'ab248b43-9757-432a-9821-22f9eeb513e7~' + id,
+      entityType: 'seoToolkit-domain',
+    }));
 
     this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
-			instance?.peek('positive', {
-				data: {
-					headline: 'Saved',
-					message: 'Domain successfully saved!'
-				}
-			})
-		});
-		if (isNew){
-			history.replaceState(null, '', location.href.replace("create", "edit/ab248b43-9757-432a-9821-22f9eeb513e7~" + id));
-		}
+      instance?.peek('positive', {
+        data: {
+          headline: 'Saved',
+          message: 'Domain successfully saved!'
+        }
+      })
+    });
+    if (isNew) {
+      if (location.href.includes('create')) {
+        history.replaceState(null, '', location.href.replace("create", "edit/ab248b43-9757-432a-9821-22f9eeb513e7~" + id));
+      } else {
+        var lastSegmentStart = location.href.lastIndexOf('/');
+        history.replaceState(null, '', location.href.substring(0, lastSegmentStart) + '/ab248b43-9757-432a-9821-22f9eeb513e7~' + id);
+      }
+    }
+  }
+
+  async delete() {
+    await new SeoToolkitDomainRepository(this).delete(this.#domain.getValue().id);
+
+    const actionEventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
+    if (!actionEventContext) throw new Error('Action Event Context is not available');
+
+    actionEventContext.dispatchEvent(new UmbRequestReloadChildrenOfEntityEvent({
+      unique: 'ab248b43-9757-432a-9821-22f9eeb513e7',
+      entityType: 'seoToolkit-domain-root',
+    }));
+
+    history.replaceState(null, '', '/umbraco/section/SeoToolkit/workspace/seoToolkit-domain-root/edit/ab248b43-9757-432a-9821-22f9eeb513e7');
   }
 
   updateDomain(domain: Partial<SeoDomainCollection>) {
