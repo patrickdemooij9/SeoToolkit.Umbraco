@@ -105,13 +105,134 @@ namespace SeoToolkit.Tests
             redirectRepository.Verify(it => it.Save(It.Is<Redirect>(r => r.NewUrl == expectedUrl)), Times.Once);
         }
 
+        [Test]
+        public void Save_Throws_WhenRedirectIsNull()
+        {
+            // Arrange
+            var redirectRepository = new Mock<IRedirectsRepository>();
+            var bloomFilter = new Mock<IRedirectsBloomFilter>();
+            var umbracoContextFactory = GetContextFactoryWithDomain();
+            var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
+            optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
+
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+
+            // Act / Assert
+            Assert.Throws<ArgumentNullException>(() => redirectService.Save(null));
+        }
+
+        [Test]
+        public void Save_Throws_WhenRedirectCodeIsNotSupported()
+        {
+            // Arrange
+            var redirectRepository = new Mock<IRedirectsRepository>();
+            var bloomFilter = new Mock<IRedirectsBloomFilter>();
+            var umbracoContextFactory = GetContextFactoryWithDomain();
+            var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
+            optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
+
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+
+            var redirect = new Redirect { Id = 1, IsEnabled = true, IsRegex = false, OldUrl = "/old", NewUrl = "/new", RedirectCode = 999 };
+
+            // Act / Assert
+            Assert.Throws<ArgumentException>(() => redirectService.Save(redirect));
+        }
+
+        [Test]
+        public void Save_Throws_WhenExistingGlobalRedirectFound()
+        {
+            // Arrange
+            var redirectRepository = new Mock<IRedirectsRepository>();
+            var bloomFilter = new Mock<IRedirectsBloomFilter>();
+            var umbracoContextFactory = GetContextFactoryWithDomain();
+            var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
+            optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
+
+            var existing = new Redirect { Id = 2, Domain = null, CustomDomain = null, OldUrl = "/old" };
+            redirectRepository.Setup(it => it.GetByUrls(It.IsAny<string[]>())).Returns(new Redirect[] { existing });
+
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+
+            var redirect = new Redirect { Id = 1, IsEnabled = true, IsRegex = false, OldUrl = "old", NewUrl = "/new", RedirectCode = (int)HttpStatusCode.MovedPermanently };
+
+            // Act / Assert
+            Assert.Throws<ArgumentException>(() => redirectService.Save(redirect));
+        }
+
+        [Test]
+        public void Delete_RemovesRedirect_WhenFound()
+        {
+            // Arrange
+            var redirectRepository = new Mock<IRedirectsRepository>();
+            var bloomFilter = new Mock<IRedirectsBloomFilter>();
+            var umbracoContextFactory = GetContextFactoryWithDomain();
+            var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
+            optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
+
+            var redirect = new Redirect { Id = 3, OldUrl = "/old" };
+            redirectRepository.Setup(it => it.Get(3)).Returns(redirect);
+
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+
+            // Act
+            redirectService.Delete(new int[] { 3 });
+
+            // Assert
+            redirectRepository.Verify(it => it.Delete(It.Is<Redirect>(r => r.Id == 3)), Times.Once);
+        }
+
+        [Test]
+        public void UpdateRedirectCodes_CallsRepository()
+        {
+            // Arrange
+            var redirectRepository = new Mock<IRedirectsRepository>();
+            var bloomFilter = new Mock<IRedirectsBloomFilter>();
+            var umbracoContextFactory = GetContextFactoryWithDomain();
+            var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
+            optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
+
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+
+            // Act
+            redirectService.UpdateRedirectCodes(new int[] { 1, 2 }, (int)HttpStatusCode.MovedPermanently);
+
+            // Assert
+            redirectRepository.Verify(it => it.UpdateRedirectCodes(It.Is<int[]>(arr => arr.Length == 2 && arr[0] == 1 && arr[1] == 2), (int)HttpStatusCode.MovedPermanently), Times.Once);
+        }
+
+        [Test]
+        public void GetByUrl_ReturnsExactGlobalMatch()
+        {
+            // Arrange
+            var redirectRepository = new Mock<IRedirectsRepository>();
+            var bloomFilter = new Mock<IRedirectsBloomFilter>();
+            var umbracoContextFactory = GetContextFactoryWithDomain();
+            var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
+            optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
+
+            var uri = new Uri("https://example.com/test");
+            var existing = new Redirect { Id = 4, OldUrl = "/test", NewUrl = "/new" };
+            redirectRepository.Setup(it => it.GetByUrls(It.IsAny<string[]>())).Returns(new Redirect[] { existing });
+            bloomFilter.Setup(it => it.Contains(It.IsAny<string>())).Returns(true);
+
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+
+            // Act
+            var result = redirectService.GetByUrl(uri);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(existing.Id, result.Redirect.Id);
+        }
+
         private IUmbracoContextFactory GetContextFactoryWithDomain()
         {
             var umbracoContextFactory = new Mock<IUmbracoContextFactory>();
             var umbracoContext = new Mock<IUmbracoContext>();
             var domainCache = new Mock<IDomainCache>();
 
-            domainCache.Setup(it => it.GetAll(false)).Returns(Enumerable.Empty<Domain>);
+            domainCache.Setup(it => it.GetAll(false)).Returns(Enumerable.Empty<Domain>());
             umbracoContext.Setup(it => it.Domains).Returns(() => domainCache.Object);
             umbracoContextFactory.Setup(it => it.EnsureUmbracoContext()).Returns(() => new UmbracoContextReference(umbracoContext.Object, true, Mock.Of<IUmbracoContextAccessor>()));
 
