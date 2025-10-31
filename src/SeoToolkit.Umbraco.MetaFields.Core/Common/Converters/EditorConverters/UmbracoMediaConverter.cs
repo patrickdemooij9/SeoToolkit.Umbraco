@@ -28,7 +28,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
 
         public object ConvertEditorToDatabaseValue(object value)
         {
-            var images = JsonHelpers.DeserializeArray<MediaEditorModel>(value?.ToString());
+            var images = JsonHelpers.DeserializeArray<MediaEditorModel>(value);
             if (images is null || images.Length == 0)
                 return null;
 

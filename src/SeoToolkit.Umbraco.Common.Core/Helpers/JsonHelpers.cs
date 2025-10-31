@@ -16,7 +16,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Helpers
         public static T[]? DeserializeArray<T>(object value)
         {
             if (value is null) return null;
-
+            
             if (value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Array)
             {
                 return JsonSerializer.Deserialize<T[]>(jsonElement);

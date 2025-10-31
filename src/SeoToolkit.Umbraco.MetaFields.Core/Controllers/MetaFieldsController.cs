@@ -15,6 +15,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
