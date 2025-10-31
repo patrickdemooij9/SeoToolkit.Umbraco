@@ -19,7 +19,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
         private readonly IRepository<DocumentTypeSettingsDto> _repository;
         private readonly FieldProviderCollection _fieldProviders;
         private readonly DistributedCache _distributedCache;
-        private readonly IAppPolicyCache _cache;
+        private readonly AppCaches _cache;
 
         public MetaFieldsSettingsService(IRepository<DocumentTypeSettingsDto> repository,
             FieldProviderCollection fieldProviders,
@@ -29,7 +29,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
             _repository = repository;
             _fieldProviders = fieldProviders;
             _distributedCache = distributedCache;
-            _cache = appCaches.RuntimeCache;
+            _cache = appCaches;
         }
 
         public void Set(DocumentTypeSettingsDto model)
@@ -45,7 +45,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 
         public DocumentTypeSettingsDto Get(int id)
         {
-            return _cache.GetCacheItem($"{CacheConstants.DocumentTypeSettings}{id}_Get", () =>
+            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.DocumentTypeSettings}{id}_Get", () =>
             {
                 return new CachedNullableModel<DocumentTypeSettingsDto>(_repository.Get(id));
             }, TimeSpan.FromMinutes(30)).Model;

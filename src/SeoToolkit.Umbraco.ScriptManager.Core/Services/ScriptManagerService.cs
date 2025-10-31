@@ -17,7 +17,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
         private readonly IScriptRepository _scriptRepository;
         private readonly DistributedCache _distributedCache;
         private readonly ISettingsService<ScriptManagerConfigModel> _settings;
-        private readonly IAppPolicyCache _cache;
+        private readonly AppCaches _cache;
 
         public ScriptManagerService(IScriptRepository scriptRepository,
             AppCaches appCaches,
@@ -27,7 +27,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
             _scriptRepository = scriptRepository;
             _distributedCache = distributedCache;
             _settings = settings;
-            _cache = appCaches.RuntimeCache;
+            _cache = appCaches;
         }
 
         public Script Save(Script script)
@@ -60,7 +60,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 
         public IEnumerable<Script> GetAll(int? domainId)
         {
-            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}GetAll_{domainId}", () =>
+            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}GetAll_{domainId}", () =>
             {
                 return _scriptRepository.GetAll(domainId).Where(it => it.Definition != null).ToArray();
             });
@@ -68,7 +68,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 
         public Script Get(int id)
         {
-            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}Get_{id}", () => _scriptRepository.Get(id));
+            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}Get_{id}", () => _scriptRepository.Get(id));
         }
 
         public ScriptRenderModel GetRender(int? domainId)
@@ -76,7 +76,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
             if (_settings.GetSettings().DisableRenderCaching)
                 return DoGetRender(domainId);
 
-            return _cache.GetCacheItem($"{CacheConstants.ScriptManager}GetRender_{domainId}", () => DoGetRender(domainId));
+            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}GetRender_{domainId}", () => DoGetRender(domainId));
         }
 
         private ScriptRenderModel DoGetRender(int? domainId)

@@ -15,18 +15,18 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
     {
         private readonly ISeoDomainsRepository _seoDomainsRepository;
         private readonly DistributedCache _distributedCache;
-        private readonly IAppPolicyCache _cache;
+        private readonly AppCaches _cache;
 
         public SeoDomainsService(ISeoDomainsRepository seoDomainsRepository, AppCaches appCaches, DistributedCache distributedCache)
         {
             _seoDomainsRepository = seoDomainsRepository;
-            _cache = appCaches.RuntimeCache;
+            _cache = appCaches;
             _distributedCache = distributedCache;
         }
 
         public SeoDomainCollection[] GetAll()
         {
-            return _cache.GetCacheItem($"{CacheConstants.SeoDomains}GetAll", _seoDomainsRepository.GetAll, TimeSpan.FromMinutes(10)) ?? [];
+            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoDomains}GetAll", _seoDomainsRepository.GetAll, TimeSpan.FromMinutes(10)) ?? [];
         }
 
         public SeoDomainCollection? Get(int id)
