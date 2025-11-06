@@ -56,7 +56,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 
             var redirect = new Redirect
             {
-                Id = postModel.Id,
+                Key = postModel.Key ?? Guid.NewGuid(),
                 CustomDomain = postModel.CustomDomain,
                 IsEnabled = postModel.IsEnabled,
                 IsRegex = postModel.IsRegex,
@@ -90,7 +90,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
                     return new BadRequestResult();
             }
 
-            if (postModel.Id == 0)
+            if (!postModel.Key.HasValue)
             {
                 redirect.CreatedBy = -1;
                 var userId = _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser?.Id;
@@ -123,7 +123,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
                     domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{domain}";
                 return new RedirectListViewModel
                 {
-                    Id = it.Id,
+                    Key = it.Key,
                     IsEnabled = it.IsEnabled,
                     OldUrl = it.OldUrl.IfNullOrWhiteSpace("/"),
                     NewUrl = it.GetNewUrl(),
@@ -204,7 +204,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             var fileExtensionString = HttpContext.Session.GetString(ImportConstants.SessionFileTypeAlias);
             var domain = int.Parse(HttpContext.Session.GetString(ImportConstants.SessionDomainId));
 
-            if (fileContent == null || fileExtensionString == null || domain == null)
+            if (fileContent == null || fileExtensionString == null)
             {
                 return BadRequest("Something went wrong during import, please try again");
             }

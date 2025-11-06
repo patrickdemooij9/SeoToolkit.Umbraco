@@ -14,6 +14,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
             To<CreatedByMigration>("state-2");
             To<IsEnabledMigration>("state-3");
             To<OldUrlIndexMigration>("state-4");
+            To<RedirectGuidIdMigration>("state-5");
         }
     }
 }

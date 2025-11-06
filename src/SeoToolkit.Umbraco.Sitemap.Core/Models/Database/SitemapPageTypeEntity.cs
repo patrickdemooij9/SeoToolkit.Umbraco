@@ -1,4 +1,5 @@
-﻿using NPoco;
+﻿using System;
+using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Models.Database
@@ -10,6 +11,9 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Models.Database
         [Column("ContentTypeId")]
         [PrimaryKeyColumn(AutoIncrement = false)]
         public int ContentTypeId { get; set; }
+
+        [Column("ContentTypeGuid")]
+        public Guid ContentTypeGuid { get; set; }
 
         [Column("HideFromSitemap")]
         public bool HideFromSitemap { get; set; }

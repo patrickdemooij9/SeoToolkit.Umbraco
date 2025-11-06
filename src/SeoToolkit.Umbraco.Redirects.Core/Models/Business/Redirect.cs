@@ -11,7 +11,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Business
 {
     public class Redirect
     {
+        [Obsolete("Use Key property instead")]
         public int Id { get; set; }
+        public Guid Key { get; set; }
         public bool IsEnabled { get; set; }
         public bool IsRegex { get; set; }
         public Domain Domain { get; set; }

@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
-using NPoco;
-using Polly;
+﻿using NPoco;
 using SeoToolkit.Umbraco.Redirects.Core.Caching;
 using SeoToolkit.Umbraco.Redirects.Core.Constants;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
@@ -13,8 +11,6 @@ using System.Linq.Expressions;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
-using Umbraco.Cms.Infrastructure.Persistence;
-using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Extensions;
 
@@ -48,7 +44,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 var entity = ToEntity(redirect);
                 scope.Database.Save(entity);
 
-                ClearCache(entity.Id);
+                ClearCache(entity.Key);
             }
         }
 
@@ -63,6 +59,17 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             scope.Complete();
         }
 
+        public void UpdateRedirectCodes(Guid[] keys, int redirectCode)
+        {
+            using var scope = _scopeProvider.CreateScope();
+
+            var sql = scope.Database.SqlContext.Sql()
+                .Update<RedirectEntity>(it => it.Set(e => e.RedirectCode, redirectCode))
+                .Where<RedirectEntity>(it => keys.Contains(it.Key));
+            scope.Database.Execute(sql);
+            scope.Complete();
+        }
+
         public void Delete(Redirect redirect)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
@@ -70,31 +77,47 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 scope.Database.Delete(ToEntity(redirect));
             }
 
-            ClearCache(redirect.Id);
+            ClearCache(redirect.Key);
         }
 
         public Redirect Get(int id)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var entity = scope.Database.FirstOrDefault<RedirectEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<RedirectEntity>()
-                    .Where<RedirectEntity>(it => it.Id == id));
-                return entity is null ? null : ToModel(entity);
-            }
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entity = scope.Database.FirstOrDefault<RedirectEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<RedirectEntity>()
+                .Where<RedirectEntity>(it => it.Id == id));
+            return entity is null ? null : ToModel(entity);
         }
 
         public Redirect[] Get(params int[] ids)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var entities = scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<RedirectEntity>()
-                    .Where<RedirectEntity>(it => ids.Contains(it.Id)));
-                return [.. entities.Select(ToModel)];
-            }
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entities = scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<RedirectEntity>()
+                .Where<RedirectEntity>(it => ids.Contains(it.Id)));
+            return [.. entities.Select(ToModel)];
+        }
+
+        public Redirect Get(Guid key)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entity = scope.Database.FirstOrDefault<RedirectEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<RedirectEntity>()
+                .Where<RedirectEntity>(it => it.Key == key));
+            return entity is null ? null : ToModel(entity);
+        }
+
+        public Redirect[] Get(params Guid[] keys)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entities = scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<RedirectEntity>()
+                .Where<RedirectEntity>(it => keys.Contains(it.Key)));
+            return [.. entities.Select(ToModel)];
         }
 
         public IEnumerable<Redirect> GetAll(int pageNumber, int pageSize, out long totalRecords, string orderBy = null, string orderDirection = null, string search = "")
@@ -158,6 +181,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             return new RedirectEntity
             {
                 Id = redirect.Id,
+                Key = redirect.Key,
                 Domain = redirect.Domain?.Id,
                 CustomDomain = redirect.CustomDomain,
                 IsRegex = redirect.IsRegex,
@@ -174,33 +198,32 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 
         private Redirect ToModel(RedirectEntity entity)
         {
-            using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
+            using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
+            return new Redirect
             {
-                return new Redirect
-                {
-                    Id = entity.Id,
-                    Domain = entity.Domain is null
-                        ? null
-                        : ctx.UmbracoContext.Domains.GetAll(false).FirstOrDefault(it => it.Id == entity.Domain),
-                    CustomDomain = entity.CustomDomain,
-                    IsEnabled = entity.IsEnabled,
-                    IsRegex = entity.IsRegex,
-                    OldUrl = entity.OldUrl,
-                    NewNode = entity.NewNodeId is null
-                        ? null
-                        : entity.NewNodeCultureId is null ? ctx.UmbracoContext.Media.GetById(entity.NewNodeId.Value) : ctx.UmbracoContext.Content.GetById(entity.NewNodeId.Value),
-                    NewNodeCulture = entity.NewNodeCultureId is null ? null : _localizationService.GetLanguageById(entity.NewNodeCultureId.Value),
-                    NewUrl = entity.NewUrl,
-                    LastUpdated = entity.LastUpdated,
-                    CreatedBy = entity.CreatedBy,
-                    RedirectCode = entity.RedirectCode
-                };
-            }
+                Id = entity.Id,
+                Key = entity.Key,
+                Domain = entity.Domain is null
+                    ? null
+                    : ctx.UmbracoContext.Domains.GetAll(false).FirstOrDefault(it => it.Id == entity.Domain),
+                CustomDomain = entity.CustomDomain,
+                IsEnabled = entity.IsEnabled,
+                IsRegex = entity.IsRegex,
+                OldUrl = entity.OldUrl,
+                NewNode = entity.NewNodeId is null
+                    ? null
+                    : entity.NewNodeCultureId is null ? ctx.UmbracoContext.Media.GetById(entity.NewNodeId.Value) : ctx.UmbracoContext.Content.GetById(entity.NewNodeId.Value),
+                NewNodeCulture = entity.NewNodeCultureId is null ? null : _localizationService.GetLanguageById(entity.NewNodeCultureId.Value),
+                NewUrl = entity.NewUrl,
+                LastUpdated = entity.LastUpdated,
+                CreatedBy = entity.CreatedBy,
+                RedirectCode = entity.RedirectCode
+            };
         }
 
-        private void ClearCache(int redirectId)
+        private void ClearCache(Guid redirectKey)
         {
-            _distributedCache.Refresh(RedirectsCacheRefresher.CacheGuid, redirectId);
+            _distributedCache.Refresh(RedirectsCacheRefresher.CacheGuid, redirectKey);
         }
 
         private Expression<Func<RedirectEntity, object>> GetOrderingColumn(string orderBy)

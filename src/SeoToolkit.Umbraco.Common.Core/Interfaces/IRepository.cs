@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SeoToolkit.Umbraco.Common.Core.Interfaces
 {
@@ -6,6 +7,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Interfaces
     {
         IEnumerable<T> GetAll();
         T Get(int id);
+        T Get(Guid key);
         T Add(T model);
         T Update(T model);
         void Delete(int id);

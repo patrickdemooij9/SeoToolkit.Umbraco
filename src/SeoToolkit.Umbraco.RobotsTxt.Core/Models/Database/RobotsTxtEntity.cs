@@ -1,4 +1,5 @@
-﻿using NPoco;
+﻿using System;
+using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Models.Database
@@ -10,6 +11,9 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Models.Database
         [Column("Id")]
         [PrimaryKeyColumn(AutoIncrement = true)]
         public int Id { get; set; }
+
+        [Column("Key")]
+        public Guid Key { get; set; }
 
         [Column("Content")]
         [SpecialDbType(SpecialDbTypes.NVARCHARMAX)]

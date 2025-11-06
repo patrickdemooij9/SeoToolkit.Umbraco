@@ -21,10 +21,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Caching
             _redirectsRepository = redirectsRepository;
         }
 
-        public override void Refresh(int id)
+        public override void Refresh(Guid key)
         {
             AppCaches.RuntimeCache.ClearByKey(CacheConstants.Redirects);
-            var redirect = _redirectsRepository.Get(id);
+            var redirect = _redirectsRepository.Get(key);
             if (redirect is null)
             {
                 _bloomFilter.Remove(string.Empty); // Forces rebuild
@@ -34,7 +34,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Caching
                 _bloomFilter.Add(redirect.OldUrl);
             }
             
-            base.Refresh(id);
+            base.Refresh(key);
         }
     }
 }

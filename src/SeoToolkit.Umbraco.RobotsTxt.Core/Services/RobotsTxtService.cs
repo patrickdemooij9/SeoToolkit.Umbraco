@@ -65,8 +65,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Services
         public void SetContent(string content, int? domainId = null)
         {
             var model = _robotsTxtRepository.GetAll().FirstOrDefault(it => it.DomainId == domainId);
-            if (model is null)
-                model = new RobotsTxtModel();
+            model ??= new RobotsTxtModel { Key = Guid.NewGuid() };
 
             model.Content = content;
             model.DomainId = domainId;

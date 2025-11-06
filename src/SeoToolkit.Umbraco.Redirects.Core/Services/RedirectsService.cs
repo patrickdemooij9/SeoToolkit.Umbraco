@@ -51,12 +51,29 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             return _redirectsRepository.Get(ids);
         }
 
+        public Redirect Get(Guid key)
+        {
+            return _redirectsRepository.Get(key);
+        }
+
+        public Redirect[] Get(params Guid[] keys)
+        {
+            return _redirectsRepository.Get(keys);
+        }
+
         public void Save(Redirect redirect)
         {
             if (redirect is null) throw new ArgumentNullException(nameof(redirect));
             if (!redirect.RedirectCode.Equals((int)HttpStatusCode.Redirect) &&
                 !redirect.RedirectCode.Equals((int)HttpStatusCode.MovedPermanently))
                 throw new ArgumentException("Only support for 301 & 302 redirects", nameof(redirect.RedirectCode));
+
+            // Backwards compatibility, remove when we no longer support int Id
+            var existingRedirect = Get(redirect.Key);
+            if (existingRedirect != null)
+            {
+                redirect.Id = existingRedirect.Id;
+            }
 
             var oldUrl = redirect.IsRegex ? redirect.OldUrl : redirect.OldUrl.CleanUrl();
             var newUrl = redirect.NewUrl;
@@ -85,7 +102,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
                 }
             }
 
-            var existingRedirects = _redirectsRepository.GetByUrls(oldUrl).Where(it => it.Id != redirect.Id).ToArray();
+            var existingRedirects = _redirectsRepository.GetByUrls(oldUrl).Where(it => it.Id != redirect.Id || it.Key != redirect.Key).ToArray();
             if (existingRedirects.Length > 0)
             {
                 if (existingRedirects.Any(it => it.Domain is null && string.IsNullOrWhiteSpace(it.CustomDomain)))
@@ -109,11 +126,27 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             _redirectsRepository.UpdateRedirectCodes(ids, redirectCode);
         }
 
+        public void UpdateRedirectCodes(Guid[] keys, int redirectCode)
+        {
+            _redirectsRepository.UpdateRedirectCodes(keys, redirectCode);
+        }
+
         public void Delete(int[] ids)
         {
             foreach (var id in ids)
             {
                 var redirect = _redirectsRepository.Get(id);
+                if (redirect is null) continue;
+
+                _redirectsRepository.Delete(redirect);
+            }
+        }
+        
+        public void Delete(Guid[] keys)
+        {
+            foreach (var key in keys)
+            {
+                var redirect = _redirectsRepository.Get(key);
                 if (redirect is null) continue;
 
                 _redirectsRepository.Delete(redirect);
