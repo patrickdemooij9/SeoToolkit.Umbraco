@@ -1,4 +1,5 @@
-﻿using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
+﻿using System;
+using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
@@ -20,6 +21,11 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
         public SitemapPageSettings GetPageTypeSettings(int contentTypeId)
         {
             return _sitemapPageTypeRepository.Get(contentTypeId);
+        }
+
+        public SitemapPageSettings GetPageTypeSettings(Guid contentTypeGuid)
+        {
+            return _sitemapPageTypeRepository.Get(contentTypeGuid);
         }
     }
 }

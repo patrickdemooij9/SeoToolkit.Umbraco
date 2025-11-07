@@ -98,6 +98,11 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Repositories
         {
             return GetAll().FirstOrDefault(it => it.Id == id);
         }
+        
+        public SiteAuditDto Get(Guid key)
+        {
+            throw new NotImplementedException();
+        }
 
         public IEnumerable<SiteAuditDto> GetAll()
         {

@@ -51,6 +51,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
             _sitemapService.SetPageTypeSettings(new SitemapPageSettings
             {
                 ContentTypeId = contentType.Id,
+                ContentTypeGuid = model.ContentTypeGuid,
                 HideFromSitemap = model.HideFromSitemap,
                 ChangeFrequency = model.ChangeFrequency,
                 Priority = model.Priority

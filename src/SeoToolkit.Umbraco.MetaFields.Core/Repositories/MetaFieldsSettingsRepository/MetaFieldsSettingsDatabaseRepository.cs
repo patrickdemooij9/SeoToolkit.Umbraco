@@ -45,6 +45,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepo
             }
         }
 
+        public DocumentTypeSettingsDto Get(Guid key)
+        {
+            throw new NotImplementedException();
+        }
+
         public DocumentTypeSettingsDto Add(DocumentTypeSettingsDto model)
         {
             var entity = _mapper.Value.Map<MetaFieldsSettingsEntity>(model);
