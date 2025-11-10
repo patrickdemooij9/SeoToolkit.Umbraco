@@ -20,7 +20,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Migrations
                 return Task.CompletedTask;
             }
 
-            Alter.Table("SeoToolkitScript").AddColumn("DomainId").AsInt32().Nullable().Do();
+            Database.Execute($"ALTER TABLE SeoToolkitScript ADD COLUMN DomainId INT NULL");
             return Task.CompletedTask;
         }
     }
