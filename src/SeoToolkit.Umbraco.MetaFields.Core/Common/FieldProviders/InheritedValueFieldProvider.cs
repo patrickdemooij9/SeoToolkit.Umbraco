@@ -21,7 +21,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders
 
         public object HandleFieldItem(FieldsItem fieldsItem, IPublishedContent content, string fieldAlias)
         {
-            var currentDocumentTypeSettings = _documentTypeSettingsService.Get(content.ContentType.Id);
+            var currentDocumentTypeSettings = _documentTypeSettingsService.Get(content.ContentType.Key);
             
             //Should be fine, but always good to check
             if (currentDocumentTypeSettings?.Inheritance is null)
@@ -34,7 +34,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders
                 if (inheritance.Id == content.ContentType.Id)
                     return null;
 
-                var inheritedSettings = _documentTypeSettingsService.Get(inheritance.Id);
+                var inheritedSettings = _documentTypeSettingsService.Get(inheritance.Key);
                 var documentTypeValue = inheritedSettings.Get(fieldAlias);
                 if (documentTypeValue != null && documentTypeValue.UseInheritedValue)
                     inheritance = inheritedSettings.Inheritance;

@@ -21,5 +21,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Caching
             AppCaches.RuntimeCache.ClearByKey($"{CacheConstants.SeoValue}{id}");
             base.Refresh(id);
         }
+
+        public override void Refresh(Guid id)
+        {
+            AppCaches.RuntimeCache.ClearByKey($"{CacheConstants.SeoValue}{id}");
+            base.Refresh(id);
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
         private readonly SitemapCollectionProviderCollection _sitemapCollectionProviders;
 
         private List<string> _validAlternateCultures;
-        private Dictionary<int, SitemapPageSettings> _pageTypeSettings; //Used to cache the types for the generation
+        private Dictionary<Guid, SitemapPageSettings> _pageTypeSettings; //Used to cache the types for the generation
 
         private XNamespace _namespace => XNamespace.Get("http://www.sitemaps.org/schemas/sitemap/0.9");
         private XNamespace _xHtmlNamespace = XNamespace.Get("http://www.w3.org/1999/xhtml");
@@ -49,7 +49,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             _settings = settingsService.GetSettings();
             _sitemapCollectionProviders = sitemapCollectionProviders;
 
-            _pageTypeSettings = new Dictionary<int, SitemapPageSettings>();
+            _pageTypeSettings = new Dictionary<Guid, SitemapPageSettings>();
         }
 
         public XDocument Generate(SitemapGeneratorOptions options)
@@ -107,7 +107,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             //Only show item if it actually has an template, so we don't index data objects and such
             if (content.TemplateId > 0 && !_publicAccessService.IsProtected(content.Path))
             {
-                var settings = GetPageTypeSettings(content.ContentType.Id);
+                var settings = GetPageTypeSettings(content.ContentType.Key);
 
                 var item = new SitemapNodeItem(content.Url(culture, UrlMode.Absolute))
                 {
@@ -216,7 +216,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             return default;
         }
 
-        private SitemapPageSettings GetPageTypeSettings(int contentTypeId)
+        private SitemapPageSettings GetPageTypeSettings(Guid contentTypeId)
         {
             if (!_pageTypeSettings.ContainsKey(contentTypeId))
                 _pageTypeSettings[contentTypeId] = _sitemapService.GetPageTypeSettings(contentTypeId);

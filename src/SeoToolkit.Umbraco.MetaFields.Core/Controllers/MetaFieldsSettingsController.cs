@@ -49,7 +49,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 var contentType = _contentTypeService.Get(nodeId.Value);
                 if (contentType != null)
                 {
-                    var model = _documentTypeSettingsService.Get(contentType.Id);
+                    var model = _documentTypeSettingsService.Get(contentType.Key);
                     if (model != null)
                     {
                         content = new DocumentTypeSettingsContentViewModel(model, _seoFieldCollection.GetAll().Select(it => new SeoFieldViewModel(it, model.Get(it.Alias))).ToArray());

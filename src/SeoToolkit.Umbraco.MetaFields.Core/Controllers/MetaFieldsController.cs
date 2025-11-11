@@ -79,7 +79,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             if (metaTags is null)
                 return Ok(new MetaFieldsSettingsViewModel());
 
-            var userValues = content is null ? new Dictionary<string, object>() : _seoValueService.GetUserValues(content.Id);
+            var userValues = content is null ? new Dictionary<string, object>() : _seoValueService.GetUserValues(content.Key);
 
             return Ok(new MetaFieldsSettingsViewModel
             {
@@ -141,7 +141,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             }
             if (isDirty)
             {
-                _seoValueService.AddValues(content.Id, values);
+                _seoValueService.AddValues(content.Key, values);
             }
 
             return Get(postModel.NodeId, postModel.Culture);

@@ -6,8 +6,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Interfaces
 {
     public interface IMetaTagsProvider
     {
-        event EventHandler<MetaTagsModel> BeforeMetaTagsGet;
-
         MetaTagsModel Get(IPublishedContent content, bool includeUserValues);
 
         MetaTagsModel GetEmpty();

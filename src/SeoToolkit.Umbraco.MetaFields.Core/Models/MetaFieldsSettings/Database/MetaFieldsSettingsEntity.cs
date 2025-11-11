@@ -1,16 +1,20 @@
-﻿using NPoco;
+﻿using System;
+using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsSettings.Database
 {
     [TableName("SeoToolkitMetaFieldsSettings")]
     [ExplicitColumns]
-    [PrimaryKey("NodeId", AutoIncrement = false)]
+    [PrimaryKey("NodeKey", AutoIncrement = false)]
     public class MetaFieldsSettingsEntity
     {
         [Column("NodeId")]
-        [PrimaryKeyColumn(AutoIncrement = false)]
         public int NodeId { get; set; }
+
+        [Column("NodeKey")]
+        [PrimaryKeyColumn(AutoIncrement = false)]
+        public Guid NodeKey { get; set; }
 
         [Column("Fields")]
         [NullSetting(NullSetting = NullSettings.Null)]
@@ -20,5 +24,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsSettings.Database
         [Column("InheritanceId")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public int? InheritanceId { get; set; }
+
+        [Column("InheritanceKey")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public Guid? InheritanceKey { get; set; }
     }
 }

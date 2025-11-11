@@ -137,7 +137,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 
         [HttpGet("redirect")]
         [ProducesResponseType(typeof(RedirectViewModel), 200)]
-        public IActionResult Get(int id)
+        public IActionResult Get(Guid id)
         {
             var redirect = _redirectsService.Get(id);
             if (redirect is null)

@@ -24,6 +24,9 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Migrations
             Database.Execute("ALTER TABLE SeoToolkitRobotsTxt ADD COLUMN [Key] UNIQUEIDENTIFIER NULL");
             Database.Execute("UPDATE SeoToolkitRobotsTxt SET [Key] = NEWID()");
             Database.Execute("ALTER TABLE SeoToolkitRobotsTxt ALTER COLUMN [Key] UNIQUEIDENTIFIER NOT NULL");
+
+            Database.Execute("ALTER TABLE SeoToolkitRobotsTxt DROP CONSTRAINT pk_SeoToolkitRobotsTxt");
+            Database.Execute("ALTER TABLE SeoToolkitRobotsTxt ADD CONSTRAINT pk_SeoToolkitRobotsTxt PRIMARY KEY ([Key])");
             return Task.CompletedTask;
         }
     }

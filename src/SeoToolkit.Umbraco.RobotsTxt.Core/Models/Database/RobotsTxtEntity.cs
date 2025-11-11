@@ -5,14 +5,15 @@ using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Models.Database
 {
     [TableName("SeoToolkitRobotsTxt")]
-    [PrimaryKey("Id", AutoIncrement = true)]
+    [PrimaryKey("Key", AutoIncrement = true)]
     public class RobotsTxtEntity
     {
         [Column("Id")]
-        [PrimaryKeyColumn(AutoIncrement = true)]
+        
         public int Id { get; set; }
 
         [Column("Key")]
+        [PrimaryKeyColumn(AutoIncrement = false)]
         public Guid Key { get; set; }
 
         [Column("Content")]
