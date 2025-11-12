@@ -15,7 +15,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
     {
         private readonly ISeoSettingsRepository _seoSettingsRepository;
         private readonly DistributedCache _distributedCache;
-        private readonly IAppPolicyCache _cache;
+        private readonly AppCaches _cache;
         private readonly ISettingsService<GlobalConfig> _settingsService;
 
         public SeoSettingsService(ISeoSettingsRepository seoSettingsRepository, AppCaches appCaches, DistributedCache distributedCache, ISettingsService<GlobalConfig> settingsService)
@@ -23,12 +23,12 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
             _seoSettingsRepository = seoSettingsRepository;
             _distributedCache = distributedCache;
             _settingsService = settingsService;
-            _cache = appCaches.RuntimeCache;
+            _cache = appCaches;
         }
 
         public bool IsEnabled(IContentType contentType)
         {
-            return _cache.GetCacheItem($"{CacheConstants.SeoSettings}{contentType.Id}",
+            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoSettings}{contentType.Id}",
                 () => _seoSettingsRepository.IsEnabled(contentType), TimeSpan.FromMinutes(10));
         }
 

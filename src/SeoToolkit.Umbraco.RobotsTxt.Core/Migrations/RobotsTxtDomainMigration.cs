@@ -20,7 +20,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Migrations
                 return Task.CompletedTask;
             }
 
-            Alter.Table("SeoToolkitRobotsTxt").AddColumn("DomainId").AsInt32().Nullable().Do();
+            Database.Execute($"ALTER TABLE SeoToolkitRobotsTxt ADD COLUMN DomainId INT NULL");
             return Task.CompletedTask;
         }
     }

@@ -16,20 +16,20 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
         private readonly IMetaFieldsValueRepository _repository;
         private readonly IVariationContextAccessor _variationContextAccessor;
         private readonly DistributedCache _distributedCache;
-        private readonly IAppPolicyCache _cache;
+        private readonly AppCaches _cache;
 
         public MetaFieldsValueService(IMetaFieldsValueRepository repository, IVariationContextAccessor variationContextAccessor, AppCaches appCaches, DistributedCache distributedCache)
         {
             _repository = repository;
             _variationContextAccessor = variationContextAccessor;
             _distributedCache = distributedCache;
-            _cache = appCaches.RuntimeCache;
+            _cache = appCaches;
         }
 
         public Dictionary<string, object> GetUserValues(int nodeId, string culture = null)
         {
             var foundCulture = culture.IfNullOrWhiteSpace(GetCulture());
-            return _cache.GetCacheItem($"{CacheConstants.SeoValue}{nodeId}_{foundCulture}", () => _repository.GetAllValues(nodeId, foundCulture), TimeSpan.FromMinutes(30));
+            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoValue}{nodeId}_{foundCulture}", () => _repository.GetAllValues(nodeId, foundCulture), TimeSpan.FromMinutes(30));
         }
 
         public void AddValues(int nodeId, Dictionary<string, object> values, string culture = null)
