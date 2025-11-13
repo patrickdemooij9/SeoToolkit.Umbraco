@@ -20,7 +20,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
                 {
                     Database.Execute("DROP INDEX IX_SeoToolkitOldUrl");
                     Database.Execute("DROP INDEX IX_SeoToolkitRegex");
-                    Database.Execute("ALTER TABLE SeoToolkitRedirects ADD COLUMN CreatedBy INT NULL");
+                    Database.Execute("ALTER TABLE SeoToolkitRedirects ADD CreatedBy INT NULL");
                     Database.Execute("UPDATE SeoToolkitRedirects SET CreatedBy = -1");
 
                     MigrationHelper.RecreateTable<RedirectEntity>(Database, Create, Sql(), "SeoToolkitRedirects");
