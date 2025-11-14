@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using SeoToolkit.Umbraco.Common.Core.Migrations;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Database;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations;
@@ -19,7 +20,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
         {
             if (ColumnExists("SeoToolkitSitemapPageType", "ContentTypeGuid")) return Task.CompletedTask;
 
-            Database.Execute("ALTER TABLE SeoToolkitSitemapPageType ADD COLUMN ContentTypeGuid UNIQUEIDENTIFIER NULL");
+            Database.Execute("ALTER TABLE SeoToolkitSitemapPageType ADD ContentTypeGuid UNIQUEIDENTIFIER NULL");
             foreach (var entry in Database.Fetch<SitemapPageTypeEntity>(Sql().SelectAll().From<SitemapPageTypeEntity>()))
             {
                 var contentType = _contentTypeService.Get(entry.ContentTypeId);
@@ -31,11 +32,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
 
             if (DatabaseType == NPoco.DatabaseType.SQLite)
             {
-                Database.Execute("ALTER TABLE SeoToolkitSitemapPageType RENAME TO old_SeoToolkitSitemapPageType;");
-                Create.Table<SitemapPageTypeEntity>().Do();
-                Database.InsertBulk(Database.Fetch<SitemapPageTypeEntity>(Sql()
-                    .SelectAll()
-                    .From("old_SeoToolkitSitemapPageType")));
+                MigrationHelper.RecreateTable<SitemapPageTypeEntity>(Database, Create, Sql(), "SeoToolkitSitemapPageType");
                 return Task.CompletedTask;
             }
 

@@ -51,7 +51,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 
         public DocumentTypeSettingsDto Get(Guid id)
         {
-            return _cache.GetCacheItem($"{CacheConstants.DocumentTypeSettings}{id}_Get", () =>
+            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.DocumentTypeSettings}{id}_Get", () =>
             {
                 return new CachedNullableModel<DocumentTypeSettingsDto>(_repository.Get(id));
             }, TimeSpan.FromMinutes(30)).Model;

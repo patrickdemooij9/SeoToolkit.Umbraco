@@ -60,7 +60,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
         public Dictionary<string, object> GetUserValues(Guid nodeId, string culture = null)
         {
             var foundCulture = culture.IfNullOrWhiteSpace(GetCulture());
-            return _cache.GetCacheItem($"{CacheConstants.SeoValue}{nodeId}_{foundCulture}", () => _repository.GetAllValues(nodeId, foundCulture), TimeSpan.FromMinutes(30));
+            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoValue}{nodeId}_{foundCulture}", () => _repository.GetAllValues(nodeId, foundCulture), TimeSpan.FromMinutes(30));
         }
 
         public void AddValues(Guid nodeId, Dictionary<string, object> values, string culture = null)
