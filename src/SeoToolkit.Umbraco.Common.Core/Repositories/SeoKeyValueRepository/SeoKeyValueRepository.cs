@@ -1,4 +1,5 @@
-﻿using SeoToolkit.Umbraco.Common.Core.Models.Database;
+﻿using System;
+using SeoToolkit.Umbraco.Common.Core.Models.Database;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Extensions;
 
@@ -13,7 +14,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository
             _scopeProvider = scopeProvider;
         }
 
-        public string? Get(string key, int? domainId)
+        public string? Get(string key, Guid? domainId)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
 
@@ -34,7 +35,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository
             return entity?.Value;
         }
 
-        public void Set(string key, string value, int? domainId)
+        public void Set(string key, string value, Guid? domainId)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
 
@@ -54,7 +55,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository
             scope.Database.Save(existingEntity);
         }
 
-        public void Delete(string key, int? domainId)
+        public void Delete(string key, Guid? domainId)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
 

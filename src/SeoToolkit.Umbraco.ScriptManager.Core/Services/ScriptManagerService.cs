@@ -9,6 +9,7 @@ using SeoToolkit.Umbraco.ScriptManager.Core.Caching;
 using SeoToolkit.Umbraco.ScriptManager.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.ScriptManager.Core.Config.Models;
+using System;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 {
@@ -58,7 +59,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
             ClearCache();
         }
 
-        public IEnumerable<Script> GetAll(int? domainId)
+        public IEnumerable<Script> GetAll(Guid? domainId)
         {
             return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}GetAll_{domainId}", () =>
             {
@@ -71,7 +72,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
             return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}Get_{id}", () => _scriptRepository.Get(id));
         }
 
-        public ScriptRenderModel GetRender(int? domainId)
+        public ScriptRenderModel GetRender(Guid? domainId)
         {
             if (_settings.GetSettings().DisableRenderCaching)
                 return DoGetRender(domainId);
@@ -79,7 +80,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
             return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}GetRender_{domainId}", () => DoGetRender(domainId));
         }
 
-        private ScriptRenderModel DoGetRender(int? domainId)
+        private ScriptRenderModel DoGetRender(Guid? domainId)
         {
             var renderModel = new ScriptRenderModel();
             foreach (var script in GetAll(domainId))

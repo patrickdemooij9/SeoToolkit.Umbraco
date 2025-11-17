@@ -8,6 +8,7 @@ using SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels;
 using SeoToolkit.Umbraco.Common.Core.Controllers;
 using Umbraco.Cms.Api.Common.Attributes;
 using Umbraco.Cms.Web.Common.Routing;
+using System;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 {
@@ -56,7 +57,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 
         [HttpGet("scripts")]
         [ProducesResponseType(typeof(ScriptListViewModel[]), 200)]
-        public IActionResult GetAllScripts(int? domainId)
+        public IActionResult GetAllScripts(Guid? domainId)
         {
             return Ok(_scriptManagerService.GetAll(domainId).Select(it => new ScriptListViewModel(it)));
 

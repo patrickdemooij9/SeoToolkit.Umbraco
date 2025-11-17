@@ -21,6 +21,6 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Models.Database
 
         [Column("DomainId")]
         [NullSetting(NullSetting = NullSettings.Null)]
-        public int? DomainId { get; set; }
+        public Guid? DomainId { get; set; }
     }
 }

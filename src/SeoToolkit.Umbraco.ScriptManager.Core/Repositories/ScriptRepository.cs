@@ -66,7 +66,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
             }
         }
 
-        public IEnumerable<Script> GetAll(int? domainId)
+        public IEnumerable<Script> GetAll(Guid? domainId)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
             {

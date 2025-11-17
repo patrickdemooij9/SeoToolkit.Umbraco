@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Business
@@ -10,6 +11,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Business
         public IScriptDefinition Definition { get; set; }
         public int[] DocumentTypeIds { get; set; }
         public Dictionary<string, string> Config { get; set; }
-        public int? DomainId { get; set; }
+        public Guid? DomainId { get; set; }
     }
 }

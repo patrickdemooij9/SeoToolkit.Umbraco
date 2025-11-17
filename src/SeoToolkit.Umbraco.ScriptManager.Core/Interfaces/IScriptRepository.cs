@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces
@@ -10,6 +11,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces
         void Delete(Script script);
 
         Script Get(int id);
-        IEnumerable<Script> GetAll(int? domainId);
+        IEnumerable<Script> GetAll(Guid? domainId);
     }
 }

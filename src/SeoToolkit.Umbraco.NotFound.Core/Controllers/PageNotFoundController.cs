@@ -18,14 +18,14 @@ namespace SeoToolkit.Umbraco.NotFound.Core.Controllers
         }
 
         [HttpPost("notFound")]
-        public void SetKeyValue(Guid? data, int? domainId)
+        public void SetKeyValue(Guid? data, Guid? domainId)
         {
             _pageNotFoundService.SetPageNotFound(data, domainId);
         }
 
         [HttpGet("notFound")]
         [ProducesResponseType(typeof(Guid), 200)]
-        public Guid? GetValue(int? domainId)
+        public Guid? GetValue(Guid? domainId)
         {
             return _pageNotFoundService.GetPageNotFound(domainId);
         }

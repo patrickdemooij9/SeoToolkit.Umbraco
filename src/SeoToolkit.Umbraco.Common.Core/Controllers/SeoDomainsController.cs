@@ -3,6 +3,7 @@ using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Models.Business;
 using SeoToolkit.Umbraco.Common.Core.Models.ViewModels;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Services;
@@ -27,16 +28,16 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
 
         [HttpGet("get")]
         [ProducesResponseType(typeof(SeoDomainCollection), 200)]
-        public IActionResult Get(int domainId)
+        public IActionResult Get(Guid domainId)
         {
             return Ok(_seoDomainsService.GetAll().FirstOrDefault(it => it.Id == domainId));
         }
 
         [HttpGet("getPredefined")]
         [ProducesResponseType(typeof(SeoDomainCollection), 200)]
-        public IActionResult GetPredefined(int umbracoDomainId)
+        public async Task<IActionResult> GetPredefined(Guid umbracoDomainId)
         {
-            var umbracoDomain = _domainService.GetById(umbracoDomainId);
+            var umbracoDomain = (await _domainService.GetAllAsync(false)).FirstOrDefault(it => it.Key == umbracoDomainId);
             if (umbracoDomain is null) return NotFound();
 
             return Ok(new SeoDomainCollection
@@ -55,7 +56,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
 
         [HttpDelete("delete")]
         [ProducesResponseType(200)]
-        public IActionResult Delete(int domainId)
+        public IActionResult Delete(Guid domainId)
         {
             _seoDomainsService.Delete(domainId);
             return Ok();

@@ -29,24 +29,24 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
             return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoDomains}GetAll", _seoDomainsRepository.GetAll, TimeSpan.FromMinutes(10)) ?? [];
         }
 
-        public SeoDomainCollection? Get(int id)
+        public SeoDomainCollection? Get(Guid id)
         {
             return GetAll().FirstOrDefault(it => it.Id == id);
         }
 
-        public SeoDomainCollection? GetByDomain(int umbracoDomainId)
+        public SeoDomainCollection? GetByDomain(Guid umbracoDomainId)
         {
             return GetAll().FirstOrDefault(it => it.DomainIds.Contains(umbracoDomainId));
         }
 
-        public int Save(SeoDomainCollection collection)
+        public Guid Save(SeoDomainCollection collection)
         {
             var id =  _seoDomainsRepository.Save(collection);
             _distributedCache.RefreshAll(SeoDomainsCacheRefresher.CacheRefreshGuid);
             return id;
         }
 
-        public void Delete(int domainId)
+        public void Delete(Guid domainId)
         {
             _seoDomainsRepository.Delete(domainId);
             _distributedCache.RefreshAll(SeoDomainsCacheRefresher.CacheRefreshGuid);

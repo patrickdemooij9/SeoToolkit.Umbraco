@@ -8,6 +8,6 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Models.Business
         public int Id { get; set; }
         public Guid Key { get; set; }
         public string Content { get; set; }
-        public int? DomainId { get; set; }
+        public Guid? DomainId { get; set; }
     }
 }

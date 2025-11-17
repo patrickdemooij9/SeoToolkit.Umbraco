@@ -1,4 +1,5 @@
-﻿using NPoco;
+﻿using System;
+using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace SeoToolkit.Umbraco.Common.Core.Models.Database
@@ -9,7 +10,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Models.Database
     {
         [Column("ContentTypeId")]
         [PrimaryKeyColumn(AutoIncrement = false)]
-        public int ContentTypeId { get; set; }
+        public Guid ContentTypeId { get; set; }
 
         [Column("Enabled")]
         public bool Enabled { get; set; }

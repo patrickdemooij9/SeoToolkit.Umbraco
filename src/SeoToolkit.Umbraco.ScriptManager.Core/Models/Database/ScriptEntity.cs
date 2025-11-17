@@ -1,4 +1,5 @@
-﻿using NPoco;
+﻿using System;
+using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Database
@@ -24,6 +25,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Database
 
         [Column("DomainId")]
         [NullSetting(NullSetting = NullSettings.Null)]
-        public int? DomainId { get; set; }
+        public Guid? DomainId { get; set; }
     }
 }

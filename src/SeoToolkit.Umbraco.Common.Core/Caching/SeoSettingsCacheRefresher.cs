@@ -17,7 +17,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Caching
         {
         }
 
-        public override void Refresh(int id)
+        public override void Refresh(Guid id)
         {
             AppCaches.RuntimeCache.ClearByKey($"{CacheConstants.SeoSettings}{id}");
             base.Refresh(id);

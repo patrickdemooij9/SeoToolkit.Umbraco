@@ -1,13 +1,14 @@
-﻿using SeoToolkit.Umbraco.Common.Core.Models.Business;
+﻿using System;
+using SeoToolkit.Umbraco.Common.Core.Models.Business;
 
 namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
 {
     public interface ISeoDomainsRepository
     {
         SeoDomainCollection[] GetAll();
-        SeoDomainCollection? Get(int id);
+        SeoDomainCollection? Get(Guid id);
 
-        int Save(SeoDomainCollection collection);
-        void Delete(int domainId);
+        Guid Save(SeoDomainCollection collection);
+        void Delete(Guid domainId);
     }
 }

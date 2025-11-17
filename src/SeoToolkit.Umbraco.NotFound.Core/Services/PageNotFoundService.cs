@@ -12,7 +12,7 @@ namespace SeoToolkit.Umbraco.NotFound.Core.Services
             _seoKeyValueRepository = seoKeyValueRepository;
         }
 
-        public Guid? GetPageNotFound(int? domainId)
+        public Guid? GetPageNotFound(Guid? domainId)
         {
             var value = _seoKeyValueRepository.Get(NotFoundConstants.NotFoundKeyValueKey, domainId);
             if (Guid.TryParse(value, out var pageNotFound))
@@ -22,7 +22,7 @@ namespace SeoToolkit.Umbraco.NotFound.Core.Services
             return null;
         }
 
-        public void SetPageNotFound(Guid? nodeId, int? domainId)
+        public void SetPageNotFound(Guid? nodeId, Guid? domainId)
         {
             if (nodeId.HasValue)
             {
