@@ -27,7 +27,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 
         [HttpGet("script")]
         [ProducesResponseType(typeof(ScriptDetailViewModel), 200)]
-        public IActionResult Get(int id)
+        public IActionResult Get(Guid id)
         {
             var script = _scriptManagerService.Get(id);
             if (script is null)
@@ -46,6 +46,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
             var script = new Script
             {
                 Id = postModel.Id,
+                Key = postModel.Key,
                 Name = postModel.Name,
                 Definition = definition,
                 Config = postModel.Fields.ToDictionary(it => it.Key, it => it.Value),

@@ -33,8 +33,9 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 
         public Script Save(Script script)
         {
-            if (script.Id == 0)
+            if (script.Key is null)
             {
+                script.Key = Guid.NewGuid();
                 script = _scriptRepository.Add(script);
             }
             else
@@ -59,6 +60,19 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
             ClearCache();
         }
 
+        public void Delete(Guid[] ids)
+        {
+            foreach (var id in ids)
+            {
+                var script = Get(id);
+                if (script is null) continue;
+
+                _scriptRepository.Delete(script);
+            }
+
+            ClearCache();
+        }
+
         public IEnumerable<Script> GetAll(Guid? domainId)
         {
             return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}GetAll_{domainId}", () =>
@@ -68,6 +82,11 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
         }
 
         public Script Get(int id)
+        {
+            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}Get_{id}", () => _scriptRepository.Get(id));
+        }
+
+        public Script Get(Guid id)
         {
             return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}Get_{id}", () => _scriptRepository.Get(id));
         }

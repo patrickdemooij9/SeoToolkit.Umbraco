@@ -24,65 +24,64 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
 
         public Script Add(Script script)
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                var entity = ToEntity(script);
-                scope.Database.Insert(entity);
-                scope.Complete();
+            using var scope = _scopeProvider.CreateScope();
+            var entity = ToEntity(script);
+            scope.Database.Insert(entity);
+            scope.Complete();
 
-                return Get(entity.Id);
-            }
+            return Get(entity.Id);
         }
 
         public Script Update(Script script)
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                var entity = ToEntity(script);
-                scope.Database.Update(entity);
-                scope.Complete();
+            using var scope = _scopeProvider.CreateScope();
+            var entity = ToEntity(script);
+            scope.Database.Update(entity);
+            scope.Complete();
 
-                return Get(entity.Id);
-            }
+            return Get(entity.Id);
         }
 
         public void Delete(Script script)
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                scope.Database.Delete(ToEntity(script));
-                scope.Complete();
-            }
+            using var scope = _scopeProvider.CreateScope();
+            scope.Database.Delete(ToEntity(script));
+            scope.Complete();
         }
 
         public Script Get(int id)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                return ToModel(scope.Database.FirstOrDefault<ScriptEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<ScriptEntity>()
-                    .Where<ScriptEntity>(it => it.Id == id)));
-            }
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            return ToModel(scope.Database.FirstOrDefault<ScriptEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<ScriptEntity>()
+                .Where<ScriptEntity>(it => it.Id == id)));
+        }
+
+        public Script Get(Guid id)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            return ToModel(scope.Database.FirstOrDefault<ScriptEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<ScriptEntity>()
+                .Where<ScriptEntity>(it => it.Key == id)));
         }
 
         public IEnumerable<Script> GetAll(Guid? domainId)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var sql = scope.SqlContext.Sql()
+                .SelectAll()
+                .From<ScriptEntity>();
+            if (domainId.HasValue)
             {
-                var sql = scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<ScriptEntity>();
-                if (domainId.HasValue)
-                {
-                    sql = sql.Where<ScriptEntity>(it => it.DomainId == domainId.Value);
-                }
-                else
-                {
-                    sql = sql.Where<ScriptEntity>(it => it.DomainId == null);
-                }
-                return scope.Database.Fetch<ScriptEntity>(sql).Select(ToModel);
+                sql = sql.Where<ScriptEntity>(it => it.DomainId == domainId.Value);
             }
+            else
+            {
+                sql = sql.Where<ScriptEntity>(it => it.DomainId == null);
+            }
+            return scope.Database.Fetch<ScriptEntity>(sql).Select(ToModel);
         }
 
         //TODO: Probably move to a mapper
@@ -91,6 +90,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
             return new ScriptEntity
             {
                 Id = script.Id,
+                Key = script.Key.Value,
                 Name = script.Name,
                 DefinitionAlias = script.Definition?.Alias,
                 Config = JsonSerializer.Serialize(script.Config),
@@ -103,6 +103,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
             return new Script
             {
                 Id = entity.Id,
+                Key = entity.Key,
                 Name = entity.Name,
                 Definition = _scriptDefinitionCollection.Get(entity.DefinitionAlias),
                 Config = JsonSerializer.Deserialize<Dictionary<string, string>>(entity.Config),

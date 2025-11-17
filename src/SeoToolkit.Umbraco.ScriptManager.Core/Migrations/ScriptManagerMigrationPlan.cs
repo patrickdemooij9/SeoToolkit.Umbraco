@@ -12,6 +12,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Migrations
         {
             To<ScriptManagerInitialMigration>("state-1");
             To<ScriptManagerDomainMigration>("state-2");
+            To<ScriptManagerIdToGuidMigration>("state-3");
         }
     }
 }

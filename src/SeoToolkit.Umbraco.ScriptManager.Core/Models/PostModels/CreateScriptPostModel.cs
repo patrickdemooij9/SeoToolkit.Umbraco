@@ -8,6 +8,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.PostModels
     {
         public int Id { get; set; }
 
+        public Guid? Key { get; set; }
+
         [Required]
         public string Name { get; set; }
 

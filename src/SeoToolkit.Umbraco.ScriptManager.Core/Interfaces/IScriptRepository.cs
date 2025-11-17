@@ -10,7 +10,9 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces
         Script Update(Script script);
         void Delete(Script script);
 
+        [Obsolete("Use Get(Guid id) method instead")]
         Script Get(int id);
+        Script Get(Guid id);
         IEnumerable<Script> GetAll(Guid? domainId);
     }
 }
