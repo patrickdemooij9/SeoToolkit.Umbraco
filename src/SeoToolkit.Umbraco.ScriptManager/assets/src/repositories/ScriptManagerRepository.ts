@@ -26,13 +26,13 @@ export default class ScriptManagerRepository
   async requestCollection(
     _filter?: UmbCollectionFilterModel | undefined
   ): Promise<UmbRepositoryResponse<UmbPagedModel<any>>> {
-    let domainId: number | undefined = undefined;
+    let domainId: string | undefined = undefined;
 
     const lastSegment = window.location.href.split("/").pop();
     if (lastSegment && lastSegment.includes("~")) {
       const parts = lastSegment.split("~");
       if (parts.length === 2) {
-        domainId = Number.parseInt(parts[1]);
+        domainId = parts[1];
       }
     }
 
@@ -50,11 +50,11 @@ export default class ScriptManagerRepository
     return result;
   }
 
-  async getScript(id: number) {
+  async getScript(id: string) {
     return this.#scriptManagerSource.getScript(id);
   }
 
-  async getScripts(domainId?: number) {
+  async getScripts(domainId?: string) {
     return this.#scriptManagerSource.getScripts(domainId);
   }
 
@@ -62,7 +62,7 @@ export default class ScriptManagerRepository
     return this.#scriptManagerSource.saveScript(model);
   }
 
-  async deleteScripts(ids: number[]) {
+  async deleteScripts(ids: string[]) {
     return this.#scriptManagerSource.deleteScripts(ids);
   }
 

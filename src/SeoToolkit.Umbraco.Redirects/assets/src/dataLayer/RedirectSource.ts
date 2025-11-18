@@ -39,7 +39,7 @@ export class RedirectSource {
     );
   }
 
-  async get(id: number) {
+  async get(id: string) {
     return await tryExecute(
       this.#host,
       BackofficeSeoToolkitRedirectsService.getUmbracoSeoToolkitRedirectsRedirect({
@@ -59,7 +59,7 @@ export class RedirectSource {
     );
   }
 
-  async delete(ids: number[]) {
+  async delete(ids: string[]) {
     await tryExecute(
       this.#host,
       BackofficeSeoToolkitRedirectsService.deleteUmbracoSeoToolkitRedirectsRedirect({

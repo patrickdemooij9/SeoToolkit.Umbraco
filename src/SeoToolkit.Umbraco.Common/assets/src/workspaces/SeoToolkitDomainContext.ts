@@ -23,7 +23,6 @@ export default class SeoToolkitDomainContext
   routes = new UmbWorkspaceRouteManager(this);
 
   #domain = new UmbObjectState<SeoDomainCollection>({
-    id: 0,
     name: "",
     domainIds: [],
     settings: {},
@@ -51,7 +50,6 @@ export default class SeoToolkitDomainContext
         component: SeoToolkitDomainViewElement,
         setup: () => {
           this.#domain.setValue({
-            id: 0,
             name: '',
             domainIds: [],
             settings: {}
@@ -66,9 +64,9 @@ export default class SeoToolkitDomainContext
           if (info.match.params.unique.includes("~")) {
             const parts = info.match.params.unique.split("~");
             if (parts.length === 2) {
-              this.load(Number.parseInt(parts[1]));
+              this.load(parts[1]);
             } else if (parts.length === 3) {
-              this.loadUmbracoDomain(Number.parseInt(parts[2]));
+              this.loadUmbracoDomain(parts[2]);
             }
           }
         },
@@ -76,13 +74,13 @@ export default class SeoToolkitDomainContext
     ]);
   }
 
-  loadUmbracoDomain(domainId: number) {
+  loadUmbracoDomain(domainId: string) {
     this.repository.getPredefined(domainId).then((resp) => {
       this.#domain.setValue(resp.data);
     })
   }
 
-  load(domainId: number) {
+  load(domainId: string) {
     this.repository.get(domainId).then((resp) => {
       this.#domain.setValue(resp.data);
     });
@@ -95,7 +93,7 @@ export default class SeoToolkitDomainContext
   }
 
   async save() {
-    const isNew = this.#domain.getValue().id === 0;
+    const isNew = this.#domain.getValue() === undefined;
     const id = (await new SeoToolkitDomainRepository(this).saveDomain(this.#domain.getValue())).data;
     this.updateDomain({
       id: id,
@@ -132,7 +130,7 @@ export default class SeoToolkitDomainContext
   }
 
   async delete() {
-    await new SeoToolkitDomainRepository(this).delete(this.#domain.getValue().id);
+    await new SeoToolkitDomainRepository(this).delete(this.#domain.getValue().id!);
 
     const actionEventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
     if (!actionEventContext) throw new Error('Action Event Context is not available');

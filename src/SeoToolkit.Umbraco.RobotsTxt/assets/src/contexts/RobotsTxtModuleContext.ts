@@ -27,7 +27,7 @@ export default class RobotsTxtModuleContext
 
   routes = new UmbWorkspaceRouteManager(this);
 
-  #domainId : number | undefined = undefined;
+  #domainId : string | undefined = undefined;
 
   #content = new UmbStringState("");
   public readonly content = this.#content.asObservable();
@@ -54,7 +54,7 @@ export default class RobotsTxtModuleContext
             if (info.match.params.unique.includes('~')){
                 const parts = info.match.params.unique.split('~');
                 if(parts.length === 2){
-                    this.#domainId = Number.parseInt(parts[1]);
+                    this.#domainId = parts[1];
                 }
             }
             this.load();

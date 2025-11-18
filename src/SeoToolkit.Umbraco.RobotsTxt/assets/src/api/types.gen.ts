@@ -11,11 +11,13 @@ export type CreateAuditPostModel = {
 
 export type CreateScriptPostModel = {
     id: number;
+    key?: string | null;
     name: string;
     definitionAlias: string;
     fields?: {
         [key: string]: string | null;
     } | null;
+    domainId?: string | null;
 };
 
 export type DeleteAuditsPostModel = {
@@ -23,11 +25,11 @@ export type DeleteAuditsPostModel = {
 };
 
 export type DeleteRedirectsPostModel = {
-    ids?: Array<number> | null;
+    ids?: Array<string> | null;
 };
 
 export type DeleteScriptPostModel = {
-    ids?: Array<number> | null;
+    ids?: Array<string> | null;
 };
 
 export type DocumentTypeSettingsContentViewModel = {
@@ -117,7 +119,7 @@ export type PagedSeoToolkitTreeItemApiModel = {
 };
 
 export type RedirectListViewModel = {
-    id: number;
+    key: string;
     isEnabled: boolean;
     domain?: string | null;
     oldUrl?: string | null;
@@ -128,6 +130,7 @@ export type RedirectListViewModel = {
 
 export type RedirectViewModel = {
     id: number;
+    key: string;
     domain?: number | null;
     customDomain?: string | null;
     isEnabled: boolean;
@@ -143,7 +146,7 @@ export type RedirectViewModel = {
 export type RobotsTxtSavePostModel = {
     skipValidation: boolean;
     content?: string | null;
-    domainId?: number | null;
+    domainId?: string | null;
 };
 
 export type RobotsTxtSaveResponseModel = {
@@ -158,6 +161,7 @@ export type RobotsTxtValidationViewModel = {
 
 export type SaveRedirectPostModel = {
     id: number;
+    key?: string | null;
     domain?: number | null;
     customDomain?: string | null;
     isEnabled: boolean;
@@ -177,11 +181,13 @@ export type ScriptDefinitionViewModel = {
 
 export type ScriptDetailViewModel = {
     id: number;
+    key?: string | null;
     name?: string | null;
     definitionAlias?: string | null;
     config?: {
         [key: string]: string | null;
     } | null;
+    domainId?: string | null;
 };
 
 export type ScriptField = {
@@ -192,7 +198,7 @@ export type ScriptField = {
 };
 
 export type ScriptListViewModel = {
-    id: number;
+    id: string;
     name?: string | null;
     definitionName?: string | null;
 };
@@ -204,12 +210,22 @@ export type SeoDisplayViewModel = {
 };
 
 export type SeoDomainCollection = {
-    id: number;
+    id?: string | null;
     name: string;
-    domainIds: Array<number>;
+    domainIds: Array<string>;
     settings: {
         [key: string]: string;
     };
+};
+
+export type SeoDomainConfigViewModel = {
+    domains: Array<UmbracoDomainModel>;
+    moduleSettings: Array<SeoDomainModuleSettingViewModel>;
+};
+
+export type SeoDomainModuleSettingViewModel = {
+    id: string;
+    name: string;
 };
 
 export type SeoFieldEditorViewModel = {
@@ -277,6 +293,7 @@ export type SeoToolkitTreeItemApiModel = {
     id: string;
     name: string;
     parentId?: string | null;
+    isDraft: boolean;
 };
 
 export type SiteAuditCheckViewModel = {
@@ -338,6 +355,26 @@ export type SitemapPageTypeSettingsViewModel = {
 
 export type StopAuditPostModel = {
     id: number;
+};
+
+export type UmbracoDomainModel = {
+    id: number;
+    key: string;
+    createDate: string;
+    updateDate: string;
+    deleteDate?: string | null;
+    readonly hasIdentity: boolean;
+    domainName: string;
+    readonly isWildcard: boolean;
+    languageId?: number | null;
+    languageIsoCode?: string | null;
+    rootContentId?: number | null;
+    sortOrder: number;
+};
+
+export type UpdateStatusCodesRedirectPostModel = {
+    redirectIds?: Array<string> | null;
+    redirectCode: number;
 };
 
 export type GetUmbracoSeoToolkitMetaFieldsImagePreviewData = {
@@ -444,7 +481,9 @@ export type PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponses =
 export type GetUmbracoSeoToolkitNotFoundNotFoundData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        domainId?: string;
+    };
     url: '/umbraco/seoToolkitNotFound/notFound';
 };
 
@@ -462,6 +501,7 @@ export type PostUmbracoSeoToolkitNotFoundNotFoundData = {
     path?: never;
     query?: {
         data?: string;
+        domainId?: string;
     };
     url: '/umbraco/seoToolkitNotFound/notFound';
 };
@@ -532,7 +572,7 @@ export type GetUmbracoSeoToolkitRedirectsRedirectData = {
     body?: never;
     path?: never;
     query?: {
-        id?: number;
+        id?: string;
     };
     url: '/umbraco/seoToolkitRedirects/redirect';
 };
@@ -582,6 +622,20 @@ export type GetUmbracoSeoToolkitRedirectsRedirectsResponses = {
 
 export type GetUmbracoSeoToolkitRedirectsRedirectsResponse = GetUmbracoSeoToolkitRedirectsRedirectsResponses[keyof GetUmbracoSeoToolkitRedirectsRedirectsResponses];
 
+export type PostUmbracoSeoToolkitRedirectsUpdateStatusCodesData = {
+    body?: UpdateStatusCodesRedirectPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitRedirects/updateStatusCodes';
+};
+
+export type PostUmbracoSeoToolkitRedirectsUpdateStatusCodesResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type PostUmbracoSeoToolkitRedirectsValidateData = {
     body?: never;
     path?: never;
@@ -617,7 +671,7 @@ export type GetUmbracoSeoToolkitRobotsTxtData = {
     body?: never;
     path?: never;
     query?: {
-        domainId?: number;
+        domainId?: string;
     };
     url: '/umbraco/seoToolkit/robotsTxt';
 };
@@ -683,7 +737,7 @@ export type GetUmbracoSeoToolkitScriptManagerScriptData = {
     body?: never;
     path?: never;
     query?: {
-        id?: number;
+        id?: string;
     };
     url: '/umbraco/seoToolkitScriptManager/script';
 };
@@ -716,7 +770,9 @@ export type PostUmbracoSeoToolkitScriptManagerScriptResponse = PostUmbracoSeoToo
 export type GetUmbracoSeoToolkitScriptManagerScriptsData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        domainId?: string;
+    };
     url: '/umbraco/seoToolkitScriptManager/scripts';
 };
 
@@ -928,6 +984,74 @@ export type GetUmbracoSeoToolkitTreeInfoRootResponses = {
 
 export type GetUmbracoSeoToolkitTreeInfoRootResponse = GetUmbracoSeoToolkitTreeInfoRootResponses[keyof GetUmbracoSeoToolkitTreeInfoRootResponses];
 
+export type GetUmbracoSeoToolkitDomainsConfigData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitDomains/config';
+};
+
+export type GetUmbracoSeoToolkitDomainsConfigResponses = {
+    /**
+     * OK
+     */
+    200: SeoDomainConfigViewModel;
+};
+
+export type GetUmbracoSeoToolkitDomainsConfigResponse = GetUmbracoSeoToolkitDomainsConfigResponses[keyof GetUmbracoSeoToolkitDomainsConfigResponses];
+
+export type DeleteUmbracoSeoToolkitDomainsDeleteData = {
+    body?: never;
+    path?: never;
+    query?: {
+        domainId?: string;
+    };
+    url: '/umbraco/seoToolkitDomains/delete';
+};
+
+export type DeleteUmbracoSeoToolkitDomainsDeleteResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetUmbracoSeoToolkitDomainsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        domainId?: string;
+    };
+    url: '/umbraco/seoToolkitDomains/get';
+};
+
+export type GetUmbracoSeoToolkitDomainsGetResponses = {
+    /**
+     * OK
+     */
+    200: SeoDomainCollection;
+};
+
+export type GetUmbracoSeoToolkitDomainsGetResponse = GetUmbracoSeoToolkitDomainsGetResponses[keyof GetUmbracoSeoToolkitDomainsGetResponses];
+
+export type GetUmbracoSeoToolkitDomainsGetPredefinedData = {
+    body?: never;
+    path?: never;
+    query?: {
+        umbracoDomainId?: string;
+    };
+    url: '/umbraco/seoToolkitDomains/getPredefined';
+};
+
+export type GetUmbracoSeoToolkitDomainsGetPredefinedResponses = {
+    /**
+     * OK
+     */
+    200: SeoDomainCollection;
+};
+
+export type GetUmbracoSeoToolkitDomainsGetPredefinedResponse = GetUmbracoSeoToolkitDomainsGetPredefinedResponses[keyof GetUmbracoSeoToolkitDomainsGetPredefinedResponses];
+
 export type PostUmbracoSeoToolkitDomainsSaveData = {
     body?: SeoDomainCollection;
     path?: never;
@@ -939,8 +1063,10 @@ export type PostUmbracoSeoToolkitDomainsSaveResponses = {
     /**
      * OK
      */
-    200: unknown;
+    200: number;
 };
+
+export type PostUmbracoSeoToolkitDomainsSaveResponse = PostUmbracoSeoToolkitDomainsSaveResponses[keyof PostUmbracoSeoToolkitDomainsSaveResponses];
 
 export type GetUmbracoSeoToolkitSettingsSeoSettingsData = {
     body?: never;

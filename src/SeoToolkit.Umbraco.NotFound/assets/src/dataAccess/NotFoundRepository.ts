@@ -11,11 +11,11 @@ export class NotFoundRepository extends UmbControllerBase {
     this.#source = new NotFoundSource(host);
   }
 
-  get(domainId?: number) {
+  get(domainId?: string) {
     return this.#source.get(domainId);
   }
 
-  save(data?: string, domainId?: number) {
+  save(data?: string, domainId?: string) {
     return this.#source.save(data, domainId);
   }
 }

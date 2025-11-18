@@ -39,13 +39,11 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 
         public void Save(Redirect redirect)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var entity = ToEntity(redirect);
-                scope.Database.Save(entity);
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entity = ToEntity(redirect);
+            scope.Database.Save(entity);
 
-                ClearCache(entity.Key);
-            }
+            ClearCache(entity.Key);
         }
 
         public void UpdateRedirectCodes(int[] ids, int redirectCode)

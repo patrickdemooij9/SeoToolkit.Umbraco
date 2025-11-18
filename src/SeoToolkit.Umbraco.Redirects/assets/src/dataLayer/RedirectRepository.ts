@@ -37,7 +37,8 @@ export default class RedirectRepository
       data: {
         total: data.data!.total,
         items: data.data!.items.map((item) => ({
-          unique: item.id.toString(),
+          id: item.key,
+          unique: item.key.toString(),
           entityType: "st-redirect",
           ...item,
         })),
@@ -46,7 +47,7 @@ export default class RedirectRepository
     return result;
   }
 
-  async get(unique: number): Promise<Redirect> {
+  async get(unique: string): Promise<Redirect> {
     const { data } = (await this.#source.get(unique));
 
     return {
@@ -60,7 +61,7 @@ export default class RedirectRepository
     await this.#source.save(redirect);
   }
 
-  async delete(ids: number[]) {
+  async delete(ids: string[]) {
     await this.#source.delete(ids);
   }
 

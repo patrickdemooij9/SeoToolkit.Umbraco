@@ -25,7 +25,7 @@ export default class NotFoundModuleWorkspaceContext
   #content = new UmbStringState("");
   public readonly content = this.#content.asObservable();
 
-  #domainId?: number;
+  #domainId?: string;
 
   constructor(host: UmbControllerHost) {
     super(host);
@@ -43,7 +43,7 @@ export default class NotFoundModuleWorkspaceContext
           if (info.match.params.unique.includes("~")) {
             const parts = info.match.params.unique.split("~");
             if (parts.length === 2) {
-              this.#domainId = Number.parseInt(parts[1]);
+              this.#domainId = parts[1];
             }
           }
           this.load();

@@ -48,7 +48,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         }
 
         [HttpPost("save")]
-        [ProducesResponseType(typeof(int), 200)]
+        [ProducesResponseType(typeof(string), 200)]
         public IActionResult Save(SeoDomainCollection collection)
         {
             return Ok(_seoDomainsService.Save(collection));

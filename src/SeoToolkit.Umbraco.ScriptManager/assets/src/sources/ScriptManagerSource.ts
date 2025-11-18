@@ -10,7 +10,7 @@ export class ScriptManagerSource {
         this.#host = host;
     }
 
-    async getScript(id: number){
+    async getScript(id: string){
         return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerScript({
             query: {
                 id: id
@@ -18,7 +18,7 @@ export class ScriptManagerSource {
         }));
     }
 
-    async getScripts(domainId?: number): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitScriptManagerScriptsResponse>>{
+    async getScripts(domainId?: string): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitScriptManagerScriptsResponse>>{
         return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerScripts({
             query: {
                 domainId
@@ -38,7 +38,7 @@ export class ScriptManagerSource {
         }));
     }
 
-    async deleteScripts(ids: number[]){
+    async deleteScripts(ids: string[]){
         return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.deleteUmbracoSeoToolkitScriptManagerScript({
             body: {
                 ids: ids

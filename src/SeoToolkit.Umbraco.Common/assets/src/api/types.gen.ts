@@ -11,12 +11,13 @@ export type CreateAuditPostModel = {
 
 export type CreateScriptPostModel = {
     id: number;
+    key?: string | null;
     name: string;
     definitionAlias: string;
     fields?: {
         [key: string]: string | null;
     } | null;
-    domainId?: number | null;
+    domainId?: string | null;
 };
 
 export type DeleteAuditsPostModel = {
@@ -24,11 +25,11 @@ export type DeleteAuditsPostModel = {
 };
 
 export type DeleteRedirectsPostModel = {
-    ids?: Array<number> | null;
+    ids?: Array<string> | null;
 };
 
 export type DeleteScriptPostModel = {
-    ids?: Array<number> | null;
+    ids?: Array<string> | null;
 };
 
 export type DocumentTypeSettingsContentViewModel = {
@@ -118,7 +119,7 @@ export type PagedSeoToolkitTreeItemApiModel = {
 };
 
 export type RedirectListViewModel = {
-    id: number;
+    key: string;
     isEnabled: boolean;
     domain?: string | null;
     oldUrl?: string | null;
@@ -129,6 +130,7 @@ export type RedirectListViewModel = {
 
 export type RedirectViewModel = {
     id: number;
+    key: string;
     domain?: number | null;
     customDomain?: string | null;
     isEnabled: boolean;
@@ -144,7 +146,7 @@ export type RedirectViewModel = {
 export type RobotsTxtSavePostModel = {
     skipValidation: boolean;
     content?: string | null;
-    domainId?: number | null;
+    domainId?: string | null;
 };
 
 export type RobotsTxtSaveResponseModel = {
@@ -159,6 +161,7 @@ export type RobotsTxtValidationViewModel = {
 
 export type SaveRedirectPostModel = {
     id: number;
+    key?: string | null;
     domain?: number | null;
     customDomain?: string | null;
     isEnabled: boolean;
@@ -178,12 +181,13 @@ export type ScriptDefinitionViewModel = {
 
 export type ScriptDetailViewModel = {
     id: number;
+    key?: string | null;
     name?: string | null;
     definitionAlias?: string | null;
     config?: {
         [key: string]: string | null;
     } | null;
-    domainId?: number | null;
+    domainId?: string | null;
 };
 
 export type ScriptField = {
@@ -194,7 +198,7 @@ export type ScriptField = {
 };
 
 export type ScriptListViewModel = {
-    id: number;
+    id: string;
     name?: string | null;
     definitionName?: string | null;
 };
@@ -206,9 +210,9 @@ export type SeoDisplayViewModel = {
 };
 
 export type SeoDomainCollection = {
-    id: number;
+    id?: string | null;
     name: string;
-    domainIds: Array<number>;
+    domainIds: Array<string>;
     settings: {
         [key: string]: string;
     };
@@ -369,7 +373,7 @@ export type UmbracoDomainModel = {
 };
 
 export type UpdateStatusCodesRedirectPostModel = {
-    redirectIds?: Array<number> | null;
+    redirectIds?: Array<string> | null;
     redirectCode: number;
 };
 
@@ -478,7 +482,7 @@ export type GetUmbracoSeoToolkitNotFoundNotFoundData = {
     body?: never;
     path?: never;
     query?: {
-        domainId?: number;
+        domainId?: string;
     };
     url: '/umbraco/seoToolkitNotFound/notFound';
 };
@@ -497,7 +501,7 @@ export type PostUmbracoSeoToolkitNotFoundNotFoundData = {
     path?: never;
     query?: {
         data?: string;
-        domainId?: number;
+        domainId?: string;
     };
     url: '/umbraco/seoToolkitNotFound/notFound';
 };
@@ -568,7 +572,7 @@ export type GetUmbracoSeoToolkitRedirectsRedirectData = {
     body?: never;
     path?: never;
     query?: {
-        id?: number;
+        id?: string;
     };
     url: '/umbraco/seoToolkitRedirects/redirect';
 };
@@ -667,7 +671,7 @@ export type GetUmbracoSeoToolkitRobotsTxtData = {
     body?: never;
     path?: never;
     query?: {
-        domainId?: number;
+        domainId?: string;
     };
     url: '/umbraco/seoToolkit/robotsTxt';
 };
@@ -733,7 +737,7 @@ export type GetUmbracoSeoToolkitScriptManagerScriptData = {
     body?: never;
     path?: never;
     query?: {
-        id?: number;
+        id?: string;
     };
     url: '/umbraco/seoToolkitScriptManager/script';
 };
@@ -767,7 +771,7 @@ export type GetUmbracoSeoToolkitScriptManagerScriptsData = {
     body?: never;
     path?: never;
     query?: {
-        domainId?: number;
+        domainId?: string;
     };
     url: '/umbraco/seoToolkitScriptManager/scripts';
 };
@@ -1000,7 +1004,7 @@ export type DeleteUmbracoSeoToolkitDomainsDeleteData = {
     body?: never;
     path?: never;
     query?: {
-        domainId?: number;
+        domainId?: string;
     };
     url: '/umbraco/seoToolkitDomains/delete';
 };
@@ -1016,7 +1020,7 @@ export type GetUmbracoSeoToolkitDomainsGetData = {
     body?: never;
     path?: never;
     query?: {
-        domainId?: number;
+        domainId?: string;
     };
     url: '/umbraco/seoToolkitDomains/get';
 };
@@ -1034,7 +1038,7 @@ export type GetUmbracoSeoToolkitDomainsGetPredefinedData = {
     body?: never;
     path?: never;
     query?: {
-        umbracoDomainId?: number;
+        umbracoDomainId?: string;
     };
     url: '/umbraco/seoToolkitDomains/getPredefined';
 };
@@ -1059,7 +1063,7 @@ export type PostUmbracoSeoToolkitDomainsSaveResponses = {
     /**
      * OK
      */
-    200: number;
+    200: string;
 };
 
 export type PostUmbracoSeoToolkitDomainsSaveResponse = PostUmbracoSeoToolkitDomainsSaveResponses[keyof PostUmbracoSeoToolkitDomainsSaveResponses];

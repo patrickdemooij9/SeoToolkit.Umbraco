@@ -2,7 +2,7 @@ export interface RedirectOverviewItem {
     unique: string;
     entityType: string;
 
-    id: number;
+    id: string;
     isEnabled: boolean;
     domain?: (string) | null;
     oldUrl?: (string) | null;

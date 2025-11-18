@@ -5,14 +5,14 @@ using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Database
 {
     [TableName("SeoToolkitScript")]
-    [PrimaryKey("Key", AutoIncrement = false)]
+    [PrimaryKey("Id", AutoIncrement = true)]
     [ExplicitColumns]
     public class ScriptEntity
     {
         [Column("Id")]
+        [PrimaryKeyColumn(AutoIncrement = true)]
         public int Id { get; set; }
 
-        [PrimaryKeyColumn(AutoIncrement = false)]
         [Column("Key")]
         public Guid Key {get; set;}
 

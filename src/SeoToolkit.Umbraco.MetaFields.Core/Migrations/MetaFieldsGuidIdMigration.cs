@@ -16,15 +16,20 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
     {
         private readonly IContentTypeService _contentTypeService;
         private readonly IContentService _contentService;
+        private readonly IKeyValueService _keyValueService;
 
-        public MetaFieldsGuidIdMigration(IMigrationContext context, IContentTypeService contentTypeService, IContentService contentService) : base(context)
+        public MetaFieldsGuidIdMigration(IMigrationContext context, IContentTypeService contentTypeService, IContentService contentService, IKeyValueService keyValueService) : base(context)
         {
             _contentTypeService = contentTypeService;
             _contentService = contentService;
+            _keyValueService = keyValueService;
         }
 
         protected override Task MigrateAsync()
         {
+            // We have a dependency on the common migration to have run first, otherwise the cleanup will be a big mess
+            MigrationHelper.EnsureMigration("SeoToolkit_Common_Migration", 6, _keyValueService);
+
             MigrateMetaFieldsValueEntity();
             MigrateMetaFieldsSettingsEntity();
             return Task.CompletedTask;

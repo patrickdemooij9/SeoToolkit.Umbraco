@@ -91,7 +91,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
                     var domains = (await FindMissingUmbracoDomains(allItems))
                         .Select(it => new SeoToolkitTreeItemApiModel
                         {
-                            Id = $"{_domainGuid}~d~{it.Id}",
+                            Id = $"{_domainGuid}~d~{it.Key}",
                             Name = it.DomainName.Replace("https://", ""),
                             HasChildren = false,
                             IsDraft = true

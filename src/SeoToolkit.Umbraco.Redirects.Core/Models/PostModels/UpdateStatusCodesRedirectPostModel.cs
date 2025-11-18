@@ -1,8 +1,10 @@
-﻿namespace SeoToolkit.Umbraco.Redirects.Core.Models.PostModels
+﻿using System;
+
+namespace SeoToolkit.Umbraco.Redirects.Core.Models.PostModels
 {
     public class UpdateStatusCodesRedirectPostModel
     {
-        public int[] RedirectIds { get; set; }
+        public Guid[] RedirectIds { get; set; }
         public int RedirectCode { get; set; }
     }
 }

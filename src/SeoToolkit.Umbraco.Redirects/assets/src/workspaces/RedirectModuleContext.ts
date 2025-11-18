@@ -29,7 +29,7 @@ export default class RedirectModuleContext extends UmbDefaultCollectionContext<
     };
     if (unique) {
       redirect = await new RedirectRepository(this).get(
-        Number.parseInt(unique)
+        unique
       );
     }
 
@@ -57,7 +57,8 @@ export default class RedirectModuleContext extends UmbDefaultCollectionContext<
       }
 
       await new RedirectRepository(this).save({
-        id: unique ? Number.parseInt(unique) : 0,
+        id: data.id,
+        key: unique ? unique : undefined,
         domain: domain,
         customDomain: data.customDomain,
         isEnabled: data.isEnabled,
@@ -92,7 +93,7 @@ export default class RedirectModuleContext extends UmbDefaultCollectionContext<
     });
   }
 
-  async openStatusCodeModal(redirectIds: number[]) {
+  async openStatusCodeModal(redirectIds: string[]) {
     this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (instance) => {
       if (!instance) {
         return;

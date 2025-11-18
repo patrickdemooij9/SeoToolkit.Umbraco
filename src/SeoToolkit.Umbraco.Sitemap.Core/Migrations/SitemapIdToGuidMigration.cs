@@ -10,14 +10,19 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
     public class SitemapIdToGuidMigration : AsyncMigrationBase
     {
         private readonly IContentTypeService _contentTypeService;
+        private readonly IKeyValueService _keyValueService;
 
-        public SitemapIdToGuidMigration(IMigrationContext context, IContentTypeService contentTypeService) : base(context)
+        public SitemapIdToGuidMigration(IMigrationContext context, IContentTypeService contentTypeService, IKeyValueService keyValueService) : base(context)
         {
             _contentTypeService = contentTypeService;
+            _keyValueService = keyValueService;
         }
 
         protected override Task MigrateAsync()
         {
+            // We have a dependency on the common migration to have run first, otherwise the cleanup will be a big mess
+            MigrationHelper.EnsureMigration("SeoToolkit_Common_Migration", 6, _keyValueService);
+
             if (ColumnExists("SeoToolkitSitemapPageType", "ContentTypeGuid")) return Task.CompletedTask;
 
             Database.Execute("ALTER TABLE SeoToolkitSitemapPageType ADD ContentTypeGuid UNIQUEIDENTIFIER NULL");

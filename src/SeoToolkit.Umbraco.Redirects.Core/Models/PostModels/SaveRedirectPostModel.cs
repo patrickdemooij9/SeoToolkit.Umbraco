@@ -4,6 +4,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.PostModels
 {
     public class SaveRedirectPostModel
     {
+        public int Id { get; set; }
+
         public Guid? Key { get; set; }
         
         public int? Domain { get; set; }

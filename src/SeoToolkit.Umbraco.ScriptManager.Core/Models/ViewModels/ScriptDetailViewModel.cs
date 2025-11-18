@@ -7,6 +7,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels
     public class ScriptDetailViewModel
     {
         public int Id { get; set; }
+        public Guid? Key {get; set; }
         public string Name { get; set; }
         public string DefinitionAlias { get; set; }
         public Dictionary<string, string> Config { get; set; }
@@ -15,6 +16,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels
         public ScriptDetailViewModel(Script script)
         {
             Id = script.Id;
+            Key = script.Key;
             Name = script.Name;
             DefinitionAlias = script.Definition.Alias;
             Config = script.Config;

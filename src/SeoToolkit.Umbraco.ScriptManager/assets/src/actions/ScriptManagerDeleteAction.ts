@@ -5,7 +5,7 @@ import { ST_SCRIPTMANAGER_MODULE_TOKEN_CONTEXT } from "../workspaces/ScriptManag
 export default class ScriptManagerDeleteAction extends UmbEntityBulkActionBase<object>{
     async execute() {
         const repository = new ScriptManagerRepository(this._host);
-        await repository.deleteScripts(this.selection.map((item => Number.parseInt(item))));
+        await repository.deleteScripts(this.selection.map((item => item)));
 
         const context = await this.getContext(ST_SCRIPTMANAGER_MODULE_TOKEN_CONTEXT);
         context?.requestCollection();

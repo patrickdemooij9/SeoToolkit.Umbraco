@@ -9,7 +9,7 @@ export class SeoToolkitDomainSource {
     this.#host = host;
   }
 
-  async get(domainId: number) {
+  async get(domainId: string) {
     return await tryExecute(
       this.#host,
       BackofficeSeoToolkitService.getUmbracoSeoToolkitDomainsGet({
@@ -20,7 +20,7 @@ export class SeoToolkitDomainSource {
     );
   }
 
-  async getPredefined(umbracoDomainId: number) {
+  async getPredefined(umbracoDomainId: string) {
     return BackofficeSeoToolkitService.getUmbracoSeoToolkitDomainsGetPredefined({
       query: {
         umbracoDomainId: umbracoDomainId
@@ -37,7 +37,7 @@ export class SeoToolkitDomainSource {
     );
   }
 
-  async delete(domainId: number) {
+  async delete(domainId: string) {
     return await tryExecute(this.#host, BackofficeSeoToolkitService.deleteUmbracoSeoToolkitDomainsDelete({
       query: {
         domainId: domainId

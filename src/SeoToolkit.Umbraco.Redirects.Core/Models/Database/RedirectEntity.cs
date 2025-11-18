@@ -5,14 +5,14 @@ using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 namespace SeoToolkit.Umbraco.Redirects.Core.Models.Database
 {
     [TableName("SeoToolkitRedirects")]
-    [PrimaryKey("Key", AutoIncrement = false)]
+    [PrimaryKey("Id", AutoIncrement = true)]
     public class RedirectEntity
     {
         [Column("Id")]
+        [PrimaryKeyColumn(AutoIncrement = true)]
         public int Id { get; set; }
 
         [Column("Key")]
-        [PrimaryKeyColumn(AutoIncrement = false)]
         public Guid Key { get; set; }
 
         [Column("Domain")]

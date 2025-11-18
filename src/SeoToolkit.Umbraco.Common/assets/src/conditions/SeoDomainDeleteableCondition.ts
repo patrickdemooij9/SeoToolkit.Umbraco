@@ -25,7 +25,7 @@ export class SeoDomainDeletableCondition
           return;
         }
 
-        this.permitted = value.id !== 0 && location.href.includes('~', 2);
+        this.permitted = value.id !== undefined && value.id !== null && location.href.includes('~', 2);
       });
     });
   }

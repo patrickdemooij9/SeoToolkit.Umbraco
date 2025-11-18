@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SeoToolkit.Umbraco.Common.Core.Migrations;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Database;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Extensions;
 
@@ -12,12 +13,18 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Migrations
 {
     public class ScriptManagerIdToGuidMigration : AsyncMigrationBase
     {
-        public ScriptManagerIdToGuidMigration(IMigrationContext context) : base(context)
+        private readonly IKeyValueService _keyValueService;
+
+        public ScriptManagerIdToGuidMigration(IMigrationContext context, IKeyValueService keyValueService) : base(context)
         {
+            _keyValueService = keyValueService;
         }
 
         protected override Task MigrateAsync()
         {
+            // We have a dependency on the common migration to have run first, otherwise the cleanup will be a big mess
+            MigrationHelper.EnsureMigration("SeoToolkit_Common_Migration", 6, _keyValueService);
+
             if (ColumnExists("SeoToolkitScript", "Key"))
             {
                 return Task.CompletedTask;

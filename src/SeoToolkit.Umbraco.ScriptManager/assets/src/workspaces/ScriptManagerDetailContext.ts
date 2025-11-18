@@ -55,7 +55,7 @@ export default class ScriptManagerDetailContext
         path: "edit/:unique",
         component: ScriptManagerDetailWorkspace,
         setup: (_component, info) => {
-          this.load(Number.parseInt(info.match.params.unique));
+          this.load(info.match.params.unique);
         },
       },
     ]);
@@ -65,7 +65,7 @@ export default class ScriptManagerDetailContext
     this.#script.update(script);
   }
 
-  load(scriptId?: number) {
+  load(scriptId?: string) {
     this.#repository.getScriptDefinitions().then((resp) => {
       this.#definitions.setValue(resp.data!);
     });
@@ -78,7 +78,7 @@ export default class ScriptManagerDetailContext
   }
 
   async save() {
-    const isNew = this.#script.value.id === 0;
+    const isNew = this.#script.value.key === undefined;
 
 	let script = this.#script.value;
     if (isNew) {
@@ -86,7 +86,7 @@ export default class ScriptManagerDetailContext
         "domainId"
       );
       if (domainId) {
-		script = { ...script, domainId: Number.parseInt(domainId) };
+        script = { ...script, domainId: domainId };
       }
     }
 
@@ -107,7 +107,7 @@ export default class ScriptManagerDetailContext
       history.replaceState(
         null,
         "",
-        "/umbraco/section/SeoToolkit/workspace/st-script/edit/" + this.#script.value.id
+        "/umbraco/section/SeoToolkit/workspace/st-script/edit/" + this.#script.value.key
       );
     }
   }

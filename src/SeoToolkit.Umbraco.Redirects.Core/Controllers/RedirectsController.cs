@@ -56,6 +56,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 
             var redirect = new Redirect
             {
+                Id = postModel.Id,
                 Key = postModel.Key ?? Guid.NewGuid(),
                 CustomDomain = postModel.CustomDomain,
                 IsEnabled = postModel.IsEnabled,

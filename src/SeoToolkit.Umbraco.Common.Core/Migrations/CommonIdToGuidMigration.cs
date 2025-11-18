@@ -37,7 +37,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
 
         private void MigrateAllData()
         {
-            var firstEntryData = Database.FirstOrDefault<dynamic>("SELECT TOP 1 Id FROM SeoToolkitDomainCollections");
+            var firstEntryData = GetFirstRecord("SeoToolkitDomainCollections", "Id");
             if (firstEntryData is null || Guid.TryParse(firstEntryData.Id.ToString(), out Guid _))
             {
                 return;
@@ -126,6 +126,20 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
                 };
                 Database.Insert(seoSettingsEntity);
             }
+        }
+
+        private dynamic GetFirstRecord(string tableName, string columnName)
+        {
+            if (DatabaseType == NPoco.DatabaseType.SQLite)
+            {
+                return Database.FirstOrDefault<dynamic>(
+                    $"SELECT {columnName} FROM {tableName} LIMIT 1"
+                );
+            }
+
+            return Database.FirstOrDefault<dynamic>(
+                $"SELECT TOP 1 {columnName} FROM {tableName}"
+            );
         }
 
         private void MigrateRobotsTxt()
