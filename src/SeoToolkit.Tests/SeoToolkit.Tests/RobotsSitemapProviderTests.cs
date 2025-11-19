@@ -125,7 +125,7 @@ namespace SeoToolkit.Tests
                 .Returns(new SeoDomainCollection
                 { 
                     Name = "Test Domain",
-                    DomainIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() } 
+                    DomainIds = new List<int> { 1, 3 } 
                 });            // Act
             var urls = provider.GetSitemapUrls(request).ToArray();
 
