@@ -7,7 +7,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
     {
         SeoDomainCollection[] GetAll();
         SeoDomainCollection? Get(Guid id);
-        SeoDomainCollection? GetByDomain(Guid umbracoDomain);
+        SeoDomainCollection? GetByDomain(int umbracoDomain);
 
         Guid Save(SeoDomainCollection collection);
         void Delete(Guid domainId);

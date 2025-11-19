@@ -1,6 +1,6 @@
-import { tryExecute, tryExecuteAndNotify } from "@umbraco-cms/backoffice/resources";
+import { tryExecute } from "@umbraco-cms/backoffice/resources";
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
-import { CreateAuditPostModel, SeoToolkitSiteAuditService } from "../api";
+import { BackofficeSeoToolkitSiteAuditService, CreateAuditPostModel } from "../api";
 
 export class SiteAuditSource {
   #host: UmbControllerHost;
@@ -10,16 +10,16 @@ export class SiteAuditSource {
   }
 
   async getSiteAudits() {
-    return await tryExecuteAndNotify(
+    return await tryExecute(
       this.#host,
-      SeoToolkitSiteAuditService.getUmbracoSeoToolkitSiteAuditSiteAudits()
+      BackofficeSeoToolkitSiteAuditService.getUmbracoSeoToolkitSiteAuditSiteAudits()
     );
   }
 
   async get(id: number) {
     return await tryExecute(
       this.#host,
-      SeoToolkitSiteAuditService.getUmbracoSeoToolkitSiteAuditSiteAudit({
+      BackofficeSeoToolkitSiteAuditService.getUmbracoSeoToolkitSiteAuditSiteAudit({
         query: {
           id: id,
         }
@@ -30,7 +30,7 @@ export class SiteAuditSource {
   async save(model: CreateAuditPostModel) {
     return await tryExecute(
       this.#host,
-      SeoToolkitSiteAuditService.postUmbracoSeoToolkitSiteAuditSiteAudit({
+      BackofficeSeoToolkitSiteAuditService.postUmbracoSeoToolkitSiteAuditSiteAudit({
         body: model,
       })
     );
@@ -39,7 +39,7 @@ export class SiteAuditSource {
   async delete(ids: number[]) {
     return await tryExecute(
       this.#host,
-      SeoToolkitSiteAuditService.deleteUmbracoSeoToolkitSiteAuditSiteAudit({
+      BackofficeSeoToolkitSiteAuditService.deleteUmbracoSeoToolkitSiteAuditSiteAudit({
         body: {
           ids: ids,
         },
@@ -50,7 +50,7 @@ export class SiteAuditSource {
   async stopAudit(id: number) {
     return await tryExecute(
       this.#host,
-      SeoToolkitSiteAuditService.postUmbracoSeoToolkitSiteAuditStopSiteAudit({
+      BackofficeSeoToolkitSiteAuditService.postUmbracoSeoToolkitSiteAuditStopSiteAudit({
         body: {
           id: id,
         },
@@ -61,7 +61,7 @@ export class SiteAuditSource {
   async getConfiguration() {
     return await tryExecute(
       this.#host,
-      SeoToolkitSiteAuditService.getUmbracoSeoToolkitSiteAuditSiteAuditConfiguration()
+      BackofficeSeoToolkitSiteAuditService.getUmbracoSeoToolkitSiteAuditSiteAuditConfiguration()
     );
   }
 }

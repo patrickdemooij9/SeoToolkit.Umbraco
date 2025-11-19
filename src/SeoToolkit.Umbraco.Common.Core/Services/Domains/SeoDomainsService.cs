@@ -34,7 +34,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
             return GetAll().FirstOrDefault(it => it.Id == id);
         }
 
-        public SeoDomainCollection? GetByDomain(Guid umbracoDomainId)
+        public SeoDomainCollection? GetByDomain(int umbracoDomainId)
         {
             return GetAll().FirstOrDefault(it => it.DomainIds.Contains(umbracoDomainId));
         }

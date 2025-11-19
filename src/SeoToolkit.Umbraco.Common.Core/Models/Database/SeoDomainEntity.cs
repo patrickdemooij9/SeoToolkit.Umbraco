@@ -13,7 +13,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Models.Database
         public Guid Id { get; set; }
 
         [Column("DomainId")]
-        public Guid DomainId { get; set; }
+        public int DomainId { get; set; }
 
         [Column("CollectionId")]
         [ForeignKey(typeof(SeoDomainCollectionEntity), Name = "FK_SeoToolkitDomains_SeoToolkitDomainCollections", Column = "Id")]

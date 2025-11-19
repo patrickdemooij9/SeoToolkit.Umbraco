@@ -26,12 +26,12 @@ namespace SeoToolkit.Umbraco.Core.Connectors
         public IEnumerable<string> GetSitemapUrls(HttpRequest request)
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
-            var domains = _domainService.GetAll(false).ToArray();
+            var domains = ctx.UmbracoContext.Domains.GetAll(includeWildcards: false).ToArray();
 
             var seoDomain = _seoDomainResolver.ResolveDomain();
             if (seoDomain != null)
             {
-                domains = domains.Where(it => seoDomain.DomainIds.Contains(it.Key)).ToArray();
+                domains = domains.Where(it => seoDomain.DomainIds.Contains(it.Id)).ToArray();
             }
             
             var baseUri = new Uri(request.GetEncodedUrl());
@@ -43,7 +43,7 @@ namespace SeoToolkit.Umbraco.Core.Connectors
             {
                 foreach (var domain in domains)
                 {
-                    var url = domain.DomainName.StartsWith('/') ? new Uri(baseUri, domain.DomainName).ToString() : domain.DomainName;
+                    var url = domain.Name.StartsWith('/') ? new Uri(baseUri, domain.Name).ToString() : domain.Name;
                     yield return $"{url.TrimEnd('/')}/sitemap.xml";
                 }
             }

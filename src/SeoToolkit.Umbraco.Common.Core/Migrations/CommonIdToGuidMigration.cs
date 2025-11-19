@@ -80,7 +80,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
                     var domainEntity = new SeoDomainEntity
                     {
                         Id = Guid.NewGuid(),
-                        DomainId = umbracoDomain.Key,
+                        DomainId = umbracoDomain.Id,
                         CollectionId = newId
                     };
                     Database.Insert(domainEntity);

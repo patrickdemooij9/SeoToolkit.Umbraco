@@ -15,7 +15,7 @@ export class SeoToolkitDomainRepository extends UmbControllerBase {
     return this.#source.get(domainId);
   }
 
-  async getPredefined(umbracoDomainId: string) {
+  async getPredefined(umbracoDomainId: number) {
     return this.#source.getPredefined(umbracoDomainId);
   }
 

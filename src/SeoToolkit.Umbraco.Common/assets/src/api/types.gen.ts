@@ -212,7 +212,7 @@ export type SeoDisplayViewModel = {
 export type SeoDomainCollection = {
     id?: string | null;
     name: string;
-    domainIds: Array<string>;
+    domainIds: Array<number>;
     settings: {
         [key: string]: string;
     };
@@ -1038,7 +1038,7 @@ export type GetUmbracoSeoToolkitDomainsGetPredefinedData = {
     body?: never;
     path?: never;
     query?: {
-        umbracoDomainId?: string;
+        umbracoDomainId?: number;
     };
     url: '/umbraco/seoToolkitDomains/getPredefined';
 };

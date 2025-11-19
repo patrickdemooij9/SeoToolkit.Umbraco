@@ -46,6 +46,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository
 
             existingEntity ??= new SeoKeyValueEntity
             {
+                Id = Guid.NewGuid(),
                 Key = key,
                 DomainId = domainId
             };

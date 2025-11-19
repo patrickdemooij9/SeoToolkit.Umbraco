@@ -20,7 +20,7 @@ export class SeoToolkitDomainSource {
     );
   }
 
-  async getPredefined(umbracoDomainId: string) {
+  async getPredefined(umbracoDomainId: number) {
     return BackofficeSeoToolkitService.getUmbracoSeoToolkitDomainsGetPredefined({
       query: {
         umbracoDomainId: umbracoDomainId

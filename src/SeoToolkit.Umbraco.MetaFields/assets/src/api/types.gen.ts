@@ -130,6 +130,7 @@ export type RedirectListViewModel = {
 
 export type RedirectViewModel = {
     id: number;
+    key: string;
     domain?: number | null;
     customDomain?: string | null;
     isEnabled: boolean;
@@ -159,6 +160,7 @@ export type RobotsTxtValidationViewModel = {
 };
 
 export type SaveRedirectPostModel = {
+    id: number;
     key?: string | null;
     domain?: number | null;
     customDomain?: string | null;
@@ -179,6 +181,7 @@ export type ScriptDefinitionViewModel = {
 
 export type ScriptDetailViewModel = {
     id: number;
+    key?: string | null;
     name?: string | null;
     definitionAlias?: string | null;
     config?: {
@@ -195,7 +198,7 @@ export type ScriptField = {
 };
 
 export type ScriptListViewModel = {
-    id: number;
+    id: string;
     name?: string | null;
     definitionName?: string | null;
 };
@@ -370,7 +373,7 @@ export type UmbracoDomainModel = {
 };
 
 export type UpdateStatusCodesRedirectPostModel = {
-    redirectIds?: Array<number> | null;
+    redirectIds?: Array<string> | null;
     redirectCode: number;
 };
 
@@ -1060,7 +1063,7 @@ export type PostUmbracoSeoToolkitDomainsSaveResponses = {
     /**
      * OK
      */
-    200: number;
+    200: string;
 };
 
 export type PostUmbracoSeoToolkitDomainsSaveResponse = PostUmbracoSeoToolkitDomainsSaveResponses[keyof PostUmbracoSeoToolkitDomainsSaveResponses];

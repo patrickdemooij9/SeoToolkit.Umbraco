@@ -102,6 +102,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
 
                 var domainEntity = new SeoDomainEntity
                 {
+                    Id = Guid.NewGuid(),
                     DomainId = domainId,
                     CollectionId = collectionEntity.Id
                 };
@@ -123,7 +124,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
                 Console.WriteLine(collection.Settings.Count);
             foreach (var setting in collection.Settings)
             {
-                var settingEntity = existingSettings.TryGetValue(setting.Key, out var value) ? value : new SeoDomainSettingEntity { Key = setting.Key, CollectionId = collectionEntity.Id };
+                var settingEntity = existingSettings.TryGetValue(setting.Key, out var value) ? value : new SeoDomainSettingEntity { Id = Guid.NewGuid(), Key = setting.Key, CollectionId = collectionEntity.Id };
 
                 settingEntity.Value = setting.Value;
                 Console.WriteLine("Saving " + setting.Key + " = " + setting.Value);

@@ -12,14 +12,12 @@ namespace SeoToolkit.Umbraco.Common.Core.Helpers
     public class SeoDomainResolver : ISeoDomainResolver
     {
         private readonly ISeoDomainsService _seoDomainsService;
-        private readonly IDomainService _domainService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SeoDomainResolver(ISeoDomainsService seoDomainsService, IDomainService domainService, IUmbracoContextFactory umbracoContextFactory, IHttpContextAccessor httpContextAccessor)
+        public SeoDomainResolver(ISeoDomainsService seoDomainsService, IUmbracoContextFactory umbracoContextFactory, IHttpContextAccessor httpContextAccessor)
         {
             _seoDomainsService = seoDomainsService;
-            _domainService = domainService;
             _umbracoContextFactory = umbracoContextFactory;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -33,10 +31,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Helpers
             var domain = DomainUtilities.SelectDomain(domains, requestUrl);
             if (domain is null) return null;
 
-            var domainKey = _domainService.GetById(domain.Id)?.Key; //TODO: I should check if this touches the database every time or not...
-            if (domainKey is null) return null;
-
-            return _seoDomainsService.GetByDomain(domainKey.Value);
+            return _seoDomainsService.GetByDomain(domain.Id);
         }
 
         public SeoDomainCollection? ResolveDomain()

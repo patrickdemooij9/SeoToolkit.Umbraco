@@ -66,7 +66,7 @@ export default class SeoToolkitDomainContext
             if (parts.length === 2) {
               this.load(parts[1]);
             } else if (parts.length === 3) {
-              this.loadUmbracoDomain(parts[2]);
+              this.loadUmbracoDomain(Number.parseInt(parts[2]));
             }
           }
         },
@@ -74,7 +74,7 @@ export default class SeoToolkitDomainContext
     ]);
   }
 
-  loadUmbracoDomain(domainId: string) {
+  loadUmbracoDomain(domainId: number) {
     this.repository.getPredefined(domainId).then((resp) => {
       this.#domain.setValue(resp.data);
     })

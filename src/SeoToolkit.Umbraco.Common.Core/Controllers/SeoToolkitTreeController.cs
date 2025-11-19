@@ -91,7 +91,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
                     var domains = (await FindMissingUmbracoDomains(allItems))
                         .Select(it => new SeoToolkitTreeItemApiModel
                         {
-                            Id = $"{_domainGuid}~d~{it.Key}",
+                            Id = $"{_domainGuid}~d~{it.Id}",
                             Name = it.DomainName.Replace("https://", ""),
                             HasChildren = false,
                             IsDraft = true
@@ -152,7 +152,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         {
             var currentlyUsedDomains = seoDomains.SelectMany(it => it.DomainIds).Distinct().ToArray();
             var domains = await _domainService.GetAllAsync(false);
-            return domains.Where(it => it.DomainName.StartsWith("http") && !currentlyUsedDomains.Contains(it.Key)).ToArray();
+            return [.. domains.Where(it => it.DomainName.StartsWith("http") && !currentlyUsedDomains.Contains(it.Id))];
         }
     }
 }

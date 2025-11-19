@@ -35,9 +35,9 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
 
         [HttpGet("getPredefined")]
         [ProducesResponseType(typeof(SeoDomainCollection), 200)]
-        public async Task<IActionResult> GetPredefined(Guid umbracoDomainId)
+        public async Task<IActionResult> GetPredefined(int umbracoDomainId)
         {
-            var umbracoDomain = (await _domainService.GetAllAsync(false)).FirstOrDefault(it => it.Key == umbracoDomainId);
+            var umbracoDomain = (await _domainService.GetAllAsync(false)).FirstOrDefault(it => it.Id == umbracoDomainId);
             if (umbracoDomain is null) return NotFound();
 
             return Ok(new SeoDomainCollection
