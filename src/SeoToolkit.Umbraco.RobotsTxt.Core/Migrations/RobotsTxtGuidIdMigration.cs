@@ -30,12 +30,12 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Migrations
                 return Task.CompletedTask;
             }
 
-            Database.Execute("ALTER TABLE SeoToolkitRobotsTxt ADD Key UNIQUEIDENTIFIER NULL");
+            Database.Execute("ALTER TABLE SeoToolkitRobotsTxt ADD [Key] UNIQUEIDENTIFIER NULL");
             if (DatabaseType == NPoco.DatabaseType.SQLite)
             {
                 foreach (var entry in Database.Fetch<RobotsTxtEntity>(Sql().SelectAll().From<RobotsTxtEntity>()))
                 {
-                    Database.Execute("UPDATE SeoToolkitRobotsTxt SET Key = @0 WHERE Id = @1",
+                    Database.Execute("UPDATE SeoToolkitRobotsTxt SET [Key] = @0 WHERE Id = @1",
                         Guid.NewGuid(), entry.Id);
                 }
 

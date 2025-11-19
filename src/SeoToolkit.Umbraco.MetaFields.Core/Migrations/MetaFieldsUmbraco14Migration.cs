@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using NPoco;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database;
 using System.Linq;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Infrastructure.Migrations;
+using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
 {
@@ -14,7 +16,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
 
         protected override void Migrate()
         {
-            var itemsWithImages = Database.Fetch<MetaFieldsValueEntity>().Where(it => it.Alias == "openGraphImage");
+            var itemsWithImages = Database.Fetch<OldMetaFieldsValueEntity>().Where(it => it.Alias == "openGraphImage");
             foreach (var item in itemsWithImages)
             {
                 var actualValue = JsonConvert.DeserializeObject<string>(item.UserValue);
@@ -28,6 +30,26 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
 
                 Database.Update(item);
             }
+        }
+
+        [TableName("SeoToolkitMetaFieldsValue")]
+        [ExplicitColumns]
+        [PrimaryKey(new[] { "NodeId", "Alias", "Culture" })]
+        private class OldMetaFieldsValueEntity
+        {
+            [Column("NodeId")]
+            [PrimaryKeyColumn(AutoIncrement = false, OnColumns = "NodeId, Alias, Culture")]
+            public int NodeId { get; set; }
+
+            [Column("Alias")]
+            public string Alias { get; set; }
+
+            [Column("Culture")]
+            public string Culture { get; set; } = "";
+
+            [Column("UserValue")]
+            [SpecialDbType(SpecialDbTypes.NVARCHARMAX)]
+            public string UserValue { get; set; }
         }
     }
 }

@@ -251,7 +251,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
         private class OldSeoSettingsEntity
         {
             [Column("ContentTypeId")]
-            public Guid ContentTypeId { get; set; }
+            public int ContentTypeId { get; set; }
 
             [Column("Enabled")]
             public bool Enabled { get; set; }

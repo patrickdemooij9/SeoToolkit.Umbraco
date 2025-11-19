@@ -45,8 +45,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
             Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings ADD NodeKey UNIQUEIDENTIFIER NULL");
             foreach (var entry in Database.Fetch<MetaFieldsSettingsEntity>(Sql().SelectAll().From<MetaFieldsSettingsEntity>()))
             {
-                var content = _contentService.GetById(entry.NodeId);
-                if (content is null) continue;
+                var content = _contentTypeService.Get(entry.NodeId);
+                if (content is null)
+                {
+                    Database.Delete(entry);
+                }
 
                 Database.Execute("UPDATE SeoToolkitMetaFieldsSettings SET NodeKey = @0 WHERE NodeId = @1",
                     content.Key, entry.NodeId);
@@ -75,7 +78,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
             foreach (var entry in Database.Fetch<MetaFieldsValueEntity>(Sql().SelectAll().From<MetaFieldsValueEntity>()))
             {
                 var content = _contentService.GetById(entry.NodeId);
-                if (content is null) continue;
+                if (content is null)
+                {
+                    Database.Delete(entry);
+                }
 
                 Database.Execute("UPDATE SeoToolkitMetaFieldsValue SET NodeKey = @0 WHERE NodeId = @1",
                     content.Key, entry.NodeId);
