@@ -35,7 +35,6 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Migrations
             {
                 foreach (var entry in Database.Fetch<RobotsTxtEntity>(Sql().SelectAll().From<RobotsTxtEntity>()))
                 {
-                    Console.WriteLine(entry.Id);
                     Database.Execute("UPDATE SeoToolkitRobotsTxt SET Key = @0 WHERE Id = @1",
                         Guid.NewGuid(), entry.Id);
                 }

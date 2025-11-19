@@ -121,20 +121,17 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
                 .From<SeoDomainSettingEntity>()
                 .Where<SeoDomainSettingEntity>(it => it.CollectionId == collectionEntity.Id))
                 .ToDictionary(x => x.Key, x => x);
-                Console.WriteLine(collection.Settings.Count);
             foreach (var setting in collection.Settings)
             {
                 var settingEntity = existingSettings.TryGetValue(setting.Key, out var value) ? value : new SeoDomainSettingEntity { Id = Guid.NewGuid(), Key = setting.Key, CollectionId = collectionEntity.Id };
 
                 settingEntity.Value = setting.Value;
-                Console.WriteLine("Saving " + setting.Key + " = " + setting.Value);
                 scope.Database.Save(settingEntity);
             }
             foreach (var existingSetting in existingSettings.Values)
             {
                 if (!collection.Settings.ContainsKey(existingSetting.Key))
                 {
-                    Console.WriteLine("Deleting " + existingSetting.Key);
                     scope.Database.Delete(existingSetting);
                 }
             }
