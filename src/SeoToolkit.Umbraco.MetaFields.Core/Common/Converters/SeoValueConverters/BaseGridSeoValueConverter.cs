@@ -19,7 +19,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
             var dataTypes = new string[]{
                 global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TextArea,
                 global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TextBox,
-                global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TinyMce
+                global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TinyMce,
+                global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.RichText
             };
             // Walk the Block List and get any text values in a list.
             List<object> values = new();

@@ -22,6 +22,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
                 global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TextArea,
                 global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TextBox,
                 global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TinyMce,
+                global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.RichText,
                 global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.BlockGrid,
                 global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.BlockList,
             });
