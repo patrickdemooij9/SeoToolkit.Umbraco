@@ -38,10 +38,14 @@ export default class RedirectModuleContext extends UmbDefaultCollectionContext<R
             await modal.onSubmit();
 
             const data = (modal.getValue() as RedirectModalData).redirect;
+            let domain = data.domain;
+            if (!domain || domain <= 0) {
+                domain = null;
+            }
             
             await new RedirectRepository(this).save({
                 id: unique ? Number.parseInt(unique) : 0,
-                domain: data.domain,
+                domain: domain,
                 customDomain: data.customDomain,
                 isEnabled: data.isEnabled,
                 isRegex: data.isRegex,
