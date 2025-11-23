@@ -50,6 +50,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         [ProducesResponseType(typeof(int), 200)]
         public IActionResult Save(SeoDomainCollection collection)
         {
+            collection.DomainIds ??= [];
+            collection.Settings ??= [];
             return Ok(_seoDomainsService.Save(collection));
         }
 
