@@ -67,10 +67,19 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
 
-            var existingEntity = scope.Database.FirstOrDefault<SeoKeyValueEntity>(scope.SqlContext.Sql()
+            var sql = scope.SqlContext.Sql()
                 .SelectAll()
                 .From<SeoKeyValueEntity>()
-                .Where<SeoKeyValueEntity>(it => it.Key == key && it.DomainId == domainId));
+                .Where<SeoKeyValueEntity>(it => it.Key == key);
+            if (!domainId.HasValue)
+            {
+                sql = sql.Where<SeoKeyValueEntity>(it => it.DomainId == null);
+            }
+            else
+            {
+                sql = sql.Where<SeoKeyValueEntity>(it => it.DomainId == domainId);
+            }
+            var existingEntity = scope.Database.FirstOrDefault<SeoKeyValueEntity>(sql);
 
             if (existingEntity is null) return;
 
