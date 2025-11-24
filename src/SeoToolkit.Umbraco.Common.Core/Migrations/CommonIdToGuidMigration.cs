@@ -49,11 +49,23 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
             var seoKeyValueData = Database.Fetch<OldSeoKeyValueEntity>(Sql().SelectAll().From<OldSeoKeyValueEntity>());
             var seoSettingsData = Database.Fetch<OldSeoSettingsEntity>(Sql().SelectAll().From<OldSeoSettingsEntity>());
 
-            Database.Execute("DROP TABLE IF EXISTS SeoToolkitDomains");
-            Database.Execute("DROP TABLE IF EXISTS SeoToolkitDomainSettings");
-            Database.Execute("DROP TABLE IF EXISTS SeoToolkitDomainCollections");
-            Database.Execute("DROP TABLE IF EXISTS SeoToolkitSeoKeyValues");
-            Database.Execute("DROP TABLE IF EXISTS SeoToolkitSeoSettings");
+            Database.Execute("DROP TABLE IF EXISTS old_SeoToolkitDomains");
+            Database.Execute("DROP TABLE IF EXISTS old_SeoToolkitDomainSettings");
+            Database.Execute("DROP TABLE IF EXISTS old_SeoToolkitDomainCollections");
+            Database.Execute("DROP TABLE IF EXISTS old_SeoToolkitSeoKeyValues");
+            Database.Execute("DROP TABLE IF EXISTS old_SeoToolkitSeoSettings");
+
+            // Rename old tables to back them up
+            Database.Execute("ALTER TABLE SeoToolkitDomains RENAME TO old_SeoToolkitDomains");
+            Database.Execute("ALTER TABLE SeoToolkitDomainSettings RENAME TO old_SeoToolkitDomainSettings");
+            Database.Execute("ALTER TABLE SeoToolkitDomainCollections RENAME TO old_SeoToolkitDomainCollections");
+            Database.Execute("ALTER TABLE SeoToolkitSeoKeyValues RENAME TO old_SeoToolkitSeoKeyValues");
+            Database.Execute("ALTER TABLE SeoToolkitSeoSettings RENAME TO old_SeoToolkitSeoSettings");
+
+            Database.Execute("DROP INDEX IX_SeoToolkitOldUrl");
+            Database.Execute("DROP INDEX IX_SeoToolkitRegex");
+            Database.Execute("DROP INDEX IX_SeoToolkitDomainsCollectionId");
+            Database.Execute("DROP INDEX IX_SeoToolkitSettingsCollectionId");
 
             Create.Table<SeoDomainCollectionEntity>().Do();
             Create.Table<SeoDomainEntity>().Do();

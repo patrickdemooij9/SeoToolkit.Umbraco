@@ -93,7 +93,7 @@ export default class SeoToolkitDomainContext
   }
 
   async save() {
-    const isNew = this.#domain.getValue() === undefined;
+    const isNew = !this.#domain.getValue().id;
     const id = (await new SeoToolkitDomainRepository(this).saveDomain(this.#domain.getValue())).data;
     this.updateDomain({
       id: id,

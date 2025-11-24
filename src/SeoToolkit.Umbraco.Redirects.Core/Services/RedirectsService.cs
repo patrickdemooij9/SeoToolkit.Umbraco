@@ -102,7 +102,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
                 }
             }
 
-            var existingRedirects = _redirectsRepository.GetByUrls(oldUrl).Where(it => it.Id != redirect.Id || it.Key != redirect.Key).ToArray();
+            var existingRedirects = _redirectsRepository.GetByUrls(oldUrl).Where(it => it.Key != redirect.Key).ToArray();
             if (existingRedirects.Length > 0)
             {
                 if (existingRedirects.Any(it => it.Domain is null && string.IsNullOrWhiteSpace(it.CustomDomain)))

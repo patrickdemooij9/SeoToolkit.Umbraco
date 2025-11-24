@@ -57,7 +57,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
 
             if (DatabaseType == NPoco.DatabaseType.SQLite)
             {
-                MigrationHelper.RecreateTable<MetaFieldsValueEntity>(Database, Create, Sql(), "SeoToolkitMetaFieldsSettings");
+                MigrationHelper.RecreateTable<MetaFieldsValueEntity>(Database, Create, Sql(), "SeoToolkitMetaFieldsValue");
                 return;
             }
 
