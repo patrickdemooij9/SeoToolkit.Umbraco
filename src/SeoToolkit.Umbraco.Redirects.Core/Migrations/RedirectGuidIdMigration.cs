@@ -1,13 +1,14 @@
-﻿using System;
+﻿using SeoToolkit.Umbraco.Common.Core.Migrations;
+using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SeoToolkit.Umbraco.Common.Core.Migrations;
-using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Extensions;
+using static Umbraco.Cms.Core.Collections.TopoGraph;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
 {
@@ -15,11 +16,13 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
     {
         private readonly IKeyValueService _keyValueService;
         private readonly IContentService _contentService;
+        private readonly IMediaService _mediaService;
 
-        public RedirectGuidIdMigration(IMigrationContext context, IKeyValueService keyValueService, IContentService contentService) : base(context)
+        public RedirectGuidIdMigration(IMigrationContext context, IKeyValueService keyValueService, IContentService contentService, IMediaService mediaService) : base(context)
         {
             _keyValueService = keyValueService;
             _contentService = contentService;
+            _mediaService = mediaService;
         }
 
         protected override Task MigrateAsync()
@@ -44,10 +47,21 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
 
                 if (entry.NewNodeId.HasValue)
                 {
-                    var node = _contentService.GetById(entry.NewNodeId.Value);
-                    if (node != null)
+                    if (entry.NewNodeCultureId.HasValue)
                     {
-                        Database.Execute("UPDATE SeoToolkitRedirects SET NewNodeKey = @0 WHERE Id = @1", node.Key, entry.Id);
+                        var node = _contentService.GetById(entry.NewNodeId.Value);
+                        if (node != null)
+                        {
+                            Database.Execute("UPDATE SeoToolkitRedirects SET NewNodeKey = @0 WHERE Id = @1", node.Key, entry.Id);
+                        }
+                    }
+                    else
+                    {
+                        var mediaNode = _mediaService.GetById(entry.NewNodeId.Value);
+                        if (mediaNode != null)
+                        {
+                            Database.Execute("UPDATE SeoToolkitRedirects SET NewNodeKey = @0 WHERE Id = @1", mediaNode.Key, entry.Id);
+                        }
                     }
                 }
             }
