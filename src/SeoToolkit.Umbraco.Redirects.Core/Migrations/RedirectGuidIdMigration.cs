@@ -14,10 +14,12 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
     public class RedirectGuidIdMigration : AsyncMigrationBase
     {
         private readonly IKeyValueService _keyValueService;
+        private readonly IContentService _contentService;
 
-        public RedirectGuidIdMigration(IMigrationContext context, IKeyValueService keyValueService) : base(context)
+        public RedirectGuidIdMigration(IMigrationContext context, IKeyValueService keyValueService, IContentService contentService) : base(context)
         {
             _keyValueService = keyValueService;
+            _contentService = contentService;
         }
 
         protected override Task MigrateAsync()
@@ -31,15 +33,29 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
             }
 
             Database.Execute("ALTER TABLE SeoToolkitRedirects ADD [Key] UNIQUEIDENTIFIER NULL");
+            Database.Execute("ALTER TABLE SeoToolkitRedirects ADD NewNodeKey UNIQUEIDENTIFIER NULL");
+            var redirects = Database.Fetch<RedirectEntity>(Sql().SelectAll().From<RedirectEntity>());
+            foreach (var entry in redirects)
+            {
+                if (DatabaseType == NPoco.DatabaseType.SQLite)
+                {
+                    Database.Execute("UPDATE SeoToolkitRedirects SET [Key] = @0 WHERE Id = @1", Guid.NewGuid(), entry.Id);
+                }
+
+                if (entry.NewNodeId.HasValue)
+                {
+                    var node = _contentService.GetById(entry.NewNodeId.Value);
+                    if (node != null)
+                    {
+                        Database.Execute("UPDATE SeoToolkitRedirects SET NewNodeKey = @0 WHERE Id = @1", node.Key, entry.Id);
+                    }
+                }
+            }
+
             if (DatabaseType == NPoco.DatabaseType.SQLite)
             {
                 Database.Execute("DROP INDEX IX_SeoToolkitOldUrl");
                 Database.Execute("DROP INDEX IX_SeoToolkitRegex");
-                foreach (var entry in Database.Fetch<RedirectEntity>(Sql().SelectAll().From<RedirectEntity>()))
-                {
-                    Database.Execute("UPDATE SeoToolkitRedirects SET [Key] = @0 WHERE Id = @1",
-                        Guid.NewGuid(), entry.Id);
-                }
 
                 MigrationHelper.RecreateTable<RedirectEntity>(Database, Create, Sql(), "SeoToolkitRedirects");
                 return Task.CompletedTask;

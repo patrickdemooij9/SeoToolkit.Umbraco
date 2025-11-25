@@ -42,6 +42,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Database
         [NullSetting(NullSetting = NullSettings.Null)]
         public int? NewNodeId { get; set; }
 
+        [Column("NewNodeKey")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public Guid? NewNodeKey { get; set; }
+
         [Column("NewNodeCultureId")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public int? NewNodeCultureId { get; set; }

@@ -28,7 +28,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             IUmbracoContextFactory umbracoContextFactory,
             ILocalizationService localizationService,
             AppCaches appCaches,
-            DistributedCache distributedCache)
+            DistributedCache distributedCache,
+            ILanguageService languageService)
         {
             _scopeProvider = scopeProvider;
             _umbracoContextFactory = umbracoContextFactory;
@@ -186,6 +187,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 IsEnabled = redirect.IsEnabled,
                 OldUrl = redirect.OldUrl,
                 NewNodeId = redirect.NewNode?.Id,
+                NewNodeKey = redirect.NewNode?.Key,
                 NewUrl = redirect.NewUrl,
                 NewNodeCultureId = redirect.NewNodeCulture?.Id,
                 CreatedBy = redirect.CreatedBy,
@@ -208,9 +210,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 IsEnabled = entity.IsEnabled,
                 IsRegex = entity.IsRegex,
                 OldUrl = entity.OldUrl,
-                NewNode = entity.NewNodeId is null
+                NewNode = entity.NewNodeKey is null
                     ? null
-                    : entity.NewNodeCultureId is null ? ctx.UmbracoContext.Media.GetById(entity.NewNodeId.Value) : ctx.UmbracoContext.Content.GetById(entity.NewNodeId.Value),
+                    : entity.NewNodeCultureId is null ? ctx.UmbracoContext.Media.GetById(entity.NewNodeKey.Value) : ctx.UmbracoContext.Content.GetById(entity.NewNodeKey.Value),
                 NewNodeCulture = entity.NewNodeCultureId is null ? null : _localizationService.GetLanguageById(entity.NewNodeCultureId.Value),
                 NewUrl = entity.NewUrl,
                 LastUpdated = entity.LastUpdated,
