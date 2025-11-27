@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.PostModels
@@ -6,6 +7,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.PostModels
     public class CreateScriptPostModel
     {
         public int Id { get; set; }
+
+        public Guid? Key { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -15,6 +18,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.PostModels
 
         public Dictionary<string, string> Fields { get; set; }
 
-        public int? DomainId { get; set; }
+        public Guid? DomainId { get; set; }
     }
 }

@@ -8,6 +8,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
     {
         public int Id { get; set; }
 
+        public Guid Key { get; set; }
+
         public int? Domain { get; set; }
 
         public string CustomDomain { get; set; }
@@ -31,6 +33,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
         public RedirectViewModel(Redirect redirect)
         {
             Id = redirect.Id;
+            Key = redirect.Key;
             Domain = redirect.Domain?.Id;
             CustomDomain = redirect.CustomDomain;
             IsEnabled = redirect.IsEnabled;

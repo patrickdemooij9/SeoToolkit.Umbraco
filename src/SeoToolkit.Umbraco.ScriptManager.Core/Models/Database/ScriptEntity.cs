@@ -1,4 +1,5 @@
-﻿using NPoco;
+﻿using System;
+using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Database
@@ -8,9 +9,12 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Database
     [ExplicitColumns]
     public class ScriptEntity
     {
-        [PrimaryKeyColumn(AutoIncrement = true)]
         [Column("Id")]
+        [PrimaryKeyColumn(AutoIncrement = true)]
         public int Id { get; set; }
+
+        [Column("Key")]
+        public Guid Key {get; set;}
 
         [Column("Name")]
         public string Name { get; set; }
@@ -24,6 +28,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Database
 
         [Column("DomainId")]
         [NullSetting(NullSetting = NullSettings.Null)]
-        public int? DomainId { get; set; }
+        public Guid? DomainId { get; set; }
     }
 }

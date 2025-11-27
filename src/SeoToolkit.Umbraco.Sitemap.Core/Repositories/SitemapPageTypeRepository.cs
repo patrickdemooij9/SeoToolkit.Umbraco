@@ -18,37 +18,55 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Repositories
 
         public void Set(SitemapPageSettings settings)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            scope.Database.Save(new SitemapPageTypeEntity
             {
-                scope.Database.Save(new SitemapPageTypeEntity
-                {
-                    ContentTypeId = settings.ContentTypeId,
-                    HideFromSitemap = settings.HideFromSitemap,
-                    ChangeFrequency = settings.ChangeFrequency,
-                    Priority = settings.Priority
-                });
-            }
+                ContentTypeId = settings.ContentTypeId,
+                ContentTypeGuid = settings.ContentTypeGuid,
+                HideFromSitemap = settings.HideFromSitemap,
+                ChangeFrequency = settings.ChangeFrequency,
+                Priority = settings.Priority
+            });
         }
 
         public SitemapPageSettings Get(int contentTypeId)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var entity = scope.Database.FirstOrDefault<SitemapPageTypeEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<SitemapPageTypeEntity>()
-                    .Where<SitemapPageTypeEntity>(it => it.ContentTypeId == contentTypeId));
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entity = scope.Database.FirstOrDefault<SitemapPageTypeEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SitemapPageTypeEntity>()
+                .Where<SitemapPageTypeEntity>(it => it.ContentTypeId == contentTypeId));
 
-                return entity is null
-                    ? null
-                    : new SitemapPageSettings
-                    {
-                        ContentTypeId = entity.ContentTypeId,
-                        HideFromSitemap = entity.HideFromSitemap,
-                        ChangeFrequency = entity.ChangeFrequency,
-                        Priority = entity.Priority
-                    };
-            }
+            return entity is null
+                ? null
+                : new SitemapPageSettings
+                {
+                    ContentTypeId = entity.ContentTypeId,
+                    ContentTypeGuid = entity.ContentTypeGuid,
+                    HideFromSitemap = entity.HideFromSitemap,
+                    ChangeFrequency = entity.ChangeFrequency,
+                    Priority = entity.Priority
+                };
+        }
+
+        public SitemapPageSettings Get(Guid contentTypeGuid)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entity = scope.Database.FirstOrDefault<SitemapPageTypeEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SitemapPageTypeEntity>()
+                .Where<SitemapPageTypeEntity>(it => it.ContentTypeGuid == contentTypeGuid));
+
+            return entity is null
+                ? null
+                : new SitemapPageSettings
+                {
+                    ContentTypeId = entity.ContentTypeId,
+                    ContentTypeGuid = entity.ContentTypeGuid,
+                    HideFromSitemap = entity.HideFromSitemap,
+                    ChangeFrequency = entity.ChangeFrequency,
+                    Priority = entity.Priority
+                };
         }
     }
 }

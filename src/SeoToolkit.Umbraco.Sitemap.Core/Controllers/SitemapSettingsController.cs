@@ -31,7 +31,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
             var contentType = _contentTypeService.Get(contentTypeGuid);
             if (contentType != null)
             {
-                settings = _sitemapService.GetPageTypeSettings(contentType.Id) ?? new SitemapPageSettings();
+                settings = _sitemapService.GetPageTypeSettings(contentType.Key) ?? new SitemapPageSettings();
             }
 
             return new JsonResult(new SitemapPageTypeSettingsViewModel
@@ -51,6 +51,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
             _sitemapService.SetPageTypeSettings(new SitemapPageSettings
             {
                 ContentTypeId = contentType.Id,
+                ContentTypeGuid = model.ContentTypeGuid,
                 HideFromSitemap = model.HideFromSitemap,
                 ChangeFrequency = model.ChangeFrequency,
                 Priority = model.Priority

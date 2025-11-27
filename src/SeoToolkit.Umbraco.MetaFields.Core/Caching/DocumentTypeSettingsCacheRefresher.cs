@@ -23,5 +23,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Caching
             AppCaches.RuntimeCache.ClearByKey($"{CacheConstants.DocumentTypeSettings}{id}");
             base.Refresh(id);
         }
+
+        public override void Refresh(Guid id)
+        {
+            AppCaches.RuntimeCache.ClearByKey($"{CacheConstants.DocumentTypeSettings}{id}");
+            base.Refresh(id);
+        }
     }
 }

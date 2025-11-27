@@ -26,23 +26,28 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepo
 
         public IEnumerable<DocumentTypeSettingsDto> GetAll()
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                return scope.Database.Fetch<MetaFieldsSettingsEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<MetaFieldsSettingsEntity>()).Select(it => _mapper.Value.Map<DocumentTypeSettingsDto>(it));
-            }
+            using var scope = _scopeProvider.CreateScope();
+            return scope.Database.Fetch<MetaFieldsSettingsEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<MetaFieldsSettingsEntity>()).Select(it => _mapper.Value.Map<DocumentTypeSettingsDto>(it));
         }
 
         public DocumentTypeSettingsDto Get(int id)
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                return _mapper.Value.Map<DocumentTypeSettingsDto>(scope.Database.FirstOrDefault<MetaFieldsSettingsEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<MetaFieldsSettingsEntity>()
-                    .Where<MetaFieldsSettingsEntity>(it => it.NodeId == id)));
-            }
+            using var scope = _scopeProvider.CreateScope();
+            return _mapper.Value.Map<DocumentTypeSettingsDto>(scope.Database.FirstOrDefault<MetaFieldsSettingsEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<MetaFieldsSettingsEntity>()
+                .Where<MetaFieldsSettingsEntity>(it => it.NodeId == id)));
+        }
+
+        public DocumentTypeSettingsDto Get(Guid key)
+        {
+            using var scope = _scopeProvider.CreateScope();
+            return _mapper.Value.Map<DocumentTypeSettingsDto>(scope.Database.FirstOrDefault<MetaFieldsSettingsEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<MetaFieldsSettingsEntity>()
+                .Where<MetaFieldsSettingsEntity>(it => it.NodeKey == key)));
         }
 
         public DocumentTypeSettingsDto Add(DocumentTypeSettingsDto model)
@@ -72,10 +77,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepo
             var entity = Get(id);
             if (entity is null)
                 return;
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                scope.Database.Delete(entity);
-            }
+
+            using var scope = _scopeProvider.CreateScope();
+            scope.Database.Delete(entity);
         }
     }
 }

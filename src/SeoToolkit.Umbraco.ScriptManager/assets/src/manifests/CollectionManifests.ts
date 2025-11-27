@@ -8,6 +8,7 @@ const ScriptManagerCollection: ManifestCollection = {
     kind: 'default',
     alias: 'seoToolkit.collections.scripts',
     name: 'ScriptManager Collection',
+    api: () => import('../workspaces/ScriptManagerModuleContext'),
     meta: {
         repositoryAlias: 'seoToolkit.repositories.scripts'
     }

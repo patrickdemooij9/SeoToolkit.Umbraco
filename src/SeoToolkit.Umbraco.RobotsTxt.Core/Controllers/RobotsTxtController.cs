@@ -5,6 +5,7 @@ using SeoToolkit.Umbraco.RobotsTxt.Core.Models.PostModel;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.ViewModels;
 using SeoToolkit.Umbraco.Common.Core.Controllers;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.ResponseModel;
+using System;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
 {
@@ -20,7 +21,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Controllers
 
         [HttpGet("robotsTxt")]
         [ProducesResponseType(typeof(string), 200)]
-        public IActionResult Get(int? domainId = null)
+        public IActionResult Get(Guid? domainId = null)
         {
             return Ok(_robotsTxtService.GetContent(domainId));
         }

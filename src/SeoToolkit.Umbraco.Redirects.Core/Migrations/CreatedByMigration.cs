@@ -1,5 +1,6 @@
 ﻿using NPoco;
 using SeoToolkit.Umbraco.Common.Core.Migrations;
+using SeoToolkit.Umbraco.Redirects.Core.Migrations.Entities;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
 using System;
 using Umbraco.Cms.Infrastructure.Migrations;
@@ -23,7 +24,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
                     Database.Execute("ALTER TABLE SeoToolkitRedirects ADD CreatedBy INT NULL");
                     Database.Execute("UPDATE SeoToolkitRedirects SET CreatedBy = -1");
 
-                    MigrationHelper.RecreateTable<RedirectEntity>(Database, Create, Sql(), "SeoToolkitRedirects");
+                    MigrationHelper.RecreateTable<CreatedByEntity>(Database, Create, Sql(), "SeoToolkitRedirects");
                     return;
                 }
 

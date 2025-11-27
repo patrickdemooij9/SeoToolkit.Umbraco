@@ -250,7 +250,7 @@ public class RedirectsImportHelper
     {
         return new Redirect
         {
-            Domain = _selectedDomain, CustomDomain = null, Id = 0, IsEnabled = true, IsRegex = false,
+            Domain = _selectedDomain, CustomDomain = null, Id = 0, Key = Guid.NewGuid(), IsEnabled = true, IsRegex = false,
             NewNodeCulture = null, NewNode = null, NewUrl = toUrl, OldUrl = fromUrl, RedirectCode = (int)redirectCode
         };
     }

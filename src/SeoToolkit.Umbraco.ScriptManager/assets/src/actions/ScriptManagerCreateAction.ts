@@ -9,7 +9,7 @@ export class ScriptManagerCreateAction extends UmbWorkspaceActionBase<ScriptMana
     if (lastSegment && lastSegment.includes("~")) {
       const parts = lastSegment.split("~");
       if (parts.length === 2) {
-        url += `?domainId=${Number.parseInt(parts[1])}`;
+        url += `?domainId=${parts[1]}`;
       }
     }
 

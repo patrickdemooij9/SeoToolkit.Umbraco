@@ -1,15 +1,16 @@
-﻿using NPoco;
+﻿using System;
+using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace SeoToolkit.Umbraco.Common.Core.Models.Database
 {
-    [PrimaryKey("Id", AutoIncrement = true)]
+    [PrimaryKey("Id", AutoIncrement = false)]
     [TableName("SeoToolkitDomainSettings")]
     public class SeoDomainSettingEntity
     {
         [Column("Id")]
-        [PrimaryKeyColumn(AutoIncrement = true)]
-        public int Id { get; set; }
+        [PrimaryKeyColumn(AutoIncrement = false)]
+        public Guid Id { get; set; }
 
         [Column("SettingKey")]
         public string Key { get; set; }
@@ -20,6 +21,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Models.Database
         [Column("CollectionId")]
         [ForeignKey(typeof(SeoDomainCollectionEntity), Name = "FK_SeoToolkitDomainSettings_SeoToolkitDomainCollections", Column = "Id")]
         [Index(IndexTypes.NonClustered, Name = "IX_SeoToolkitSettingsCollectionId")]
-        public int CollectionId { get; set; }
+        public Guid CollectionId { get; set; }
     }
 }

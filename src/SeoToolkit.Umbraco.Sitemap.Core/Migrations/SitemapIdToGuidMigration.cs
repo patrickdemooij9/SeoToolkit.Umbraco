@@ -1,0 +1,51 @@
+﻿using System.Threading.Tasks;
+using SeoToolkit.Umbraco.Common.Core.Migrations;
+using SeoToolkit.Umbraco.Sitemap.Core.Models.Database;
+using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Infrastructure.Migrations;
+using Umbraco.Extensions;
+
+namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
+{
+    public class SitemapIdToGuidMigration : AsyncMigrationBase
+    {
+        private readonly IContentTypeService _contentTypeService;
+        private readonly IKeyValueService _keyValueService;
+
+        public SitemapIdToGuidMigration(IMigrationContext context, IContentTypeService contentTypeService, IKeyValueService keyValueService) : base(context)
+        {
+            _contentTypeService = contentTypeService;
+            _keyValueService = keyValueService;
+        }
+
+        protected override Task MigrateAsync()
+        {
+            // We have a dependency on the common migration to have run first, otherwise the cleanup will be a big mess
+            MigrationHelper.EnsureMigration("SeoToolkit_Common_Migration", 6, _keyValueService);
+
+            if (ColumnExists("SeoToolkitSitemapPageType", "ContentTypeGuid")) return Task.CompletedTask;
+
+            Database.Execute("ALTER TABLE SeoToolkitSitemapPageType ADD ContentTypeGuid UNIQUEIDENTIFIER NULL");
+            foreach (var entry in Database.Fetch<SitemapPageTypeEntity>(Sql().SelectAll().From<SitemapPageTypeEntity>()))
+            {
+                var contentType = _contentTypeService.Get(entry.ContentTypeId);
+                if (contentType is null) continue;
+
+                Database.Execute("UPDATE SeoToolkitSitemapPageType SET ContentTypeGuid = @0 WHERE ContentTypeId = @1",
+                    contentType.Key, entry.ContentTypeId);
+            }
+
+            if (DatabaseType == NPoco.DatabaseType.SQLite)
+            {
+                MigrationHelper.RecreateTable<SitemapPageTypeEntity>(Database, Create, Sql(), "SeoToolkitSitemapPageType");
+                return Task.CompletedTask;
+            }
+
+            Database.Execute("ALTER TABLE SeoToolkitSitemapPageType ALTER COLUMN ContentTypeGuid UNIQUEIDENTIFIER NOT NULL");
+
+            Database.Execute("ALTER TABLE SeoToolkitSitemapPageType DROP CONSTRAINT pk_SeoToolkitSitemapPageType");
+            Database.Execute("ALTER TABLE SeoToolkitSitemapPageType ADD CONSTRAINT pk_SeoToolkitSitemapPageType PRIMARY KEY (ContentTypeGuid)");
+            return Task.CompletedTask;
+        }
+    }
+}

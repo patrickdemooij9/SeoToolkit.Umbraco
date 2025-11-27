@@ -29,7 +29,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Services
             _sitemapProvider = sitemapProvider;
         }
 
-        public string GetContent(int? domainId = null)
+        public string GetContent(Guid? domainId = null)
         {
             return _robotsTxtRepository.GetAll().FirstOrDefault(it => it.DomainId == domainId)?.Content ?? string.Empty;
         }
@@ -62,11 +62,10 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Services
             return content;
         }
 
-        public void SetContent(string content, int? domainId = null)
+        public void SetContent(string content, Guid? domainId = null)
         {
             var model = _robotsTxtRepository.GetAll().FirstOrDefault(it => it.DomainId == domainId);
-            if (model is null)
-                model = new RobotsTxtModel();
+            model ??= new RobotsTxtModel { Key = Guid.NewGuid() };
 
             model.Content = content;
             model.DomainId = domainId;

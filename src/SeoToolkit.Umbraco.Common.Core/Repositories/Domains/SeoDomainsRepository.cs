@@ -1,5 +1,6 @@
 ﻿using SeoToolkit.Umbraco.Common.Core.Models.Business;
 using SeoToolkit.Umbraco.Common.Core.Models.Database;
+using System;
 using System.Linq;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Extensions;
@@ -15,7 +16,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
             _scopeProvider = scopeProvider;
         }
 
-        public SeoDomainCollection? Get(int id)
+        public SeoDomainCollection? Get(Guid id)
         {
             using var scope = _scopeProvider.CreateScope();
             var collection = scope.Database.FirstOrDefault<SeoDomainCollectionEntity>(scope.SqlContext.Sql()
@@ -67,12 +68,12 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
             return collections;
         }
 
-        public int Save(SeoDomainCollection collection)
+        public Guid Save(SeoDomainCollection collection)
         {
             using var scope = _scopeProvider.CreateScope();
 
             SeoDomainCollectionEntity collectionEntity;
-            if (collection.Id != 0)
+            if (collection.Id.HasValue)
             {
                 collectionEntity = scope.Database.FirstOrDefault<SeoDomainCollectionEntity>(scope.SqlContext.Sql()
                     .SelectAll()
@@ -81,7 +82,10 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
             }
             else
             {
-                collectionEntity = new SeoDomainCollectionEntity();
+                collectionEntity = new SeoDomainCollectionEntity
+                {
+                    Id = Guid.NewGuid()
+                };
             }
 
             collectionEntity.Name = collection.Name;
@@ -98,6 +102,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
 
                 var domainEntity = new SeoDomainEntity
                 {
+                    Id = Guid.NewGuid(),
                     DomainId = domainId,
                     CollectionId = collectionEntity.Id
                 };
@@ -118,7 +123,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
                 .ToDictionary(x => x.Key, x => x);
             foreach (var setting in collection.Settings)
             {
-                var settingEntity = existingSettings.TryGetValue(setting.Key, out var value) ? value : new SeoDomainSettingEntity { Key = setting.Key, CollectionId = collectionEntity.Id };
+                var settingEntity = existingSettings.TryGetValue(setting.Key, out var value) ? value : new SeoDomainSettingEntity { Id = Guid.NewGuid(), Key = setting.Key, CollectionId = collectionEntity.Id };
 
                 settingEntity.Value = setting.Value;
                 scope.Database.Save(settingEntity);
@@ -135,7 +140,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
             return collectionEntity.Id;
         }
 
-        public void Delete(int domainId)
+        public void Delete(Guid domainId)
         {
             using var scope = _scopeProvider.CreateScope();
 

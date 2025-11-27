@@ -145,12 +145,13 @@ namespace SeoToolkit.Tests
             var umbracoContext = new Mock<IUmbracoContext>();
             var domainCache = new Mock<IDomainCache>();
             var seoDomainResolver = new Mock<ISeoDomainResolver>();
+            var domainService = new Mock<IDomainService>();
 
             umbracoContext.Setup(it => it.Domains).Returns(domainCache.Object);
             umbracoFactory.Setup(it => it.EnsureUmbracoContext())
                 .Returns(new UmbracoContextReference(umbracoContext.Object, true, Mock.Of<IUmbracoContextAccessor>()));
 
-            var provider = new RobotsSitemapProvider(umbracoFactory.Object, seoDomainResolver.Object);
+            var provider = new RobotsSitemapProvider(umbracoFactory.Object, seoDomainResolver.Object, domainService.Object);
 
             return (provider, (umbracoFactory, umbracoContext, domainCache, seoDomainResolver));
         }

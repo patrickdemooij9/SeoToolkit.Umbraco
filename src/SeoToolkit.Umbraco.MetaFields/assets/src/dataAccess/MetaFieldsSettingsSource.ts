@@ -1,8 +1,8 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
 import {
-  DocumentTypeSettingsPostViewModel,
-  SeoToolkitMetaFieldsService,
+  BackofficeSeoToolkitMetaFieldsService,
+  DocumentTypeSettingsPostViewModel
 } from "../api";
 
 export class MetaFieldsSettingsSource {
@@ -15,7 +15,7 @@ export class MetaFieldsSettingsSource {
   async get(contentTypeGuid: string) {
     return await tryExecute(
       this.#host,
-      SeoToolkitMetaFieldsService.getUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettings(
+      BackofficeSeoToolkitMetaFieldsService.getUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettings(
         {
           query: {
             nodeId: contentTypeGuid,
@@ -28,14 +28,14 @@ export class MetaFieldsSettingsSource {
   async getAdditionalFields() {
     return await tryExecute(
       this.#host,
-      SeoToolkitMetaFieldsService.getUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFields()
+      BackofficeSeoToolkitMetaFieldsService.getUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFields()
     );
   }
 
   async save(model: DocumentTypeSettingsPostViewModel) {
     return await tryExecute(
       this.#host,
-      SeoToolkitMetaFieldsService.postUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettings(
+      BackofficeSeoToolkitMetaFieldsService.postUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettings(
         {
           body: model,
         }

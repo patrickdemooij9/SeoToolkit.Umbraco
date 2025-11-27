@@ -1,4 +1,5 @@
-﻿using Umbraco.Cms.Core.Models;
+﻿using System;
+using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 
 namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
@@ -7,6 +8,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
     {
         bool IsEnabled(IContentType contentType);
         bool SupressContentAppSavingNotification();
-        void ToggleSeoSettings(int contentTypeId, bool value);
+        void ToggleSeoSettings(Guid contentTypeId, bool value);
     }
 }

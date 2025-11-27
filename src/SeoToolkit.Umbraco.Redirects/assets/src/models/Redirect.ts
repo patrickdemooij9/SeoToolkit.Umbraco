@@ -1,4 +1,5 @@
 export interface Redirect { 
+    id: number;
     unique: string;
     entityType: string;
     isEnabled: boolean;

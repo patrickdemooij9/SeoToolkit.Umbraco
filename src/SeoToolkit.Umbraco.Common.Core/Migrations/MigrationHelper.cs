@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations.Expressions.Create;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Extensions;
@@ -21,6 +22,17 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
             umbracoDatabase.InsertBulk(umbracoDatabase.Fetch<T>(sql
                 .SelectAll()
                 .From($"old_{tableName}")));
+        }
+
+        public static void EnsureMigration(string module, int minVersion, IKeyValueService keyValueService)
+        {
+            var value = keyValueService.GetValue($"Umbraco.Core.Upgrader.State+{module}") ?? throw new Exception($"Migration for {module} not found, please ensure the module is installed correctly.");
+            var version = int.Parse(value.Replace("state-", ""));
+
+            if (version < minVersion)
+            {
+                throw new Exception($"Migration for {module} is outdated (found: {version}, required: {minVersion}), please run the migrations to ensure the module works correctly.");
+            }
         }
     }
 }

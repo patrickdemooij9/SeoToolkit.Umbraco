@@ -10,7 +10,7 @@ export class RobotsTxtSource {
         this.#host = host;
     }
 
-    async getContent(domainId: number | undefined): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitRobotsTxtResponse>>{
+    async getContent(domainId: string | undefined): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitRobotsTxtResponse>>{
         return await tryExecute(this.#host, BackofficeSeoToolkitRobotsTxtService.getUmbracoSeoToolkitRobotsTxt({
             query: {
                 domainId: domainId
@@ -18,7 +18,7 @@ export class RobotsTxtSource {
         }));
     }
 
-    async saveContent(content: string, domainId: number | undefined, skipValidation: boolean): Promise<UmbDataSourceResponse<PostUmbracoSeoToolkitRobotsTxtResponse>>{
+    async saveContent(content: string, domainId: string | undefined, skipValidation: boolean): Promise<UmbDataSourceResponse<PostUmbracoSeoToolkitRobotsTxtResponse>>{
         return await tryExecute(this.#host, BackofficeSeoToolkitRobotsTxtService.postUmbracoSeoToolkitRobotsTxt({
             body: {
                 skipValidation: skipValidation,

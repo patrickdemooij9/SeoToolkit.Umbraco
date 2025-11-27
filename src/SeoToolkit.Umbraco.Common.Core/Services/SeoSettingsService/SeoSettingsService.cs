@@ -37,7 +37,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
             return _settingsService.GetSettings().SupressContentAppSavingNotification;
         }
 
-        public void ToggleSeoSettings(int contentTypeId, bool value)
+        public void ToggleSeoSettings(Guid contentTypeId, bool value)
         {
             _seoSettingsRepository.Toggle(contentTypeId, value);
 

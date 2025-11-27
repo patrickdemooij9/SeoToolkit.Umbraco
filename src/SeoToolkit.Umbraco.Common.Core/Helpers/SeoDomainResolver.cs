@@ -2,7 +2,9 @@
 using SeoToolkit.Umbraco.Common.Core.Models.Business;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 using System;
+using System.Linq;
 using Umbraco.Cms.Core.Routing;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 
 namespace SeoToolkit.Umbraco.Common.Core.Helpers

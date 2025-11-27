@@ -5,7 +5,7 @@ import { ST_REDIRECT_MODULE_TOKEN_CONTEXT } from "../workspaces/RedirectModuleCo
 export default class DeleteRedirectAction extends UmbEntityBulkActionBase<object>{
     async execute() {
         const repository = new RedirectRepository(this._host);
-        await repository.delete(this.selection.map((item => Number.parseInt(item))));
+        await repository.delete(this.selection.map((item => item)));
 
         const context = await this.getContext(ST_REDIRECT_MODULE_TOKEN_CONTEXT);
         context?.requestCollection();

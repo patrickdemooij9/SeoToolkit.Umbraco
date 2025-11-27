@@ -6,6 +6,6 @@ export default class UpdateStatusCodeRedirectAction extends UmbEntityBulkActionB
     const workspaceContext = await this.getContext(
       ST_REDIRECT_MODULE_TOKEN_CONTEXT
     );
-    await workspaceContext?.openStatusCodeModal(this.selection.map((item => Number.parseInt(item))));
+    await workspaceContext?.openStatusCodeModal(this.selection.map((item => item)));
   }
 }

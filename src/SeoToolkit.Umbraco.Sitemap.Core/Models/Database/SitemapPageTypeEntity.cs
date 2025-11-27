@@ -1,15 +1,19 @@
-﻿using NPoco;
+﻿using System;
+using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Models.Database
 {
     [TableName("SeoToolkitSitemapPageType")]
-    [PrimaryKey("ContentTypeId", AutoIncrement = false)]
+    [PrimaryKey("ContentTypeGuid", AutoIncrement = false)]
     public class SitemapPageTypeEntity
     {
         [Column("ContentTypeId")]
-        [PrimaryKeyColumn(AutoIncrement = false)]
         public int ContentTypeId { get; set; }
+
+        [Column("ContentTypeGuid")]
+        [PrimaryKeyColumn(AutoIncrement = false)]
+        public Guid ContentTypeGuid { get; set; }
 
         [Column("HideFromSitemap")]
         public bool HideFromSitemap { get; set; }

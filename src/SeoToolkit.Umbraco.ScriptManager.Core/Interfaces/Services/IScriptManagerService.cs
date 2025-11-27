@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services
@@ -6,9 +7,13 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services
     public interface IScriptManagerService
     {
         Script Save(Script script);
+        [Obsolete("Use Delete(Guid[] ids) method instead")]
         void Delete(int[] ids);
-        IEnumerable<Script> GetAll(int? domainId);
+        void Delete(Guid[] ids);
+        IEnumerable<Script> GetAll(Guid? domainId);
+        [Obsolete("Use Get(Guid id) method instead")]
         Script Get(int id);
-        ScriptRenderModel GetRender(int? domainId);
+        Script Get(Guid id);
+        ScriptRenderModel GetRender(Guid? domainId);
     }
 }

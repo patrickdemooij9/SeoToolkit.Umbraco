@@ -1,7 +1,9 @@
-﻿using Umbraco.Cms.Core.Packaging;
+﻿using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.Packaging;
 
 namespace SeoToolkit.Umbraco.Common.Core.Migrations
 {
+    [Weight(10)]
     public class SeoToolkitMigrationPlan : PackageMigrationPlan
     {
         public SeoToolkitMigrationPlan()
@@ -15,6 +17,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
             To<CreateSeoToolkitUserGroupMigration>("state-3");
             To<SeoToolkitDomainMigration>("state-4");
             To<SeoKeyValueMigration>("state-5");
+            To<CommonIdToGuidMigration>("state-6");
         }
     }
 }

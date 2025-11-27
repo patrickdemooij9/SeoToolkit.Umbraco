@@ -12,6 +12,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Migrations
         {
             To<InitialRobotsTxtMigration>("state-1");
             To<RobotsTxtDomainMigration>("state-2");
+            To<RobotsTxtGuidIdMigration>("state-3");
         }
     }
 }

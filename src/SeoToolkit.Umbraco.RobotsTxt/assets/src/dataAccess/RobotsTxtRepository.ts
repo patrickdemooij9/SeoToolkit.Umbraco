@@ -11,11 +11,11 @@ export class RobotsTxtRepository extends UmbControllerBase{
         this.#robotsTxtSource = new RobotsTxtSource(host);
     }
 
-    async getContent(domainId: number | undefined){
+    async getContent(domainId: string | undefined){
         return this.#robotsTxtSource.getContent(domainId);
     }
 
-    async saveContent(content: string, domainId: number | undefined, skipValidation: boolean){
+    async saveContent(content: string, domainId: string | undefined, skipValidation: boolean){
         return this.#robotsTxtSource.saveContent(content, domainId, skipValidation);
     }
 }

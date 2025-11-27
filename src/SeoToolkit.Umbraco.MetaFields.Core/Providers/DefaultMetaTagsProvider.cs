@@ -29,9 +29,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
         private readonly IContentTypeService _contentTypeService;
         private readonly IEventAggregator _eventAggregator;
 
-        [Obsolete("Doesn't work, use the notification variant instead! Remove in V3")]
-        public event EventHandler<MetaTagsModel> BeforeMetaTagsGet;
-
         public DefaultMetaTagsProvider(IMetaFieldsSettingsService documentTypeSettingsService,
             SeoFieldCollection seoFieldCollection,
             IMetaFieldsValueService seoValueService,
@@ -63,11 +60,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                 var metaTags = new MetaTagsModel(allFields.ToDictionary(it => it, it => (object)null));
                 _eventAggregator.Publish(new BeforeMetaTagsNotification(content, metaTags));
 
-                var contentType = _contentTypeService.Get(content.ContentType.Id);
-                var settings = _documentTypeSettingsService.Get(content.ContentType.Id);
+                var contentType = _contentTypeService.Get(content.ContentType.Key);
+                var settings = _documentTypeSettingsService.Get(content.ContentType.Key);
                 if (_seoSettingsService.IsEnabled(contentType) != true)
                     return null;
-                var userValues = includeUserValues ? _seoValueService.GetUserValues(content.Id) : null;
+                var userValues = includeUserValues ? _seoValueService.GetUserValues(content.Key) : null;
                 var fields = allFields.Select(it =>
                 {
                     //If set by event, make sure not to override it with the fallback value
@@ -90,7 +87,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                             var inheritance = settings.Inheritance;
                             while (inheritance != null)
                             {
-                                var inheritedSettings = _documentTypeSettingsService.Get(inheritance.Id);
+                                var inheritedSettings = _documentTypeSettingsService.Get(inheritance.Key);
                                 documentTypeValue = inheritedSettings?.Get(it.Alias);
                                 if (documentTypeValue != null && documentTypeValue.UseInheritedValue)
                                     inheritance = inheritedSettings.Inheritance;
@@ -110,7 +107,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
 
                     if (fromType != it.FieldType)
                     {
-                        _logger.LogWarning("No converter found for conversion {0} to {1}", fromType, it.FieldType);
+                        _logger.LogWarning("No converter found for conversion {fromType} to {fieldType}", fromType, it.FieldType);
                     }
                     return new SeoValue(it, intermediateObject);
                 }).WhereNotNull().ToArray();

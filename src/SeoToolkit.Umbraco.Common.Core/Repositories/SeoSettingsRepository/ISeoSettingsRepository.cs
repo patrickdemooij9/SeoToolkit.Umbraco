@@ -1,11 +1,11 @@
-﻿using Umbraco.Cms.Core.Models;
-using Umbraco.Cms.Core.Models.PublishedContent;
+﻿using System;
+using Umbraco.Cms.Core.Models;
 
 namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
 {
     public interface ISeoSettingsRepository
     {
         bool IsEnabled(IContentType contentType);
-        void Toggle(int contentTypeId, bool value);
+        void Toggle(Guid contentTypeId, bool value);
     }
 }

@@ -11,7 +11,7 @@ export class SeoToolkitDomainRepository extends UmbControllerBase {
     this.#source = new SeoToolkitDomainSource(this);
   }
 
-  async get(domainId: number) {
+  async get(domainId: string) {
     return this.#source.get(domainId);
   }
 
@@ -23,7 +23,7 @@ export class SeoToolkitDomainRepository extends UmbControllerBase {
     return this.#source.saveDomain(domain);
   }
 
-  async delete(domainId: number) {
+  async delete(domainId: string) {
     return this.#source.delete(domainId);
   }
 

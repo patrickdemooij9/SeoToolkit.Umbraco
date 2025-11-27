@@ -84,7 +84,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
                 {
                     Id = $"{_domainGuid}~{it.Id}",
                     Name = it.Name,
-                    HasChildren = GetSectionsForDomain(it.Id).Length > 0
+                    HasChildren = GetSectionsForDomain(it.Id!.Value).Length > 0
                 }).ToList();
                 if (_config.GetSettings().SyncContentDomains)
                 {
@@ -109,7 +109,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             }
             else if (parentUnique.StartsWith($"{_domainGuid}~"))
             {
-                if (int.TryParse(parentUnique.Replace($"{_domainGuid}~", ""), out var domainId))
+                if (Guid.TryParse(parentUnique.Replace($"{_domainGuid}~", ""), out var domainId))
                 {
                     var sections = GetSectionsForDomain(domainId);
                     return new PagedViewModel<SeoToolkitTreeItemApiModel>
@@ -141,7 +141,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             return Ok(Enumerable.Empty<SeoToolkitTreeItemApiModel>());
         }
 
-        private ISeoTreeSection[] GetSectionsForDomain(int domainId)
+        private ISeoTreeSection[] GetSectionsForDomain(Guid domainId)
         {
             var domain = _seoDomainsService.GetAll().FirstOrDefault(it => it.Id == domainId);
             if (domain is null) return [];
@@ -152,7 +152,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         {
             var currentlyUsedDomains = seoDomains.SelectMany(it => it.DomainIds).Distinct().ToArray();
             var domains = await _domainService.GetAllAsync(false);
-            return domains.Where(it => it.DomainName.StartsWith("http") && !currentlyUsedDomains.Contains(it.Id)).ToArray();
+            return [.. domains.Where(it => it.DomainName.StartsWith("http") && !currentlyUsedDomains.Contains(it.Id))];
         }
     }
 }

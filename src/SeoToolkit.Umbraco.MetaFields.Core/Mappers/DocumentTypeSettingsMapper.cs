@@ -54,7 +54,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Mappers
                 (source, context) => new DocumentTypeSettingsDto(),
                 (source, target, context) =>
                 {
-                    target.Content = _contentTypeService.Get(source.NodeId);
+                    target.Content = _contentTypeService.Get(source.NodeKey);
                     if (!string.IsNullOrWhiteSpace(source.Fields))
                     {
                         var fields = JsonConvert.DeserializeObject<MetaFieldsFieldEntity[]>(source.Fields);
@@ -72,7 +72,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Mappers
                             });
                         }
                     }
-                    target.Inheritance = source.InheritanceId is null ? null : _contentTypeService.Get(source.InheritanceId.Value);
+                    target.Inheritance = source.InheritanceKey is null ? null : _contentTypeService.Get(source.InheritanceKey.Value);
                 });
 
             mapper.Define<DocumentTypeSettingsDto, MetaFieldsSettingsEntity>(
@@ -80,13 +80,15 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Mappers
                 (source, target, context) =>
                 {
                     target.NodeId = source.Content.Id;
+                    target.NodeKey = source.Content.Key;
                     target.Fields = JsonConvert.SerializeObject(source.Fields?.Select(it => new MetaFieldsFieldEntity
                     {
                         Alias = it.Key.Alias,
                         Value = it.Value.Value,
                         UseInheritedValue = it.Value.UseInheritedValue
-                    }).ToArray() ?? Array.Empty<MetaFieldsFieldEntity>());
+                    }).ToArray() ?? []);
                     target.InheritanceId = source.Inheritance?.Id;
+                    target.InheritanceKey = source.Inheritance?.Key;
                 });
         }
     }

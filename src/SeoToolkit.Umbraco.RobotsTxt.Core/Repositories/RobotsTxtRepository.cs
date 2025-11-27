@@ -28,26 +28,33 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Repositories
             throw new NotImplementedException();
         }
 
+        [Obsolete("Use Get(Guid key) method instead. Will be removed in next major version.")]
         public RobotsTxtModel Get(int id)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var entity = scope.Database.FirstOrDefault<RobotsTxtEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<RobotsTxtEntity>()
-                    .Where<RobotsTxtEntity>(it => it.Id == id));
-                return entity is null ? null : MapToModel(entity);
-            }
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entity = scope.Database.FirstOrDefault<RobotsTxtEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<RobotsTxtEntity>()
+                .Where<RobotsTxtEntity>(it => it.Id == id));
+            return entity is null ? null : MapToModel(entity);
+        }
+
+        public RobotsTxtModel Get(Guid key)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entity = scope.Database.FirstOrDefault<RobotsTxtEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<RobotsTxtEntity>()
+                .Where<RobotsTxtEntity>(it => it.Key == key));
+            return entity is null ? null : MapToModel(entity);
         }
 
         public IEnumerable<RobotsTxtModel> GetAll()
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                return scope.Database.Fetch<RobotsTxtEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<RobotsTxtEntity>()).Select(MapToModel);
-            }
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            return scope.Database.Fetch<RobotsTxtEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<RobotsTxtEntity>()).Select(MapToModel);
         }
 
         public RobotsTxtModel Update(RobotsTxtModel model)
@@ -56,7 +63,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Repositories
             {
                 scope.Database.Save(MapToEntity(model));
             }
-            return Get(model.Id);
+            return Get(model.Key);
         }
 
         private RobotsTxtModel MapToModel(RobotsTxtEntity entity)
@@ -64,6 +71,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Repositories
             return new RobotsTxtModel
             {
                 Id = entity.Id,
+                Key = entity.Key,
                 Content = entity.Content,
                 DomainId = entity.DomainId
             };
@@ -74,6 +82,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Repositories
             return new RobotsTxtEntity
             {
                 Id = model.Id,
+                Key = model.Key,
                 Content = model.Content,
                 DomainId = model.DomainId
             };

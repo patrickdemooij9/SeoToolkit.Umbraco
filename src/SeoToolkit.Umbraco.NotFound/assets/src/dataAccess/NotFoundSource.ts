@@ -9,7 +9,7 @@ export default class NotFoundSource {
     this.#host = host;
   }
 
-  async get(domainId?: number) {
+  async get(domainId?: string) {
     return await tryExecute(
       this.#host,
       BackofficeSeoToolkitNotFoundService.getUmbracoSeoToolkitNotFoundNotFound({
@@ -18,7 +18,7 @@ export default class NotFoundSource {
     );
   }
 
-  async save(data?: string, domainId?: number) {
+  async save(data?: string, domainId?: string) {
     return await tryExecute(
       this.#host,
       BackofficeSeoToolkitNotFoundService.postUmbracoSeoToolkitNotFoundNotFound({

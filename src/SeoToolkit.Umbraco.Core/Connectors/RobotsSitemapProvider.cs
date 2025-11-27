@@ -5,6 +5,7 @@ using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 
 namespace SeoToolkit.Umbraco.Core.Connectors
@@ -13,17 +14,19 @@ namespace SeoToolkit.Umbraco.Core.Connectors
     {
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISeoDomainResolver _seoDomainResolver;
+        private readonly IDomainService _domainService;
 
-        public RobotsSitemapProvider(IUmbracoContextFactory umbracoContextFactory, ISeoDomainResolver seoDomainResolver)
+        public RobotsSitemapProvider(IUmbracoContextFactory umbracoContextFactory, ISeoDomainResolver seoDomainResolver, IDomainService domainService)
         {
             _umbracoContextFactory = umbracoContextFactory;
             _seoDomainResolver = seoDomainResolver;
+            _domainService = domainService;
         }
 
         public IEnumerable<string> GetSitemapUrls(HttpRequest request)
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
-            var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
+            var domains = ctx.UmbracoContext.Domains.GetAll(includeWildcards: false).ToArray();
 
             var seoDomain = _seoDomainResolver.ResolveDomain();
             if (seoDomain != null)

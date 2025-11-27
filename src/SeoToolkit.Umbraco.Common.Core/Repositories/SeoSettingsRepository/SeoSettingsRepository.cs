@@ -6,6 +6,7 @@ using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Models;
+using System;
 
 namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
 {
@@ -31,7 +32,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
                 var entity = scope.Database.FirstOrDefault<SeoSettingsEntity>(scope.SqlContext.Sql()
                     .SelectAll()
                     .From<SeoSettingsEntity>()
-                    .Where<SeoSettingsEntity>(it => it.ContentTypeId == contentType.Id));
+                    .Where<SeoSettingsEntity>(it => it.ContentTypeId == contentType.Key));
 
                 //Default is disabled.
                 if (entity is null && _settingsService.GetSettings().EnableSeoSettingsByDefaultForTemplated)
@@ -45,7 +46,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
             }
         }
 
-        public void Toggle(int contentTypeId, bool value)
+        public void Toggle(Guid contentTypeId, bool value)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
             {

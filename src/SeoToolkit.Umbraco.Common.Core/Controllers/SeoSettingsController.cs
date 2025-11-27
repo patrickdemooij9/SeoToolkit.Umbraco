@@ -55,7 +55,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             var contentType = _contentTypeService.Get(postModel.ContentTypeId);
             if (contentType is null) return NotFound();
 
-            _seoSettingsService.ToggleSeoSettings(contentType.Id, postModel.Enabled);
+            _seoSettingsService.ToggleSeoSettings(contentType.Key, postModel.Enabled);
             return Ok();
         }
     }

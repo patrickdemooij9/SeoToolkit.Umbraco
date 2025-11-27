@@ -12,6 +12,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Database
         [PrimaryKeyColumn(AutoIncrement = true)]
         public int Id { get; set; }
 
+        [Column("Key")]
+        public Guid Key { get; set; }
+
         [Column("Domain")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public int? Domain { get; set; }
@@ -38,6 +41,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Database
         [Column("NewNodeId")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public int? NewNodeId { get; set; }
+
+        [Column("NewNodeKey")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public Guid? NewNodeKey { get; set; }
 
         [Column("NewNodeCultureId")]
         [NullSetting(NullSetting = NullSettings.Null)]

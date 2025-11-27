@@ -61,15 +61,15 @@ export class SeoToolkitDomainEditViewElement
   loadList() {
     this.domainList = (this.config?.domains ?? []).map((domain) => ({
       label: domain.domainName ?? "",
-      value: domain.id?.toString(),
-      checked: this.model?.domainIds.includes(domain.id ?? 0) ?? false,
+      value: domain.key,
+      checked: this.model?.domainIds.includes(domain.id) ?? false,
     }));
   }
 
   #onDomainChange(
     event: CustomEvent & { target: UmbInputCheckboxListElement }
   ) {
-    let newValue = event.target.selection.map((it) => Number.parseInt(it));
+    let newValue = event.target.selection.map((item) => parseInt(item));
     this.#context?.updateDomain({ domainIds: newValue });
   }
 

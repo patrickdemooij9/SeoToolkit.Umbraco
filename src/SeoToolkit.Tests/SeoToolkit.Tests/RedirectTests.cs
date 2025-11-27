@@ -21,10 +21,11 @@ namespace SeoToolkit.Tests
         {
             // Arrange
             var redirectId = 1;
+            var redirectKey = Guid.NewGuid();
             var redirectRepository = new Mock<IRedirectsRepository>();
             redirectRepository.Setup(it => it.GetAllRegexRedirects()).Returns(() => new Redirect[]
             {
-                new Redirect { Domain = null, IsRegex = true, Id = redirectId, OldUrl = "^/test" }
+                new Redirect { Domain = null, IsRegex = true, Id = redirectId, Key = redirectKey, OldUrl = "^/test" }
             });
             var bloomFilterMock = new Mock<IRedirectsBloomFilter>();
             bloomFilterMock.Setup(it => it.Contains(It.IsAny<string>())).Returns(true);
@@ -60,6 +61,7 @@ namespace SeoToolkit.Tests
             var redirect = new Redirect
             {
                 Id = 1,
+                Key = Guid.NewGuid(),
                 IsEnabled = true,
                 IsRegex = false,
                 OldUrl = "test",
@@ -93,6 +95,7 @@ namespace SeoToolkit.Tests
             var redirect = new Redirect
             {
                 Id = 1,
+                Key = Guid.NewGuid(),
                 IsEnabled = true,
                 IsRegex = false,
                 OldUrl = "/test",
@@ -133,7 +136,7 @@ namespace SeoToolkit.Tests
 
             var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
 
-            var redirect = new Redirect { Id = 1, IsEnabled = true, IsRegex = false, OldUrl = "/old", NewUrl = "/new", RedirectCode = 999 };
+            var redirect = new Redirect { Id = 1, Key = Guid.NewGuid(), IsEnabled = true, IsRegex = false, OldUrl = "/old", NewUrl = "/new", RedirectCode = 999 };
 
             // Act / Assert
             Assert.Throws<ArgumentException>(() => redirectService.Save(redirect));
@@ -149,7 +152,7 @@ namespace SeoToolkit.Tests
             var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
             optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
 
-            var existing = new Redirect { Id = 2, Domain = null, CustomDomain = null, OldUrl = "/old" };
+            var existing = new Redirect { Id = 2, Key = Guid.NewGuid(), Domain = null, CustomDomain = null, OldUrl = "/old" };
             redirectRepository.Setup(it => it.GetByUrls(It.IsAny<string[]>())).Returns(new Redirect[] { existing });
 
             var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
@@ -170,7 +173,7 @@ namespace SeoToolkit.Tests
             var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
             optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
 
-            var redirect = new Redirect { Id = 3, OldUrl = "/old" };
+            var redirect = new Redirect { Id = 3, Key = Guid.NewGuid(), OldUrl = "/old" };
             redirectRepository.Setup(it => it.Get(3)).Returns(redirect);
 
             var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
@@ -212,7 +215,7 @@ namespace SeoToolkit.Tests
             optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
 
             var uri = new Uri("https://example.com/test");
-            var existing = new Redirect { Id = 4, OldUrl = "/test", NewUrl = "/new" };
+            var existing = new Redirect { Id = 4, Key = Guid.NewGuid(), OldUrl = "/test", NewUrl = "/new" };
             redirectRepository.Setup(it => it.GetByUrls(It.IsAny<string[]>())).Returns(new Redirect[] { existing });
             bloomFilter.Setup(it => it.Contains(It.IsAny<string>())).Returns(true);
 
@@ -224,6 +227,7 @@ namespace SeoToolkit.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(existing.Id, result.Redirect.Id);
+            Assert.AreEqual(existing.Key, result.Redirect.Key);
         }
 
         private IUmbracoContextFactory GetContextFactoryWithDomain()
