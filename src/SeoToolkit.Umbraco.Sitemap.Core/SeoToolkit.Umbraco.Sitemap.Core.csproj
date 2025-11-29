@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-    <TargetFrameworks>net9.0</TargetFrameworks>
+    <TargetFrameworks>net10.0</TargetFrameworks>
     <Product>SeoToolkit Sitemap Core</Product>
     <PackageId>SeoToolkit.Umbraco.Sitemap.Core</PackageId>
     <Title>SeoToolkit Sitemap Core</Title>
@@ -17,8 +17,8 @@
 </PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Umbraco.Cms.Web.Website" Version="[16.0.0,16.999)" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[16.0.0,16.999)" />
+	  <PackageReference Include="Umbraco.Cms.Web.Website" Version="[17.0.0,17.999)" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[17.0.0,17.999)" />
 	</ItemGroup>
 
 	<ItemGroup>

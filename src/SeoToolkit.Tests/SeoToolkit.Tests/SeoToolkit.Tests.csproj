@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -15,7 +15,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="16.0.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="17.0.0" />
     <PackageReference Include="Microsoft.Playwright.NUnit" Version="1.47.0" />
   </ItemGroup>
 

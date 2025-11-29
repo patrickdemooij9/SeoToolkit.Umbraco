@@ -53,7 +53,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 
             var sql = scope.Database.SqlContext.Sql()
                 .Update<RedirectEntity>(it => it.Set(e => e.RedirectCode, redirectCode))
-                .Where<RedirectEntity>(it => ids.Contains(it.Id));
+                .WhereIn<RedirectEntity>(it => it.Id, ids);
             scope.Database.Execute(sql);
             scope.Complete();
         }
@@ -64,7 +64,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 
             var sql = scope.Database.SqlContext.Sql()
                 .Update<RedirectEntity>(it => it.Set(e => e.RedirectCode, redirectCode))
-                .Where<RedirectEntity>(it => keys.Contains(it.Key));
+                .WhereIn<RedirectEntity>(it => it.Key, keys);
             scope.Database.Execute(sql);
             scope.Complete();
         }
@@ -95,7 +95,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             var entities = scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
                 .SelectAll()
                 .From<RedirectEntity>()
-                .Where<RedirectEntity>(it => ids.Contains(it.Id)));
+                .WhereIn<RedirectEntity>(it => it.Id, ids));
             return [.. entities.Select(ToModel)];
         }
 
@@ -115,7 +115,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             var entities = scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
                 .SelectAll()
                 .From<RedirectEntity>()
-                .Where<RedirectEntity>(it => keys.Contains(it.Key)));
+                .WhereIn<RedirectEntity>(it => it.Key, keys));
             return [.. entities.Select(ToModel)];
         }
 
@@ -129,9 +129,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 
                 if (!string.IsNullOrWhiteSpace(search))
                 {
-                    sql = sql.Where<RedirectEntity>(it => it.OldUrl.Contains(search) ||
-                                                          it.NewUrl.Contains(search) ||
-                                                          it.CustomDomain.Contains(search));
+                    sql = sql.WhereIn<RedirectEntity>(it => it.OldUrl, search)
+                        .WhereIn<RedirectEntity>(it => it.NewUrl, search)
+                        .WhereIn<RedirectEntity>(it => it.CustomDomain, search);
                 }
 
                 // Translate alternative names (from list view) to the correct columns
@@ -170,7 +170,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 return scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
                         .SelectAll()
                         .From<RedirectEntity>()
-                        .Where<RedirectEntity>(it => it.IsEnabled && !it.IsRegex && paths.Contains(it.OldUrl)))
+                        .Where<RedirectEntity>(it => it.IsEnabled && !it.IsRegex)
+                        .WhereIn<RedirectEntity>(it => it.OldUrl, paths))
                     .Select(ToModel);
             }
         }
