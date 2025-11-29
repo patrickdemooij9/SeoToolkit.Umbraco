@@ -129,9 +129,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 
                 if (!string.IsNullOrWhiteSpace(search))
                 {
-                    sql = sql.WhereIn<RedirectEntity>(it => it.OldUrl, search)
-                        .WhereIn<RedirectEntity>(it => it.NewUrl, search)
-                        .WhereIn<RedirectEntity>(it => it.CustomDomain, search);
+                    sql = sql.Where<RedirectEntity>(it => 
+                        it.OldUrl.Contains(search) ||
+                        it.NewUrl.Contains(search) ||
+                        it.CustomDomain.Contains(search));
                 }
 
                 // Translate alternative names (from list view) to the correct columns
