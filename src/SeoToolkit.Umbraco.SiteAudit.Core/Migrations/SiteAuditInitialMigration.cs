@@ -1,15 +1,16 @@
 ﻿using Umbraco.Cms.Infrastructure.Migrations;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.Database;
+using System.Threading.Tasks;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Migrations
 {
-    public class SiteAuditInitialMigration : MigrationBase
+    public class SiteAuditInitialMigration : AsyncMigrationBase
     {
         public SiteAuditInitialMigration(IMigrationContext context) : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             if (TableExists("uSeoToolkitSiteAudit"))
             {
@@ -55,6 +56,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Migrations
             {
                 Create.Table<SiteAuditCheckResultEntity>().Do();
             }
+            return Task.CompletedTask;
         }
     }
 }

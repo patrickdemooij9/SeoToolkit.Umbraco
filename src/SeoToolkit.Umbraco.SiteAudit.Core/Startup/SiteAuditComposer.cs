@@ -10,10 +10,8 @@ using SeoToolkit.Umbraco.SiteAudit.Core.Components;
 using SeoToolkit.Umbraco.SiteAudit.Core.Config;
 using SeoToolkit.Umbraco.SiteAudit.Core.Config.Models;
 using SeoToolkit.Umbraco.SiteAudit.Core.Factories.SiteCrawler;
-using SeoToolkit.Umbraco.SiteAudit.Core.Hubs;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.Config;
-using SeoToolkit.Umbraco.SiteAudit.Core.NotificationHandlers;
 using SeoToolkit.Umbraco.SiteAudit.Core.Notifications;
 using SeoToolkit.Umbraco.SiteAudit.Core.Repositories;
 using SeoToolkit.Umbraco.SiteAudit.Core.Services;
@@ -45,7 +43,6 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
             builder.Services.AddSingleton(typeof(ISiteCrawlerFactory), typeof(DefaultSiteCrawlerFactory));
             builder.Services.AddSingleton(typeof(SiteAuditService), typeof(SiteAuditService));
             builder.Services.AddSingleton(typeof(ISiteCheckService), typeof(SiteCheckService));
-            builder.Services.AddSingleton(typeof(SiteAuditHubClientService));
             builder.Services.AddSingleton(typeof(ISettingsService<SiteAuditConfigModel>), typeof(SiteAuditConfigurationService));
             builder.Services.AddSingleton(typeof(ISiteCheckRepository), typeof(SiteCheckDatabaseRepository));
             builder.Services.AddSingleton(typeof(ISiteAuditScheduler), typeof(SiteAuditScheduler));
@@ -62,8 +59,6 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
                 .Append<MissingDescriptionCheck>()
                 .Append<BrokenImageCheck>()
                 .Append<MissingImageAltCheck>();
-
-            builder.AddNotificationHandler<SiteAuditUpdatedNotification, SiteAuditUpdateNotificationHandler>();
 
             builder.Services.AddHttpClient<BrokenImageCheck>()
                 .ConfigurePrimaryHttpMessageHandler(x =>

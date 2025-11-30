@@ -72,7 +72,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
         {
             using var scope = _scopeProvider.CreateScope();
 
-            SeoDomainCollectionEntity collectionEntity;
+            SeoDomainCollectionEntity? collectionEntity = null;
             if (collection.Id.HasValue)
             {
                 collectionEntity = scope.Database.FirstOrDefault<SeoDomainCollectionEntity>(scope.SqlContext.Sql()
@@ -80,13 +80,11 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
                     .From<SeoDomainCollectionEntity>()
                     .Where<SeoDomainCollectionEntity>(it => it.Id == collection.Id));
             }
-            else
+
+            collectionEntity ??= new SeoDomainCollectionEntity
             {
-                collectionEntity = new SeoDomainCollectionEntity
-                {
-                    Id = Guid.NewGuid()
-                };
-            }
+                Id = Guid.NewGuid()
+            };
 
             collectionEntity.Name = collection.Name;
             scope.Database.Save(collectionEntity);

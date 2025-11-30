@@ -9,7 +9,6 @@ using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.SiteAudit.Core.Enums;
-using SeoToolkit.Umbraco.SiteAudit.Core.Hubs;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.Business;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.Config;

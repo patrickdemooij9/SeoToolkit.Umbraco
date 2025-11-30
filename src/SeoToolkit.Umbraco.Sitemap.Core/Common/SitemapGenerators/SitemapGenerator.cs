@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
-using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Web;
-using Umbraco.Extensions;
-using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+﻿using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.Sitemap.Core.Collections;
 using SeoToolkit.Umbraco.Sitemap.Core.Config.Models;
+using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using Umbraco.Cms.Core.Events;
+using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
-using SeoToolkit.Umbraco.Sitemap.Core.Collections;
-using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
+using Umbraco.Cms.Core.Services.Navigation;
+using Umbraco.Cms.Core.Web;
+using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
 {
@@ -25,6 +26,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
         private readonly IEventAggregator _eventAggregator;
         private readonly SitemapConfig _settings;
         private readonly IVariationContextAccessor _variationContextAccessor;
+        private readonly IDocumentNavigationQueryService _documentNavigationQueryService;
         private readonly SitemapCollectionProviderCollection _sitemapCollectionProviders;
 
         private List<string> _validAlternateCultures;
@@ -39,6 +41,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             IPublicAccessService publicAccessService,
             IEventAggregator eventAggregator,
             IVariationContextAccessor variationContextAccessor,
+            IDocumentNavigationQueryService documentNavigationQueryService,
             SitemapCollectionProviderCollection sitemapCollectionProviders = null)
         {
             _umbracoContextFactory = umbracoContextFactory;
@@ -46,6 +49,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             _publicAccessService = publicAccessService;
             _eventAggregator = eventAggregator;
             _variationContextAccessor = variationContextAccessor;
+            _documentNavigationQueryService = documentNavigationQueryService;
             _settings = settingsService.GetSettings();
             _sitemapCollectionProviders = sitemapCollectionProviders;
 
@@ -68,7 +72,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                 if (options.StartingNode != null)
                     startingNodes.Add(options.StartingNode);
                 else
-                    startingNodes.AddRange(ctx.UmbracoContext.Content.GetAtRoot(options.Culture));
+                {
+                    if (_documentNavigationQueryService.TryGetRootKeys(out var rootKeys))
+                    {
+                        var rootNodes = rootKeys.Select(ctx.UmbracoContext.Content.GetById).Where(it => it != null).ToArray();
+                        if (rootNodes.Length > 0)
+                            startingNodes.AddRange(rootNodes);
+                    }
+                }
 
                 foreach (var node in startingNodes)
                 {
