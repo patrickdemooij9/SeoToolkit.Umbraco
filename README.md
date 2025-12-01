@@ -2,7 +2,7 @@
 
 # SeoToolkit
 
-SeoToolkit is a SEO package for Umbraco 9 to 16. This package features most functionalities needed for your SEO needs like meta fields, sitemap, robots.txt and much more.
+SeoToolkit is a SEO package for Umbraco 9 to 17. This package features most functionalities needed for your SEO needs like meta fields, sitemap, robots.txt and much more.
 
 SeoToolkit is also an award winning Umbraco package, winning the Umbraco Package Award 2025!
 
@@ -17,6 +17,7 @@ If you are installing for Umbraco 10, use the 2.x versions.
 If you are installing for Umbraco 11-13, use the 3.x versions.
 If you are installing for Umbraco 15, use the 4.x versions.
 If you are installing for Umbraco 16, use the 5.x versions.
+If you are installing for Umbraco 17, use the 6.x versions.
 
 After installing, you'll want to add the following lines to the _ViewImports.cshtml file:
 

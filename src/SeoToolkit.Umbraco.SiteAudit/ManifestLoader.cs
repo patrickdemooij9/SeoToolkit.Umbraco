@@ -33,7 +33,7 @@ namespace SeoToolkit.Umbraco.SiteAudit
                 Id = "SeoToolkit.Umbraco.SiteAudit",
                 Name = "SeoToolkit SiteAudit",
                 AllowTelemetry = true,
-                Version = "4.1.1",
+                Version = "6.0.0",
                 Extensions = [ entrypoint!],
             }
             ];
