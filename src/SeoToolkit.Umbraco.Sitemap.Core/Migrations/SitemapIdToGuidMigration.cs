@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
-using SeoToolkit.Umbraco.Common.Core.Migrations;
+﻿using SeoToolkit.Umbraco.Common.Core.Migrations;
+using SeoToolkit.Umbraco.Sitemap.Core.Migrations.Entities._5_0_0;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Database;
+using System.Threading.Tasks;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Extensions;
@@ -26,13 +27,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
             if (ColumnExists("SeoToolkitSitemapPageType", "ContentTypeGuid")) return Task.CompletedTask;
 
             Database.Execute("ALTER TABLE SeoToolkitSitemapPageType ADD ContentTypeGuid UNIQUEIDENTIFIER NULL");
-            foreach (var entry in Database.Fetch<SitemapPageTypeEntity>(Sql().SelectAll().From<SitemapPageTypeEntity>()))
+            foreach (var entry in Database.Fetch<SitemapPageTypeEntity_5>(Sql().SelectAll().From<SitemapPageTypeEntity_5>()))
             {
                 var contentType = _contentTypeService.Get(entry.ContentTypeId);
-                if (contentType is null) continue;
+                if (contentType is null) {
+                    continue;
+                };
 
-                Database.Execute("UPDATE SeoToolkitSitemapPageType SET ContentTypeGuid = @0 WHERE ContentTypeId = @1",
-                    contentType.Key, entry.ContentTypeId);
+                Database.Update(Sql().Update<SitemapPageTypeEntity>((it) => it.Set(c => c.ContentTypeGuid, contentType.Key)).Where<SitemapPageTypeEntity>(it => it.ContentTypeId == entry.ContentTypeId));
             }
 
             if (DatabaseType == NPoco.DatabaseType.SQLite)

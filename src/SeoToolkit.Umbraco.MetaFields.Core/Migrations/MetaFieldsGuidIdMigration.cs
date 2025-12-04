@@ -50,6 +50,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
                 if (content is null)
                 {
                     Database.Delete(entry);
+                    continue;
                 }
                 if (entry.InheritanceId.HasValue)
                 {
@@ -91,6 +92,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
                 if (content is null)
                 {
                     Database.Delete(entry);
+                    continue;
                 }
 
                 Database.Execute("UPDATE SeoToolkitMetaFieldsValue SET NodeKey = @0 WHERE NodeId = @1",
