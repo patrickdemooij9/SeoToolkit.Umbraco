@@ -13,7 +13,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services
         IEnumerable<Script> GetAll(Guid? domainId);
         [Obsolete("Use Get(Guid id) method instead")]
         Script Get(int id);
-        Script Get(Guid id);
+        Script? Get(Guid id);
         ScriptRenderModel GetRender(Guid? domainId);
     }
 }

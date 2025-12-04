@@ -11,7 +11,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Business
         public Guid? Key {get; set;}
         public string Name { get; set; }
         public IScriptDefinition Definition { get; set; }
-        public int[] DocumentTypeIds { get; set; }
         public Dictionary<string, string> Config { get; set; }
         public Guid? DomainId { get; set; }
     }

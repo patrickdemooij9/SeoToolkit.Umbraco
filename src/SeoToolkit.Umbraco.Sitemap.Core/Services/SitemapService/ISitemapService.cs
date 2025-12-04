@@ -9,6 +9,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
 
         [Obsolete("Use GetPageTypeSettings(Guid contentTypeGuid) instead")]
         SitemapPageSettings GetPageTypeSettings(int contentTypeId);
-        SitemapPageSettings GetPageTypeSettings(Guid contentTypeGuid);
+        SitemapPageSettings? GetPageTypeSettings(Guid contentTypeGuid);
+        SitemapPageSettings[] GetAll();
     }
 }

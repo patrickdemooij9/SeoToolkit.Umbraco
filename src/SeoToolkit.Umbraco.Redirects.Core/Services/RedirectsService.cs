@@ -13,6 +13,8 @@ using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using Umbraco.Cms.Core.Configuration.Models;
 using Microsoft.Extensions.Options;
 using SeoToolkit.Umbraco.Redirects.Core.Caching;
+using Umbraco.Cms.Core.Events;
+using SeoToolkit.Umbraco.Redirects.Core.Notifications;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Services
 {
@@ -21,16 +23,19 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
         private readonly IRedirectsRepository _redirectsRepository;
         private readonly IRedirectsBloomFilter _redirectsBloomFilter;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly IEventAggregator _eventAggregator;
         private RequestHandlerSettings _requestHandlerSettings;
 
         public RedirectsService(IRedirectsRepository redirectsRepository,
             IRedirectsBloomFilter redirectsBloomFilter,
             IUmbracoContextFactory umbracoContextFactory,
+            IEventAggregator eventAggregator,
             IOptionsMonitor<RequestHandlerSettings> requestHandlerSettings)
         {
             _redirectsRepository = redirectsRepository;
             _redirectsBloomFilter = redirectsBloomFilter;
             _umbracoContextFactory = umbracoContextFactory;
+            _eventAggregator = eventAggregator;
             _requestHandlerSettings = requestHandlerSettings.CurrentValue;
             requestHandlerSettings.OnChange(settings => _requestHandlerSettings = settings);
         }
@@ -51,7 +56,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             return _redirectsRepository.Get(ids);
         }
 
-        public Redirect Get(Guid key)
+        public Redirect? Get(Guid key)
         {
             return _redirectsRepository.Get(key);
         }
@@ -119,6 +124,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             redirect.NewUrl = newUrl;
             redirect.LastUpdated = DateTime.Now;
             _redirectsRepository.Save(redirect);
+
+            _eventAggregator.Publish(new RedirectSavedNotification(redirect));
         }
 
         public void UpdateRedirectCodes(int[] ids, int redirectCode)
@@ -139,6 +146,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
                 if (redirect is null) continue;
 
                 _redirectsRepository.Delete(redirect);
+                _eventAggregator.Publish(new RedirectDeletedNotification(redirect));
             }
         }
         
@@ -150,6 +158,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
                 if (redirect is null) continue;
 
                 _redirectsRepository.Delete(redirect);
+                _eventAggregator.Publish(new RedirectDeletedNotification(redirect));
             }
         }
 

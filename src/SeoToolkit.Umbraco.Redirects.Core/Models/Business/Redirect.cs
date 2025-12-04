@@ -23,7 +23,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Business
         public IPublishedContent NewNode { get; set; }
         public ILanguage NewNodeCulture { get; set; }
         public DateTime LastUpdated { get; set; }
-        public int CreatedBy { get; set; }
+        public Guid? CreatedBy { get; set; }
         public int RedirectCode { get; set; }
 
         public string GetNewUrl()

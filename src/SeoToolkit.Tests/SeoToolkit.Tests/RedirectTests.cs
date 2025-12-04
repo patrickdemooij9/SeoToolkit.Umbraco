@@ -7,6 +7,7 @@ using SeoToolkit.Umbraco.Redirects.Core.Services;
 using System.Net;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Configuration.Models;
+using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
@@ -31,7 +32,7 @@ namespace SeoToolkit.Tests
             bloomFilterMock.Setup(it => it.Contains(It.IsAny<string>())).Returns(true);
 
             var umbracoContextFactory = GetContextFactoryWithDomain();
-            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilterMock.Object, umbracoContextFactory, new Mock<IOptionsMonitor<RequestHandlerSettings>>().Object);
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilterMock.Object, umbracoContextFactory, new Mock<IEventAggregator>().Object, new Mock<IOptionsMonitor<RequestHandlerSettings>>().Object);
 
             // Act
             var redirect = redirectService.GetByUrl(new Uri("https://test.nl/test123"));
@@ -55,7 +56,7 @@ namespace SeoToolkit.Tests
             var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
             optionsMonitor.Setup(it => it.CurrentValue).Returns(requestHandlerSettings);
 
-            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, new Mock<IEventAggregator>().Object, optionsMonitor.Object);
 
             // Act
             var redirect = new Redirect
@@ -89,7 +90,7 @@ namespace SeoToolkit.Tests
             var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
             optionsMonitor.Setup(it => it.CurrentValue).Returns(requestHandlerSettings);
 
-            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, new Mock<IEventAggregator>().Object, optionsMonitor.Object);
 
             // Act
             var redirect = new Redirect
@@ -118,7 +119,7 @@ namespace SeoToolkit.Tests
             var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
             optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
 
-            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, new Mock<IEventAggregator>().Object, optionsMonitor.Object);
 
             // Act / Assert
             Assert.Throws<ArgumentNullException>(() => redirectService.Save(null));
@@ -134,7 +135,7 @@ namespace SeoToolkit.Tests
             var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
             optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
 
-            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, new Mock<IEventAggregator>().Object, optionsMonitor.Object);
 
             var redirect = new Redirect { Id = 1, Key = Guid.NewGuid(), IsEnabled = true, IsRegex = false, OldUrl = "/old", NewUrl = "/new", RedirectCode = 999 };
 
@@ -155,7 +156,7 @@ namespace SeoToolkit.Tests
             var existing = new Redirect { Id = 2, Key = Guid.NewGuid(), Domain = null, CustomDomain = null, OldUrl = "/old" };
             redirectRepository.Setup(it => it.GetByUrls(It.IsAny<string[]>())).Returns(new Redirect[] { existing });
 
-            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, new Mock<IEventAggregator>().Object, optionsMonitor.Object);
 
             var redirect = new Redirect { Id = 1, IsEnabled = true, IsRegex = false, OldUrl = "old", NewUrl = "/new", RedirectCode = (int)HttpStatusCode.MovedPermanently };
 
@@ -176,7 +177,7 @@ namespace SeoToolkit.Tests
             var redirect = new Redirect { Id = 3, Key = Guid.NewGuid(), OldUrl = "/old" };
             redirectRepository.Setup(it => it.Get(3)).Returns(redirect);
 
-            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, new Mock<IEventAggregator>().Object, optionsMonitor.Object);
 
             // Act
             redirectService.Delete(new int[] { 3 });
@@ -195,7 +196,7 @@ namespace SeoToolkit.Tests
             var optionsMonitor = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
             optionsMonitor.Setup(it => it.CurrentValue).Returns(new RequestHandlerSettings());
 
-            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, new Mock<IEventAggregator>().Object, optionsMonitor.Object);
 
             // Act
             redirectService.UpdateRedirectCodes(new int[] { 1, 2 }, (int)HttpStatusCode.MovedPermanently);
@@ -219,7 +220,7 @@ namespace SeoToolkit.Tests
             redirectRepository.Setup(it => it.GetByUrls(It.IsAny<string[]>())).Returns(new Redirect[] { existing });
             bloomFilter.Setup(it => it.Contains(It.IsAny<string>())).Returns(true);
 
-            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, optionsMonitor.Object);
+            var redirectService = new RedirectsService(redirectRepository.Object, bloomFilter.Object, umbracoContextFactory, new Mock<IEventAggregator>().Object, optionsMonitor.Object);
 
             // Act
             var result = redirectService.GetByUrl(uri);

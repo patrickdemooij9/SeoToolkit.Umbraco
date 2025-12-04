@@ -7,6 +7,10 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces
 {
     public interface IRobotsTxtService
     {
+        RobotsTxtModel? Get(Guid id);
+        RobotsTxtModel[] GetAll();
+        void Save(RobotsTxtModel model);
+
         string GetContent(Guid? domainId = null);
         string GetContentWithSitemaps(HttpRequest request);
         void SetContent(string content, Guid? domainId = null);

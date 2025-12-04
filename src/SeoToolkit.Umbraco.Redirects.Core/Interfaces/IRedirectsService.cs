@@ -11,7 +11,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Interfaces
         Redirect Get(int id);
         [Obsolete("Use Get method with Guid[] instead. Will be removed in next major version.")]
         Redirect[] Get(params int[] ids);
-        Redirect Get(Guid key);
+        Redirect? Get(Guid key);
         Redirect[] Get(params Guid[] keys);
         void Save(Redirect redirect);
         [Obsolete("Use UpdateRedirectCodes(Guid[] keys, int redirectCode) method instead. Will be removed in next major version.")]
