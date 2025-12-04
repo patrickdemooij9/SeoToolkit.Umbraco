@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SeoToolkit.Umbraco.Common.Core.Migrations;
+using SeoToolkit.Umbraco.MetaFields.Core.Migrations.Entities._5_0_0;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsSettings.Database;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database;
 using Umbraco.Cms.Core.Services;
@@ -44,7 +45,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
 
             Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings ADD NodeKey UNIQUEIDENTIFIER NULL");
             Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings ADD InheritanceKey UNIQUEIDENTIFIER NULL");
-            foreach (var entry in Database.Fetch<MetaFieldsSettingsEntity>(Sql().SelectAll().From<MetaFieldsSettingsEntity>()))
+            foreach (var entry in Database.Fetch<MetaFieldsSettingsEntity_5>(Sql().SelectAll().From<MetaFieldsSettingsEntity_5>()))
             {
                 var content = _contentTypeService.Get(entry.NodeId);
                 if (content is null)
@@ -72,7 +73,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
             }
 
             Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings ALTER COLUMN NodeKey UNIQUEIDENTIFIER NOT NULL");
-            Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings ALTER COLUMN InheritanceKey UNIQUEIDENTIFIER NOT NULL");
 
             Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings DROP CONSTRAINT pk_SeoToolkitMetaFieldsSettings");
             Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings ADD CONSTRAINT pk_SeoToolkitMetaFieldsSettings PRIMARY KEY (NodeKey)");
@@ -86,7 +86,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
             }
 
             Database.Execute("ALTER TABLE SeoToolkitMetaFieldsValue ADD NodeKey UNIQUEIDENTIFIER NULL");
-            foreach (var entry in Database.Fetch<MetaFieldsValueEntity>(Sql().SelectAll().From<MetaFieldsValueEntity>()))
+            foreach (var entry in Database.Fetch<MetaFieldsValueEntity_5>(Sql().SelectAll().From<MetaFieldsValueEntity_5>()))
             {
                 var content = _contentService.GetById(entry.NodeId);
                 if (content is null)

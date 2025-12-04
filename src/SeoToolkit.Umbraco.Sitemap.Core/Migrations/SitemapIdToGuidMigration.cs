@@ -30,11 +30,13 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
             foreach (var entry in Database.Fetch<SitemapPageTypeEntity_5>(Sql().SelectAll().From<SitemapPageTypeEntity_5>()))
             {
                 var contentType = _contentTypeService.Get(entry.ContentTypeId);
-                if (contentType is null) {
+                if (contentType is null) 
+                {
+                    Database.Delete(entry);
                     continue;
-                };
+                }
 
-                Database.Update(Sql().Update<SitemapPageTypeEntity>((it) => it.Set(c => c.ContentTypeGuid, contentType.Key)).Where<SitemapPageTypeEntity>(it => it.ContentTypeId == entry.ContentTypeId));
+                Database.Execute("UPDATE SeoToolkitSitemapPageType SET ContentTypeGuid = @0 WHERE ContentTypeId = @1", contentType.Key, entry.ContentTypeId);
             }
 
             if (DatabaseType == NPoco.DatabaseType.SQLite)
