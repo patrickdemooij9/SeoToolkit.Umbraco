@@ -7,6 +7,8 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
 {
@@ -27,40 +29,46 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository
 
         public bool IsEnabled(IContentType contentType)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var entity = scope.Database.FirstOrDefault<SeoSettingsEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<SeoSettingsEntity>()
-                    .Where<SeoSettingsEntity>(it => it.ContentTypeId == contentType.Key));
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entity = scope.Database.FirstOrDefault<SeoSettingsEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SeoSettingsEntity>()
+                .Where<SeoSettingsEntity>(it => it.ContentTypeId == contentType.Key));
 
-                //Default is disabled.
-                if (entity is null && _settingsService.GetSettings().EnableSeoSettingsByDefaultForTemplated)
+            //Default is disabled.
+            if (entity is null && _settingsService.GetSettings().EnableSeoSettingsByDefaultForTemplated)
+            {
+                if (contentType.DefaultTemplate != null)
                 {
-                    if (contentType.DefaultTemplate != null)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-                return entity?.Enabled ?? false;
             }
+            return entity?.Enabled ?? false;
         }
 
         public void Toggle(Guid contentTypeId, bool value)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var entity = scope.Database.FirstOrDefault<SeoSettingsEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<SeoSettingsEntity>()
-                    .Where<SeoSettingsEntity>(it => it.ContentTypeId == contentTypeId));
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entity = scope.Database.FirstOrDefault<SeoSettingsEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SeoSettingsEntity>()
+                .Where<SeoSettingsEntity>(it => it.ContentTypeId == contentTypeId));
 
-                if (entity is null)
-                    entity = new SeoSettingsEntity { ContentTypeId = contentTypeId };
-                entity.Enabled = value;
+            if (entity is null)
+                entity = new SeoSettingsEntity { ContentTypeId = contentTypeId };
+            entity.Enabled = value;
 
-                scope.Database.Save(entity);
-            }
+            scope.Database.Save(entity);
+        }
+
+        public Dictionary<Guid, bool> GetAll()
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+
+            return scope.Database.Fetch<SeoSettingsEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SeoSettingsEntity>())
+                .ToDictionary(it => it.ContentTypeId, it => it.Enabled);
         }
     }
 }

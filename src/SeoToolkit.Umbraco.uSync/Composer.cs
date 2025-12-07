@@ -1,5 +1,6 @@
-﻿using SeoToolkit.Umbraco.Redirects.Core.Notifications;
-using SeoToolkit.Umbraco.RobotsTxt.Core.Notifications;
+﻿using SeoToolkit.Umbraco.Common.Core.Notifications;
+using SeoToolkit.Umbraco.MetaFields.Core.Notifications;
+using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using SeoToolkit.Umbraco.uSync.Handlers;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
@@ -14,6 +15,12 @@ namespace SeoToolkit.Umbraco.uSync
 
             //builder.AddNotificationAsyncHandler<RedirectSavedNotification, RedirectHandler>();
             //builder.AddNotificationAsyncHandler<RedirectDeletedNotification, RedirectHandler>();
+
+            builder.AddNotificationAsyncHandler<SitemapPageSettingsSavedNotification, SitemapSettingsHandler>();
+
+            builder.AddNotificationAsyncHandler<MetaFieldSettingsSavedNotification, MetaFieldsHandler>();
+
+            builder.AddNotificationAsyncHandler<SeoSettingSavedNotification, SeoSettingHandler>();
         }
     }
 }

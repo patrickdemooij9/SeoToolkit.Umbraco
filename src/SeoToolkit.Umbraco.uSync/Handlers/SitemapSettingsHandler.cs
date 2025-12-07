@@ -16,7 +16,7 @@ using uSync.Core;
 
 namespace SeoToolkit.Umbraco.uSync.Handlers
 {
-    [SyncHandler("SitemapSettingsHandler", "Sitemap Settings", "SeoToolkit//SitemapSettings", 3200, Icon = "icon-shield")]
+    [SyncHandler("SitemapSettingsHandler", "Sitemap Settings", "SeoToolkit//SitemapSettings", 3100, Icon = "icon-map")]
     public class SitemapSettingsHandler : SyncHandlerRoot<SitemapPageSettings, SitemapPageSettings>, ISyncHandler,
         INotificationAsyncHandler<SitemapPageSettingsSavedNotification>
     {

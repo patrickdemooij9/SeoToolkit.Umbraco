@@ -9,10 +9,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
     public interface IMetaFieldsSettingsService
     {
         void Set(DocumentTypeSettingsDto model);
+        void Delete(Guid contentTypeGuid);
 
         [Obsolete("Use the overload with Guid key instead")]
         DocumentTypeSettingsDto Get(int id);
-        DocumentTypeSettingsDto Get(Guid id);
+        DocumentTypeSettingsDto? Get(Guid id);
+        DocumentTypeSettingsDto[] GetAll();
 
         IEnumerable<FieldItemViewModel> GetAdditionalFieldItems();
     }

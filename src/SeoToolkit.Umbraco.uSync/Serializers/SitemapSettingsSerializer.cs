@@ -1,25 +1,24 @@
 ﻿using Microsoft.Extensions.Logging;
-using SeoToolkit.Umbraco.RobotsTxt.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Linq;
+using Umbraco.Cms.Core.Services;
 using uSync.Core;
 using uSync.Core.Models;
 using uSync.Core.Serialization;
 
 namespace SeoToolkit.Umbraco.uSync.Serializers
 {
-    [SyncSerializer("5f802097-5321-4b8d-8bfd-ebe693b64f05", "RobotsTxt Serializer", "RobotsTxt")]
+    [SyncSerializer("5f802097-5321-4b8d-8bfd-ebe693b64f05", "Sitemap Settings Serializer", "SitemapSetting")]
     public class SitemapSettingsSerializer : SyncSerializerRoot<SitemapPageSettings>, ISyncSerializer<SitemapPageSettings>
     {
         private readonly ISitemapService _sitemapService;
+        private readonly IContentTypeService _contentTypeService;
 
-        public SitemapSettingsSerializer(ILogger<SyncSerializerRoot<SitemapPageSettings>> logger, ISitemapService sitemapService) : base(logger)
+        public SitemapSettingsSerializer(ILogger<SyncSerializerRoot<SitemapPageSettings>> logger, ISitemapService sitemapService, IContentTypeService contentTypeService) : base(logger)
         {
             _sitemapService = sitemapService;
+            _contentTypeService = contentTypeService;
         }
 
         public override Task DeleteItemAsync(SitemapPageSettings item)
@@ -35,12 +34,16 @@ namespace SeoToolkit.Umbraco.uSync.Serializers
 
         public override Task<SitemapPageSettings?> FindItemAsync(string alias)
         {
-            return Task.FromResult<SitemapPageSettings?>(null);
+            var contentType = _contentTypeService.Get(alias);
+            if (contentType is null)
+                return Task.FromResult<SitemapPageSettings?>(null);
+            return Task.FromResult(_sitemapService.GetPageTypeSettings(contentType.Key));
         }
 
         public override string ItemAlias(SitemapPageSettings item)
         {
-            return item.ContentTypeGuid.ToString();
+            var contentType = _contentTypeService.Get(item.ContentTypeGuid);
+            return contentType?.Alias ?? item.ContentTypeGuid.ToString();
         }
 
         public override Guid ItemKey(SitemapPageSettings item)
@@ -59,8 +62,12 @@ namespace SeoToolkit.Umbraco.uSync.Serializers
             var item = await FindItemAsync(node);
             item ??= new SitemapPageSettings
             {
-                ContentTypeGuid = node.Element("Key").ValueOrDefault(Guid.NewGuid())
+                ContentTypeGuid = node.Element("Key").ValueOrDefault(Guid.Empty)
             };
+            if (item.ContentTypeGuid == Guid.Empty)
+            {
+                return SyncAttempt<SitemapPageSettings>.Fail(node.GetAlias(), ChangeType.Fail, "No valid Key");
+            }
 
             var infoNode = node.Element("Info");
             if (infoNode is null)
@@ -78,7 +85,8 @@ namespace SeoToolkit.Umbraco.uSync.Serializers
         protected override Task<SyncAttempt<XElement>> SerializeCoreAsync(SitemapPageSettings item, SyncSerializerOptions options)
         {
             var node = new XElement(ItemType,
-                new XAttribute("Key", item.ContentTypeGuid)
+                new XAttribute("Key", item.ContentTypeGuid),
+                new XAttribute("Alias", ItemAlias(item))
             );
 
             var info = new XElement("Info",
