@@ -41,7 +41,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
             Alter.Table("SeoToolkitRedirects").AddColumn("CreatedBy").AsGuid().Nullable().Do();
             foreach (var redirect in redirects)
             {
-                var createdByKey = Database.Fetch<Guid?>("SELECT userKey FROM umbracoUser where id = @0", [redirect.Id]).FirstOrDefault();
+                var createdByKey = Database.Fetch<Guid?>("SELECT userKey FROM umbracoUser where id = @0", [redirect.CreatedBy]).FirstOrDefault();
                 if (createdByKey is null) continue;
 
                 Database.Execute("UPDATE SeoToolkitRedirects SET CreatedBy = @0 WHERE Key = @1", createdByKey, redirect.Key);
