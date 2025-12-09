@@ -93,8 +93,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 
             if (!postModel.Key.HasValue)
             {
-                redirect.CreatedBy = -1;
-                var userId = _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser?.Id;
+                redirect.CreatedBy = null;
+                var userId = _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser?.Key;
                 if (userId.HasValue)
                 {
                     redirect.CreatedBy = userId.Value;

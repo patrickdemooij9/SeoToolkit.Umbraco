@@ -1,32 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using Umbraco.Cms.Core.Cache;
-using Umbraco.Extensions;
-using SeoToolkit.Umbraco.Common.Core.Interfaces;
+﻿using SeoToolkit.Umbraco.Common.Core.Interfaces;
 using SeoToolkit.Umbraco.Common.Core.Models;
+using SeoToolkit.Umbraco.MetaFields.Core.Caching;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
-using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
-using SeoToolkit.Umbraco.MetaFields.Core.Caching;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
+using SeoToolkit.Umbraco.MetaFields.Core.Notifications;
+using SeoToolkit.Umbraco.MetaFields.Core.Repositories.DocumentTypeSettingsRepository;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Events;
+using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 {
     public class MetaFieldsSettingsService : IMetaFieldsSettingsService
     {
-        private readonly IRepository<DocumentTypeSettingsDto> _repository;
+        private readonly IMetaFieldsSettingsRepository _repository;
         private readonly FieldProviderCollection _fieldProviders;
         private readonly DistributedCache _distributedCache;
+        private readonly IEventAggregator _eventAggregator;
         private readonly AppCaches _cache;
 
-        public MetaFieldsSettingsService(IRepository<DocumentTypeSettingsDto> repository,
+        public MetaFieldsSettingsService(IMetaFieldsSettingsRepository repository,
             FieldProviderCollection fieldProviders,
             AppCaches appCaches,
-            DistributedCache distributedCache)
+            DistributedCache distributedCache,
+            IEventAggregator eventAggregator)
         {
             _repository = repository;
             _fieldProviders = fieldProviders;
             _distributedCache = distributedCache;
+            _eventAggregator = eventAggregator;
             _cache = appCaches;
         }
 
@@ -39,6 +46,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
                 _repository.Add(model);
 
             ClearCache(model.Content.Key);
+            _eventAggregator.Publish(new MetaFieldSettingsSavedNotification(model));
         }
 
         public DocumentTypeSettingsDto Get(int id)
@@ -57,9 +65,20 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
             }, TimeSpan.FromMinutes(30)).Model;
         }
 
+        public DocumentTypeSettingsDto[] GetAll()
+        {
+            return _repository.GetAll().ToArray();
+        }
+
         public IEnumerable<FieldItemViewModel> GetAdditionalFieldItems()
         {
             return _fieldProviders.GetAllItems();
+        }
+
+        public void Delete(Guid contentTypeGuid)
+        {
+            _repository.Delete(contentTypeGuid);
+            ClearCache(contentTypeGuid);
         }
 
         private void ClearCache(Guid id)

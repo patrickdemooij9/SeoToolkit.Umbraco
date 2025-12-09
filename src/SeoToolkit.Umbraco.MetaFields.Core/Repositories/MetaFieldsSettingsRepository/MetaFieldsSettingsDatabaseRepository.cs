@@ -81,5 +81,15 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepo
             using var scope = _scopeProvider.CreateScope();
             scope.Database.Delete(entity);
         }
+
+        public void Delete(Guid contentTypeGuid)
+        {
+            var entity = Get(contentTypeGuid);
+            if (entity is null)
+                return;
+
+            using var scope = _scopeProvider.CreateScope();
+            scope.Database.Delete(entity);
+        }
     }
 }

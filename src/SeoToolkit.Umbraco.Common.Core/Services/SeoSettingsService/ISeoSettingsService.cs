@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 
@@ -9,5 +10,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
         bool IsEnabled(IContentType contentType);
         bool SupressContentAppSavingNotification();
         void ToggleSeoSettings(Guid contentTypeId, bool value);
+
+        Dictionary<Guid, bool> GetAll();
     }
 }

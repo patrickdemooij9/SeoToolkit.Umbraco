@@ -54,12 +54,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.Components().Append<EnableModuleComponent>();
 
             builder.Services.AddTransient(typeof(IRepository<DocumentTypeSettingsDto>), typeof(MetaFieldsSettingsDatabaseRepository));
+            builder.Services.AddTransient(typeof(IMetaFieldsSettingsRepository), typeof(MetaFieldsSettingsDatabaseRepository));
             builder.Services.AddTransient(typeof(IMetaFieldsSettingsService), typeof(MetaFieldsSettingsService));
             builder.Services.AddTransient(typeof(IMetaFieldsService), typeof(MetaFieldsService));
             builder.Services.AddTransient(typeof(IMetaTagsProvider), typeof(DefaultMetaTagsProvider));
             builder.Services.AddTransient(typeof(IMetaFieldsValueService), typeof(MetaFieldsValueService));
             builder.Services.AddTransient(typeof(IMetaFieldsValueRepository), typeof(MetaFieldsDatabaseRepository));
-            builder.Services.AddTransient(typeof(IMetaFieldsSettingsService), typeof(MetaFieldsSettingsService));
 
             if (!disabledModules.Contains(DisabledModuleConstant.Api))
             {

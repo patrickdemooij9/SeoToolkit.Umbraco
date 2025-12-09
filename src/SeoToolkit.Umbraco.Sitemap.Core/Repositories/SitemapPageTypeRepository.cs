@@ -4,6 +4,7 @@ using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Database;
 using Umbraco.Cms.Infrastructure.Scoping;
+using System.Linq;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Repositories
 {
@@ -39,14 +40,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Repositories
 
             return entity is null
                 ? null
-                : new SitemapPageSettings
-                {
-                    ContentTypeId = entity.ContentTypeId,
-                    ContentTypeGuid = entity.ContentTypeGuid,
-                    HideFromSitemap = entity.HideFromSitemap,
-                    ChangeFrequency = entity.ChangeFrequency,
-                    Priority = entity.Priority
-                };
+                : MapFromEntity(entity);
         }
 
         public SitemapPageSettings Get(Guid contentTypeGuid)
@@ -59,14 +53,29 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Repositories
 
             return entity is null
                 ? null
-                : new SitemapPageSettings
-                {
-                    ContentTypeId = entity.ContentTypeId,
-                    ContentTypeGuid = entity.ContentTypeGuid,
-                    HideFromSitemap = entity.HideFromSitemap,
-                    ChangeFrequency = entity.ChangeFrequency,
-                    Priority = entity.Priority
-                };
+                : MapFromEntity(entity);
+        }
+
+        public SitemapPageSettings[] GetAll()
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entities = scope.Database.Fetch<SitemapPageTypeEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SitemapPageTypeEntity>()).ToArray();
+
+            return entities.Select(MapFromEntity).ToArray();
+        }
+
+        private SitemapPageSettings MapFromEntity(SitemapPageTypeEntity entity)
+        {
+            return new SitemapPageSettings
+            {
+                ContentTypeId = entity.ContentTypeId,
+                ContentTypeGuid = entity.ContentTypeGuid,
+                HideFromSitemap = entity.HideFromSitemap,
+                ChangeFrequency = entity.ChangeFrequency,
+                Priority = entity.Priority
+            };
         }
     }
 }

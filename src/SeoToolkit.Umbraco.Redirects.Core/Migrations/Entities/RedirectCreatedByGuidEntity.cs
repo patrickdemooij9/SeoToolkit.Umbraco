@@ -1,12 +1,12 @@
-﻿using System;
-using NPoco;
+﻿using NPoco;
+using System;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
-namespace SeoToolkit.Umbraco.Redirects.Core.Models.Database
+namespace SeoToolkit.Umbraco.Redirects.Core.Migrations.Entities
 {
     [TableName("SeoToolkitRedirects")]
     [PrimaryKey("Id", AutoIncrement = true)]
-    public class RedirectEntity
+    internal class RedirectCreatedByGuidEntity
     {
         [Column("Id")]
         [PrimaryKeyColumn(AutoIncrement = true)]
@@ -55,8 +55,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Database
 
         [Column("LastUpdated")]
         public DateTime LastUpdated { get; set; }
-        
+
         [Column("CreatedBy")]
-        public Guid? CreatedBy { get; set; }
+        public int CreatedBy { get; set; }
     }
 }

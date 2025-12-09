@@ -1,10 +1,13 @@
-﻿using System;
-using SeoToolkit.Umbraco.Common.Core.Caching;
+﻿using SeoToolkit.Umbraco.Common.Core.Caching;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Models.Config;
+using SeoToolkit.Umbraco.Common.Core.Notifications;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using System;
+using System.Collections.Generic;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
@@ -17,12 +20,14 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
         private readonly DistributedCache _distributedCache;
         private readonly AppCaches _cache;
         private readonly ISettingsService<GlobalConfig> _settingsService;
+        private readonly IEventAggregator _eventAggregator;
 
-        public SeoSettingsService(ISeoSettingsRepository seoSettingsRepository, AppCaches appCaches, DistributedCache distributedCache, ISettingsService<GlobalConfig> settingsService)
+        public SeoSettingsService(ISeoSettingsRepository seoSettingsRepository, AppCaches appCaches, DistributedCache distributedCache, ISettingsService<GlobalConfig> settingsService, IEventAggregator eventAggregator)
         {
             _seoSettingsRepository = seoSettingsRepository;
             _distributedCache = distributedCache;
             _settingsService = settingsService;
+            _eventAggregator = eventAggregator;
             _cache = appCaches;
         }
 
@@ -42,6 +47,12 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
             _seoSettingsRepository.Toggle(contentTypeId, value);
 
             _distributedCache.Refresh(SeoSettingsCacheRefresher.CacheGuid, contentTypeId);
+            _eventAggregator.Publish(new SeoSettingSavedNotification(contentTypeId, value));
+        }
+
+        public Dictionary<Guid, bool> GetAll()
+        {
+            return _seoSettingsRepository.GetAll();
         }
     }
 }

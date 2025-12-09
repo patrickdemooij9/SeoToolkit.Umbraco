@@ -7,7 +7,9 @@ using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.Business;
+using SeoToolkit.Umbraco.RobotsTxt.Core.Notifications;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Startup;
+using Umbraco.Cms.Core.Events;
 
 namespace SeoToolkit.Umbraco.RobotsTxt.Core.Services
 {
@@ -16,17 +18,30 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Services
         private readonly IRobotsTxtRepository _robotsTxtRepository;
         private readonly IRobotsTxtValidator _robotsTxtValidator;
         private readonly ISeoDomainResolver _seoDomainResolver;
+        private readonly IEventAggregator _eventAggregator;
         private readonly IRobotsTxtSitemapProvider _sitemapProvider;
 
         public RobotsTxtService(IRobotsTxtRepository robotsTxtRepository,
             IRobotsTxtValidator robotsTxtValidator,
             ISeoDomainResolver seoDomainResolver,
+            IEventAggregator eventAggregator,
             IRobotsTxtSitemapProvider sitemapProvider = null)
         {
             _robotsTxtRepository = robotsTxtRepository;
             _robotsTxtValidator = robotsTxtValidator;
             _seoDomainResolver = seoDomainResolver;
+            _eventAggregator = eventAggregator;
             _sitemapProvider = sitemapProvider;
+        }
+
+        public RobotsTxtModel Get(Guid id)
+        {
+            return _robotsTxtRepository.Get(id);
+        }
+
+        public RobotsTxtModel[] GetAll()
+        {
+            return _robotsTxtRepository.GetAll().ToArray();
         }
 
         public string GetContent(Guid? domainId = null)
@@ -62,6 +77,13 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Services
             return content;
         }
 
+        public void Save(RobotsTxtModel model)
+        {
+            _robotsTxtRepository.Update(model);
+
+            _eventAggregator.Publish(new RobotsTxtSavedNotification(model));
+        }
+
         public void SetContent(string content, Guid? domainId = null)
         {
             var model = _robotsTxtRepository.GetAll().FirstOrDefault(it => it.DomainId == domainId);
@@ -70,6 +92,8 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Services
             model.Content = content;
             model.DomainId = domainId;
             _robotsTxtRepository.Update(model);
+
+            _eventAggregator.Publish(new RobotsTxtSavedNotification(model));
         }
 
         public IEnumerable<RobotsTxtValidation> Validate(string content)
