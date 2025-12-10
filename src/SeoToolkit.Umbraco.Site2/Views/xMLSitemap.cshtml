@@ -1,0 +1,6 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    Context.Response.ContentType = "text/xml";
+    Layout = null;
+}
+@(await Html.CachedPartialAsync("~/Views/Partials/xmlSitemap.cshtml", Model, TimeSpan.FromMinutes(60)))
