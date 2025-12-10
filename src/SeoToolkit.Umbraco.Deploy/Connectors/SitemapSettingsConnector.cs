@@ -12,7 +12,7 @@ using static Umbraco.Cms.Core.Constants.Conventions;
 
 namespace SeoToolkit.Umbraco.Deploy.Connectors
 {
-    [UdiDefinition("sitemap-settings", UdiType.GuidUdi)]
+    /*[UdiDefinition("sitemap-settings", UdiType.GuidUdi)]
     internal class SitemapSettingsConnector : ServiceConnectorBase<SitemapSettingsArtifact, GuidUdi, ArtifactDeployState<SitemapSettingsArtifact, SitemapPageSettings>>
     {
         private readonly ISitemapService _sitemapService;
@@ -81,7 +81,7 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors
                 return Task.FromResult(new NamedUdiRange(udi, OpenUdiName, selector));
             }
             //TODO: Use IContentTypeService
-            return Task.FromResult(new NamedUdiRange(udi, _sitemapService.GetPageTypeSettings(udi.Guid).ContentTypeGuid.ToString(), selector))
+            return Task.FromResult(new NamedUdiRange(udi, _sitemapService.GetPageTypeSettings(udi.Guid).ContentTypeGuid.ToString(), selector));
         }
 
         public override Task<NamedUdiRange> GetRangeAsync(string entityType, string sid, string selector, CancellationToken cancellationToken = default)
@@ -101,5 +101,5 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors
         {
             throw new NotImplementedException();
         }
-    }
+    }*/
 }
