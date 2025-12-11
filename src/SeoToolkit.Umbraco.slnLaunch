@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "Both Test Sites - Kestrel",
+    "Projects": [
+      {
+        "Path": "SeoToolkit.Umbraco.Site\\SeoToolkit.Umbraco.Site.csproj",
+        "Action": "Start",
+        "DebugTarget": "Umbraco.Web.UI"
+      },
+      {
+        "Path": "SeoToolkit.Umbraco.Site2\\SeoToolkit.Umbraco.Site2.csproj",
+        "Action": "Start",
+        "DebugTarget": "Umbraco.Web.UI"
+      }
+    ]
+  }
+]
