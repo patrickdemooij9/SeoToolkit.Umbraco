@@ -51,17 +51,4 @@ const RobotsTxtValidationModal: ManifestModal = {
     js: () => import('../modals/RobotsTxtValidationModal.element')
 }
 
-const test = {
-      type: "deployEntityActionRegistrar",
-      actionAlias: "Deploy.EntityAction.Queue",
-      alias: "SeoToolkit.Deploy.Queue.Registrar",
-      name: "SeoToolkit Deploy Queue Entity Action Registrar",
-      forEntityTypes: [
-        {
-          entityTypes: [SEOTOOLKIT_ROBOTSTXT_ENTITY],
-          conditions: ["default"],
-        },
-      ],
-    }
-
-export const Manifests = [RobotsTxtTreeItem, RobotsTxtWorkspace, RobotsTxtSaveActionManifest, RobotsTxtValidationModal, test];
+export const Manifests = [RobotsTxtTreeItem, RobotsTxtWorkspace, RobotsTxtSaveActionManifest, RobotsTxtValidationModal];
