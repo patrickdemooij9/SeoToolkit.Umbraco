@@ -6,7 +6,7 @@ import { customElement, state } from "lit/decorators.js";
 import { umbFocus, UmbLitElement } from "@umbraco-cms/backoffice/lit-element";
 import { UUIInputElement } from "@umbraco-cms/backoffice/external/uui";
 
-@customElement("seotoolkit.domain-detail")
+@customElement("seotoolkit-domain-detail")
 export default class SeoToolkitDomainViewElement extends UmbLitElement {
   #context?: SeoToolkitDomainContext;
 
