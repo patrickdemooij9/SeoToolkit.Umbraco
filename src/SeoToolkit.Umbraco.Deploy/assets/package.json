@@ -1,0 +1,13 @@
+{
+  "name": "seotoolkit-umbraco-deploy",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "generate": "openapi-ts",
+    "deploy": "npm install && tsc && vite build"
+  }
+}
