@@ -8,7 +8,7 @@ namespace SeoToolkit.Umbraco.Deploy.Extensions
         public static GuidUdi GetUdi(this RobotsTxtModel entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
-            return new GuidUdi("seoToolkit-robotstxt", entity.Key).EnsureClosed();
+            return new GuidUdi(SeoToolkitDeployConstants.UdiRobotsTxtEntityType, entity.Key).EnsureClosed();
         }
     }
 }

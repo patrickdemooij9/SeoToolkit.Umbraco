@@ -20,10 +20,10 @@ namespace SeoToolkit.Umbraco.Deploy.Components
         {
             // Let Umbraco & Deploy know about a new UDI type
             // umb://seotoolkit-robotstxt/someguid-without-hyphens
-            UdiParser.RegisterUdiType("seoToolkit-robotstxt", UdiType.GuidUdi);
+            UdiParser.RegisterUdiType(SeoToolkitDeployConstants.UdiRobotsTxtEntityType, UdiType.GuidUdi);
 
             // Allow RobotsTxt to be transferred via UI and not schema/disk-entity
-            _transferEntityService.RegisterTransferEntityType("seoToolkit-robotstxt", new DeployRegisteredEntityTypeDetailOptions
+            _transferEntityService.RegisterTransferEntityType(SeoToolkitDeployConstants.UdiRobotsTxtEntityType, new DeployRegisteredEntityTypeDetailOptions
             {
                 SupportsQueueForTransfer = true,
                 PermittedToRestore = true,

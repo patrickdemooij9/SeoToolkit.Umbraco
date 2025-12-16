@@ -10,6 +10,7 @@ namespace SeoToolkit.Umbraco.Deploy.ArtifactModels
             : base(udi, dependencies)
         { }
 
+        public int Id { get; set; } // For now, but superseded by Key in future versions
         public string Content { get; set; }
         public Guid? DomainId { get; set; }
     }

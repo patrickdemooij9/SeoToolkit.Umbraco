@@ -2,6 +2,7 @@
 using SeoToolkit.Umbraco.Deploy.Extensions;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Models.Business;
+using SeoToolkit.Umbraco.RobotsTxt.Core.Startup;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Deploy;
 using Umbraco.Deploy.Infrastructure.Connectors.ServiceConnectors;
@@ -10,8 +11,8 @@ using static Umbraco.Cms.Core.Constants;
 namespace SeoToolkit.Umbraco.Deploy.Connectors
 {
 
-    [UdiDefinition("seoToolkit-robotstxt", UdiType.GuidUdi)]
-    public class RobotsTxtServiceConnector : ServiceConnectorBase<RobotsTxtArtifact, GuidUdi, ArtifactDeployState<RobotsTxtArtifact, RobotsTxtModel>>
+    [UdiDefinition(SeoToolkitDeployConstants.UdiRobotsTxtEntityType, UdiType.GuidUdi)]
+    public class RobotsTxtServiceConnector : ServiceConnectorBase<RobotsTxtArtifact, GuidUdi, RobotsTxtModel>
     {
         private readonly IRobotsTxtService _robotsTxtService;
 
@@ -38,7 +39,7 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors
             {
                 foreach(var item in _robotsTxtService.GetAll())
                 {
-                    yield return new GuidUdi("seoToolkit-robotstxt", item.Key);
+                    yield return new GuidUdi(SeoToolkitDeployConstants.UdiRobotsTxtEntityType, item.Key);
                 }
                 yield break;
             }
@@ -49,7 +50,7 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors
                 yield break;
             }
 
-            yield return new GuidUdi("seoToolkit-robotstxt", entity.Key);
+            yield return new GuidUdi(SeoToolkitDeployConstants.UdiRobotsTxtEntityType, entity.Key);
         }
 
         public override async Task<RobotsTxtArtifact?> GetArtifactAsync(GuidUdi udi, IContextCache contextCache, CancellationToken cancellationToken = default)
@@ -60,22 +61,24 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors
             if (item is null)
                 return null;
 
-            return new RobotsTxtArtifact(new GuidUdi("seoToolkit-robotstxt", item.Key))
+            return new RobotsTxtArtifact(new GuidUdi(SeoToolkitDeployConstants.UdiRobotsTxtEntityType, item.Key))
             {
+                Id = item.Id,
                 DomainId = item.DomainId,
                 Content = item.Content
             };
         }
 
-        public override async Task<RobotsTxtArtifact> GetArtifactAsync(ArtifactDeployState<RobotsTxtArtifact, RobotsTxtModel> entity, IContextCache contextCache, CancellationToken cancellationToken = default)
+        public override async Task<RobotsTxtArtifact> GetArtifactAsync(RobotsTxtModel entity, IContextCache contextCache, CancellationToken cancellationToken = default)
         {
-            if (entity.Entity is null)
+            if (entity is null)
                 return null;
 
-            return new RobotsTxtArtifact(new GuidUdi("seoToolkit-robotstxt", entity.Entity.Key))
+            return new RobotsTxtArtifact(new GuidUdi(SeoToolkitDeployConstants.UdiRobotsTxtEntityType, entity.Key))
             {
-                DomainId = entity.Entity.DomainId,
-                Content = entity.Entity.Content
+                Id = entity.Id,
+                DomainId = entity.DomainId,
+                Content = entity.Content
             };
         }
 
@@ -90,40 +93,45 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors
             }
 
             var robotsTxt = _robotsTxtService.Get(udi.Guid);
-            return new NamedUdiRange(robotsTxt.GetUdi(), selector);
+            return new NamedUdiRange(robotsTxt.GetUdi(), "Robots.Txt", selector);
         }
 
         public override async Task<NamedUdiRange> GetRangeAsync(string entityType, string sid, string selector, CancellationToken cancellationToken = default)
         {
             EnsureType(entityType);
-            if(sid == "-1")
+
+            // Check if we have the root robots.txt node
+            if (Guid.TryParse(sid, out var resultGuid) && resultGuid == RobotsTxtTreeSection.RobotsTxtSectionGuid)
             {
-                EnsureOpenSelector(selector);
-                return new NamedUdiRange(Udi.Create("seoToolkit-robotstxt"), OpenUdiName, selector);
+                var entity = _robotsTxtService.GetAll().FirstOrDefault(it => it.DomainId is null);
+                return entity is null
+                    ? throw new ArgumentException("Could not find entity")
+                    : await GetRangeAsync(entity.GetUdi(), selector, cancellationToken);
             }
 
-            if (!Guid.TryParse(sid, out Guid guidResult))
-            {
-                throw new ArgumentException("Invalid identifier", nameof(sid));
-            }
-
-            var entity = _robotsTxtService.Get(guidResult);
-            if(entity == null)
-            {
-                throw new ArgumentException("Could not find an entity with the specified identifier.", nameof(sid));
-            }
-
-            return await GetRangeAsync(entity.GetUdi(), selector);
+            throw new ArgumentException("Invalid identifier", nameof(sid));
         }
 
-        public override async Task ProcessAsync(ArtifactDeployState<RobotsTxtArtifact, ArtifactDeployState<RobotsTxtArtifact, RobotsTxtModel>> state, IDeployContext context, int pass, CancellationToken cancellationToken = default)
+        public override Task ProcessAsync(ArtifactDeployState<RobotsTxtArtifact, RobotsTxtModel> state, IDeployContext context, int pass, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            state.NextPass = GetNextPass(pass);
+
+            var model = new RobotsTxtModel
+            {
+                Id = state.Artifact.Id,
+                Key = state.Artifact.Udi.Guid,
+                Content = state.Artifact.Content,
+                DomainId = state.Artifact.DomainId
+            };
+            _robotsTxtService.Save(model);
+            return Task.CompletedTask;
         }
 
-        public override async Task<ArtifactDeployState<RobotsTxtArtifact, ArtifactDeployState<RobotsTxtArtifact, RobotsTxtModel>>> ProcessInitAsync(RobotsTxtArtifact artifact, IDeployContext context, CancellationToken cancellationToken = default)
+        public override Task<ArtifactDeployState<RobotsTxtArtifact, RobotsTxtModel>> ProcessInitAsync(RobotsTxtArtifact artifact, IDeployContext context, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var entity = _robotsTxtService.Get(artifact.Udi.Guid);
+
+            return Task.FromResult(ArtifactDeployState.Create(artifact, entity, this, ProcessPasses[0]));
         }
 
         protected override IEnumerable<Difference> GetDifferences(RobotsTxtArtifact art1, RobotsTxtArtifact art2)

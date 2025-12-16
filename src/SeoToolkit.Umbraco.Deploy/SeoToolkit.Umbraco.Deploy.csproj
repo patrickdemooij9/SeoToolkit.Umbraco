@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <ContentTargetFolders>.</ContentTargetFolders>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <StaticWebAssetBasePath>App_Plugins/SeoToolkit</StaticWebAssetBasePath>

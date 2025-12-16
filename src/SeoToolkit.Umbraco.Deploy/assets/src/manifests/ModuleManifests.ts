@@ -25,7 +25,7 @@ export const Manifests = [
     },
     {
         name: "SeoToolkit Deploy Partial Restore Entity Action Registrar",
-        alias: "SeoToolkit.Deploy.PartialRestore.Registrar",
+        alias: "SeoToolkit.Deploy.TreeRestore.Registrar",
         type: "deployEntityActionRegistrar",
         actionAlias: "Deploy.EntityAction.TreeRestore",
         forEntityTypes: [
@@ -33,5 +33,13 @@ export const Manifests = [
                 entityTypes: [SEOTOOLKIT_ROBOTSTXT_ENTITY],
             },
         ],
-    }
+    },
+    {
+      type: "deployEntityTypeMapping",
+      alias: "SeoToolkit.Deploy.EntityTypeMapping",
+      name: "SeoToolkit Deploy Entity Type Mapping",
+      entityTypes: {
+        [SEOTOOLKIT_ROBOTSTXT_ENTITY]: "seotoolkit-robotstxt"
+      },
+    },
 ];
