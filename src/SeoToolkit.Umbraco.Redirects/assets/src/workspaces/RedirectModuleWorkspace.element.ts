@@ -1,6 +1,6 @@
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
+import { customElement } from "@umbraco-cms/backoffice/external/lit";
 import { html, LitElement } from "lit";
-import { customElement } from "lit/decorators.js";
 
 @customElement('seotoolkit-module-redirect')
 export class RedirectModuleWorkspace extends UmbElementMixin(LitElement) {

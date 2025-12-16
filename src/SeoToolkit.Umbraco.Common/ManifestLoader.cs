@@ -34,7 +34,7 @@ namespace SeoToolkit.Umbraco.Common
                 Id = "SeoToolkit.Umbraco.Common",
                 Name = "SeoToolkit Common",
                 AllowTelemetry = true,
-                Version = "5.1.2-beta3",
+                Version = "5.1.2-beta4",
                 Extensions = [ entrypoint!],
             }
             ];
