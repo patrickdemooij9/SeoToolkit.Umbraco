@@ -1,7 +1,7 @@
 import { UmbTreeItemContext, UmbTreeItemElementBase } from "@umbraco-cms/backoffice/tree";
 import { SeoToolkitTreeItemModel } from "./types";
 import { css, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property } from "@umbraco-cms/backoffice/external/lit";
 
 @customElement("seotoolkit-tree-item")
 export default class SeoToolkitTreeItemElement extends UmbTreeItemElementBase<SeoToolkitTreeItemModel> {
