@@ -1,8 +1,6 @@
-import { classMap } from "@umbraco-cms/backoffice/external/lit";
+import { classMap, customElement, repeat, state } from "@umbraco-cms/backoffice/external/lit";
 import { UmbModalBaseElement } from "@umbraco-cms/backoffice/modal";
 import { css, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { repeat } from "lit/directives/repeat.js";
 
 export interface ItemGroupPickerConfig {
   items: ItemGroupPickerItem[];
