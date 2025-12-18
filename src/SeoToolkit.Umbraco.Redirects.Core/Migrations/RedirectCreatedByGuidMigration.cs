@@ -32,13 +32,14 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
             if (DatabaseType == NPoco.DatabaseType.SQLite)
             {
                 Database.Execute("ALTER TABLE SeoToolkitRedirects RENAME COLUMN CreatedBy TO CreatedBy_Old");
+                Database.Execute("ALTER TABLE SeoToolkitRedirects ADD CreatedBy TEXT NULL");
             }
             else
             {
                 Database.Execute("exec sp_rename 'SeoToolkitRedirects.CreatedBy', 'CreatedBy_Old', 'COLUMN'");
+                Database.Execute("ALTER TABLE SeoToolkitRedirects ADD CreatedBy UNIQUEIDENTIFIER NULL");
             }
-            
-            Alter.Table("SeoToolkitRedirects").AddColumn("CreatedBy").AsGuid().Nullable().Do();
+
             foreach (var redirect in redirects)
             {
                 var createdByKey = Database.Fetch<Guid?>("SELECT userKey FROM umbracoUser where id = @0", [redirect.CreatedBy]).FirstOrDefault();
