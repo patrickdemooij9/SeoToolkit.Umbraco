@@ -10,6 +10,7 @@ import { UmbWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
 import { SeoSettingsPostModel } from "../api";
 import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import { SeoToolkitSettingsRepository } from "../repositories/seoToolkitSettingsRepository";
+import { UmbEntityUpdatedEvent } from "@umbraco-cms/backoffice/entity-action";
 
 export default class SeoToolkitDocumentContext
   extends UmbContextBase
@@ -46,7 +47,10 @@ export default class SeoToolkitDocumentContext
       }
 
       this.#actionEventContext = instance;
-      instance.addEventListener("request-reload-structure-for-entity", this.#save);
+      this.#actionEventContext.addEventListener(
+        UmbEntityUpdatedEvent.TYPE,
+        this.#save
+      );
     });
   }
 
@@ -55,7 +59,10 @@ export default class SeoToolkitDocumentContext
   }
 
   public save() {
-    this.#settingsRepository.setSettings(this.#model.getValue());
+    const value = { ...this.#model.getValue() };
+    if (value.contentTypeId === "") return;
+
+    this.#settingsRepository.setSettings(value);
   }
 
   public setSeoSettings(value: boolean) {
@@ -69,7 +76,7 @@ export default class SeoToolkitDocumentContext
   }
 
   destroy(): void {
-    this.#actionEventContext?.removeEventListener("request-reload-structure-for-entity", this.#save);
+    this.#actionEventContext?.removeEventListener(UmbEntityUpdatedEvent.TYPE, this.#save);
   }
 }
 
