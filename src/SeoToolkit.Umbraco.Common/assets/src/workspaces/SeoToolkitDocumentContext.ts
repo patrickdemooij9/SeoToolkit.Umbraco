@@ -76,7 +76,7 @@ export default class SeoToolkitDocumentContext
   }
 
   destroy(): void {
-    this.#actionEventContext?.removeEventListener("request-reload-structure-for-entity", this.#save);
+    this.#actionEventContext?.removeEventListener(UmbEntityUpdatedEvent.TYPE, this.#save);
   }
 }
 
