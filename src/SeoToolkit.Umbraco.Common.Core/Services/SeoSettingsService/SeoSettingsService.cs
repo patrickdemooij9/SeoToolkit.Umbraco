@@ -28,7 +28,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
 
         public bool IsEnabled(IContentType contentType)
         {
-            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoSettings}{contentType.Id}",
+            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoSettings}{contentType.Key}",
                 () => _seoSettingsRepository.IsEnabled(contentType), TimeSpan.FromMinutes(10));
         }
 
