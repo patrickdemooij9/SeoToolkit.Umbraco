@@ -6,7 +6,7 @@ import {
   UmbTreeServerDataSourceBase,
 } from "@umbraco-cms/backoffice/tree";
 import {
-  BackofficeSeoToolkitService,
+  BackofficeSeoToolkit,
   SeoToolkitTreeItemApiModel,
 } from "../api";
 import {
@@ -38,7 +38,7 @@ export class seoToolkitTreeSource extends UmbTreeServerDataSourceBase<
 
 const getRootItems = async (_args: UmbTreeRootItemsRequestArgs) => {
   const data =
-    await BackofficeSeoToolkitService.getUmbracoSeoToolkitTreeInfoRoot();
+    await BackofficeSeoToolkit.getUmbracoSeoToolkitTreeInfoRoot();
   return data;
 };
 
@@ -48,7 +48,7 @@ const getChildrenOf = async (args: UmbTreeChildrenOfRequestArgs) => {
   } else {
     // eslint-disable-next-line local-rules/no-direct-api-import
     const data =
-      await BackofficeSeoToolkitService.getUmbracoSeoToolkitTreeInfoChildren({
+      await BackofficeSeoToolkit.getUmbracoSeoToolkitTreeInfoChildren({
         query: {
           parentUnique: args.parent.unique,
           skip: args.skip,
@@ -61,7 +61,7 @@ const getChildrenOf = async (args: UmbTreeChildrenOfRequestArgs) => {
 
 const getAncestorsOf = async (args: UmbTreeAncestorsOfRequestArgs) => {
   const response =
-    await BackofficeSeoToolkitService.getUmbracoSeoToolkitTreeInfoAncestors({
+    await BackofficeSeoToolkit.getUmbracoSeoToolkitTreeInfoAncestors({
       query: {
         descendantId: args.treeItem.unique,
       },

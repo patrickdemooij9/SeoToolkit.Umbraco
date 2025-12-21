@@ -1,5 +1,5 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
-import { BackofficeSeoToolkitService, SeoDomainCollection } from "../api";
+import { BackofficeSeoToolkit, SeoDomainCollection } from "../api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
 
 export class SeoToolkitDomainSource {
@@ -12,7 +12,7 @@ export class SeoToolkitDomainSource {
   async get(domainId: string) {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitService.getUmbracoSeoToolkitDomainsGet({
+      BackofficeSeoToolkit.getUmbracoSeoToolkitDomainsGet({
         query: {
           domainId: domainId,
         },
@@ -21,7 +21,7 @@ export class SeoToolkitDomainSource {
   }
 
   async getPredefined(umbracoDomainId: number) {
-    return BackofficeSeoToolkitService.getUmbracoSeoToolkitDomainsGetPredefined({
+    return BackofficeSeoToolkit.getUmbracoSeoToolkitDomainsGetPredefined({
       query: {
         umbracoDomainId: umbracoDomainId
       }
@@ -31,14 +31,14 @@ export class SeoToolkitDomainSource {
   async saveDomain(domain: SeoDomainCollection) {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitService.postUmbracoSeoToolkitDomainsSave({
+      BackofficeSeoToolkit.postUmbracoSeoToolkitDomainsSave({
         body: domain,
       })
     );
   }
 
   async delete(domainId: string) {
-    return await tryExecute(this.#host, BackofficeSeoToolkitService.deleteUmbracoSeoToolkitDomainsDelete({
+    return await tryExecute(this.#host, BackofficeSeoToolkit.deleteUmbracoSeoToolkitDomainsDelete({
       query: {
         domainId: domainId
       }
@@ -48,7 +48,7 @@ export class SeoToolkitDomainSource {
   async getConfig() {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitService.getUmbracoSeoToolkitDomainsConfig()
+      BackofficeSeoToolkit.getUmbracoSeoToolkitDomainsConfig()
     );
   }
 }

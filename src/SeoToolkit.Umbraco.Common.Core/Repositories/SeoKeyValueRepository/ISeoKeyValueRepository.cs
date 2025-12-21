@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Hunspell;
+using System;
+using System.Collections.Generic;
 
 namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository
 {
@@ -6,6 +8,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository
     {
         void Set(string key, string value, Guid? domainId);
         string? Get(string key, Guid? domainId);
+        Dictionary<string, string> Get(string[] keys, Guid? domainId);
         void Delete(string key, Guid? domainId);
     }
 }

@@ -5,21 +5,22 @@ import {
   state,
   when,
 } from "@umbraco-cms/backoffice/external/lit";
-import { html, LitElement } from "lit";
+import { css, html, LitElement } from "lit";
 import { SeoFieldViewModel } from "../api";
-import {
-  umbExtensionsRegistry,
-} from "@umbraco-cms/backoffice/extension-registry";
+import { umbExtensionsRegistry } from "@umbraco-cms/backoffice/extension-registry";
 import { createExtensionElement } from "@umbraco-cms/backoffice/extension-api";
-import { ManifestPropertyEditorUi, UmbPropertyEditorConfigCollection, UmbPropertyValueChangeEvent } from "@umbraco-cms/backoffice/property-editor";
+import {
+  ManifestPropertyEditorUi,
+  UmbPropertyEditorConfigCollection,
+  UmbPropertyValueChangeEvent,
+} from "@umbraco-cms/backoffice/property-editor";
 
 @customElement("st-metafield-settingsfield")
 export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
-
   @property({ type: Object })
   public set field(value: SeoFieldViewModel | undefined) {
     this._field = value;
-    if (this._element){
+    if (this._element) {
       this._element.value = value?.value;
     }
   }
@@ -29,7 +30,7 @@ export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
   private _field?: SeoFieldViewModel;
 
   @property({ type: String })
-  public set view(value: string | undefined){
+  public set view(value: string | undefined) {
     this._view = value;
     this.observePropertyView();
   }
@@ -50,10 +51,7 @@ export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
     }
 
     this.observe(
-      umbExtensionsRegistry.byTypeAndAlias(
-        "propertyEditorUi",
-        this._view
-      ),
+      umbExtensionsRegistry.byTypeAndAlias("propertyEditorUi", this._view),
       (manifest) => {
         this._gotEditorUI(manifest);
       },
@@ -74,10 +72,10 @@ export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
       this._element.addEventListener("change", () => {
         this._field = {
           ...this._field!,
-          value: this._element!.value
+          value: this._element!.value,
         };
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
-      })
+      });
 
       this._element.value = this.field?.value;
       if (this.field?.editor?.config) {
@@ -102,6 +100,46 @@ export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
         .label=${this.field!.title!}
         .description=${this.field!.description!}
       >
+        <div slot="action-menu" class="action-menu">
+          <uui-button
+            id="popover-trigger"
+            popovertarget="property-action-popover"
+            data-mark="open-property-actions"
+            label=${this.localize.term("actions_viewActionsFor")}
+            compact
+          >
+            <uui-symbol-more id="more-symbol"></uui-symbol-more>
+          </uui-button>
+          <uui-popover-container id="property-action-popover">
+            <umb-popover-layout>
+              <div class="actions">
+                ${when(
+                  this.field!.useInheritedValue,
+                  () => html`
+                    <uui-button
+                      look="placeholder"
+                      @click=${this.toggleInheritance}
+                      >Override</uui-button
+                    >
+                  `,
+                  () => html`
+                    ${when(
+                      this.hasGlobalInheritance,
+                      () => html`
+                        <uui-button
+                          look="placeholder"
+                          @click=${this.toggleInheritance}
+                          >Set to inherited</uui-button
+                        >
+                      `
+                    )}
+                  `
+                )}
+                <uui-button look="placeholder"> Set format </uui-button>
+              </div>
+            </umb-popover-layout>
+          </uui-popover-container>
+        </div>
         <div slot="editor">
           ${when(
             this.field!.useInheritedValue,
@@ -114,23 +152,29 @@ export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
                 >Override</uui-button
               >`,
             () => html`
+              <uui-input placeholder="Format for the field"></uui-input>
               ${this._element}
-              ${when(
-                this.hasGlobalInheritance,
-                () => html`
-                  <uui-button
-                    look="placeholder"
-                    @click=${this.toggleInheritance}
-                    >Set to inherited</uui-button
-                  >
-                `
-              )}
             `
           )}
         </div>
       </umb-property-layout>
     `;
   }
+
+  static styles = [
+    css`
+      .action-menu {
+        display: inline;
+      }
+
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 8px 4px;
+      }
+    `,
+  ];
 }
 
 declare global {
