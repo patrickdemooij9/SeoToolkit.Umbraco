@@ -2,11 +2,11 @@ import { css, html } from "lit";
 import SeoToolkitDomainContext, {
   ST_DOMAIN_DETAIL_TOKEN_CONTEXT,
 } from "./SeoToolkitDomainContext";
-import { customElement, state } from "lit/decorators.js";
 import { umbFocus, UmbLitElement } from "@umbraco-cms/backoffice/lit-element";
 import { UUIInputElement } from "@umbraco-cms/backoffice/external/uui";
+import { customElement, state } from "@umbraco-cms/backoffice/external/lit";
 
-@customElement("seotoolkit.domain-detail")
+@customElement("seotoolkit-domain-detail")
 export default class SeoToolkitDomainViewElement extends UmbLitElement {
   #context?: SeoToolkitDomainContext;
 

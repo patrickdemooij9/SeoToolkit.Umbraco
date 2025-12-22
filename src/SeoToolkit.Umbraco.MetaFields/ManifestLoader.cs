@@ -33,7 +33,7 @@ namespace SeoToolkit.Umbraco.MetaFields
                 Id = "SeoToolkit.Umbraco.MetaFields",
                 Name = "SeoToolkit MetaFields",
                 AllowTelemetry = true,
-                Version = "6.0.1",
+                Version = "6.0.2",
                 Extensions = [ entrypoint!],
             }
             ];
