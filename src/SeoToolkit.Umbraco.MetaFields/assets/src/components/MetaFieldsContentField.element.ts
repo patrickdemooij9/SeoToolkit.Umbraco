@@ -1,11 +1,13 @@
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
 import {
+  classMap,
   customElement,
   property,
+  repeat,
   state,
   when,
 } from "@umbraco-cms/backoffice/external/lit";
-import { html, LitElement } from "lit";
+import { css, html, LitElement } from "lit";
 import { SeoSettingsFieldViewModel } from "../api";
 import {
   umbExtensionsRegistry,
@@ -88,6 +90,10 @@ export class MetaFieldsContentField extends UmbElementMixin(LitElement) {
     }
   }
 
+  private getValue(): string | undefined | null {
+    return this.field?.userValue?.toString() ?? this.field?.value;
+  }
+
   render() {
     return html`
       <umb-property-layout
@@ -102,10 +108,37 @@ export class MetaFieldsContentField extends UmbElementMixin(LitElement) {
             () => html` <small>Fallback value: ${this.field?.value}</small> `,
             () => html` <small>No fallback value found</small>`
           ))}
+          ${when(this.field!.suggestions!.length > 0, () => html`
+            ${repeat(this.field!.suggestions!, (item) => item.alias, (item) => html`
+              <div class="field-suggestion">
+                ${when(item.alias === 'maxLength', () => html`
+                <p class=${classMap({"valid": !this.getValue() || this.getValue()!.length < (item.config!.maxLength as number)})}>
+                  Best practice: Length of the text to be lower than ${item.config!.maxLength} characters.
+                </p>
+                `)}
+              </div>
+              `)}
+            `)}
         </div>
       </umb-property-layout>
     `;
   }
+
+  static styles = css`
+    .field-suggestion {
+      font-size: 0.9em;
+      color: #f44336;
+      margin-top: 2px;
+
+      p {
+        margin: 0;
+      }
+
+      > .valid {
+        color: #4caf50;
+      }
+    }
+  `
 }
 
 declare global {

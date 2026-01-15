@@ -60,6 +60,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
                 .Append<BrokenImageCheck>()
                 .Append<MissingImageAltCheck>();
 
+            builder.WithCollectionBuilder<SeoDisplayCollectionBuilder>()
+                .Add<SiteAuditDisplayProvider>();
+
             builder.Services.AddHttpClient<BrokenImageCheck>()
                 .ConfigurePrimaryHttpMessageHandler(x =>
                 {

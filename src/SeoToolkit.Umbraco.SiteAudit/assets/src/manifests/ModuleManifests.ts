@@ -65,4 +65,16 @@ const SiteAuditDetailEditView: ManifestWorkspaceView = {
     ]
 }
 
-export const ModuleManifests = [SiteAuditTreeItem, SiteAuditWorkspace, SiteAuditCreateWorkspace, SiteAuditDetailWorkspace, SiteAuditDetailEditView];
+const SiteAuditContentView: any = {
+  type: "seoToolkitContentView",
+  alias: "seoToolkit.siteAudit.contentView",
+  name: "SeoToolkit SiteAudit content view",
+  js: () => import("../workspaces/SiteAuditContentView.element"),
+  weight: 500,
+  meta: {
+    label: "Page checks",
+    pathname: "pageChecks"
+  },
+};
+
+export const ModuleManifests = [SiteAuditTreeItem, SiteAuditWorkspace, SiteAuditCreateWorkspace, SiteAuditDetailWorkspace, SiteAuditDetailEditView, SiteAuditContentView];

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Html;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField
