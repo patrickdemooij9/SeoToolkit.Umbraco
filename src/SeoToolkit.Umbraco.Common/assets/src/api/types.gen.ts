@@ -250,8 +250,17 @@ export type SeoFieldViewModel = {
     title?: string | null;
     description?: string | null;
     useInheritedValue: boolean;
+    allowChangingFormatField: boolean;
     value?: unknown;
     editor?: SeoFieldEditorViewModel | null;
+};
+
+export type SeoKeyValueSettingViewModel = {
+    key: string;
+    title: string;
+    description: string;
+    propertyAlias: string;
+    value?: unknown;
 };
 
 export type SeoSettingsFieldViewModel = {
@@ -1093,6 +1102,42 @@ export type PostUmbracoSeoToolkitDomainsSaveResponses = {
 };
 
 export type PostUmbracoSeoToolkitDomainsSaveResponse = PostUmbracoSeoToolkitDomainsSaveResponses[keyof PostUmbracoSeoToolkitDomainsSaveResponses];
+
+export type GetUmbracoSeoToolkitSeoKeyValueSettingsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        domainId?: string;
+    };
+    url: '/umbraco/seoToolkitSeoKeyValueSettings';
+};
+
+export type GetUmbracoSeoToolkitSeoKeyValueSettingsResponses = {
+    /**
+     * OK
+     */
+    200: Array<SeoKeyValueSettingViewModel>;
+};
+
+export type GetUmbracoSeoToolkitSeoKeyValueSettingsResponse = GetUmbracoSeoToolkitSeoKeyValueSettingsResponses[keyof GetUmbracoSeoToolkitSeoKeyValueSettingsResponses];
+
+export type PostUmbracoSeoToolkitSeoKeyValueSettingsSaveData = {
+    body?: {
+        [key: string]: string;
+    };
+    path?: never;
+    query?: {
+        domainId?: string;
+    };
+    url: '/umbraco/seoToolkitSeoKeyValueSettings/save';
+};
+
+export type PostUmbracoSeoToolkitSeoKeyValueSettingsSaveResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
 
 export type GetUmbracoSeoToolkitSettingsSeoSettingsData = {
     body?: never;

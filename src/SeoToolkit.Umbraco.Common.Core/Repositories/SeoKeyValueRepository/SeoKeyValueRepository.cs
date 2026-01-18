@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using SeoToolkit.Umbraco.Common.Core.Models.Database;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Extensions;
 
@@ -33,6 +36,25 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository
 
             var entity = scope.Database.FirstOrDefault<SeoKeyValueEntity>(sql);
             return entity?.Value;
+        }
+
+        public Dictionary<string, string> Get(Guid? domainId)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+
+            var sql = scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SeoKeyValueEntity>();
+            if (domainId == null)
+            {
+                sql = sql.Where<SeoKeyValueEntity>(it => it.DomainId == null);
+            }
+            else
+            {
+                sql = sql.Where<SeoKeyValueEntity>(it => it.DomainId == domainId);
+            }
+
+            return scope.Database.Fetch<SeoKeyValueEntity>(sql).ToDictionary(it => it.Key, it => it.Value);
         }
 
         public void Set(string key, string value, Guid? domainId)

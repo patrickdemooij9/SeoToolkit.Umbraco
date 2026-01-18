@@ -8,7 +8,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository
     {
         void Set(string key, string value, Guid? domainId);
         string? Get(string key, Guid? domainId);
-        Dictionary<string, string> Get(string[] keys, Guid? domainId);
+        Dictionary<string, string> Get(Guid? domainId);
         void Delete(string key, Guid? domainId);
     }
 }

@@ -6,6 +6,7 @@ using SeoToolkit.Umbraco.Common.Core.Repositories.Domains;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoSettingsRepository;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
+using SeoToolkit.Umbraco.Common.Core.Services.SeoKeyValueService;
 using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Common.Core.Startup;
@@ -32,6 +33,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
             builder.Services.AddUnique<ISeoSettingsService, SeoSettingsService>();
 
             builder.Services.AddUnique<ISeoKeyValueRepository, SeoKeyValueRepository>();
+            builder.Services.AddUnique<ISeoKeyValueService, SeoKeyValueService>();
 
             builder.Services.AddUnique<ISeoDomainsRepository, SeoDomainsRepository>();
             builder.Services.AddUnique<ISeoDomainsService, SeoDomainsService>();
@@ -39,6 +41,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
 
             builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
                 .Add<SeoToolkitInfoSection>();
+
+            builder.WithCollectionBuilder<SeoKeyValueSettingCollectionBuilder>();
         }
     }
 }
