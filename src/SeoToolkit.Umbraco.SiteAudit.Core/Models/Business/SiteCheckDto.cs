@@ -5,6 +5,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Models.Business
     public class SiteCheckDto
     {
         public int Id { get; set; }
+        public bool AllowedAsPageCheck { get; set; }
         public ISiteCheck Check { get; set; }
     }
 }
