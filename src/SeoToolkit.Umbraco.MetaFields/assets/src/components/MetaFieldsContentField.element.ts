@@ -73,6 +73,7 @@ export class MetaFieldsContentField extends UmbElementMixin(LitElement) {
           ...this._field!,
           userValue: this._element!.value,
         };
+        console.log("Hello world");
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
       });
 

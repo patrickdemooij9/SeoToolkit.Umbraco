@@ -261,6 +261,7 @@ export type SeoKeyValueSettingViewModel = {
     description: string;
     propertyAlias: string;
     value?: unknown;
+    hasRootValue: boolean;
 };
 
 export type SeoSettingsFieldViewModel = {

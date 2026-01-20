@@ -22,6 +22,19 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             _seoKeyValueRepository = seoKeyValueRepository;
         }
 
+        [HttpGet("value")]
+        [ProducesResponseType(typeof(string), 200)]
+        public IActionResult GetValue(string key)
+        {
+            var values = _seoKeyValueRepository.Get(null);
+            var value = string.Empty;
+            if (values.TryGetValue(key, out var foundValue))
+            {
+                value = foundValue;
+            }
+            return Ok(foundValue);
+        }
+
         [HttpGet]
         [ProducesResponseType(typeof(SeoKeyValueSettingViewModel[]), 200)]
         public IActionResult GetSettings(Guid? domainId)
@@ -39,7 +52,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
                 Description = it.Description,
                 PropertyAlias = it.PropertyAlias,
                 Value = values.TryGetValue(it.Key, out string? value) ? value : null,
-                HasRootValue = rootValues.ContainsKey(it.Key)
+                HasRootValue = domainId.HasValue && rootValues.ContainsKey(it.Key)
             }));
         }
 

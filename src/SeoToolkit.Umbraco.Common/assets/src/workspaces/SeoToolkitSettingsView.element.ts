@@ -5,16 +5,17 @@ import {
   state,
 } from "@umbraco-cms/backoffice/external/lit";
 import { css, html, LitElement } from "lit";
-import SeoToolkitSettingsContext, { ST_SETTINGS_MODULE_TOKEN_CONTEXT } from "./SeoToolkitSettingsContext";
-import {
-  UmbPropertyDatasetElement,
-  UmbPropertyValueData,
-} from "@umbraco-cms/backoffice/property";
+import SeoToolkitSettingsContext, {
+  ST_SETTINGS_MODULE_TOKEN_CONTEXT,
+} from "./SeoToolkitSettingsContext";
 import { SeoKeyValueSettingViewModel } from "../api";
+
+import "../components/SeoSettingField.element";
+import { SeoSettingFieldElement } from "../components/SeoSettingField.element";
 
 @customElement("st-settings")
 export default class SeoToolkitSettingsViewElement extends UmbElementMixin(
-  LitElement
+  LitElement,
 ) {
   #context?: SeoToolkitSettingsContext;
 
@@ -22,7 +23,7 @@ export default class SeoToolkitSettingsViewElement extends UmbElementMixin(
   _fields: SeoKeyValueSettingViewModel[] = [];
 
   @state()
-  _content: UmbPropertyValueData[] = [];
+  _inheritedKeys: string[] = [];
 
   constructor() {
     super();
@@ -32,22 +33,23 @@ export default class SeoToolkitSettingsViewElement extends UmbElementMixin(
 
       context?.settings.subscribe((value) => {
         this._fields = value;
-        this._content = value.map((item) => ({
-          alias: item.key,
-          value: item.value,
-        }));
       });
+      context?.inheritedKeys.subscribe((value) => this._inheritedKeys = value);
     });
   }
 
   #onPropertyDataChange(e: Event) {
+    const field = (e.target as SeoSettingFieldElement).field!;
+    this.#context?.updateValue(field.key, (field.value as string) ?? "");
+    /*this.#context?.updateField(this._culture!, field!.alias!, field!.userValue);
+
     const value = (e.target as UmbPropertyDatasetElement).value;
-    
-    const values: {[key: string]: string} = {};
+
+    const values: { [key: string]: string } = {};
     value.forEach((item) => {
-        values[item.alias] = item.value as string ?? "";
-    })
-    this.#context?.updateValues(values);
+      values[item.alias] = (item.value as string) ?? "";
+    });
+    this.#context?.updateValues(values);*/
   }
 
   protected render() {
@@ -55,24 +57,19 @@ export default class SeoToolkitSettingsViewElement extends UmbElementMixin(
       <umb-workspace-editor>
         <div class="settingsWorkspace">
           <uui-box headline="Settings" headline-variant="h5">
-            <umb-property-dataset
-              .value=${this._content}
-              @change=${this.#onPropertyDataChange}
-            >
-              ${repeat(
-                this._fields,
-                (item) => item.key,
-                (item) => html`
-                  <umb-property
-                    alias=${item.key!}
-                    label=${item.title!}
-                    description=${item.description!}
-                    property-editor-ui-alias=${item.propertyAlias!}
-                  >
-                  </umb-property>
-                `
-              )}
-            </umb-property-dataset>
+            ${repeat(
+              this._fields,
+              (item) => item.key,
+              (item) => html`
+                <st-setting-field
+                  .field=${item}
+                  @change=${this.#onPropertyDataChange}
+                  @toggle-inheritance=${() => this.#context!.toggleInheritance(item.key)}
+                  .inherited=${this._inheritedKeys.includes(item.key)}
+                >
+                </st-setting-field>
+              `,
+            )}
           </uui-box>
         </div>
       </umb-workspace-editor>

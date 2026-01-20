@@ -1,8 +1,9 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
 import {
+  BackofficeSeoToolkit,
   BackofficeSeoToolkitMetaFields,
-  DocumentTypeSettingsPostViewModel
+  DocumentTypeSettingsPostViewModel,
 } from "../api";
 
 export class MetaFieldsSettingsSource {
@@ -19,16 +20,16 @@ export class MetaFieldsSettingsSource {
         {
           query: {
             nodeId: contentTypeGuid,
-          }
-        }
-      )
+          },
+        },
+      ),
     );
   }
 
   async getAdditionalFields() {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitMetaFields.getUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFields()
+      BackofficeSeoToolkitMetaFields.getUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFields(),
     );
   }
 
@@ -38,8 +39,19 @@ export class MetaFieldsSettingsSource {
       BackofficeSeoToolkitMetaFields.postUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettings(
         {
           body: model,
-        }
-      )
+        },
+      ),
+    );
+  }
+
+  async getTitleFormat(key: string) {
+    return await tryExecute(
+      this.#host,
+      BackofficeSeoToolkit.getUmbracoSeoToolkitSeoKeyValueSettingsValue({
+        query: {
+          key,
+        },
+      }),
     );
   }
 }

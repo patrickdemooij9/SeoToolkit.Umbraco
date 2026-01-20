@@ -25,9 +25,12 @@ export default class SeoToolkitSettingsContext
 
   #settings = new UmbArrayState<SeoKeyValueSettingViewModel>(
     [],
-    (item) => item.key
+    (item) => item.key,
   );
   public readonly settings = this.#settings.asObservable();
+
+  #inheritedKeys = new UmbArrayState<string>([], (item) => item);
+  public readonly inheritedKeys = this.#inheritedKeys.asObservable();
 
   #domainId?: string;
 
@@ -59,13 +62,18 @@ export default class SeoToolkitSettingsContext
   load() {
     this.#source.getSettings(this.#domainId).then((result) => {
       this.#settings.setValue(result.data);
+      this.#inheritedKeys.setValue(
+        result.data
+          .filter((item) => item.hasRootValue && !item.value)
+          .map((item) => item.key),
+      );
     });
   }
 
   async save() {
     const postValue: { [key: string]: string } = {};
     this.#settings.value.forEach((item) => {
-      postValue[item.key] = (item.value as string) ?? "";
+      postValue[item.key] = this.#inheritedKeys.value.includes(item.key) ? "" : ((item.value as string) ?? "");
     });
     await this.#source.saveSettings(postValue, this.#domainId);
 
@@ -88,6 +96,22 @@ export default class SeoToolkitSettingsContext
       setting.value = item[1];
     });
     this.#settings.setValue(newSettings);
+  }
+
+  updateValue(key: string, value: string) {
+    const newSettings = structuredClone(this.#settings.value);
+    newSettings.find((item) => item.key == key)!.value = value;
+    this.#settings.setValue(newSettings);
+  }
+
+  toggleInheritance(key: string) {
+    const inheritedKeys = structuredClone(this.#inheritedKeys.value);
+    if (inheritedKeys.includes(key)) {
+      inheritedKeys.splice(inheritedKeys.indexOf(key), 1);
+    } else {
+      inheritedKeys.push(key);
+    }
+    this.#inheritedKeys.setValue(inheritedKeys);
   }
 
   getEntityType(): string {
