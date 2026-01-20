@@ -10,7 +10,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels
         public string Title { get; set; }
         public string Description { get; set; }
         public bool UseInheritedValue { get; set; }
-        public bool AllowChangingFormatField { get; set; }
         public object Value { get; set; }
         public SeoFieldEditorViewModel Editor { get; set; }
 

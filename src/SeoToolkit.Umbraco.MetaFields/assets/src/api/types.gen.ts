@@ -250,7 +250,6 @@ export type SeoFieldViewModel = {
     title?: string | null;
     description?: string | null;
     useInheritedValue: boolean;
-    allowChangingFormatField: boolean;
     value?: unknown;
     editor?: SeoFieldEditorViewModel | null;
 };
