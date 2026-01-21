@@ -5,10 +5,7 @@ import {
   UmbTreeRootItemsRequestArgs,
   UmbTreeServerDataSourceBase,
 } from "@umbraco-cms/backoffice/tree";
-import {
-  BackofficeSeoToolkitService,
-  SeoToolkitTreeItemApiModel,
-} from "../api";
+import { BackofficeSeoToolkit, SeoToolkitTreeItemApiModel } from "../api";
 import {
   SEOTOOLKIT_MODULE_ENTITY,
   SEOTOOLKIT_REDIRECT_ENTITY,
@@ -19,6 +16,7 @@ import {
   SEOTOOLKIT_TREE_ROOT,
   SEOTOOLKIT_DOMAIN_ENTITY,
   SEOTOOLKIT_DOMAIN_ROOT_ENTITY,
+  SEOTOOLKIT_SETTINGS_ENTITY,
 } from "../constants/seoToolkitConstants";
 import { SeoToolkitTreeItemModel } from "../trees/types";
 
@@ -37,8 +35,7 @@ export class seoToolkitTreeSource extends UmbTreeServerDataSourceBase<
 }
 
 const getRootItems = async (_args: UmbTreeRootItemsRequestArgs) => {
-  const data =
-    await BackofficeSeoToolkitService.getUmbracoSeoToolkitTreeInfoRoot();
+  const data = await BackofficeSeoToolkit.getUmbracoSeoToolkitTreeInfoRoot();
   return data;
 };
 
@@ -48,7 +45,7 @@ const getChildrenOf = async (args: UmbTreeChildrenOfRequestArgs) => {
   } else {
     // eslint-disable-next-line local-rules/no-direct-api-import
     const data =
-      await BackofficeSeoToolkitService.getUmbracoSeoToolkitTreeInfoChildren({
+      await BackofficeSeoToolkit.getUmbracoSeoToolkitTreeInfoChildren({
         query: {
           parentUnique: args.parent.unique,
           skip: args.skip,
@@ -61,7 +58,7 @@ const getChildrenOf = async (args: UmbTreeChildrenOfRequestArgs) => {
 
 const getAncestorsOf = async (args: UmbTreeAncestorsOfRequestArgs) => {
   const response =
-    await BackofficeSeoToolkitService.getUmbracoSeoToolkitTreeInfoAncestors({
+    await BackofficeSeoToolkit.getUmbracoSeoToolkitTreeInfoAncestors({
       query: {
         descendantId: args.treeItem.unique,
       },
@@ -101,7 +98,10 @@ const mapper = (item: SeoToolkitTreeItemApiModel): SeoToolkitTreeItemModel => {
   ) {
     entity = SEOTOOLKIT_NOTFOUND_ENTITY;
     icon = "icon-article";
-  } else if (item.id == "ab248b43-9757-432a-9821-22f9eeb513e7".toLowerCase()){
+  } else if (item.id.startsWith("5ed58cb7-2ec2-4c97-be5b-506d6189086f".toLowerCase())) {
+    entity = SEOTOOLKIT_SETTINGS_ENTITY;
+    icon = "icon-settings";
+  } else if (item.id == "ab248b43-9757-432a-9821-22f9eeb513e7".toLowerCase()) {
     entity = SEOTOOLKIT_DOMAIN_ROOT_ENTITY;
     icon = "icon-globe";
   } else if (
@@ -122,6 +122,6 @@ const mapper = (item: SeoToolkitTreeItemApiModel): SeoToolkitTreeItemModel => {
     hasChildren: item.hasChildren,
     isFolder: false,
     icon: icon,
-    isDraft: item.isDraft
+    isDraft: item.isDraft,
   };
 };

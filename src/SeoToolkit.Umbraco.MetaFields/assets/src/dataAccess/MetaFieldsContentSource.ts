@@ -1,7 +1,7 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
 import {
-  BackofficeSeoToolkitMetaFieldsService,
+  BackofficeSeoToolkitMetaFields,
   MetaFieldsSettingsPostViewModel,
 } from "../api";
 
@@ -15,7 +15,7 @@ export class MetaFieldsContentSource {
   async get(contentGuid: string, culture: string) {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitMetaFieldsService.getUmbracoSeoToolkitMetaFieldsMetaFields({
+      BackofficeSeoToolkitMetaFields.getUmbracoSeoToolkitMetaFieldsMetaFields({
         query: {
           nodeGuid: contentGuid,
           culture,
@@ -27,7 +27,7 @@ export class MetaFieldsContentSource {
   async save(model: MetaFieldsSettingsPostViewModel) {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitMetaFieldsService.postUmbracoSeoToolkitMetaFieldsMetaFields({
+      BackofficeSeoToolkitMetaFields.postUmbracoSeoToolkitMetaFieldsMetaFields({
         body: model,
       })
     );
@@ -36,7 +36,7 @@ export class MetaFieldsContentSource {
   async getImagePreview(mediaId: string) {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitMetaFieldsService.getUmbracoSeoToolkitMetaFieldsImagePreview({
+      BackofficeSeoToolkitMetaFields.getUmbracoSeoToolkitMetaFieldsImagePreview({
         query: {
           mediaId,
         },
