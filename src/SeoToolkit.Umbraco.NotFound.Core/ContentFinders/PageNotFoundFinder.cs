@@ -1,6 +1,5 @@
 ﻿using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.NotFound.Core.Services;
-using SeoToolkit.Umbraco.NotFound.Core.Startup;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using SeoToolkit.Umbraco.NotFound.Core.Notifications;
@@ -30,12 +29,12 @@ public class PageNotFoundFinder : IContentLastChanceFinder
         _umbracoContextAccessor.TryGetUmbracoContext(out var context);
 
         var seoDomain = _seoDomainResolver.ResolveDomain();
-        if (seoDomain != null && !seoDomain.HasFunctionality($"Module.{NotFoundTreeSection.SectionGuid}"))
-        {
-            seoDomain = null;
-        }
 
         var pageNotFoundGuid = _pageNotFoundService.GetPageNotFound(seoDomain?.Id);
+        if (pageNotFoundGuid is null && seoDomain != null) //Fallback to root
+        {
+            pageNotFoundGuid = _pageNotFoundService.GetPageNotFound(null);
+        }
         if (pageNotFoundGuid is null)
         {
             return false;
