@@ -29,10 +29,6 @@ public class PageNotFoundFinder : IContentLastChanceFinder
         _umbracoContextAccessor.TryGetUmbracoContext(out var context);
 
         var seoDomain = _seoDomainResolver.ResolveDomain();
-        if (seoDomain != null)
-        {
-            seoDomain = null;
-        }
 
         var pageNotFoundGuid = _pageNotFoundService.GetPageNotFound(seoDomain?.Id);
         if (pageNotFoundGuid is null && seoDomain != null) //Fallback to root
