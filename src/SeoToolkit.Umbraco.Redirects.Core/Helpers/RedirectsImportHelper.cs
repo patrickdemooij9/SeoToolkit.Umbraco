@@ -213,6 +213,8 @@ public class RedirectsImportHelper
 
     private void SetDomain(int domain)
     {
+        if (domain <= 0) return;
+
         using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
         var foundDomain = ctx.UmbracoContext.Domains?.GetAll(false).FirstOrDefault(it => it.Id == domain);
         if (foundDomain is null)

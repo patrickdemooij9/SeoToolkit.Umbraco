@@ -65,7 +65,7 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
     this._domains.splice(0, 0, { id: 0, name: "All Sites" });
 
     this.observe(this.State.asObservable(), (value) => {
-      const domain = value.domain
+      const domain = value.domain !== undefined
         ? this._domains.find((item) => item.id === value.domain)
         : undefined;
 
@@ -158,7 +158,7 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
             <umb-property
               alias="domain"
               label="Select the domain to import for"
-              description="If nothing is selected, redirects will be active for all domains"
+              description="This is the domain for which the redirects will be imported. If you choose 'All Sites', the redirects will be imported for all domains."
               property-editor-ui-alias="Umb.PropertyEditorUi.Dropdown"
               val
               .config=${[
@@ -167,6 +167,10 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
                   value: this._domains.map((item) => item.name),
                 },
               ]}
+              .validation=${{
+                mandatory: true,
+                mandatoryMessage: "This field is required",
+              }}
             >
             </umb-property>
             <umb-property
@@ -175,7 +179,6 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
               description="Select the type of file you want to import the redirects from"
               property-editor-ui-alias="Umb.PropertyEditorUi.Dropdown"
               val
-              required
               .config=${[
                 {
                   alias: "items",

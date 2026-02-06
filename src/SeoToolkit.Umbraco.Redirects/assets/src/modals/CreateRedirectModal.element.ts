@@ -111,14 +111,14 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
               .requestItems([value.newNodeId!])
               .then((resp) => {
                 this.newUrlName = resp.data![0].urls.find(
-                  (u) => u.culture === value.newCultureIso
+                  (u) => u.culture === value.newCultureIso,
                 )?.url;
               });
           } else {
             this.#umbMediaUrlRepository
               .requestItems([value.newNodeId!])
               .then((resp) => {
-                this.newUrlName = resp.data![0].url
+                this.newUrlName = resp.data![0].url;
               });
           }
         }
@@ -134,7 +134,7 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
     value.forEach((item) => {
       if (item.alias === "domain") {
         const domainId = this.domains.find(
-          (d) => d.name === (item.value as string[])[0]
+          (d) => d.name === (item.value as string[])[0],
         )?.id;
         newValue["domain"] = domainId;
       } else if (item.alias === "redirectCode") {
@@ -209,7 +209,7 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
   }
 
   #handleSubmit() {
-    if (!this.redirect?.value.oldUrl || !this.newUrlName){
+    if (!this.redirect?.value.oldUrl || !this.newUrlName) {
       this.showValidationMessage = true;
       this.requestUpdate();
       return;
@@ -241,7 +241,10 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
               description="Choose the domain set within Umbraco or use a custom domain"
               property-editor-ui-alias="Umb.PropertyEditorUi.Dropdown"
               val
-              required
+              .validation=${{
+                mandatory: true,
+                mandatoryMessage: "This field is required",
+              }}
               .config=${[
                 {
                   alias: "items",
@@ -261,7 +264,7 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
                   val
                 >
                 </umb-property>
-              `
+              `,
             )}
             <umb-property
               alias="isEnabled"
@@ -286,7 +289,10 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
                   @change=${this.#onRegexOptionChange}
                 >
                 </uui-select>
-                ${when(this.showValidationMessage && !this.#oldUrl, () => html`<div class="error">This field is required!</div>`)}
+                ${when(
+                  this.showValidationMessage && !this.#oldUrl,
+                  () => html`<div class="error">This field is required!</div>`,
+                )}
               </div>
             </umb-property-layout>
             <umb-property-layout
@@ -309,11 +315,13 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
                     <uui-button look="outline" @click=${this.#onSetLinkClick}>
                       <span>${this.newUrlName}</span>
                     </uui-button>
-                  `
+                  `,
                 )}
-                ${when(this.showValidationMessage && !this.newUrlName, () => html`<div class="error">This field is required!</div>`)}
+                ${when(
+                  this.showValidationMessage && !this.newUrlName,
+                  () => html`<div class="error">This field is required!</div>`,
+                )}
               </div>
-              
             </umb-property-layout>
             <umb-property
               alias="redirectCode"
