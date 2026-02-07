@@ -75,6 +75,7 @@ export default class RedirectCollection extends UmbLitElement {
                             value: {
                                 name: item.oldUrl,
                                 unique: item.unique,
+                                url: item.oldUrl,
                             }
                         }, {
                             columnAlias: 'to',
