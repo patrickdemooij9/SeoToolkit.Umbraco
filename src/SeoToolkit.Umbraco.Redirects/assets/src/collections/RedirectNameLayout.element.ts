@@ -29,7 +29,7 @@ export class RedirectNameLayout extends UmbLitElement {
 
     return html`<div class="redirect-name-layout">
       <a @click=${this.#clickItem}>${this.value.name}</a>
-      <a href="${this.value.url}" target="_blank" class="quick-link">
+      <a href="${this.value.url}" target="_blank" rel="noopener noreferrer" class="quick-link">
         <uui-icon name="icon-log-out"></uui-icon>
       </a>
     </div>`;
@@ -49,12 +49,8 @@ export class RedirectNameLayout extends UmbLitElement {
         color: var(--uui-color-interactive-emphasis);
       }
 
-	  .redirect-name-layout {
-		&:hover {
-			.quick-link {
-				visibility: visible;
-			}
-		}
+	  .redirect-name-layout:hover .quick-link {
+		visibility: visible;
 	  }
 
       .quick-link {
