@@ -179,9 +179,14 @@ public class RedirectsImportHelper
                 var toUrl = Uri.IsWellFormedUriString(row[1].ToString(), UriKind.Absolute)
                     ? row[1].ToString()
                     : row[1].ToString()?.EnsureEndsWith("/").ToLower();
-                var redirectCode = GetRedirectCode(row[2].ToString());
+                var redirectCode = HttpStatusCode.MovedPermanently;
+                if (row.ItemArray.Length > 2)
+                {
+                    redirectCode = GetRedirectCode(row[2].ToString());
+                }
+
                 var isEnabled = true;
-                if (bool.TryParse(row[3].ToString(), out var booleanResult))
+                if (row.ItemArray.Length > 3 && bool.TryParse(row[3].ToString(), out var booleanResult))
                 {
                     isEnabled = booleanResult;
                 }
