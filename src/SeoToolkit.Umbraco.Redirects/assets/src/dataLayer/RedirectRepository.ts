@@ -81,6 +81,10 @@ export default class RedirectRepository
     return this.#source.submitImport();
   }
 
+  async export() {
+    return this.#source.export();
+  }
+
   async updateStatusCodes(model: UpdateStatusCodesRedirectPostModel){
     return this.#source.updateStatusCodes(model);
   }

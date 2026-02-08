@@ -65,6 +65,23 @@ const RedirectCollectionImportAction: ManifestCollectionAction = {
     ],
 }
 
+const RedirectCollectionExportAction: ManifestCollectionAction = {
+    type: 'collectionAction',
+    kind: 'button',
+    name: 'Redirect Collection Overview Export',
+    alias: 'seoToolkit.collections.redirects.exportAction',
+    api: () => import('../actions/ExportRedirectAction'),
+    meta: {
+        label: 'Export',
+    },
+    conditions: [
+        {
+            alias: UMB_COLLECTION_ALIAS_CONDITION,
+            match: 'seoToolkit.collections.redirects',
+        },
+    ],
+} 
+
 const RedirectCollectionTrashBulkAction: ManifestEntityBulkAction = {
     type: 'entityBulkAction',
 	alias: 'seoToolkit.collections.redirects.trashAction',
@@ -108,4 +125,4 @@ const RedirectRepository: ManifestRepository = {
     api: () => import('../dataLayer/RedirectRepository')
 }
 
-export const CollectionManifests = [RedirectCollection, RedirectCollectionView, RedirectCollectionCreateAction, RedirectCollectionTrashBulkAction, RedirectUpdateStatusCodeBulkAction, RedirectRepository, RedirectCollectionImportAction];
+export const CollectionManifests = [RedirectCollection, RedirectCollectionView, RedirectCollectionCreateAction, RedirectCollectionTrashBulkAction, RedirectUpdateStatusCodeBulkAction, RedirectCollectionImportAction, RedirectCollectionExportAction, RedirectRepository];
