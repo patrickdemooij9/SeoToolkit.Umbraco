@@ -1,19 +1,16 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Umbraco.Cms.Core.Composing;
-using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Cms.Core.Mapping;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Interfaces;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.Api;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldGroups;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoSettings;
 using SeoToolkit.Umbraco.MetaFields.Core.Components;
 using SeoToolkit.Umbraco.MetaFields.Core.Config;
 using SeoToolkit.Umbraco.MetaFields.Core.Config.Models;
@@ -29,8 +26,12 @@ using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.MetaFieldsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService;
+using System;
+using System.Linq;
+using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Services;
-using SeoToolkit.Umbraco.MetaFields.Core.Common.Api;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
 {
@@ -101,6 +102,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.WithCollectionBuilder<FieldProviderCollectionBuilder>()
                 .Add<InheritedValueFieldProvider>()
                 .Add<PageNameFieldProvider>();
+
+            builder.WithCollectionBuilder<SeoKeyValueSettingCollectionBuilder>()
+                .Add<PageTitleTemplateSetting>();
         }
     }
 }

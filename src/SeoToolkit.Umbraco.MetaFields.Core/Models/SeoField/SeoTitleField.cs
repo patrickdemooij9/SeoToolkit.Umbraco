@@ -8,12 +8,16 @@ using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldEditors;
 using System.Web;
 using System.Collections.Generic;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldSuggestions;
+using SeoToolkit.Umbraco.Common.Core.Services.SeoKeyValueService;
+using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 {
     [Weight(100)]
     public class SeoTitleField : ISeoField, ISeoFieldHasSuggestions
     {
+        private readonly ISeoKeyValueService _seoKeyValueService;
+
         public string Title => "Title";
         public string Alias => SeoFieldAliasConstants.Title;
         public string Description => "Title for the page";
@@ -28,9 +32,17 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
             new SeoFieldMaxLengthSuggestion() { MaxLength = 60 }
         };
 
+        public SeoTitleField(ISeoKeyValueService seoKeyValueService)
+        {
+            _seoKeyValueService = seoKeyValueService;
+        }
+
         public HtmlString Render(object value)
         {
-            return new HtmlString($"<title>{HttpUtility.HtmlEncode(value)}</title>");
+            var template = _seoKeyValueService.GetValue("pageTitleTemplate").IfNullOrWhiteSpace("%value%");
+            var templatedValue = template.Replace("%value%", value.ToString());
+
+            return new HtmlString($"<title>{HttpUtility.HtmlEncode(templatedValue)}</title>");
         }
     }
 }

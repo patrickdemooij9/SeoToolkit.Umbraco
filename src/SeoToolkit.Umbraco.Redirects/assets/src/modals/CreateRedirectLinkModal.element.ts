@@ -45,7 +45,7 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
 
     this.model = new UmbObjectState(this.data!);
     const { data } = await new UmbLanguageCollectionRepository(
-      this
+      this,
     ).requestCollection({});
 
     if (data) {
@@ -110,7 +110,7 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
           UMB_APP_LANGUAGE_CONTEXT,
           (instance) => {
             instance?.setLanguage(culture.unique);
-          }
+          },
         );
       } else if (modelKeys.includes(item.alias)) {
         if (Array.isArray(item.value)) {
@@ -131,8 +131,11 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
     const modelValue = this.model!.getValue();
 
     this.value = {
-        ...modelValue,
-        culture: modelValue.linkType === RedirectLinkType.Media ? undefined : modelValue.culture
+      ...modelValue,
+      culture:
+        modelValue.linkType === RedirectLinkType.Media
+          ? undefined
+          : modelValue.culture,
     };
     this.modalContext?.submit();
   }
@@ -171,7 +174,7 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
                   val
                 >
                 </umb-property>
-              `
+              `,
             )}
             ${when(
               this.linkType === RedirectLinkType.Content,
@@ -185,7 +188,10 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
                       description="Choose the type of link that you want to redirect to"
                       property-editor-ui-alias="Umb.PropertyEditorUi.Dropdown"
                       val
-                      required
+                      .validation=${{
+                        mandatory: this._languages.length > 1,
+                        mandatoryMessage: "This field is required",
+                      }}
                       .config=${[
                         {
                           alias: "items",
@@ -194,7 +200,7 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
                       ]}
                     >
                     </umb-property>
-                  `
+                  `,
                 )}
 
                 <umb-property
@@ -211,7 +217,7 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
                   ]}
                 >
                 </umb-property>
-              `
+              `,
             )}
             ${when(
               this.linkType === RedirectLinkType.Media,
@@ -230,25 +236,29 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
                   ]}
                 >
                 </umb-property>
-              `
+              `,
             )}
           </umb-property-dataset>
         </uui-box>
 
         <umb-workspace-footer slot="footer" data-mark="workspace:footer">
-			<slot name="footer-info"></slot>
-			<slot name="actions" slot="actions" data-mark="workspace:footer-actions">
-                <uui-button
-                    slot="actions"
-                    id="save"
-                    label="Submit"
-                    look="primary"
-                    color="positive"
-                    @click="${this.#handleSubmit}"
-                    >Submit</uui-button
-                  >
-            </slot>
-		</umb-workspace-footer>
+          <slot name="footer-info"></slot>
+          <slot
+            name="actions"
+            slot="actions"
+            data-mark="workspace:footer-actions"
+          >
+            <uui-button
+              slot="actions"
+              id="save"
+              label="Submit"
+              look="primary"
+              color="positive"
+              @click="${this.#handleSubmit}"
+              >Submit</uui-button
+            >
+          </slot>
+        </umb-workspace-footer>
       </umb-body-layout>
     `;
   }

@@ -1,6 +1,6 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
-import { BackofficeSeoToolkitService, SeoSettingsPostModel } from "../api";
+import { BackofficeSeoToolkit, SeoSettingsPostModel } from "../api";
 
 export class SeoToolkitSettingsSource {
   #host: UmbControllerHost;
@@ -12,7 +12,7 @@ export class SeoToolkitSettingsSource {
   async getSettings(contentTypeId: string) {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitService.getUmbracoSeoToolkitSettingsSeoSettings({
+      BackofficeSeoToolkit.getUmbracoSeoToolkitSettingsSeoSettings({
         query: { contentTypeId },
       })
     );
@@ -21,7 +21,7 @@ export class SeoToolkitSettingsSource {
   async postSettings(settings: SeoSettingsPostModel) {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitService.postUmbracoSeoToolkitSettingsSeoSettings({
+      BackofficeSeoToolkit.postUmbracoSeoToolkitSettingsSeoSettings({
         body: settings,
       })
     );

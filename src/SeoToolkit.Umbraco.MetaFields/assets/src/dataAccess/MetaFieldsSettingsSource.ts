@@ -19,9 +19,9 @@ export class MetaFieldsSettingsSource {
         {
           query: {
             nodeId: contentTypeGuid,
-          }
-        }
-      )
+          },
+        },
+      ),
     );
   }
 
@@ -38,8 +38,19 @@ export class MetaFieldsSettingsSource {
       BackofficeSeoToolkitMetaFields.postUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettings(
         {
           body: model,
-        }
-      )
+        },
+      ),
+    );
+  }
+
+  async getTitleFormat(key: string) {
+    return await tryExecute(
+      this.#host,
+      BackofficeSeoToolkit.getUmbracoSeoToolkitSeoKeyValueSettingsValue({
+        query: {
+          key,
+        },
+      }),
     );
   }
 }

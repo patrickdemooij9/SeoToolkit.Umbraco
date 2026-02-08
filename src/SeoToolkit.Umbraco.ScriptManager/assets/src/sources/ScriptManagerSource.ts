@@ -30,6 +30,7 @@ export class ScriptManagerSource {
         return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.postUmbracoSeoToolkitScriptManagerScript({
             body: {
                 id: model.id,
+                key: model.key,
                 name: model.name!,
                 definitionAlias: model.definitionAlias!,
                 fields: model.config,

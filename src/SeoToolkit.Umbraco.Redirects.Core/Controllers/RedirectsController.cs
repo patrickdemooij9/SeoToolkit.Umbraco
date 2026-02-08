@@ -165,6 +165,43 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             return Ok();
         }
 
+        [HttpGet("export")]
+        [Produces("text/csv; charset=utf-8")]
+        public IActionResult Export()
+        {
+            // Get all redirects (use a very large page size to ensure all records are returned)
+            var redirectsPaged = _redirectsService.GetAll(1, int.MaxValue);
+            var redirects = redirectsPaged.Items;
+
+            using var memoryStream = new MemoryStream();
+            using (var writer = new StreamWriter(memoryStream, System.Text.Encoding.UTF8, 1024, leaveOpen: true))
+            {
+                writer.WriteLine("From,To,StatusCode,Enabled");
+                foreach (var it in redirects)
+                {
+                    // Local helper to escape CSV values
+                    static string EscapeCsv(string? value)
+                    {
+                        if (string.IsNullOrEmpty(value)) return string.Empty;
+                        var escaped = value.Replace("\"", "\"\"").Replace("\r", " ").Replace("\n", " ");
+                        if (escaped.Contains(',') || escaped.Contains('"') || escaped.Contains('\n') || escaped.Contains('\r'))
+                            return $"\"{escaped}\"";
+                        return escaped;
+                    }
+
+                    var from = EscapeCsv(it.OldUrl);
+                    var to = EscapeCsv(it.GetNewUrl());
+                    var status = it.RedirectCode;
+                    var enabled = it.IsEnabled ? "true" : "false";
+
+                    writer.WriteLine($"{from},{to},{status},{enabled}");
+                }
+            }
+
+            memoryStream.Position = 0;
+            return File(memoryStream.ToArray(), "text/csv; charset=utf-8", "redirects.csv");
+        }
+
         [HttpPost("validate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

@@ -7,6 +7,7 @@ using SeoToolkit.Umbraco.Common.Core.Models.Business;
 using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.Common.Core.Startup;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,15 +30,18 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         private readonly SeoTreeSectionCollection _seoTreeSections;
         private readonly ISeoDomainsService _seoDomainsService;
         private readonly IDomainService _domainService;
+        private readonly SeoKeyValueSettingCollection _seoKeyValueSettings;
         private readonly ISettingsService<GlobalConfig> _config;
 
         private Guid _domainGuid = new Guid("ab248b43-9757-432a-9821-22f9eeb513e7");
+        private Guid _settingsGuid = new Guid("5ed58cb7-2ec2-4c97-be5b-506d6189086f");
 
-        public SeoToolkitTreeController(SeoTreeSectionCollection seoTreeSections, ISeoDomainsService seoDomainsService, IDomainService domainService, ISettingsService<GlobalConfig> config)
+        public SeoToolkitTreeController(SeoTreeSectionCollection seoTreeSections, ISeoDomainsService seoDomainsService, IDomainService domainService, SeoKeyValueSettingCollection seoKeyValueSettings, ISettingsService<GlobalConfig> config)
         {
             _seoTreeSections = seoTreeSections;
             _seoDomainsService = seoDomainsService;
             _domainService = domainService;
+            _seoKeyValueSettings = seoKeyValueSettings;
             _config = config;
         }
 
@@ -51,6 +55,15 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
                 Id = it.Id.ToString(),
                 Name = it.Name
             }).ToList();
+
+            if (_seoKeyValueSettings.Count > 0)
+            {
+                items.Add(new SeoToolkitTreeItemApiModel
+                {
+                    Id = _settingsGuid.ToString(),
+                    Name = "Settings",
+                });
+            }
 
             var seoDomains = _seoDomainsService.GetAll();
             var umbracoDomains = await FindMissingUmbracoDomains(seoDomains);
@@ -145,7 +158,13 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         {
             var domain = _seoDomainsService.GetAll().FirstOrDefault(it => it.Id == domainId);
             if (domain is null) return [];
-            return _seoTreeSections.Where(it => it.CanBeDomainSpecific && domain.Settings.ContainsKey($"Module.{it.Id}")).ToArray();
+            var sections = _seoTreeSections.Where(it => it.CanBeDomainSpecific && domain.Settings.ContainsKey($"Module.{it.Id}")).ToList();
+            if (_seoKeyValueSettings.Count > 0)
+            {
+                sections.Add(new SeoToolkitSettingsSection());
+            }
+
+            return sections.ToArray();
         }
 
         private async Task<IDomain[]> FindMissingUmbracoDomains(SeoDomainCollection[] seoDomains)

@@ -1,4 +1,5 @@
 ﻿using SeoToolkit.Umbraco.Common.Core.Enums;
+using System.Text.Json.Serialization;
 
 namespace SeoToolkit.Umbraco.Common.Core.Models
 {
@@ -8,6 +9,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Models
         public string Alias { get; set; }
         public string Icon { get; set; }
         public string Link { get; set; }
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public SeoToolkitModuleStatus Status { get; set; }
     }
 }

@@ -1,8 +1,9 @@
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
-import { customElement, property } from "@umbraco-cms/backoffice/external/lit";
+import { customElement, property, state } from "@umbraco-cms/backoffice/external/lit";
 import { css, html, LitElement } from "lit";
 import { SeoSettingsFieldViewModel } from "../api";
 import { ISeoContentPreviewer } from "./ISeoContentPreviewer";
+import { MetaFieldsSettingsSource } from "../dataAccess/MetaFieldsSettingsSource";
 
 @customElement("st-metafieldspreviewer")
 export default class MetaFieldsPreviewer
@@ -11,6 +12,19 @@ export default class MetaFieldsPreviewer
 {
   @property({ type: Array })
   public value: SeoSettingsFieldViewModel[] = [];
+
+  @state()
+  public titleTemplate: string = "%value%";
+
+  constructor() {
+    super();
+    
+    new MetaFieldsSettingsSource(this).getTitleFormat("pageTitleTemplate").then((response) => {
+      if (response.data != ""){
+        this.titleTemplate = response.data;
+      }
+    })
+  }
 
   public getValue(key: string) {
     const foundItem = this.value.find((item) => item.alias === key);
@@ -29,7 +43,7 @@ export default class MetaFieldsPreviewer
       <div class="listing">
         <a .href=${this.getValue("canonicalUrl")!}>
           <p class="link">${this.getValue("canonicalUrl")}</p>
-          <h3>${this.getValue("title")}</h3>
+          <h3>${this.titleTemplate.replace("%value%", this.getValue("title") ?? "")}</h3>
         </a>
         <p class="description">${this.getValue("metaDescription")}</p>
       </div>

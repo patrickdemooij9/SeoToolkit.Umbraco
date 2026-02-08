@@ -7,19 +7,20 @@ import {
 } from "@umbraco-cms/backoffice/external/lit";
 import { html, LitElement } from "lit";
 import { SeoFieldViewModel } from "../api";
-import {
-  umbExtensionsRegistry,
-} from "@umbraco-cms/backoffice/extension-registry";
+import { umbExtensionsRegistry } from "@umbraco-cms/backoffice/extension-registry";
 import { createExtensionElement } from "@umbraco-cms/backoffice/extension-api";
-import { ManifestPropertyEditorUi, UmbPropertyEditorConfigCollection, UmbPropertyValueChangeEvent } from "@umbraco-cms/backoffice/property-editor";
+import {
+  ManifestPropertyEditorUi,
+  UmbPropertyEditorConfigCollection,
+  UmbPropertyValueChangeEvent,
+} from "@umbraco-cms/backoffice/property-editor";
 
 @customElement("st-metafield-settingsfield")
 export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
-
   @property({ type: Object })
   public set field(value: SeoFieldViewModel | undefined) {
     this._field = value;
-    if (this._element){
+    if (this._element) {
       this._element.value = value?.value;
     }
   }
@@ -29,7 +30,7 @@ export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
   private _field?: SeoFieldViewModel;
 
   @property({ type: String })
-  public set view(value: string | undefined){
+  public set view(value: string | undefined) {
     this._view = value;
     this.observePropertyView();
   }
@@ -50,10 +51,7 @@ export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
     }
 
     this.observe(
-      umbExtensionsRegistry.byTypeAndAlias(
-        "propertyEditorUi",
-        this._view
-      ),
+      umbExtensionsRegistry.byTypeAndAlias("propertyEditorUi", this._view),
       (manifest) => {
         this._gotEditorUI(manifest);
       },
@@ -74,10 +72,10 @@ export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
       this._element.addEventListener("change", () => {
         this._field = {
           ...this._field!,
-          value: this._element!.value
+          value: this._element!.value,
         };
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
-      })
+      });
 
       this._element.value = this.field?.value;
       if (this.field?.editor?.config) {
