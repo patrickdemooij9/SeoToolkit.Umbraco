@@ -166,6 +166,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         }
 
         [HttpGet("export")]
+        [Produces("text/csv; charset=utf-8")]
         public IActionResult Export()
         {
             // Get all redirects (use a very large page size to ensure all records are returned)
@@ -175,13 +176,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             using var memoryStream = new MemoryStream();
             using (var writer = new StreamWriter(memoryStream, System.Text.Encoding.UTF8, 1024, leaveOpen: true))
             {
-                writer.WriteLine("From,To,Domain,Status code,Enabled");
+                writer.WriteLine("From,To,StatusCode,Enabled");
                 foreach (var it in redirects)
                 {
-                    var domain = it.Domain?.Name ?? it.CustomDomain;
-                    if (domain?.StartsWith("/") is true)
-                        domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{domain}";
-
                     // Local helper to escape CSV values
                     static string EscapeCsv(string? value)
                     {
@@ -194,11 +191,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 
                     var from = EscapeCsv(it.OldUrl);
                     var to = EscapeCsv(it.GetNewUrl());
-                    var domainEsc = EscapeCsv(domain);
                     var status = it.RedirectCode;
                     var enabled = it.IsEnabled ? "true" : "false";
 
-                    writer.WriteLine($"{from},{to},{domainEsc},{status},{enabled}");
+                    writer.WriteLine($"{from},{to},{status},{enabled}");
                 }
             }
 

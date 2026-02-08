@@ -106,10 +106,14 @@ public class RedirectsImportHelper
             while (!parser.EndOfData)
             {
                 var fields = parser.ReadFields();
-                if (fields?.Length is not (2 or 3))
+                if (fields?.Length < 2)
                 {
                     return Attempt<List<Redirect>, string>.Fail(
-                        $"Validation Fail: only 2 columns allowed on line {parser.LineNumber}", result: null);
+                        $"Validation Fail: expected more than 2 fields on line {parser.LineNumber}", result: null);
+                }
+                if (fields[0] == "From" && fields[1] == "To") // Header line
+                {
+                    continue;
                 }
 
                 var fromUrl = CleanFromUrl(fields[0]);
@@ -117,9 +121,14 @@ public class RedirectsImportHelper
                     ? fields[1]
                     : fields[1].EnsureEndsWith("/").ToLower();
                 var redirectCode = HttpStatusCode.MovedPermanently;
+                var isEnabled = true;
                 if (fields.Length is 3)
                 {
                     redirectCode = GetRedirectCode(fields[2]);
+                }
+                if (fields.Length is 4 && bool.TryParse(fields[3], out var boolResult))
+                {
+                    isEnabled = boolResult;
                 }
                 if (!string.IsNullOrWhiteSpace(fromUrl) && !string.IsNullOrWhiteSpace(toUrl))
                 {
@@ -136,7 +145,7 @@ public class RedirectsImportHelper
                     }
 
 
-                    parsedData.Add(CreateRedirect(fromUrl, toUrl, redirectCode));
+                    parsedData.Add(CreateRedirect(fromUrl, toUrl, redirectCode, isEnabled));
                 }
                 else
                 {
@@ -161,9 +170,9 @@ public class RedirectsImportHelper
             for (var i = 0; i < dataTable.Rows.Count; i++)
             {
                 var row = dataTable.Rows[i];
-                if (row.ItemArray.Length is not (2 or 3))
+                if (row.ItemArray.Length < 2)
                 {
-                    return Attempt<List<Redirect>, string>.Fail($"2 or 3 columns required on row {i + 1}");
+                    return Attempt<List<Redirect>, string>.Fail($"More than 2 columns required on row {i + 1}");
                 }
 
                 var fromUrl = CleanFromUrl(row[0].ToString());
@@ -171,6 +180,11 @@ public class RedirectsImportHelper
                     ? row[1].ToString()
                     : row[1].ToString()?.EnsureEndsWith("/").ToLower();
                 var redirectCode = GetRedirectCode(row[2].ToString());
+                var isEnabled = true;
+                if (bool.TryParse(row[3].ToString(), out var booleanResult))
+                {
+                    isEnabled = booleanResult;
+                }
                 if (!string.IsNullOrWhiteSpace(fromUrl) && !string.IsNullOrWhiteSpace(toUrl))
                 {
                     var urlValidation = ValidateRedirectUrl(fromUrl, parsedData, i + 1);
@@ -185,7 +199,7 @@ public class RedirectsImportHelper
                         return codeValidation;
                     }
 
-                    parsedData.Add(CreateRedirect(fromUrl, toUrl, redirectCode));
+                    parsedData.Add(CreateRedirect(fromUrl, toUrl, redirectCode, isEnabled));
                 }
                 else
                 {
@@ -246,11 +260,11 @@ public class RedirectsImportHelper
         return fromUrl;
     }
 
-    private Redirect CreateRedirect(string fromUrl, string toUrl, HttpStatusCode redirectCode)
+    private Redirect CreateRedirect(string fromUrl, string toUrl, HttpStatusCode redirectCode, bool isEnabled)
     {
         return new Redirect
         {
-            Domain = _selectedDomain, CustomDomain = null, Id = 0, Key = Guid.NewGuid(), IsEnabled = true, IsRegex = false,
+            Domain = _selectedDomain, CustomDomain = null, Id = 0, Key = Guid.NewGuid(), IsEnabled = isEnabled, IsRegex = false,
             NewNodeCulture = null, NewNode = null, NewUrl = toUrl, OldUrl = fromUrl, RedirectCode = (int)redirectCode
         };
     }
