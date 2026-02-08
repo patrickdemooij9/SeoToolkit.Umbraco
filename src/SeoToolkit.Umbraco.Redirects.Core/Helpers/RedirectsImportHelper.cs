@@ -106,10 +106,9 @@ public class RedirectsImportHelper
             while (!parser.EndOfData)
             {
                 var fields = parser.ReadFields();
-                if (fields?.Length < 2)
+                if (fields?.Length < 2 || fields?.Length > 4)
                 {
-                    return Attempt<List<Redirect>, string>.Fail(
-                        $"Validation Fail: expected more than 2 fields on line {parser.LineNumber}", result: null);
+                    return Attempt<List<Redirect>, string>.Fail($"Validation Fail: expected 2–4 columns on row {parser.LineNumber}");
                 }
                 if (fields[0] == "From" && fields[1] == "To") // Header line
                 {
@@ -122,11 +121,11 @@ public class RedirectsImportHelper
                     : fields[1].EnsureEndsWith("/").ToLower();
                 var redirectCode = HttpStatusCode.MovedPermanently;
                 var isEnabled = true;
-                if (fields.Length is 3)
+                if (fields.Length >= 3)
                 {
                     redirectCode = GetRedirectCode(fields[2]);
                 }
-                if (fields.Length is 4 && bool.TryParse(fields[3], out var boolResult))
+                if (fields.Length >= 4 && bool.TryParse(fields[3], out var boolResult))
                 {
                     isEnabled = boolResult;
                 }
@@ -170,9 +169,9 @@ public class RedirectsImportHelper
             for (var i = 0; i < dataTable.Rows.Count; i++)
             {
                 var row = dataTable.Rows[i];
-                if (row.ItemArray.Length < 2)
+                if (row.ItemArray.Length < 2 || row.ItemArray.Length > 4)
                 {
-                    return Attempt<List<Redirect>, string>.Fail($"More than 2 columns required on row {i + 1}");
+                    return Attempt<List<Redirect>, string>.Fail($"Validation Fail: expected 2–4 columns on row {i + 1}");
                 }
 
                 var fromUrl = CleanFromUrl(row[0].ToString());
