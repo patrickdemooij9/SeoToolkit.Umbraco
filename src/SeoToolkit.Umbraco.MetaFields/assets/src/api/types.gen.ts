@@ -268,6 +268,7 @@ export type SeoSettingsFieldViewModel = {
     title?: string | null;
     description?: string | null;
     groupAlias?: string | null;
+    suggestions?: Array<SeoSuggestionViewModel> | null;
     value?: string | null;
     userValue?: unknown;
     editView?: string | null;
@@ -285,6 +286,13 @@ export type SeoSettingsViewModel = {
     isEnabled: boolean;
     supressContentAppSavingNotification: boolean;
     displays: Array<SeoDisplayViewModel>;
+};
+
+export type SeoSuggestionViewModel = {
+    alias?: string | null;
+    config?: {
+        [key: string]: unknown;
+    } | null;
 };
 
 export type SeoToolkitModule = {

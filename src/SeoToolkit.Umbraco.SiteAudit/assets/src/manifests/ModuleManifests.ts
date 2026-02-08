@@ -1,6 +1,7 @@
 import { ManifestTreeItem } from "@umbraco-cms/backoffice/tree";
 import { SEOTOOLKIT_SITEAUDIT_ENTITY } from "../Constants";
-import { ManifestWorkspace, ManifestWorkspaceView } from "@umbraco-cms/backoffice/workspace";
+import { ManifestWorkspace, ManifestWorkspaceContext, ManifestWorkspaceView } from "@umbraco-cms/backoffice/workspace";
+import SiteAuditContentViewContext from "../workspaces/SiteAuditContentViewContext";
 
 const SiteAuditTreeItem: ManifestTreeItem = {
     type: 'treeItem',
@@ -65,4 +66,29 @@ const SiteAuditDetailEditView: ManifestWorkspaceView = {
     ]
 }
 
-export const ModuleManifests = [SiteAuditTreeItem, SiteAuditWorkspace, SiteAuditCreateWorkspace, SiteAuditDetailWorkspace, SiteAuditDetailEditView];
+const SiteAuditContentWorkspaceContext: ManifestWorkspaceContext = {
+  type: "workspaceContext",
+  alias: "seoToolkit.siteAudit.contentWorkspaceContext",
+  name: "SeoToolkit Site Audit content workspace context",
+  api: SiteAuditContentViewContext,
+  conditions: [
+    {
+      alias: "Umb.Condition.WorkspaceAlias",
+      match: "Umb.Workspace.Document",
+    },
+  ],
+};
+
+const SiteAuditContentView: any = {
+  type: "seoToolkitContentView",
+  alias: "seoToolkit.siteAudit.contentView",
+  name: "SeoToolkit SiteAudit content view",
+  js: () => import("../workspaces/SiteAuditContentView.element"),
+  weight: 500,
+  meta: {
+    label: "Page checks",
+    pathname: "pageChecks"
+  },
+};
+
+export const ModuleManifests = [SiteAuditTreeItem, SiteAuditWorkspace, SiteAuditCreateWorkspace, SiteAuditDetailWorkspace, SiteAuditDetailEditView, SiteAuditContentWorkspaceContext, SiteAuditContentView];

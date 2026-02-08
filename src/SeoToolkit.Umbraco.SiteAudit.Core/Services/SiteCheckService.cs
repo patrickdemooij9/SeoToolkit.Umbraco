@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.SiteAudit.Core.Checks;
 using SeoToolkit.Umbraco.SiteAudit.Core.Collections;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.Business;
@@ -58,8 +59,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
                     registeredCheckId = _siteCheckRepository.RegisterCheck(codeCheck);
                 }
 
+                var isBrokenLinkCheck = codeCheck is BrokenLinkCheck; //TODO: Remove this when we have a better way of handling this. Currently the check is based on the amount of crawled pages but we only want 1 for the content checks
                 if (settingsCheck is null || settingsCheck.Enabled)
-                    _items.Add(new SiteCheckDto { Id = registeredCheckId, Check = codeCheck });
+                    _items.Add(new SiteCheckDto { Id = registeredCheckId, Check = codeCheck, AllowedAsPageCheck = settingsCheck?.AllowedAsPageCheck ?? !isBrokenLinkCheck });
             }
         }
     }

@@ -1,9 +1,8 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
 import {
-  BackofficeSeoToolkit,
   BackofficeSeoToolkitMetaFields,
-  DocumentTypeSettingsPostViewModel,
+  DocumentTypeSettingsPostViewModel
 } from "../api";
 
 export class MetaFieldsSettingsSource {
@@ -29,7 +28,7 @@ export class MetaFieldsSettingsSource {
   async getAdditionalFields() {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitMetaFields.getUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFields(),
+      BackofficeSeoToolkitMetaFields.getUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFields()
     );
   }
 

@@ -4,5 +4,6 @@
     {
         public string Alias { get; set; }
         public bool Enabled { get; set; }
+        public bool? AllowedAsPageCheck { get; set; }
     }
 }

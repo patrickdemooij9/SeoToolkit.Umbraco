@@ -7,6 +7,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldPreviewers;
 using SeoToolkit.Umbraco.MetaFields.Core.Config.Models;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsValue.ViewModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels;
@@ -93,12 +94,18 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                         : null;
 
                     var humanReadableValue = value is string[] ? string.Join(", ", value as string[]) : value;
+                    var suggestions = Array.Empty<SeoSuggestionViewModel>();
+                    if (key is ISeoFieldHasSuggestions seoFieldSuggestions)
+                    {
+                        suggestions = seoFieldSuggestions.Suggestions.Select(it => it.ToViewModel()).ToArray();
+                    }
                     return new SeoSettingsFieldViewModel
                     {
                         Alias = key.Alias,
                         Title = key.Title,
                         Description = key.Description,
                         GroupAlias = key.GroupAlias,
+                        Suggestions = suggestions,
                         Value = humanReadableValue?.ToString(),
                         UserValue = userValue,
                         EditView = key.EditEditor.View,

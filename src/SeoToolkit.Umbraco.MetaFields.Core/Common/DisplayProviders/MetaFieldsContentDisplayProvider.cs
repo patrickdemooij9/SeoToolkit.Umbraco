@@ -1,9 +1,11 @@
 ﻿using SeoToolkit.Umbraco.Common.Core.Interfaces;
 using SeoToolkit.Umbraco.Common.Core.Models.ViewModels;
+using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Models;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders
 {
+    [Weight(100)]
     public class MetaFieldsContentDisplayProvider : ISeoDisplayProvider
     {
         public SeoDisplayViewModel Get(IContent content)
