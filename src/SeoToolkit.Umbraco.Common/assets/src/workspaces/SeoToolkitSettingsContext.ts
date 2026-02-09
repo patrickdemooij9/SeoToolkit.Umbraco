@@ -64,7 +64,7 @@ export default class SeoToolkitSettingsContext
       this.#settings.setValue(result.data);
       this.#inheritedKeys.setValue(
         result.data
-          .filter((item) => item.hasRootValue && !item.value)
+          .filter((item) => !item.isRoot && !item.value)
           .map((item) => item.key),
       );
     });
@@ -73,7 +73,7 @@ export default class SeoToolkitSettingsContext
   async save() {
     const postValue: { [key: string]: string } = {};
     this.#settings.value.forEach((item) => {
-      postValue[item.key] = this.#inheritedKeys.value.includes(item.key) ? "" : ((item.value as string) ?? "");
+      postValue[item.key] = this.#inheritedKeys.value.includes(item.key) ? "" : ((String(item.value ?? "")) ?? "");
     });
     await this.#source.saveSettings(postValue, this.#domainId);
 

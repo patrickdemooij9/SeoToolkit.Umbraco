@@ -14,5 +14,7 @@ namespace SeoToolkit.Umbraco.NotFound.Core.Settings
         public string Description => "Select your 404 page here.";
 
         public string PropertyAlias => "Umb.PropertyEditorUi.DocumentPicker";
+
+        public Type EditorType => typeof(string);
     }
 }

@@ -40,19 +40,14 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         public IActionResult GetSettings(Guid? domainId)
         {
             var values = _seoKeyValueRepository.Get(domainId);
-            var rootValues = values;
-            if (domainId.HasValue)
-            {
-                rootValues = _seoKeyValueRepository.Get(null);
-            }
             return Ok(_seoKeyValueSettings.Select(it => new SeoKeyValueSettingViewModel
             {
                 Key = it.Key,
                 Title = it.Title,
                 Description = it.Description,
                 PropertyAlias = it.PropertyAlias,
-                Value = values.TryGetValue(it.Key, out string? value) ? value : null,
-                HasRootValue = domainId.HasValue && rootValues.ContainsKey(it.Key)
+                Value = values.TryGetValue(it.Key, out string? value) ? Convert.ChangeType(value, it.EditorType) : null,
+                IsRoot = !domainId.HasValue
             }));
         }
 
