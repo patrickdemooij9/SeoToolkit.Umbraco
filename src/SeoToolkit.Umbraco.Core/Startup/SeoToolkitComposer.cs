@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using SeoToolkit.Umbraco.Core.Connectors;
+using SeoToolkit.Umbraco.Core.SeoSettings;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
@@ -16,10 +18,10 @@ namespace SeoToolkit.Umbraco.Core.Startup
             builder.Services.Configure<GlobalAppSettingsModel>(section);
 
             var settings = section?.Get<GlobalAppSettingsModel>() ?? new GlobalAppSettingsModel();
-            if (settings.AutomaticSitemapsInRobotsTxt is true)
-            {
-                builder.Services.AddSingleton<IRobotsTxtSitemapProvider, RobotsSitemapProvider>();
-            }
+
+            builder.WithCollectionBuilder<SeoKeyValueSettingCollectionBuilder>()
+                .Add<AutomaticSitemapInRobotsTxtSeoSetting>();
+            builder.Services.AddSingleton<IRobotsTxtSitemapProvider, RobotsSitemapProvider>();
         }
     }
 }

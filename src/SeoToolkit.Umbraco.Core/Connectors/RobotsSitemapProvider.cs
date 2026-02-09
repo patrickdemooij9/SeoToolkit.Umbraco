@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Helpers;
+using SeoToolkit.Umbraco.Common.Core.Services.SeoKeyValueService;
+using SeoToolkit.Umbraco.Core.SeoSettings;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,13 +16,15 @@ namespace SeoToolkit.Umbraco.Core.Connectors
     {
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISeoDomainResolver _seoDomainResolver;
-        private readonly IDomainService _domainService;
+        private readonly ISeoKeyValueService _seoKeyValueService;
 
-        public RobotsSitemapProvider(IUmbracoContextFactory umbracoContextFactory, ISeoDomainResolver seoDomainResolver, IDomainService domainService)
+        public RobotsSitemapProvider(IUmbracoContextFactory umbracoContextFactory,
+            ISeoDomainResolver seoDomainResolver,
+            ISeoKeyValueService seoKeyValueService)
         {
             _umbracoContextFactory = umbracoContextFactory;
             _seoDomainResolver = seoDomainResolver;
-            _domainService = domainService;
+            _seoKeyValueService = seoKeyValueService;
         }
 
         public IEnumerable<string> GetSitemapUrls(HttpRequest request)
@@ -29,6 +33,11 @@ namespace SeoToolkit.Umbraco.Core.Connectors
             var domains = ctx.UmbracoContext.Domains.GetAll(includeWildcards: false).ToArray();
 
             var seoDomain = _seoDomainResolver.ResolveDomain();
+            if (!bool.TryParse(_seoKeyValueService.GetValue(AutomaticSitemapInRobotsTxtSeoSetting.SettingKey), out var result) || !result)
+            {
+                yield break;
+            }
+
             if (seoDomain != null)
             {
                 domains = domains.Where(it => seoDomain.DomainIds.Contains(it.Id)).ToArray();
