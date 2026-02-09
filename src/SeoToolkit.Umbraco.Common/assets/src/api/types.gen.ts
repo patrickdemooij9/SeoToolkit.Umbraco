@@ -163,6 +163,10 @@ export type RobotsTxtValidationViewModel = {
     readonly error?: string | null;
 };
 
+export type RunPageCheckPostModel = {
+    contentId: string;
+};
+
 export type SaveRedirectPostModel = {
     id: number;
     key?: string | null;
@@ -260,7 +264,7 @@ export type SeoKeyValueSettingViewModel = {
     description: string;
     propertyAlias: string;
     value?: unknown;
-    hasRootValue: boolean;
+    isRoot: boolean;
 };
 
 export type SeoSettingsFieldViewModel = {
@@ -268,6 +272,7 @@ export type SeoSettingsFieldViewModel = {
     title?: string | null;
     description?: string | null;
     groupAlias?: string | null;
+    suggestions?: Array<SeoSuggestionViewModel> | null;
     value?: string | null;
     userValue?: unknown;
     editView?: string | null;
@@ -285,6 +290,13 @@ export type SeoSettingsViewModel = {
     isEnabled: boolean;
     supressContentAppSavingNotification: boolean;
     displays: Array<SeoDisplayViewModel>;
+};
+
+export type SeoSuggestionViewModel = {
+    alias?: string | null;
+    config?: {
+        [key: string]: unknown;
+    } | null;
 };
 
 export type SeoToolkitModule = {
@@ -564,6 +576,20 @@ export type GetUmbracoSeoToolkitRedirectsDomainsResponses = {
 
 export type GetUmbracoSeoToolkitRedirectsDomainsResponse = GetUmbracoSeoToolkitRedirectsDomainsResponses[keyof GetUmbracoSeoToolkitRedirectsDomainsResponses];
 
+export type GetUmbracoSeoToolkitRedirectsExportData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitRedirects/export';
+};
+
+export type GetUmbracoSeoToolkitRedirectsExportResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type PostUmbracoSeoToolkitRedirectsImportData = {
     body?: never;
     path?: never;
@@ -819,6 +845,38 @@ export type GetUmbracoSeoToolkitScriptManagerScriptsResponses = {
 };
 
 export type GetUmbracoSeoToolkitScriptManagerScriptsResponse = GetUmbracoSeoToolkitScriptManagerScriptsResponses[keyof GetUmbracoSeoToolkitScriptManagerScriptsResponses];
+
+export type GetUmbracoSeoToolkitSiteAuditPageChecksData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitSiteAudit/pageChecks';
+};
+
+export type GetUmbracoSeoToolkitSiteAuditPageChecksResponses = {
+    /**
+     * OK
+     */
+    200: Array<SiteAuditCheckViewModel>;
+};
+
+export type GetUmbracoSeoToolkitSiteAuditPageChecksResponse = GetUmbracoSeoToolkitSiteAuditPageChecksResponses[keyof GetUmbracoSeoToolkitSiteAuditPageChecksResponses];
+
+export type PostUmbracoSeoToolkitSiteAuditRunData = {
+    body?: RunPageCheckPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitSiteAudit/run';
+};
+
+export type PostUmbracoSeoToolkitSiteAuditRunResponses = {
+    /**
+     * OK
+     */
+    200: SiteAuditDetailViewModel;
+};
+
+export type PostUmbracoSeoToolkitSiteAuditRunResponse = PostUmbracoSeoToolkitSiteAuditRunResponses[keyof PostUmbracoSeoToolkitSiteAuditRunResponses];
 
 export type DeleteUmbracoSeoToolkitSiteAuditSiteAuditData = {
     body?: DeleteAuditsPostModel;
@@ -1138,6 +1196,24 @@ export type PostUmbracoSeoToolkitSeoKeyValueSettingsSaveResponses = {
      */
     200: unknown;
 };
+
+export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueData = {
+    body?: never;
+    path?: never;
+    query?: {
+        key?: string;
+    };
+    url: '/umbraco/seoToolkitSeoKeyValueSettings/value';
+};
+
+export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponse = GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses[keyof GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses];
 
 export type GetUmbracoSeoToolkitSettingsSeoSettingsData = {
     body?: never;

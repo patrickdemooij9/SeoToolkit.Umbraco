@@ -8,6 +8,6 @@
         public required string PropertyAlias { get; set; }
 
         public object? Value { get; set; }
-        public bool HasRootValue { get; set; }
+        public bool IsRoot { get; set; }
     }
 }

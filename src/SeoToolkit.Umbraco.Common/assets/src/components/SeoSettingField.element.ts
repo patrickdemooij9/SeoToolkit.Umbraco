@@ -97,7 +97,7 @@ export class SeoSettingFieldElement extends UmbElementMixin(LitElement) {
       >
         <div slot="editor" class="relative">
           ${this._element}
-          ${when(this.field?.hasRootValue, () => {
+          ${when(!this.field?.isRoot, () => {
             return this.inherited
               ? html`<div class="overlay">
                   <uui-button look="outline" @click=${this.toggleInheritance}>
