@@ -1,6 +1,7 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
 import {
+  BackofficeSeoToolkit,
   BackofficeSeoToolkitMetaFields,
   DocumentTypeSettingsPostViewModel
 } from "../api";
