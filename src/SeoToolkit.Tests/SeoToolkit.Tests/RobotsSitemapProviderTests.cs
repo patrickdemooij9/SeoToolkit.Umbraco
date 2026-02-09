@@ -3,18 +3,20 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Moq;
 using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.Common.Core.Models.Business;
+using SeoToolkit.Umbraco.Common.Core.Services.SeoKeyValueService;
 using SeoToolkit.Umbraco.Core.Connectors;
+using SeoToolkit.Umbraco.Core.SeoSettings;
 using System;
 using System.Linq;
 using System.Web;
-using Umbraco.Cms.Web.Common;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Routing;
-using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Core.Web.Mvc;
-using Umbraco.Cms.Core;
+using Umbraco.Cms.Web.Common;
 
 namespace SeoToolkit.Tests
 {
@@ -145,13 +147,14 @@ namespace SeoToolkit.Tests
             var umbracoContext = new Mock<IUmbracoContext>();
             var domainCache = new Mock<IDomainCache>();
             var seoDomainResolver = new Mock<ISeoDomainResolver>();
-            var domainService = new Mock<IDomainService>();
+            var keyValueService = new Mock<ISeoKeyValueService>();
 
             umbracoContext.Setup(it => it.Domains).Returns(domainCache.Object);
             umbracoFactory.Setup(it => it.EnsureUmbracoContext())
                 .Returns(new UmbracoContextReference(umbracoContext.Object, true, Mock.Of<IUmbracoContextAccessor>()));
+            keyValueService.Setup(it => it.GetValue(AutomaticSitemapInRobotsTxtSeoSetting.SettingKey)).Returns("true");
 
-            var provider = new RobotsSitemapProvider(umbracoFactory.Object, seoDomainResolver.Object, domainService.Object);
+            var provider = new RobotsSitemapProvider(umbracoFactory.Object, seoDomainResolver.Object, keyValueService.Object);
 
             return (provider, (umbracoFactory, umbracoContext, domainCache, seoDomainResolver));
         }
