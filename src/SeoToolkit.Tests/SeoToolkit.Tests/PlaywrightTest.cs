@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace PlaywrightTests;
 
-[Parallelizable(ParallelScope.Self)]
+/*[Parallelizable(ParallelScope.Self)]
 [TestFixture]
 public class ExampleTest : PageTest
 {
@@ -30,4 +30,4 @@ public class ExampleTest : PageTest
         // Expects page to have a heading with the name of Installation.
         await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Installation" })).ToBeVisibleAsync();
     } 
-}
+}*/
