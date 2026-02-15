@@ -8,6 +8,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Migrations
         : base("SEO Toolkit: Script Manager", "SeoToolkit_ScriptManager_Migration")
         { }
 
+        public override bool IgnoreCurrentState => false;
+
         protected override void DefinePlan()
         {
             To<ScriptManagerInitialMigration>("state-1");

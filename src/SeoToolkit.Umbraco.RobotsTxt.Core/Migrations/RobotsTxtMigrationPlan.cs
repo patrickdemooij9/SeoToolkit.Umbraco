@@ -8,6 +8,8 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Migrations
             : base("SEO Toolkit: Robots.txt", "SeoToolkit_RobotsTxt_Migration")
         { }
 
+        public override bool IgnoreCurrentState => false;
+
         protected override void DefinePlan()
         {
             To<InitialRobotsTxtMigration>("state-1");

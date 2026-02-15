@@ -1,15 +1,16 @@
 ﻿using Umbraco.Cms.Infrastructure.Migrations;
 using SeoToolkit.Umbraco.Common.Core.Models.Database;
+using System.Threading.Tasks;
 
 namespace SeoToolkit.Umbraco.Common.Core.Migrations
 {
-    public class SeoSettingsInitialMigration : MigrationBase
+    public class SeoSettingsInitialMigration : AsyncMigrationBase
     {
         public SeoSettingsInitialMigration(IMigrationContext context)
             : base(context)
         { }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             if (TableExists("uSeoToolkitSeoSettings"))
             {
@@ -19,6 +20,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
             {
                 Create.Table<SeoSettingsEntity>().Do();
             }
+            return Task.CompletedTask;
         }
     }
 }

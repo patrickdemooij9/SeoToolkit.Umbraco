@@ -8,6 +8,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Migrations
             : base("SEO Toolkit: Site Audit", "SeoToolkit_SiteAudit_Migration")
         { }
 
+        public override bool IgnoreCurrentState => false;
+
         protected override void DefinePlan()
         {
             To<SiteAuditInitialMigration>("state-1");
