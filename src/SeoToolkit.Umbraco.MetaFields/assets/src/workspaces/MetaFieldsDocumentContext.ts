@@ -60,6 +60,7 @@ export default class MetaFieldsDocumentContext
   }
 
   destroy(): void {
+    super.destroy();
     this.#actionEventContext?.removeEventListener("request-reload-structure-for-entity", this.#save);
   }
 

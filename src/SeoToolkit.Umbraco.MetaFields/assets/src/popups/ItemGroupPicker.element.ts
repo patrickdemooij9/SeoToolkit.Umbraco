@@ -130,7 +130,8 @@ export default class ItemGroupPicker extends UmbModalBaseElement<
 
         &.selected,
         &:hover {
-          background-color: var(--uui-palette-gravel);
+          border: 1px solid var(--uui-palette-gravel);
+          background-color: var(--uui-palette-gravel-light);
         }
       }
     `,

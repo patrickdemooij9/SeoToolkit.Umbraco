@@ -66,6 +66,7 @@ export default class SitemapDocumentViewContext
   }
 
   destroy(): void {
+    super.destroy();
     this.#actionEventContext?.removeEventListener("request-reload-structure-for-entity", this.#save);
   }
 
