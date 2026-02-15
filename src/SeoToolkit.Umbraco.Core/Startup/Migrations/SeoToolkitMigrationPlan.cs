@@ -8,6 +8,8 @@ namespace SeoToolkit.Umbraco.Core.Startup.Migrations
         {
         }
 
+        public override bool IgnoreCurrentState => false;
+
         protected override void DefinePlan()
         {
             To<SitemapInRobotsTxtMigration>("state-1");

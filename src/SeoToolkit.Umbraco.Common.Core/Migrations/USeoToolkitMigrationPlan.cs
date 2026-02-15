@@ -10,6 +10,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
             : base("SEO Toolkit", "SeoToolkit_Common_Migration")
         { }
 
+        public override bool IgnoreCurrentState => false;
+
         protected override void DefinePlan()
         {
             To<SeoSettingsInitialMigration>("state-1");

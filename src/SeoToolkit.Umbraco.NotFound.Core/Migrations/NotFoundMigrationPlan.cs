@@ -8,6 +8,8 @@ namespace SeoToolkit.Umbraco.NotFound.Core.Migrations
         {
         }
 
+        public override bool IgnoreCurrentState => false;
+
         protected override void DefinePlan()
         {
             To<NotFoundUmbraco13Migration>("state-1");

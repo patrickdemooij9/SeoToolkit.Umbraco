@@ -8,6 +8,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
             : base("SEO Toolkit: Meta Fields", "SeoToolkit_MetaFields_Migration")
         { }
 
+        public override bool IgnoreCurrentState => false;
+
         protected override void DefinePlan()
         {
             To<MetaFieldsInitialMigration>("state-1");

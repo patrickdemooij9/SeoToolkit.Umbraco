@@ -8,6 +8,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
             : base("SEO Toolkit: Redirects", "SeoToolkit_Redirects_Migration")
         { }
 
+        public override bool IgnoreCurrentState => false;
+
         protected override void DefinePlan()
         {
             To<InitialRedirectsMigration>("state-1");
