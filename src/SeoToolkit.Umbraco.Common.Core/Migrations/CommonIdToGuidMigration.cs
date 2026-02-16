@@ -46,7 +46,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
             var domainCollectionData = Database.Fetch<OldSeoDomainCollectionEntity>(Sql().SelectAll().From<OldSeoDomainCollectionEntity>());
             var domainData = Database.Fetch<OldSeoDomainEntity>(Sql().SelectAll().From<OldSeoDomainEntity>());
             var domainSettingData = Database.Fetch<OldSeoDomainSettingEntity>(Sql().SelectAll().From<OldSeoDomainSettingEntity>());
-            var seoKeyValueData = Database.Fetch<OldSeoKeyValueEntity>(Sql().SelectAll().From<OldSeoKeyValueEntity>());
+            var seoKeyValueData = Database.Fetch<dynamic>(Sql().SelectAll().From<OldSeoKeyValueEntity>());
             var seoSettingsData = Database.Fetch<OldSeoSettingsEntity>(Sql().SelectAll().From<OldSeoSettingsEntity>());
 
             // Rename old tables to back them up
@@ -124,15 +124,25 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
 
             foreach (var seoKeyValue in seoKeyValueData)
             {
-                var domainGuidId = seoKeyValue.DomainId.HasValue && _newDomainMapping.TryGetValue(seoKeyValue.DomainId.Value, out Guid value)
-                    ? value : (Guid?)null;
+                var domainValue = seoKeyValue.DomainId;
+                Guid? domainId = null;
+
+                Guid value = Guid.Empty; // Declare 'value' outside the if statement to ensure it's definitely assigned
+                if (domainValue is int intParsed && _newDomainMapping.TryGetValue(intParsed, out value))
+                {
+                    domainId = value;
+                }
+                else if (domainValue is Guid guidParsed)
+                {
+                    domainId = guidParsed;
+                }
 
                 var seoKeyValueEntity = new SeoKeyValueEntity
                 {
                     Id = Guid.NewGuid(),
                     Key = seoKeyValue.Key,
                     Value = seoKeyValue.Value,
-                    DomainId = domainGuidId
+                    DomainId = domainId
                 };
                 Database.Insert(seoKeyValueEntity);
             }
