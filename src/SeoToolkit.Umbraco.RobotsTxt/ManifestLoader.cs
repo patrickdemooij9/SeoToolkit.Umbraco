@@ -33,7 +33,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt
                 Id = "SeoToolkit.Umbraco.RobotsTxt",
                 Name = "SeoToolkit RobotsTxt",
                 AllowTelemetry = true,
-                Version = "6.1.0",
+                Version = "6.1.1-beta1",
                 Extensions = [ entrypoint!],
             }
             ];
