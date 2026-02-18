@@ -32,7 +32,7 @@ const SiteAuditCreateWorkspace: ManifestWorkspace = {
     name: 'SeoToolkit SiteAudit Create',
     api: () => import('../workspaces/SiteAuditCreateContext'),
     meta: {
-        entityType: 'st-siteAudit'
+        entityType: 'st-create-siteAudit'
     }
 }
 
