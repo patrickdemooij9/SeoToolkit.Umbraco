@@ -38,7 +38,7 @@ const SiteAuditCollectionCreateAction: ManifestCollectionAction = {
     alias: 'seoToolkit.collections.siteAudits.createAction',
     meta: {
         label: '#general_create',
-        href: '/umbraco/section/SeoToolkit/workspace/st-siteAudit/create',
+        href: '/umbraco/section/SeoToolkit/workspace/st-create-siteAudit/create',
     },
     conditions: [
         {
