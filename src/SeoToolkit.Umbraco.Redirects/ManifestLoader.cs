@@ -33,7 +33,7 @@ namespace SeoToolkit.Umbraco.Redirects
                 Id = "SeoToolkit.Umbraco.Redirects",
                 Name = "SeoToolkit Redirects",
                 AllowTelemetry = true,
-                Version = "6.1.1-beta1",
+                Version = "6.1.1-beta2",
                 Extensions = [ entrypoint!],
             }
             ];
