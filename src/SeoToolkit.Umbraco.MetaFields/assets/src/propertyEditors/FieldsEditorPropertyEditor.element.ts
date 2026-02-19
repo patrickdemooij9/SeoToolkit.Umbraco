@@ -42,11 +42,15 @@ export default class FieldsEditorPropertyEditor
   #sorter: UmbSorterController<string>;
 
   @property({ type: Array })
-  public set value(items: FieldItem[] | undefined){
+  public set value(items: FieldItem[] | undefined) {
     this._value = items ?? [];
     this.requestUpdate();
+
+    if (this.#sorter) {
+      this.#sorter.setModel(this._value.map((item) => item.value));
+    }
   }
-  public get value(){
+  public get value() {
     return this._value;
   }
   private _value: FieldItem[] = [];
@@ -74,7 +78,7 @@ export default class FieldsEditorPropertyEditor
       onChange: (model) => {
         const fields = this.getFields();
         this.value = model.model.map(
-          (value) => fields.find((field) => field.value === value)!
+          (value) => fields.find((field) => field.value === value)!,
         );
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
       },
@@ -93,7 +97,7 @@ export default class FieldsEditorPropertyEditor
             if (this.dataTypesCache[prop.dataType.unique]) {
               if (
                 !this.dataTypesToRender.includes(
-                  this.dataTypesCache[prop.dataType.unique]
+                  this.dataTypesCache[prop.dataType.unique],
                 )
               ) {
                 return;
@@ -104,7 +108,7 @@ export default class FieldsEditorPropertyEditor
                   source: 1,
                   group:
                     field.containers.find(
-                      (con) => con.id === prop.container!.id
+                      (con) => con.id === prop.container!.id,
                     )?.name ?? "",
                   onlyShowIfInherited: false,
                 });
@@ -124,7 +128,7 @@ export default class FieldsEditorPropertyEditor
                       source: 1,
                       group:
                         field.containers.find(
-                          (con) => con.id === prop.container!.id
+                          (con) => con.id === prop.container!.id,
                         )?.name ?? "",
                       onlyShowIfInherited: false,
                     });
@@ -175,7 +179,7 @@ export default class FieldsEditorPropertyEditor
             items: this.getFields(),
           },
           value: this.value!.map((item) => item.value) ?? [],
-        }
+        },
       );
       await modal.onSubmit();
       const fields = this.getFields();
@@ -194,18 +198,18 @@ export default class FieldsEditorPropertyEditor
         ${repeat(
           this.value ?? [],
           (item) => item.value,
-          (item) =>
-            html`
-              <div data-sort-id=${item.value} class="field-item">
-                ${item.name}
-              </div>
-            `
+          (item) => html`
+            <div data-sort-id=${item.value} class="field-item">
+              ${item.name}
+            </div>
+          `,
         )}
       </div>
       <div>
         <uui-button
           class="add-button"
           look="placeholder"
+          label="Add fields"
           @click="${this.onItemsAddHandler}"
         >
           Manage fields

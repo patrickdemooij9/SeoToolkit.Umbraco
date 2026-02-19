@@ -152,6 +152,7 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
             () => html`
               <uui-button
                 look="outline"
+                label="Disable SEO settings"
                 @click=${() => this.setSeoSettings(false)}
               >
                 Disable SEO settings
@@ -160,6 +161,7 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
             () => html`
               <uui-button
                 look="outline"
+                label="Enable SEO settings"
                 @click=${() => this.setSeoSettings(true)}
               >
                 Enable SEO settings
