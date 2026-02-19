@@ -208,7 +208,7 @@ export default class FieldsEditorPropertyEditor
           look="placeholder"
           @click="${this.onItemsAddHandler}"
         >
-          Add fields
+          Manage fields
         </uui-button>
       </div>
       <small class="control-description">

@@ -78,6 +78,7 @@ export default class SiteAuditDetailContext
   }
 
   override destroy() {
+    super.destroy();
     this.runHeartbeat = false;
   }
 

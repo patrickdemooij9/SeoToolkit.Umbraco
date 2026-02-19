@@ -76,6 +76,7 @@ export default class SeoToolkitDocumentContext
   }
 
   destroy(): void {
+    super.destroy();
     this.#actionEventContext?.removeEventListener(UmbEntityUpdatedEvent.TYPE, this.#save);
   }
 }
