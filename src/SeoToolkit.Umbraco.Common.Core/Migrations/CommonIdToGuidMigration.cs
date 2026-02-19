@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NPoco;
 using SeoToolkit.Umbraco.Common.Core.Models.Database;
+using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
@@ -46,7 +47,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
             var domainCollectionData = Database.Fetch<OldSeoDomainCollectionEntity>(Sql().SelectAll().From<OldSeoDomainCollectionEntity>());
             var domainData = Database.Fetch<OldSeoDomainEntity>(Sql().SelectAll().From<OldSeoDomainEntity>());
             var domainSettingData = Database.Fetch<OldSeoDomainSettingEntity>(Sql().SelectAll().From<OldSeoDomainSettingEntity>());
-            var seoKeyValueData = Database.Fetch<dynamic>(Sql().SelectAll().From<OldSeoKeyValueEntity>());
+            var seoKeyValueData = Database.Fetch<OldSeoKeyValueEntity>(Sql().SelectAll().From<OldSeoKeyValueEntity>());
             var seoSettingsData = Database.Fetch<OldSeoSettingsEntity>(Sql().SelectAll().From<OldSeoSettingsEntity>());
 
             // Rename old tables to back them up
@@ -149,7 +150,14 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
 
             foreach (var seoSettings in seoSettingsData)
             {
-                var contentType = _contentTypeService.Get(seoSettings.ContentTypeId);
+                IContentType? contentType = null;
+                if (seoSettings.ContentTypeId is int contentTypeIdInt)
+                {
+                    contentType = _contentTypeService.Get(contentTypeIdInt);
+                } else if (seoSettings.ContentTypeId is Guid guidParsed)
+                {
+                    contentType = _contentTypeService.Get(guidParsed);
+                }
                 if (contentType is null) continue;
 
                 var seoSettingsEntity = new SeoSettingsEntity
@@ -267,9 +275,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
         [TableName("SeoToolkitSeoKeyValues")]
         private class OldSeoKeyValueEntity
         {
-            [Column("Id")]
-            public int Id { get; set; }
-
             [Column("Key")]
             public string Key { get; set; }
 
@@ -277,14 +282,14 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
             public string Value { get; set; }
 
             [Column("DomainId")]
-            public int? DomainId { get; set; }
+            public object? DomainId { get; set; }
         }
 
         [TableName("SeoToolkitSeoSettings")]
         private class OldSeoSettingsEntity
         {
             [Column("ContentTypeId")]
-            public int ContentTypeId { get; set; }
+            public object ContentTypeId { get; set; }
 
             [Column("Enabled")]
             public bool Enabled { get; set; }
