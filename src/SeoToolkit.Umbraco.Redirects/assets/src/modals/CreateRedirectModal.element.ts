@@ -110,9 +110,10 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
             this.#documentUrlRepository
               .requestItems([value.newNodeId!])
               .then((resp) => {
-                this.newUrlName = resp.data![0].urls.find(
+                const foundUrl = resp.data![0].urls.find(
                   (u) => u.culture === value.newCultureIso,
                 )?.url;
+                this.newUrlName = foundUrl || "[No URL available for selected culture]";
               });
           } else {
             this.#umbMediaUrlRepository
@@ -209,7 +210,7 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
   }
 
   #handleSubmit() {
-    if (!this.redirect?.value.oldUrl || !this.newUrlName) {
+    if (!this.redirect?.value.oldUrl || !this.newUrlName || this.newUrlName === "[No URL available for selected culture]") {
       this.showValidationMessage = true;
       this.requestUpdate();
       return;
@@ -318,8 +319,8 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
                   `,
                 )}
                 ${when(
-                  this.showValidationMessage && !this.newUrlName,
-                  () => html`<div class="error">This field is required!</div>`,
+                  this.showValidationMessage && (!this.newUrlName || this.newUrlName === "[No URL available for selected culture]"),
+                  () => html`<div class="error">${this.newUrlName === "[No URL available for selected culture]" ? "No URL available for selected content in this culture" : "This field is required!"}</div>`,
                 )}
               </div>
             </umb-property-layout>
