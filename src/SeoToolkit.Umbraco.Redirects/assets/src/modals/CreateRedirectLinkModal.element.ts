@@ -196,11 +196,14 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
       contentKey,
     ]);
     const item = docResponse.data?.[0];
-    const selectedVariant = item?.variants.find(
-      (variant) =>
-        variant.culture === this.model?.getValue().culture ||
-        variant.culture === null,
+    const culture = this.model?.getValue().culture;
+    const cultureVariant = item?.variants.find(
+      (variant) => variant.culture === culture,
     );
+    const invariantVariant = item?.variants.find(
+      (variant) => variant.culture === null,
+    );
+    const selectedVariant = cultureVariant ?? invariantVariant;
     if (selectedVariant) {
       this._selectedContentName = {
         name: selectedVariant.name,
