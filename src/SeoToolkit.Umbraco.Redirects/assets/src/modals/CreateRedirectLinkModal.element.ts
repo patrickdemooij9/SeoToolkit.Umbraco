@@ -52,6 +52,7 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
 
   @state()
   _selectedContentName?: {
+    key: string;
     name: string;
     icon?: string;
   };
@@ -192,6 +193,9 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
       this._selectedContentName = undefined;
       return;
     }
+    if (contentKey === this._selectedContentName?.key) {
+      return;
+    }
     const docResponse = await this.#documentRepository.requestItems([
       contentKey,
     ]);
@@ -206,11 +210,13 @@ export default class CreateRedirectLinkModal extends UmbModalBaseElement<
     const selectedVariant = cultureVariant ?? invariantVariant;
     if (selectedVariant) {
       this._selectedContentName = {
+        key: contentKey,
         name: selectedVariant.name,
         icon: item?.documentType?.icon?.split(" ")[0],
       };
     } else {
       this._selectedContentName = {
+        key: contentKey,
         name: contentKey,
         icon: undefined,
       };

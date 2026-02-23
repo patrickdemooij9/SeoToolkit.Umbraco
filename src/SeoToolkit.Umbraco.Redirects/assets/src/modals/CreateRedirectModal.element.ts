@@ -210,7 +210,7 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
   }
 
   #handleSubmit() {
-    if (!this.redirect?.value.oldUrl || !this.newUrlName || this.newUrlName === "[No URL available for selected culture]") {
+    if (!this.redirect?.value.oldUrl || !this.newUrlName) {
       this.showValidationMessage = true;
       this.requestUpdate();
       return;
@@ -319,8 +319,8 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
                   `,
                 )}
                 ${when(
-                  this.showValidationMessage && (!this.newUrlName || this.newUrlName === "[No URL available for selected culture]"),
-                  () => html`<div class="error">${this.newUrlName === "[No URL available for selected culture]" ? "No URL available for selected content in this culture" : "This field is required!"}</div>`,
+                  this.showValidationMessage && (!this.newUrlName),
+                  () => html`<div class="error">${"This field is required!"}</div>`,
                 )}
               </div>
             </umb-property-layout>
