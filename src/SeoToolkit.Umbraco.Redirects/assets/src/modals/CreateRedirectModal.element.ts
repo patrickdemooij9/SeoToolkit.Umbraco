@@ -110,9 +110,10 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
             this.#documentUrlRepository
               .requestItems([value.newNodeId!])
               .then((resp) => {
-                this.newUrlName = resp.data![0].urls.find(
+                const foundUrl = resp.data![0].urls.find(
                   (u) => u.culture === value.newCultureIso,
                 )?.url;
+                this.newUrlName = foundUrl || "[No URL available for selected culture]";
               });
           } else {
             this.#umbMediaUrlRepository
@@ -318,8 +319,8 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
                   `,
                 )}
                 ${when(
-                  this.showValidationMessage && !this.newUrlName,
-                  () => html`<div class="error">This field is required!</div>`,
+                  this.showValidationMessage && (!this.newUrlName),
+                  () => html`<div class="error">${"This field is required!"}</div>`,
                 )}
               </div>
             </umb-property-layout>
