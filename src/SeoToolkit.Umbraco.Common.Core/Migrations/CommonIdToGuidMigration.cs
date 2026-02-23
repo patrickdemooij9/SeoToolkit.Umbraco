@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NPoco;
 using SeoToolkit.Umbraco.Common.Core.Models.Database;
+using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
@@ -124,22 +125,39 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
 
             foreach (var seoKeyValue in seoKeyValueData)
             {
-                var domainGuidId = seoKeyValue.DomainId.HasValue && _newDomainMapping.TryGetValue(seoKeyValue.DomainId.Value, out Guid value)
-                    ? value : (Guid?)null;
+                var domainValue = seoKeyValue.DomainId;
+                Guid? domainId = null;
+
+                Guid value = Guid.Empty; // Declare 'value' outside the if statement to ensure it's definitely assigned
+                if (domainValue is int intParsed && _newDomainMapping.TryGetValue(intParsed, out value))
+                {
+                    domainId = value;
+                }
+                else if (domainValue is Guid guidParsed)
+                {
+                    domainId = guidParsed;
+                }
 
                 var seoKeyValueEntity = new SeoKeyValueEntity
                 {
                     Id = Guid.NewGuid(),
                     Key = seoKeyValue.Key,
                     Value = seoKeyValue.Value,
-                    DomainId = domainGuidId
+                    DomainId = domainId
                 };
                 Database.Insert(seoKeyValueEntity);
             }
 
             foreach (var seoSettings in seoSettingsData)
             {
-                var contentType = _contentTypeService.Get(seoSettings.ContentTypeId);
+                IContentType? contentType = null;
+                if (seoSettings.ContentTypeId is int contentTypeIdInt)
+                {
+                    contentType = _contentTypeService.Get(contentTypeIdInt);
+                } else if (seoSettings.ContentTypeId is Guid guidParsed)
+                {
+                    contentType = _contentTypeService.Get(guidParsed);
+                }
                 if (contentType is null) continue;
 
                 var seoSettingsEntity = new SeoSettingsEntity
@@ -257,9 +275,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
         [TableName("SeoToolkitSeoKeyValues")]
         private class OldSeoKeyValueEntity
         {
-            [Column("Id")]
-            public int Id { get; set; }
-
             [Column("Key")]
             public string Key { get; set; }
 
@@ -267,14 +282,14 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
             public string Value { get; set; }
 
             [Column("DomainId")]
-            public int? DomainId { get; set; }
+            public object? DomainId { get; set; }
         }
 
         [TableName("SeoToolkitSeoSettings")]
         private class OldSeoSettingsEntity
         {
             [Column("ContentTypeId")]
-            public int ContentTypeId { get; set; }
+            public object ContentTypeId { get; set; }
 
             [Column("Enabled")]
             public bool Enabled { get; set; }
