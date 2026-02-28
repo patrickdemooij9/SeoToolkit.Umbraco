@@ -6,6 +6,8 @@ SeoToolkit is a SEO package for Umbraco 9 to 17. This package features most func
 
 SeoToolkit is also an award winning Umbraco package, winning the Umbraco Package Award 2025!
 
+[Official Site](https://useotoolkit.com/) - [Documentation](https://seotoolkit.gitbook.io/useotoolkit/)
+
 ## Installation
 
 Installation of that package can be done through the NuGet command: 
