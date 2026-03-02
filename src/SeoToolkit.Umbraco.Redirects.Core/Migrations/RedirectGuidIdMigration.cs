@@ -1,4 +1,5 @@
 ﻿using SeoToolkit.Umbraco.Common.Core.Migrations;
+using SeoToolkit.Umbraco.Redirects.Core.Migrations.Entities;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
 
             Database.Execute("ALTER TABLE SeoToolkitRedirects ADD [Key] UNIQUEIDENTIFIER NULL");
             Database.Execute("ALTER TABLE SeoToolkitRedirects ADD NewNodeKey UNIQUEIDENTIFIER NULL");
-            var redirects = Database.Fetch<RedirectEntity>(Sql().SelectAll().From<RedirectEntity>());
+            var redirects = Database.Fetch<RedirectCreatedByGuidEntity>(Sql().SelectAll().From<RedirectCreatedByGuidEntity>());
             foreach (var entry in redirects)
             {
                 if (DatabaseType == NPoco.DatabaseType.SQLite)
@@ -71,7 +72,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
                 Database.Execute("DROP INDEX IX_SeoToolkitOldUrl");
                 Database.Execute("DROP INDEX IX_SeoToolkitRegex");
 
-                MigrationHelper.RecreateTable<RedirectEntity>(Database, Create, Sql(), "SeoToolkitRedirects");
+                MigrationHelper.RecreateTable<RedirectCreatedByGuidEntity>(Database, Create, Sql(), "SeoToolkitRedirects");
                 return Task.CompletedTask;
             }
 
