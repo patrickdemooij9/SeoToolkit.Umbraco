@@ -1,15 +1,9 @@
 ﻿using SeoToolkit.Umbraco.Common.Core.Migrations;
 using SeoToolkit.Umbraco.Redirects.Core.Migrations.Entities;
-using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Migrations;
-using Umbraco.Extensions;
-using static Umbraco.Cms.Core.Collections.TopoGraph;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
 {
@@ -31,14 +25,14 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
             // We have a dependency on the common migration to have run first, otherwise the cleanup will be a big mess
             MigrationHelper.EnsureMigration("SeoToolkit_Common_Migration", 6, _keyValueService);
 
-            if (ColumnExists("SeoToolkitRedirects", "Key"))
+            if (KeyColumnExists())
             {
                 return Task.CompletedTask;
             }
 
             Database.Execute("ALTER TABLE SeoToolkitRedirects ADD [Key] UNIQUEIDENTIFIER NULL");
             Database.Execute("ALTER TABLE SeoToolkitRedirects ADD NewNodeKey UNIQUEIDENTIFIER NULL");
-            var redirects = Database.Fetch<RedirectCreatedByGuidEntity>(Sql().SelectAll().From<RedirectCreatedByGuidEntity>());
+            var redirects = Database.Fetch<RedirectCreatedByGuidEntity>("SELECT * FROM SeoToolkitRedirects");
             foreach (var entry in redirects)
             {
                 if (DatabaseType == NPoco.DatabaseType.SQLite)
@@ -82,6 +76,16 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
             Database.Execute("ALTER TABLE SeoToolkitRedirects DROP CONSTRAINT pk_SeoToolkitRedirects");
             Database.Execute("ALTER TABLE SeoToolkitRedirects ADD CONSTRAINT pk_SeoToolkitRedirects PRIMARY KEY ([Key])");
             return Task.CompletedTask;
+        }
+
+        private bool KeyColumnExists()
+        {
+            if (DatabaseType == NPoco.DatabaseType.SQLite)
+            {
+                return Database.ExecuteScalar<int>("SELECT COUNT(*) FROM pragma_table_info('SeoToolkitRedirects') WHERE name = @0", "Key") > 0;
+            }
+
+            return Database.ExecuteScalar<int>("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = @0 AND COLUMN_NAME = @1", "SeoToolkitRedirects", "Key") > 0;
         }
     }
 }
