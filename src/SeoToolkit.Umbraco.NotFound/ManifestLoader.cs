@@ -33,7 +33,7 @@ namespace SeoToolkit.Umbraco.NotFound
                 Id = "SeoToolkit.Umbraco.NotFound",
                 Name = "SeoToolkit NotFound",
                 AllowTelemetry = true,
-                Version = "6.1.1",
+                Version = "6.1.2-beta1",
                 Extensions = [ entrypoint!],
             }
             ];
