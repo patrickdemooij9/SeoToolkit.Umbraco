@@ -267,6 +267,11 @@ export type SeoKeyValueSettingViewModel = {
     isRoot: boolean;
 };
 
+export type SeoKeyValueViewModel = {
+    key: string;
+    value: string;
+};
+
 export type SeoSettingsFieldViewModel = {
     alias?: string | null;
     title?: string | null;
@@ -1210,7 +1215,7 @@ export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses = {
     /**
      * OK
      */
-    200: string;
+    200: SeoKeyValueViewModel;
 };
 
 export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponse = GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses[keyof GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses];

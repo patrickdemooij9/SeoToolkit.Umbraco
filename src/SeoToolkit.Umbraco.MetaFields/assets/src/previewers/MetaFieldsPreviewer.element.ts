@@ -1,5 +1,9 @@
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
-import { customElement, property, state } from "@umbraco-cms/backoffice/external/lit";
+import {
+  customElement,
+  property,
+  state,
+} from "@umbraco-cms/backoffice/external/lit";
 import { css, html, LitElement } from "lit";
 import { SeoSettingsFieldViewModel } from "../api";
 import { ISeoContentPreviewer } from "./ISeoContentPreviewer";
@@ -18,12 +22,14 @@ export default class MetaFieldsPreviewer
 
   constructor() {
     super();
-    
-    new MetaFieldsSettingsSource(this).getTitleFormat("pageTitleTemplate").then((response) => {
-      if (response.data != ""){
-        this.titleTemplate = response.data;
-      }
-    })
+
+    new MetaFieldsSettingsSource(this)
+      .getTitleFormat("pageTitleTemplate")
+      .then((response) => {
+        if (response.data && response.data.value != '') {
+          this.titleTemplate = response.data.value ?? "%value%";
+        }
+      });
   }
 
   public getValue(key: string) {
@@ -32,8 +38,8 @@ export default class MetaFieldsPreviewer
       return "";
     }
     const returnValue = foundItem.userValue?.toString();
-    if (returnValue && returnValue !== ''){
-        return returnValue;
+    if (returnValue && returnValue !== "") {
+      return returnValue;
     }
     return foundItem.value;
   }
@@ -43,7 +49,12 @@ export default class MetaFieldsPreviewer
       <div class="listing">
         <a .href=${this.getValue("canonicalUrl")!}>
           <p class="link">${this.getValue("canonicalUrl")}</p>
-          <h3>${this.titleTemplate.replace("%value%", this.getValue("title") ?? "")}</h3>
+          <h3>
+            ${this.titleTemplate.replace(
+              "%value%",
+              this.getValue("title") ?? "",
+            )}
+          </h3>
         </a>
         <p class="description">${this.getValue("metaDescription")}</p>
       </div>
