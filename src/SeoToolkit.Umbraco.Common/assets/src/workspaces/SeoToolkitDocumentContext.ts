@@ -20,6 +20,7 @@ export default class SeoToolkitDocumentContext
 
   #actionEventContext?: UmbActionEventContext;
   #settingsRepository = new SeoToolkitSettingsRepository(this);
+  #isElementType = false;
 
   #model = new UmbObjectState<SeoSettingsPostModel>({
     contentTypeId: "",
@@ -31,6 +32,9 @@ export default class SeoToolkitDocumentContext
     super(host, ST_METAFIELDS_SETTINGSDOCUMENT_TOKEN_CONTEXT.toString());
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
+      this.observe(instance?.isElement, (value) => {
+        this.#isElementType = value ?? false;
+      });
       this.observe(instance?.unique, (value) => {
         this.#settingsRepository.getSettings(value!).then((resp) => {
           this.#model.update({
@@ -59,8 +63,17 @@ export default class SeoToolkitDocumentContext
   }
 
   public save() {
+    if (this.#isElementType) return;
+
     const value = { ...this.#model.getValue() };
     if (value.contentTypeId === "") return;
+
+    // Send out an event for each view to implement their own save method
+    this.#actionEventContext?.dispatchEvent(new CustomEvent("seo-settings", {
+      detail: {
+        contentTypeId: value.contentTypeId
+      }
+    }));
 
     this.#settingsRepository.setSettings(value);
   }

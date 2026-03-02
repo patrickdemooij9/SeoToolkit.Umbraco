@@ -39,6 +39,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 
         public void Set(DocumentTypeSettingsDto model)
         {
+            if (model.Content.IsElement) // We don't allow setting this on elements
+            {
+                throw new ArgumentException("MetaFields cannot be set on element document types");
+            }
+
             var exists = _repository.Get(model.Content.Key) != null;
             if (exists)
                 _repository.Update(model);
