@@ -46,7 +46,7 @@ export default class MetaFieldsDocumentContext
       }
 
       this.#actionEventContext = instance;
-      instance.addEventListener("request-reload-structure-for-entity", this.#save);
+      instance.addEventListener("seo-settings", this.#save);
     });
   }
 
@@ -61,7 +61,7 @@ export default class MetaFieldsDocumentContext
 
   destroy(): void {
     super.destroy();
-    this.#actionEventContext?.removeEventListener("request-reload-structure-for-entity", this.#save);
+    this.#actionEventContext?.removeEventListener("seo-settings", this.#save);
   }
 
   #save = () => {
