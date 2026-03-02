@@ -23,7 +23,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         }
 
         [HttpGet("value")]
-        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(SeoKeyValueViewModel), 200)]
         public IActionResult GetValue(string key)
         {
             var values = _seoKeyValueRepository.Get(null);
@@ -32,7 +32,11 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
             {
                 value = foundValue;
             }
-            return Ok(foundValue);
+            return Ok(new SeoKeyValueViewModel
+            {
+                Key = key,
+                Value = value
+            });
         }
 
         [HttpGet]
