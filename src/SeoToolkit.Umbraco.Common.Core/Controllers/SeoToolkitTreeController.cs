@@ -171,7 +171,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         {
             var currentlyUsedDomains = seoDomains.SelectMany(it => it.DomainIds).Distinct().ToArray();
             var domains = await _domainService.GetAllAsync(false);
-            return [.. domains.Where(it => it.DomainName.StartsWith("http") && !currentlyUsedDomains.Contains(it.Id))];
+            return [.. domains.Where(it => !it.DomainName.StartsWith('/') && !currentlyUsedDomains.Contains(it.Id))];
         }
     }
 }
