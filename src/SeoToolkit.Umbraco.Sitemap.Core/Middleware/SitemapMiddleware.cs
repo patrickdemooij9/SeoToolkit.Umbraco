@@ -24,22 +24,20 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
         private readonly RequestDelegate _next;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISettingsService<SitemapConfig> _sitemapConfigurationService;
-        private readonly ILogger<SitemapMiddleware> _logger;
 
         public SitemapMiddleware(RequestDelegate next,
             IUmbracoContextFactory umbracoContextFactory,
-            ISettingsService<SitemapConfig> sitemapConfigurationService,
-            ILogger<SitemapMiddleware> logger)
+            ISettingsService<SitemapConfig> sitemapConfigurationService)
         {
             _next = next;
             _umbracoContextFactory = umbracoContextFactory;
             _sitemapConfigurationService = sitemapConfigurationService;
-            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context,
             ISitemapGenerator sitemapGenerator,
-            ISitemapIndexGenerator sitemapIndexGenerator)
+            ISitemapIndexGenerator sitemapIndexGenerator,
+            ILogger<SitemapMiddleware> logger)
         {
             if (context.Request.Path.Value?.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase) != true)
             {
@@ -54,7 +52,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
             {
                 //If domain is null, we are either at root or we don't have any domains on the website anyway.
                 var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
-                _logger.LogInformation($"Found {domains.Length} domain(s). Default culture: {ctx.UmbracoContext.Domains.DefaultCulture}");
+                logger.LogInformation($"Found {domains.Length} domain(s). Default culture: {ctx.UmbracoContext.Domains.DefaultCulture}");
                 if (domains.Length == 0 || settings.StructureMode == StructureMode.OnlyRoot)
                 {
                     doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture));
