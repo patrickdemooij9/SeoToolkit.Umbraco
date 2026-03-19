@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SeoToolkit.Umbraco.Common.Core.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
@@ -28,13 +29,15 @@ namespace SeoToolkit.Umbraco.Common
             ""type"": ""backofficeEntryPoint"",
             ""js"": ""/App_Plugins/SeoToolkit/entry/common/common.js""}");
 
+            var manifestVersion = AssemblyVersionHelper.GetInformationalVersion(typeof(ManifestFilter).Assembly);
+
             List<PackageManifest> manifest = [
                 new PackageManifest
             {
                 Id = "SeoToolkit.Umbraco.Common",
                 Name = "SeoToolkit Common",
                 AllowTelemetry = true,
-                Version = "6.1.2",
+                Version = manifestVersion,
                 Extensions = [ entrypoint!],
             }
             ];
