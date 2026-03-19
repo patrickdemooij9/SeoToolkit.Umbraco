@@ -1,0 +1,30 @@
+<Project>
+  <PropertyGroup>
+    <SeoToolkitVersionCommon>6.1.2</SeoToolkitVersionCommon>
+    <SeoToolkitVersionMetaFields>6.1.2</SeoToolkitVersionMetaFields>
+    <SeoToolkitVersionNotFound>6.1.2</SeoToolkitVersionNotFound>
+    <SeoToolkitVersionRedirects>6.1.2</SeoToolkitVersionRedirects>
+    <SeoToolkitVersionRobotsTxt>6.1.2</SeoToolkitVersionRobotsTxt>
+    <SeoToolkitVersionScriptManager>6.1.2</SeoToolkitVersionScriptManager>
+    <SeoToolkitVersionSiteAudit>6.1.2</SeoToolkitVersionSiteAudit>
+    <SeoToolkitVersionSitemap>6.1.2</SeoToolkitVersionSitemap>
+    <SeoToolkitVersionCore>6.1.2</SeoToolkitVersionCore>
+    <SeoToolkitVersionPackage>6.1.2</SeoToolkitVersionPackage>
+	<SeoToolkitVersionUsync>1.0.0-beta1</SeoToolkitVersionUsync>
+
+    <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.Common'))">$(SeoToolkitVersionCommon)</VersionPrefix>
+    <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.MetaFields'))">$(SeoToolkitVersionMetaFields)</VersionPrefix>
+    <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.NotFound'))">$(SeoToolkitVersionNotFound)</VersionPrefix>
+    <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.Redirects'))">$(SeoToolkitVersionRedirects)</VersionPrefix>
+    <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.RobotsTxt'))">$(SeoToolkitVersionRobotsTxt)</VersionPrefix>
+    <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.ScriptManager'))">$(SeoToolkitVersionScriptManager)</VersionPrefix>
+    <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.SiteAudit'))">$(SeoToolkitVersionSiteAudit)</VersionPrefix>
+    <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.Sitemap'))">$(SeoToolkitVersionSitemap)</VersionPrefix>
+	<VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.uSync'))">$(SeoToolkitVersionUsync)</VersionPrefix>
+    <VersionPrefix Condition="'$(MSBuildProjectName)' == 'SeoToolkit.Umbraco.Core'">$(SeoToolkitVersionCore)</VersionPrefix>
+    <VersionPrefix Condition="'$(MSBuildProjectName)' == 'SeoToolkit.Umbraco'">$(SeoToolkitVersionPackage)</VersionPrefix>
+
+    <Version>$(VersionPrefix)</Version>
+    <PackageVersion>$(Version)</PackageVersion>
+  </PropertyGroup>
+</Project>
