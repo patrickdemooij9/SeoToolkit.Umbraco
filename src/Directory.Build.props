@@ -10,6 +10,7 @@
     <SeoToolkitVersionSitemap>6.1.2</SeoToolkitVersionSitemap>
     <SeoToolkitVersionCore>6.1.2</SeoToolkitVersionCore>
     <SeoToolkitVersionPackage>6.1.2</SeoToolkitVersionPackage>
+	<SeoToolkitVersionUsync>1.0.0-beta1</SeoToolkitVersionUsync>
 
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.Common'))">$(SeoToolkitVersionCommon)</VersionPrefix>
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.MetaFields'))">$(SeoToolkitVersionMetaFields)</VersionPrefix>
@@ -19,6 +20,7 @@
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.ScriptManager'))">$(SeoToolkitVersionScriptManager)</VersionPrefix>
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.SiteAudit'))">$(SeoToolkitVersionSiteAudit)</VersionPrefix>
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.Sitemap'))">$(SeoToolkitVersionSitemap)</VersionPrefix>
+	<VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.uSync'))">$(SeoToolkitVersionUsync)</VersionPrefix>
     <VersionPrefix Condition="'$(MSBuildProjectName)' == 'SeoToolkit.Umbraco.Core'">$(SeoToolkitVersionCore)</VersionPrefix>
     <VersionPrefix Condition="'$(MSBuildProjectName)' == 'SeoToolkit.Umbraco'">$(SeoToolkitVersionPackage)</VersionPrefix>
 
