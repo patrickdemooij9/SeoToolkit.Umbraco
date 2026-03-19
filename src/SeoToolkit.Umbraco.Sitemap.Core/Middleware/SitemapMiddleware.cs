@@ -36,8 +36,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
 
         public async Task Invoke(HttpContext context,
             ISitemapGenerator sitemapGenerator,
-            ISitemapIndexGenerator sitemapIndexGenerator,
-            ILogger<SitemapMiddleware> logger)
+            ISitemapIndexGenerator sitemapIndexGenerator)
         {
             if (context.Request.Path.Value?.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase) != true)
             {
@@ -52,7 +51,6 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
             {
                 //If domain is null, we are either at root or we don't have any domains on the website anyway.
                 var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
-                logger.LogInformation($"Found {domains.Length} domain(s). Default culture: {ctx.UmbracoContext.Domains.DefaultCulture}");
                 if (domains.Length == 0 || settings.StructureMode == StructureMode.OnlyRoot)
                 {
                     doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture));
