@@ -15,6 +15,7 @@ using SeoToolkit.Umbraco.Sitemap.Core.Config;
 using SeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
 {
@@ -50,7 +51,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
             {
                 //If domain is null, we are either at root or we don't have any domains on the website anyway.
                 var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
-                if (domains.Length <= 1 || settings.StructureMode == StructureMode.OnlyRoot)
+                if (domains.Length == 0 || settings.StructureMode == StructureMode.OnlyRoot)
                 {
                     doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture));
                 }
@@ -59,6 +60,11 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                     var domain = DomainUtilities.SelectDomain(domains, new Uri(context.Request.GetEncodedUrl()));
                     if (domain is null)
                     {
+                        if (domains.Length == 1) // No point showing a sitemap index if there is only 1 domain.
+                        {
+                            await _next.Invoke(context);
+                            return;
+                        }
                         doc = sitemapIndexGenerator.Generate();
                     }
                     else
