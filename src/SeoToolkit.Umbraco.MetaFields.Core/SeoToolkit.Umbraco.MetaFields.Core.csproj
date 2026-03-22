@@ -15,6 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Schema.NET" Version="13.0.0" />
     <PackageReference Include="Umbraco.Cms.Core" Version="[17.0.0,17.999)" />
     <PackageReference Include="Umbraco.Cms.Api.Management" Version="[17.0.0,17.999)" />
   </ItemGroup>
