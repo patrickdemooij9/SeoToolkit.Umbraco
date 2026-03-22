@@ -53,6 +53,10 @@ namespace SeoToolkit.Umbraco.Core.Connectors
                 foreach (var domain in domains)
                 {
                     var url = domain.Name.StartsWith('/') ? new Uri(baseUri, domain.Name).ToString() : domain.Name;
+                    if (!url.StartsWith("http"))
+                    {
+                        url = $"{baseUri.Scheme}://{url}";
+                    }
                     yield return $"{url.TrimEnd('/')}/sitemap.xml";
                 }
             }
