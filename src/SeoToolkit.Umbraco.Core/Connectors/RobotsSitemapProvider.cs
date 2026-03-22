@@ -55,7 +55,7 @@ namespace SeoToolkit.Umbraco.Core.Connectors
                     var url = domain.Name.StartsWith('/') ? new Uri(baseUri, domain.Name).ToString() : domain.Name;
                     if (!url.StartsWith("http"))
                     {
-                        url = $"{baseUri.Scheme}://{url}";
+                        url = $"https://{url}";
                     }
                     yield return $"{url.TrimEnd('/')}/sitemap.xml";
                 }
