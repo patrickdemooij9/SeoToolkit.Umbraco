@@ -80,6 +80,25 @@ namespace SeoToolkit.Tests
         }
 
         [Test]
+        public void GetSitemapUrls_DomainWithNoScheme_UsesRequestScheme()
+        {
+            // Arrange
+            var (provider, mocks) = CreateProviderWithMocks();
+            var request = CreateHttpRequest("https://example.com");
+
+            var domain = new Domain(1, "example.com", 0, "en-US", true, -1);
+            mocks.DomainCache.Setup(it => it.GetAll(false))
+                .Returns(new[] { domain });
+
+            // Act
+            var urls = provider.GetSitemapUrls(request).ToArray();
+
+            // Assert
+            Assert.That(urls.Length, Is.EqualTo(1));
+            Assert.That(urls[0], Is.EqualTo("https://example.com/sitemap.xml"));
+        }
+
+        [Test]
         public void GetSitemapUrls_MultipleDomains_ReturnsAllSitemaps()
         {
             // Arrange
