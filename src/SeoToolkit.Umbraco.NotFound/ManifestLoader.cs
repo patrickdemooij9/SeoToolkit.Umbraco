@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SeoToolkit.Umbraco.Common.Core.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
@@ -27,13 +28,15 @@ namespace SeoToolkit.Umbraco.NotFound
             ""type"": ""backofficeEntryPoint"",
             ""js"": ""/App_Plugins/SeoToolkit/entry/notFound/notFound.js""}");
 
+            var manifestVersion = AssemblyVersionHelper.GetInformationalVersion(typeof(ManifestFilter).Assembly);
+
             List<PackageManifest> manifest = [
                 new PackageManifest
             {
                 Id = "SeoToolkit.Umbraco.NotFound",
                 Name = "SeoToolkit NotFound",
                 AllowTelemetry = true,
-                Version = "6.1.2",
+                Version = manifestVersion,
                 Extensions = [ entrypoint!],
             }
             ];
