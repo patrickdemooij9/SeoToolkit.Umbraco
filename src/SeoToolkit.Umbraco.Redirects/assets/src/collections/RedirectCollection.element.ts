@@ -2,7 +2,7 @@ import { UmbCollectionDefaultElement } from "@umbraco-cms/backoffice/collection"
 import { customElement, html } from "@umbraco-cms/backoffice/external/lit";
 
 @customElement("st-redirects-collection")
-export default class RedirectCollectionView extends UmbCollectionDefaultElement {
+export default class RedirectCollection extends UmbCollectionDefaultElement {
     protected override renderToolbar() {
 		return html`
 			<umb-collection-toolbar slot="header">
