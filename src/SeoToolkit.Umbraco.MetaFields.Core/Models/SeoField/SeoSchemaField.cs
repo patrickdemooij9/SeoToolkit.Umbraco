@@ -18,8 +18,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string GroupAlias => SeoFieldGroupConstants.Others;
         public Type FieldType => typeof(string);
 
-        public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.TextBox", "Umbraco.TextArea", "Umbraco.TinyMCE", "Umbraco.RichText" });
-        public ISeoFieldEditEditor EditEditor => new SeoTextAreaEditEditor();
+public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.TextBox", "Umbraco.TextArea", "Umbraco.TinyMCE", "Umbraco.RichText" });
+        public ISeoFieldEditEditor EditEditor => new SeoSchemaEditEditor();
 
         public HtmlString Render(object value)
         {

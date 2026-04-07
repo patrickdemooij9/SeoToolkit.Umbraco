@@ -181,6 +181,18 @@ export type SaveRedirectPostModel = {
     redirectCode: number;
 };
 
+export type SchemaPropertyViewModel = {
+    alias?: string | null;
+    displayName?: string | null;
+    propertyEditor?: string | null;
+};
+
+export type SchemaTypeViewModel = {
+    alias?: string | null;
+    name?: string | null;
+    properties?: Array<SchemaPropertyViewModel> | null;
+};
+
 export type ScriptDefinitionViewModel = {
     readonly name?: string | null;
     readonly alias?: string | null;
@@ -529,6 +541,22 @@ export type PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponses =
      */
     200: unknown;
 };
+
+export type GetUmbracoSeoToolkitSchemaTypesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitSchema/types';
+};
+
+export type GetUmbracoSeoToolkitSchemaTypesResponses = {
+    /**
+     * OK
+     */
+    200: Array<SchemaTypeViewModel>;
+};
+
+export type GetUmbracoSeoToolkitSchemaTypesResponse = GetUmbracoSeoToolkitSchemaTypesResponses[keyof GetUmbracoSeoToolkitSchemaTypesResponses];
 
 export type GetUmbracoSeoToolkitNotFoundNotFoundData = {
     body?: never;

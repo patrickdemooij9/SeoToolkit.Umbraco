@@ -9,6 +9,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Common.Api;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldGroups;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoSettings;
 using SeoToolkit.Umbraco.MetaFields.Core.Components;
@@ -105,6 +106,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
 
             builder.WithCollectionBuilder<SeoKeyValueSettingCollectionBuilder>()
                 .Add<PageTitleTemplateSetting>();
+
+            builder.WithCollectionBuilder<SchemaResolverCollectionBuilder>()
+                .Add<OrganizationSchemaResolver>();
         }
     }
 }
