@@ -7,6 +7,7 @@ const RedirectCollection: ManifestCollection = {
     kind: 'default',
     alias: 'seoToolkit.collections.redirects',
     name: 'Redirects Collection',
+    js: () => import("../collections/RedirectCollection.element"),
     api: () => import('../workspaces/RedirectModuleContext'),
     meta: {
         repositoryAlias: 'seoToolkit.repositories.redirects'
@@ -17,7 +18,7 @@ const RedirectCollectionView: ManifestCollectionView = {
     type: 'collectionView',
     alias: 'seoToolkit.collections.redirects.overview',
     name: 'Redirects overview',
-    js: () => import("../collections/RedirectCollection.element"),
+    js: () => import("../collections/RedirectCollectionView.element"),
     meta: {
         label: 'Overview',
         icon: 'icon-list',
