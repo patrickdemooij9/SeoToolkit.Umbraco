@@ -11,6 +11,12 @@ const documentView: any = {
         pathname: 'sitemap',
         icon: 'icon-globe'
     },
+    conditions: [
+        {
+            alias: 'SeoToolkit.SeoModuleEnabled',
+            moduleAlias: 'sitemap'
+        }
+    ]
 }
 
 const documentWorkspaceContext: ManifestWorkspaceContext = {
@@ -22,6 +28,10 @@ const documentWorkspaceContext: ManifestWorkspaceContext = {
         {
             alias: 'Umb.Condition.WorkspaceAlias',
             match: 'Umb.Workspace.DocumentType'
+        },
+        {
+            alias: 'SeoToolkit.SeoModuleEnabled',
+            moduleAlias: 'sitemap'
         }
     ]
 };

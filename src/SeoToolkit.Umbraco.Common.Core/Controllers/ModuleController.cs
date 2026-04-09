@@ -3,6 +3,7 @@ using Umbraco.Cms.Web.Common.Attributes;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Models;
 using System.Linq;
+using SeoToolkit.Umbraco.Common.Core.Enums;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
 {
@@ -21,6 +22,13 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         public IActionResult GetModules()
         {
             return Ok(_moduleCollection.GetAll().ToArray());
+        }
+
+        [HttpGet("isEnabled")]
+        [ProducesResponseType(typeof(bool), 200)]
+        public IActionResult IsEnabled(string moduleAlias)
+        {
+            return Ok(_moduleCollection.GetAll().FirstOrDefault(it => it.Alias == moduleAlias)?.Status == SeoToolkitModuleStatus.Installed);
         }
     }
 }
