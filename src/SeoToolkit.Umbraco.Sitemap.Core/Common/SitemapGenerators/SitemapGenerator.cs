@@ -1,4 +1,5 @@
 ﻿using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.Sitemap.Core.Collections;
 using SeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
@@ -28,6 +29,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
         private readonly IVariationContextAccessor _variationContextAccessor;
         private readonly IDocumentNavigationQueryService _documentNavigationQueryService;
         private readonly SitemapCollectionProviderCollection _sitemapCollectionProviders;
+        private readonly IMetaFieldsService _metaFieldsService;
 
         private List<string> _validAlternateCultures;
         private Dictionary<Guid, SitemapPageSettings> _pageTypeSettings; //Used to cache the types for the generation
@@ -42,7 +44,8 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             IEventAggregator eventAggregator,
             IVariationContextAccessor variationContextAccessor,
             IDocumentNavigationQueryService documentNavigationQueryService,
-            SitemapCollectionProviderCollection sitemapCollectionProviders = null)
+            SitemapCollectionProviderCollection sitemapCollectionProviders = null,
+            IEnumerable<IMetaFieldsService> metaFieldsServices = null)
         {
             _umbracoContextFactory = umbracoContextFactory;
             _sitemapService = sitemapService;
@@ -52,6 +55,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             _documentNavigationQueryService = documentNavigationQueryService;
             _settings = settingsService.GetSettings();
             _sitemapCollectionProviders = sitemapCollectionProviders;
+            _metaFieldsService = metaFieldsServices?.FirstOrDefault();
 
             _pageTypeSettings = new Dictionary<Guid, SitemapPageSettings>();
         }
@@ -119,6 +123,19 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             if (content.TemplateId > 0 && !_publicAccessService.IsProtected(content.Path))
             {
                 var settings = GetPageTypeSettings(content.ContentType.Key);
+
+                if (_metaFieldsService != null)
+                {
+                    var metaTags = _metaFieldsService.Get(content, true);
+                    if (metaTags?.Robots != null && metaTags.Robots.Contains("noindex", StringComparer.OrdinalIgnoreCase))
+                    {
+                        foreach (var child in content.Children(culture))
+                        {
+                            items.AddRange(GetSelfAndChildren(child, culture));
+                        }
+                        return items;
+                    }
+                }
 
                 var item = new SitemapNodeItem(content.Url(culture, UrlMode.Absolute))
                 {
