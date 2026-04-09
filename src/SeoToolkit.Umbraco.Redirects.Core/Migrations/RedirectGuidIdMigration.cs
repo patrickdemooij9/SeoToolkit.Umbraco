@@ -69,8 +69,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
 
             if (DatabaseType == NPoco.DatabaseType.SQLite)
             {
-                Database.Execute("DROP INDEX IX_SeoToolkitOldUrl");
-                Database.Execute("DROP INDEX IX_SeoToolkitRegex");
+                Database.Execute("DROP INDEX IF EXISTS IX_SeoToolkitOldUrl");
+                Database.Execute("DROP INDEX IF EXISTS IX_SeoToolkitRegex");
 
                 MigrationHelper.RecreateTable<RedirectCreatedByGuidEntity>(Database, Create, Sql(), "SeoToolkitRedirects");
                 return Task.CompletedTask;

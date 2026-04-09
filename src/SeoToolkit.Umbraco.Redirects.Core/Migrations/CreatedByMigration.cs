@@ -19,8 +19,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
             {
                 if (DatabaseType == DatabaseType.SQLite)
                 {
-                    Database.Execute("DROP INDEX IX_SeoToolkitOldUrl");
-                    Database.Execute("DROP INDEX IX_SeoToolkitRegex");
+                    Database.Execute("DROP INDEX IF EXISTS IX_SeoToolkitOldUrl");
+                    Database.Execute("DROP INDEX IF EXISTS IX_SeoToolkitRegex");
                     Database.Execute("ALTER TABLE SeoToolkitRedirects ADD CreatedBy INT NULL");
                     Database.Execute("UPDATE SeoToolkitRedirects SET CreatedBy = -1");
 
