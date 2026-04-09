@@ -5,6 +5,7 @@ using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using SeoToolkit.Umbraco.Core.Connectors;
 using SeoToolkit.Umbraco.Core.SeoSettings;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
+using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 
@@ -22,6 +23,7 @@ namespace SeoToolkit.Umbraco.Core.Startup
             builder.WithCollectionBuilder<SeoKeyValueSettingCollectionBuilder>()
                 .Add<AutomaticSitemapInRobotsTxtSeoSetting>();
             builder.Services.AddSingleton<IRobotsTxtSitemapProvider, RobotsSitemapProvider>();
+            builder.Services.AddScoped<ISitemapNoIndexFilter, MetaFieldsNoIndexFilter>();
         }
     }
 }

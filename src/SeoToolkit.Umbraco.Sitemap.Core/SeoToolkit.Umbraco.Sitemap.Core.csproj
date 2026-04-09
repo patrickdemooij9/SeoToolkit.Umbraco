@@ -21,6 +21,5 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\SeoToolkit.Umbraco.Common.Core\SeoToolkit.Umbraco.Common.Core.csproj" />
-	  <ProjectReference Include="..\SeoToolkit.Umbraco.MetaFields.Core\SeoToolkit.Umbraco.MetaFields.Core.csproj" />
 	</ItemGroup>
 </Project>
