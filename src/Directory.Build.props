@@ -1,15 +1,15 @@
 <Project>
   <PropertyGroup>
-    <SeoToolkitVersionCommon>6.1.3</SeoToolkitVersionCommon>
-    <SeoToolkitVersionMetaFields>6.1.3</SeoToolkitVersionMetaFields>
-    <SeoToolkitVersionNotFound>6.1.3</SeoToolkitVersionNotFound>
-    <SeoToolkitVersionRedirects>6.1.3</SeoToolkitVersionRedirects>
-    <SeoToolkitVersionRobotsTxt>6.1.3</SeoToolkitVersionRobotsTxt>
-    <SeoToolkitVersionScriptManager>6.1.3</SeoToolkitVersionScriptManager>
-    <SeoToolkitVersionSiteAudit>6.1.3</SeoToolkitVersionSiteAudit>
-    <SeoToolkitVersionSitemap>6.1.3</SeoToolkitVersionSitemap>
-    <SeoToolkitVersionCore>6.1.3</SeoToolkitVersionCore>
-    <SeoToolkitVersionPackage>6.1.3</SeoToolkitVersionPackage>
+    <SeoToolkitVersionCommon>6.1.4</SeoToolkitVersionCommon>
+    <SeoToolkitVersionMetaFields>6.1.4</SeoToolkitVersionMetaFields>
+    <SeoToolkitVersionNotFound>6.1.4</SeoToolkitVersionNotFound>
+    <SeoToolkitVersionRedirects>6.1.4</SeoToolkitVersionRedirects>
+    <SeoToolkitVersionRobotsTxt>6.1.4</SeoToolkitVersionRobotsTxt>
+    <SeoToolkitVersionScriptManager>6.1.4</SeoToolkitVersionScriptManager>
+    <SeoToolkitVersionSiteAudit>6.1.4</SeoToolkitVersionSiteAudit>
+    <SeoToolkitVersionSitemap>6.1.4</SeoToolkitVersionSitemap>
+    <SeoToolkitVersionCore>6.1.4</SeoToolkitVersionCore>
+    <SeoToolkitVersionPackage>6.1.4</SeoToolkitVersionPackage>
 	<SeoToolkitVersionUsync>1.0.0-beta1</SeoToolkitVersionUsync>
 
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.Common'))">$(SeoToolkitVersionCommon)</VersionPrefix>
