@@ -267,6 +267,11 @@ export type SeoKeyValueSettingViewModel = {
     isRoot: boolean;
 };
 
+export type SeoKeyValueViewModel = {
+    key: string;
+    value: string;
+};
+
 export type SeoSettingsFieldViewModel = {
     alias?: string | null;
     title?: string | null;
@@ -1004,6 +1009,24 @@ export type PostUmbracoSeoToolkitSitemapSitemapSettingsResponses = {
     200: unknown;
 };
 
+export type GetUmbracoSeoToolkitIsEnabledData = {
+    body?: never;
+    path?: never;
+    query?: {
+        moduleAlias?: string;
+    };
+    url: '/umbraco/seoToolkit/isEnabled';
+};
+
+export type GetUmbracoSeoToolkitIsEnabledResponses = {
+    /**
+     * OK
+     */
+    200: boolean;
+};
+
+export type GetUmbracoSeoToolkitIsEnabledResponse = GetUmbracoSeoToolkitIsEnabledResponses[keyof GetUmbracoSeoToolkitIsEnabledResponses];
+
 export type GetUmbracoSeoToolkitModulesData = {
     body?: never;
     path?: never;
@@ -1210,7 +1233,7 @@ export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses = {
     /**
      * OK
      */
-    200: string;
+    200: SeoKeyValueViewModel;
 };
 
 export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponse = GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses[keyof GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses];
