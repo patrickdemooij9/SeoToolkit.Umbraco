@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Database;

@@ -353,6 +353,22 @@ export type SitemapPageTypeSettingsViewModel = {
     priority?: number | null;
 };
 
+export type SitemapContentSettingsPostModel = {
+    nodeKey: string;
+    hideFromSitemap?: boolean | null;
+    changeFrequency?: string | null;
+    priority?: number | null;
+};
+
+export type SitemapContentSettingsViewModel = {
+    hideFromSitemap?: boolean | null;
+    changeFrequency?: string | null;
+    priority?: number | null;
+    effectiveHideFromSitemap: boolean;
+    effectiveChangeFrequency?: string | null;
+    effectivePriority?: number | null;
+};
+
 export type StopAuditPostModel = {
     id: number;
 };
@@ -905,6 +921,38 @@ export type PostUmbracoSeoToolkitSitemapSitemapSettingsData = {
 };
 
 export type PostUmbracoSeoToolkitSitemapSitemapSettingsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetUmbracoSeoToolkitSitemapContentContentSettingsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        nodeKey?: string;
+    };
+    url: '/umbraco/seoToolkitSitemapContent/contentSettings';
+};
+
+export type GetUmbracoSeoToolkitSitemapContentContentSettingsResponses = {
+    /**
+     * OK
+     */
+    200: SitemapContentSettingsViewModel;
+};
+
+export type GetUmbracoSeoToolkitSitemapContentContentSettingsResponse = GetUmbracoSeoToolkitSitemapContentContentSettingsResponses[keyof GetUmbracoSeoToolkitSitemapContentContentSettingsResponses];
+
+export type PostUmbracoSeoToolkitSitemapContentContentSettingsData = {
+    body?: SitemapContentSettingsPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitSitemapContent/contentSettings';
+};
+
+export type PostUmbracoSeoToolkitSitemapContentContentSettingsResponses = {
     /**
      * OK
      */
