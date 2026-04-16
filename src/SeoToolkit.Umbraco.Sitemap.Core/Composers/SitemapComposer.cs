@@ -45,6 +45,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Composers
             builder.Services.AddScoped<ISitemapIndexGenerator, SitemapIndexGenerator>();
             builder.Services.AddUnique<ISitemapService, SitemapService>();
             builder.Services.AddUnique<ISitemapPageTypeRepository, SitemapPageTypeRepository>();
+            builder.Services.AddUnique<ISitemapContentRepository, SitemapContentRepository>();
 
             if (!disabledModules.Contains(DisabledModuleConstant.Middleware))
             {

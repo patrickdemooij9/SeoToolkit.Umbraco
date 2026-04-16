@@ -1,4 +1,4 @@
-﻿using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
+using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using System;
@@ -11,12 +11,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
     {
         private readonly IContentTypeService _contentTypeService;
         private readonly ISitemapPageTypeRepository _sitemapPageTypeRepository;
+        private readonly ISitemapContentRepository _sitemapContentRepository;
         private readonly IEventAggregator _eventAggregator;
 
-        public SitemapService(IContentTypeService contentTypeService, ISitemapPageTypeRepository sitemapPageTypeRepository, IEventAggregator eventAggregator)
+        public SitemapService(IContentTypeService contentTypeService, ISitemapPageTypeRepository sitemapPageTypeRepository, ISitemapContentRepository sitemapContentRepository, IEventAggregator eventAggregator)
         {
             _contentTypeService = contentTypeService;
             _sitemapPageTypeRepository = sitemapPageTypeRepository;
+            _sitemapContentRepository = sitemapContentRepository;
             _eventAggregator = eventAggregator;
         }
 
@@ -46,6 +48,21 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
         public SitemapPageSettings[] GetAll()
         {
             return _sitemapPageTypeRepository.GetAll();
+        }
+
+        public void SetContentSettings(SitemapContentSettings settings)
+        {
+            _sitemapContentRepository.Set(settings);
+        }
+
+        public SitemapContentSettings? GetContentSettings(Guid nodeKey)
+        {
+            return _sitemapContentRepository.Get(nodeKey);
+        }
+
+        public SitemapContentSettings[] GetAllContentSettings()
+        {
+            return _sitemapContentRepository.GetAll();
         }
     }
 }

@@ -15,6 +15,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
             To<SitemapInitialMigration>("state-1");
             To<SitemapChangeFrequencyOptionalMigration>("state-2");
             To<SitemapIdToGuidMigration>("state-3");
+            To<SitemapContentMigration>("state-4");
         }
     }
 }
