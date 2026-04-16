@@ -140,7 +140,6 @@ export default class SitemapContentViewElement extends UmbElementMixin(LitElemen
                         label="Hide from sitemap"
                         description="Override whether this page is hidden from the sitemap. 'Inherited' uses the document type setting (currently: ${this.#effectiveHideLabel()})."
                         property-editor-ui-alias="Umb.PropertyEditorUi.Dropdown"
-                        val
                         .config=${[{
                             alias: "items",
                             value: this.#hideOptions.map((o) => o.name),
@@ -151,7 +150,6 @@ export default class SitemapContentViewElement extends UmbElementMixin(LitElemen
                         label="Change frequency"
                         description="Override the change frequency for this page. 'Inherited' uses the document type setting${this._effectiveChangeFrequency ? ` (currently: ${this._effectiveChangeFrequency})` : ''}."
                         property-editor-ui-alias="Umb.PropertyEditorUi.Dropdown"
-                        val
                         .config=${[{
                             alias: "items",
                             value: this.#changeFrequences.map((f) => f.name),
@@ -162,7 +160,6 @@ export default class SitemapContentViewElement extends UmbElementMixin(LitElemen
                         label="Priority"
                         description="Override the priority for this page. 'Inherited' uses the document type setting${this._effectivePriority != null ? ` (currently: ${this._effectivePriority})` : ''}."
                         property-editor-ui-alias="Umb.PropertyEditorUi.Dropdown"
-                        val
                         .config=${[{
                             alias: "items",
                             value: this.#priorities.map((p) => p.name),

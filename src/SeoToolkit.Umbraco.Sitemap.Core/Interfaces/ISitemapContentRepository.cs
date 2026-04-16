@@ -5,7 +5,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Interfaces
 {
     public interface ISitemapContentRepository
     {
-        SitemapContentSettings Get(Guid nodeKey);
+        SitemapContentSettings? Get(Guid nodeKey);
         void Set(SitemapContentSettings settings);
         SitemapContentSettings[] GetAll();
     }

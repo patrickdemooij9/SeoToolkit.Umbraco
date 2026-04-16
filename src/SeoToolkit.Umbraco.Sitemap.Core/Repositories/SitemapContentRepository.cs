@@ -17,7 +17,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Repositories
             _scopeProvider = scopeProvider;
         }
 
-        public SitemapContentSettings Get(Guid nodeKey)
+        public SitemapContentSettings? Get(Guid nodeKey)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
             var entity = scope.Database.FirstOrDefault<SitemapContentEntity>(scope.SqlContext.Sql()
