@@ -24,7 +24,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
     public class SitemapMiddleware
     {
         private const int MaxUrlsPerSitemap = 50000;
-        private static readonly Regex SplitSitemapRegex = new(@"\/sitemap\-(\d+)\.xml$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex SplitSitemapRegex = new(@"/sitemap-(\d+)\.xml$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private readonly RequestDelegate _next;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
@@ -129,8 +129,13 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                 return false;
             }
 
-            splitSitemapPageNumber = int.Parse(splitSitemapMatch.Groups[1].Value);
-            return splitSitemapPageNumber > 0;
+            if (!int.TryParse(splitSitemapMatch.Groups[1].Value, out var pageNumber))
+            {
+                return false;
+            }
+
+            splitSitemapPageNumber = pageNumber;
+            return pageNumber > 0;
         }
 
         private static XDocument? ResolveSplitSitemapDocument(XDocument sitemapDocument, HttpContext context, int? splitSitemapPageNumber)
@@ -147,7 +152,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                 return splitSitemapPageNumber.HasValue ? null : sitemapDocument;
             }
 
-            var totalSplitSitemaps = (int)Math.Ceiling(urls.Length / (double)MaxUrlsPerSitemap);
+            var totalSplitSitemaps = (urls.Length + MaxUrlsPerSitemap - 1) / MaxUrlsPerSitemap;
             if (!splitSitemapPageNumber.HasValue)
             {
                 return BuildSitemapIndex(context, totalSplitSitemaps);
@@ -171,9 +176,8 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
         {
             var ns = XNamespace.Get("http://www.sitemaps.org/schemas/sitemap/0.9");
             var requestPath = context.Request.Path.Value ?? string.Empty;
-            var sitemapPathBase = requestPath.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase)
-                ? requestPath[..^"sitemap.xml".Length]
-                : requestPath;
+            var lastSlashIndex = requestPath.LastIndexOf('/');
+            var sitemapPathBase = lastSlashIndex >= 0 ? requestPath[..lastSlashIndex] : string.Empty;
             var baseUrl = $"{context.Request.Scheme}://{context.Request.Host}{sitemapPathBase.TrimEnd('/')}";
 
             var sitemapIndexElement = new XElement(ns + "sitemapindex");
