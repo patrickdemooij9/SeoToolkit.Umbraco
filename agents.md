@@ -23,7 +23,7 @@ Each feature is split into a backoffice package and (usually) a `.Core` logic pa
 Root:
 
 - `README.md` — installation and feature overview.
-- `umbraco-marketplace-seotoolkit.umbraco*.json` — marketplace metadata per package.
+- `umbraco-marketplace-seotoolkit.umbraco*.json` (glob pattern) — marketplace metadata per package.
 - `.github/workflows/` — CI/release workflows.
 - `src/` — all source projects.
 
