@@ -214,4 +214,3 @@ Representative tests include:
 - Main package csproj: `src/SeoToolkit.Umbraco/SeoToolkit.Umbraco.csproj`
 - Sample host config: `src/SeoToolkit.Umbraco.Site/appsettings.json`
 - CI baseline: `.github/workflows/build-and-test.yml`
-
