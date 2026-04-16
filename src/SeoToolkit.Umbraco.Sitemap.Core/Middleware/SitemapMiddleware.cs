@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -21,6 +23,9 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
 {
     public class SitemapMiddleware
     {
+        private const int MaxUrlsPerSitemap = 50000;
+        private static readonly Regex SplitSitemapRegex = new(@"\/sitemap\-(\d+)\.xml$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         private readonly RequestDelegate _next;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISettingsService<SitemapConfig> _sitemapConfigurationService;
@@ -38,7 +43,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
             ISitemapGenerator sitemapGenerator,
             ISitemapIndexGenerator sitemapIndexGenerator)
         {
-            if (context.Request.Path.Value?.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase) != true)
+            if (!TryParseSitemapRequest(context.Request.Path.Value, out var splitSitemapPageNumber))
             {
                 await _next.Invoke(context);
                 return;
@@ -54,12 +59,19 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                 if (domains.Length == 0 || settings.StructureMode == StructureMode.OnlyRoot)
                 {
                     doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture));
+                    doc = ResolveSplitSitemapDocument(doc, context, splitSitemapPageNumber);
                 }
                 else
                 {
                     var domain = DomainUtilities.SelectDomain(domains, new Uri(context.Request.GetEncodedUrl()));
                     if (domain is null)
                     {
+                        if (splitSitemapPageNumber.HasValue)
+                        {
+                            await _next.Invoke(context);
+                            return;
+                        }
+
                         if (domains.Length == 1) // No point showing a sitemap index if there is only 1 domain.
                         {
                             await _next.Invoke(context);
@@ -77,8 +89,15 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                         }
 
                         doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(rootNode, domain.Culture));
+                        doc = ResolveSplitSitemapDocument(doc, context, splitSitemapPageNumber);
                     }
                 }
+            }
+
+            if (doc is null)
+            {
+                await _next.Invoke(context);
+                return;
             }
 
             context.Response.StatusCode = 200;
@@ -89,6 +108,83 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                 await doc.SaveAsync(writer, SaveOptions.None, CancellationToken.None);
                 await context.Response.WriteAsync(writer.ToString());
             }
+        }
+
+        private static bool TryParseSitemapRequest(string? path, out int? splitSitemapPageNumber)
+        {
+            splitSitemapPageNumber = null;
+            if (path?.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                return true;
+            }
+
+            if (path is null)
+            {
+                return false;
+            }
+
+            var splitSitemapMatch = SplitSitemapRegex.Match(path);
+            if (!splitSitemapMatch.Success)
+            {
+                return false;
+            }
+
+            splitSitemapPageNumber = int.Parse(splitSitemapMatch.Groups[1].Value);
+            return splitSitemapPageNumber > 0;
+        }
+
+        private static XDocument? ResolveSplitSitemapDocument(XDocument sitemapDocument, HttpContext context, int? splitSitemapPageNumber)
+        {
+            var root = sitemapDocument.Root;
+            if (root is null)
+            {
+                return sitemapDocument;
+            }
+
+            var urls = root.Elements().ToArray();
+            if (urls.Length <= MaxUrlsPerSitemap)
+            {
+                return splitSitemapPageNumber.HasValue ? null : sitemapDocument;
+            }
+
+            var totalSplitSitemaps = (int)Math.Ceiling(urls.Length / (double)MaxUrlsPerSitemap);
+            if (!splitSitemapPageNumber.HasValue)
+            {
+                return BuildSitemapIndex(context, totalSplitSitemaps);
+            }
+
+            if (splitSitemapPageNumber.Value > totalSplitSitemaps)
+            {
+                return null;
+            }
+
+            var urlsForSitemap = urls.Skip((splitSitemapPageNumber.Value - 1) * MaxUrlsPerSitemap).Take(MaxUrlsPerSitemap);
+            return BuildSitemapDocument(root.Name, root.Attributes(), urlsForSitemap);
+        }
+
+        private static XDocument BuildSitemapDocument(XName rootName, IEnumerable<XAttribute> rootAttributes, IEnumerable<XElement> urls)
+        {
+            return new XDocument(new XElement(rootName, rootAttributes, urls));
+        }
+
+        private static XDocument BuildSitemapIndex(HttpContext context, int totalSplitSitemaps)
+        {
+            var ns = XNamespace.Get("http://www.sitemaps.org/schemas/sitemap/0.9");
+            var requestPath = context.Request.Path.Value ?? string.Empty;
+            var sitemapPathBase = requestPath.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase)
+                ? requestPath[..^"sitemap.xml".Length]
+                : requestPath;
+            var baseUrl = $"{context.Request.Scheme}://{context.Request.Host}{sitemapPathBase.TrimEnd('/')}";
+
+            var sitemapIndexElement = new XElement(ns + "sitemapindex");
+            for (var i = 1; i <= totalSplitSitemaps; i++)
+            {
+                sitemapIndexElement.Add(
+                    new XElement(ns + "sitemap",
+                        new XElement(ns + "loc", $"{baseUrl}/sitemap-{i}.xml")));
+            }
+
+            return new XDocument(sitemapIndexElement);
         }
     }
 }

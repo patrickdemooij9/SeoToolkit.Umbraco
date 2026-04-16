@@ -292,6 +292,79 @@ namespace SeoToolkit.Tests
             _mockSitemapGenerator.Verify(g => g.Generate(It.IsAny<SitemapGeneratorOptions>()), Times.Once);
         }
 
+        [Test]
+        public async Task Invoke_WithMoreThan50000Urls_AtSitemapXmlPath_ReturnsSitemapIndex()
+        {
+            // Arrange
+            _httpContext.Request.Path = "/sitemap.xml";
+            _httpContext.Request.Scheme = "https";
+            _httpContext.Request.Host = new HostString("example.com");
+            var sitemapXml = CreateSitemapWithUrlCount(50001);
+            var settings = new SitemapConfig { ReturnContentType = "application/xml", StructureMode = StructureMode.OnlyRoot };
+
+            _mockSettingsService.Setup(s => s.GetSettings()).Returns(settings);
+            _mockSitemapGenerator.Setup(g => g.Generate(It.IsAny<SitemapGeneratorOptions>())).Returns(sitemapXml);
+            SetupBasicUmbracoContext();
+
+            // Act
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+
+            // Assert
+            _httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+            using var reader = new StreamReader(_httpContext.Response.Body, Encoding.UTF8);
+            var responseContent = await reader.ReadToEndAsync();
+            Assert.That(responseContent, Does.Contain("sitemapindex"));
+            Assert.That(responseContent, Does.Contain("https://example.com/sitemap-1.xml"));
+            Assert.That(responseContent, Does.Contain("https://example.com/sitemap-2.xml"));
+        }
+
+        [Test]
+        public async Task Invoke_WithMoreThan50000Urls_AtSplitSitemapPath_ReturnsRequestedSitemapChunk()
+        {
+            // Arrange
+            _httpContext.Request.Path = "/sitemap-2.xml";
+            _httpContext.Request.Scheme = "https";
+            _httpContext.Request.Host = new HostString("example.com");
+            var sitemapXml = CreateSitemapWithUrlCount(50001);
+            var settings = new SitemapConfig { ReturnContentType = "application/xml", StructureMode = StructureMode.OnlyRoot };
+
+            _mockSettingsService.Setup(s => s.GetSettings()).Returns(settings);
+            _mockSitemapGenerator.Setup(g => g.Generate(It.IsAny<SitemapGeneratorOptions>())).Returns(sitemapXml);
+            SetupBasicUmbracoContext();
+
+            // Act
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+
+            // Assert
+            _httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+            using var reader = new StreamReader(_httpContext.Response.Body, Encoding.UTF8);
+            var responseContent = await reader.ReadToEndAsync();
+            Assert.That(responseContent, Does.Contain("urlset"));
+            Assert.That(responseContent, Does.Contain("https://example.com/page50001"));
+            Assert.That(responseContent, Does.Not.Contain("https://example.com/page50000"));
+        }
+
+        [Test]
+        public async Task Invoke_WithOutOfRangeSplitSitemapPath_PassesToNextMiddleware()
+        {
+            // Arrange
+            _httpContext.Request.Path = "/sitemap-3.xml";
+            _httpContext.Request.Scheme = "https";
+            _httpContext.Request.Host = new HostString("example.com");
+            var sitemapXml = CreateSitemapWithUrlCount(50001);
+            var settings = new SitemapConfig { ReturnContentType = "application/xml", StructureMode = StructureMode.OnlyRoot };
+
+            _mockSettingsService.Setup(s => s.GetSettings()).Returns(settings);
+            _mockSitemapGenerator.Setup(g => g.Generate(It.IsAny<SitemapGeneratorOptions>())).Returns(sitemapXml);
+            SetupBasicUmbracoContext();
+
+            // Act
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+
+            // Assert
+            _mockNext.Verify(n => n.Invoke(_httpContext), Times.Once);
+        }
+
         private void SetupBasicUmbracoContext()
         {
             var mockUmbracoContext = new Mock<IUmbracoContext>();
@@ -311,6 +384,19 @@ namespace SeoToolkit.Tests
             var ctxRef = new UmbracoContextReference(mockUmbracoContext.Object, true, mockAccessor.Object);
             _mockUmbracoContextFactory.Setup(f => f.EnsureUmbracoContext())
                 .Returns(ctxRef);
+        }
+
+        private static XDocument CreateSitemapWithUrlCount(int count)
+        {
+            var ns = XNamespace.Get("http://www.sitemaps.org/schemas/sitemap/0.9");
+            var urlSet = new XElement(ns + "urlset");
+            for (var i = 1; i <= count; i++)
+            {
+                urlSet.Add(new XElement(ns + "url",
+                    new XElement(ns + "loc", $"https://example.com/page{i}")));
+            }
+
+            return new XDocument(urlSet);
         }
     }
 }
