@@ -4,7 +4,7 @@ import MyWelcomeDashboardElement from "./welcomeDashboard.element";
 export const welcomeDashboardManifest : ManifestDashboard = {
     type: "dashboard",
     alias: "seoToolkitWelcomeDashboard",
-    name: "SEO Dashboard",
+    name: "Welcome",
     meta: {
         pathname: "welcome"
     },
