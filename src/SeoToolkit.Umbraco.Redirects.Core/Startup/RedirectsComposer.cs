@@ -60,17 +60,13 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Composers
             {
                 builder.Services.Configure<UmbracoPipelineOptions>(options =>
                 {
-                    options.AddFilter(new UmbracoPipelineFilter(
-                        "SeoToolkitRedirects",
-                        applicationBuilder =>
+                    options.AddFilter(new UmbracoPipelineFilter("SeoToolkitRedirects")
+                    {
+                        PostPipeline = applicationBuilder =>
                         {
                             applicationBuilder.UseMiddleware<RedirectMiddleware>();
-                        },
-                        applicationBuilder =>
-                        {
-                        },
-                        applicationBuilder => { }
-                    ));
+                        }
+                    });
                 });
             }
         }
