@@ -6,7 +6,7 @@ namespace SeoToolkit.Tests
     [TestFixture]
     public class RobotsTxtValidatorTests
     {
-        private const string DisallowAllWarning = "You are currently blocking all bots which will impact your SEO. Make sure to check if this is correct.";
+        private const string DisallowAllWarning = DefaultRobotsTxtValidator.DisallowAllWarning;
 
         [Test]
         public void Validate_WhenDisallowAllForWildcardUserAgent_ReturnsWarning()
@@ -56,6 +56,20 @@ namespace SeoToolkit.Tests
             // Arrange
             var validator = new DefaultRobotsTxtValidator();
             var content = "User-agent: *\nDisallow: /\nUser-agent: Googlebot\nDisallow: /";
+
+            // Act
+            var results = validator.Validate(content).ToArray();
+
+            // Assert
+            Assert.That(results.Count(it => it.Error == DisallowAllWarning), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Validate_WhenWildcardAndSpecificUserAgentsAreGrouped_WarnsForDisallowAll()
+        {
+            // Arrange
+            var validator = new DefaultRobotsTxtValidator();
+            var content = "User-agent: *\nUser-agent: Googlebot\nDisallow: /";
 
             // Act
             var results = validator.Validate(content).ToArray();

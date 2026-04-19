@@ -8,7 +8,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Common.Validators
 {
     public class DefaultRobotsTxtValidator : IRobotsTxtValidator
     {
-        private const string DisallowAllWarning = "You are currently blocking all bots which will impact your SEO. Make sure to check if this is correct.";
+        public const string DisallowAllWarning = "You are currently blocking all bots which will impact your SEO. Make sure to check if this is correct.";
 
         private readonly string[] ValidLineStarts =
         {
@@ -18,8 +18,9 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Common.Validators
         public IEnumerable<RobotsTxtValidation> Validate(string content)
         {
             var lines = content.Split(Environment.NewLine.ToCharArray());
-            var hasWildcardUserAgent = false;
-            var warningShownForCurrentUserAgent = false;
+            var currentGroupHasWildcardUserAgent = false;
+            var warningShownForCurrentGroup = false;
+            var hasRulesForCurrentGroup = false;
 
             for (var i = 0; i < lines.Length; i++)
             {
@@ -27,20 +28,33 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Common.Validators
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
-                var lineParts = line.Split(':', 2);
-                var directive = lineParts[0].Trim();
-                var value = lineParts.Length > 1 ? lineParts[1].Trim() : string.Empty;
-
-                if (directive == "USER-AGENT")
+                var colonIndex = line.IndexOf(':');
+                if (colonIndex >= 0)
                 {
-                    hasWildcardUserAgent = value == "*";
-                    warningShownForCurrentUserAgent = false;
-                }
+                    var directive = line[..colonIndex].Trim();
+                    var value = line[(colonIndex + 1)..].Trim();
 
-                if (hasWildcardUserAgent && !warningShownForCurrentUserAgent && directive == "DISALLOW" && value == "/")
-                {
-                    yield return new RobotsTxtValidation(i + 1, DisallowAllWarning);
-                    warningShownForCurrentUserAgent = true;
+                    if (directive == "USER-AGENT")
+                    {
+                        if (hasRulesForCurrentGroup)
+                        {
+                            currentGroupHasWildcardUserAgent = false;
+                            warningShownForCurrentGroup = false;
+                            hasRulesForCurrentGroup = false;
+                        }
+
+                        currentGroupHasWildcardUserAgent = currentGroupHasWildcardUserAgent || value == "*";
+                    }
+                    else
+                    {
+                        hasRulesForCurrentGroup = true;
+                    }
+
+                    if (currentGroupHasWildcardUserAgent && !warningShownForCurrentGroup && directive == "DISALLOW" && value == "/")
+                    {
+                        yield return new RobotsTxtValidation(i + 1, DisallowAllWarning);
+                        warningShownForCurrentGroup = true;
+                    }
                 }
 
                 var valid = ValidLineStarts.Any(validLineStart => line.StartsWith(validLineStart));
