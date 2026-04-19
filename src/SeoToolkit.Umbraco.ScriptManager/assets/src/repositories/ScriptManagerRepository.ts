@@ -69,4 +69,8 @@ export default class ScriptManagerRepository
   async getScriptDefinitions() {
     return this.#scriptManagerSource.getScriptDefinitions();
   }
+
+  async sortScripts(keys: string[]) {
+    return this.#scriptManagerSource.sortScripts(keys);
+  }
 }

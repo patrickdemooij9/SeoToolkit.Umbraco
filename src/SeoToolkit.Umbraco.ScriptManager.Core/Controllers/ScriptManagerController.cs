@@ -50,7 +50,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
                 Name = postModel.Name,
                 Definition = definition,
                 Config = postModel.Fields.ToDictionary(it => it.Key, it => it.Value),
-                DomainId = postModel.DomainId
+                DomainId = postModel.DomainId,
+                SortOrder = postModel.SortOrder ?? 0
             };
             script = _scriptManagerService.Save(script);
             return Ok(new ScriptDetailViewModel(script));
@@ -79,6 +80,14 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
 
             _scriptManagerService.Delete(postModel.Ids);
             return GetAllScripts(domainId);
+        }
+
+        [HttpPost("sortScripts")]
+        [ProducesResponseType(200)]
+        public IActionResult SortScripts(SortScriptsPostModel postModel)
+        {
+            _scriptManagerService.Sort(postModel.Keys);
+            return Ok();
         }
     }
 }

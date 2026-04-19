@@ -35,6 +35,11 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
         {
             if (script.Key is null)
             {
+                if (script.SortOrder <= 0)
+                {
+                    script.SortOrder = _scriptRepository.GetMaxSortOrder(script.DomainId) + 1;
+                }
+
                 script.Key = Guid.NewGuid();
                 script = _scriptRepository.Add(script);
             }
@@ -113,6 +118,18 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
         private void ClearCache()
         {
             _distributedCache.RefreshAll(ScriptManagerCacheRefresher.CacheGuid);
+        }
+
+        public void Sort(Guid[] orderedKeys)
+        {
+            for (int i = 0; i < orderedKeys.Length; i++)
+            {
+                var script = _scriptRepository.Get(orderedKeys[i]);
+                if (script is null) continue;
+                script.SortOrder = i + 1;
+                _scriptRepository.Update(script);
+            }
+            ClearCache();
         }
     }
 }
