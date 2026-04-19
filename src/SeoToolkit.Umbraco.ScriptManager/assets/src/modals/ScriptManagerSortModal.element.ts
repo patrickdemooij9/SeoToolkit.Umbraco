@@ -78,12 +78,14 @@ export default class ScriptManagerSortModal extends UmbModalBaseElement<
                     <uui-button
                         label="Cancel"
                         @click=${this.#handleCancel}>
+                        Cancel
                     </uui-button>
                     <uui-button
                         label="Save"
                         look="primary"
                         color="positive"
                         @click=${this.#handleSubmit}>
+                        Save
                     </uui-button>
                 </div>
             </umb-body-layout>

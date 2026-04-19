@@ -1,7 +1,7 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UmbDataSourceResponse } from "@umbraco-cms/backoffice/repository";
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
-import { BackofficeSeoToolkitScriptManagerService, GetUmbracoSeoToolkitScriptManagerDefinitionsResponse, GetUmbracoSeoToolkitScriptManagerScriptsResponse, ScriptDetailViewModel, SortScriptsPostModel } from "../api";
+import { BackofficeSeoToolkitScriptManager, GetUmbracoSeoToolkitScriptManagerDefinitionsResponse, GetUmbracoSeoToolkitScriptManagerScriptsResponse, ScriptDetailViewModel } from "../api";
 
 export class ScriptManagerSource {
     #host: UmbControllerHost;
@@ -11,7 +11,7 @@ export class ScriptManagerSource {
     }
 
     async getScript(id: string){
-        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerScript({
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManager.getUmbracoSeoToolkitScriptManagerScript({
             query: {
                 id: id
             }
@@ -19,7 +19,7 @@ export class ScriptManagerSource {
     }
 
     async getScripts(domainId?: string): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitScriptManagerScriptsResponse>>{
-        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerScripts({
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManager.getUmbracoSeoToolkitScriptManagerScripts({
             query: {
                 domainId
             }
@@ -27,7 +27,7 @@ export class ScriptManagerSource {
     }
 
     async saveScript(model: ScriptDetailViewModel){
-        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.postUmbracoSeoToolkitScriptManagerScript({
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManager.postUmbracoSeoToolkitScriptManagerScript({
             body: {
                 id: model.id,
                 key: model.key,
@@ -41,7 +41,7 @@ export class ScriptManagerSource {
     }
 
     async deleteScripts(ids: string[]){
-        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.deleteUmbracoSeoToolkitScriptManagerScript({
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManager.deleteUmbracoSeoToolkitScriptManagerScript({
             body: {
                 ids: ids
             }
@@ -49,11 +49,11 @@ export class ScriptManagerSource {
     }
 
     async getScriptDefinitions(): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitScriptManagerDefinitionsResponse>>{
-        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerDefinitions());
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManager.getUmbracoSeoToolkitScriptManagerDefinitions());
     }
 
     async sortScripts(keys: string[]) {
-        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.postUmbracoSeoToolkitScriptManagerSortScripts({
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManager.postUmbracoSeoToolkitScriptManagerSortScripts({
             body: {
                 keys
             }
