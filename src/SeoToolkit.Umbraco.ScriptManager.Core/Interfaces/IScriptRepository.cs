@@ -14,5 +14,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces
         Script Get(int id);
         Script Get(Guid id);
         IEnumerable<Script> GetAll(Guid? domainId);
+        int GetMaxSortOrder(Guid? domainId);
     }
 }
