@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Database;
 using Umbraco.Cms.Infrastructure.Migrations;
+using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.ScriptManager.Core.Migrations
 {
