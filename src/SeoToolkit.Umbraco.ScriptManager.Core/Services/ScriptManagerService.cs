@@ -119,5 +119,17 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
         {
             _distributedCache.RefreshAll(ScriptManagerCacheRefresher.CacheGuid);
         }
+
+        public void Sort(Guid[] orderedKeys)
+        {
+            for (int i = 0; i < orderedKeys.Length; i++)
+            {
+                var script = _scriptRepository.Get(orderedKeys[i]);
+                if (script is null) continue;
+                script.SortOrder = i + 1;
+                _scriptRepository.Update(script);
+            }
+            ClearCache();
+        }
     }
 }

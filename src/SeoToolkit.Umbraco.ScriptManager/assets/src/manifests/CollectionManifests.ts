@@ -1,7 +1,8 @@
 import { ManifestCollection, ManifestCollectionAction, ManifestCollectionView, UMB_COLLECTION_ALIAS_CONDITION } from "@umbraco-cms/backoffice/collection";
 import { SEOTOOLKIT_SCRIPTMANAGER_ENTITY } from "../Constants";
-import { ManifestEntityBulkAction, ManifestRepository } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestEntityBulkAction, ManifestModal, ManifestRepository } from "@umbraco-cms/backoffice/extension-registry";
 import { ScriptManagerCreateAction } from "../actions/ScriptManagerCreateAction";
+import { ScriptManagerSortAction } from "../actions/ScriptManagerSortAction";
 
 const ScriptManagerCollection: ManifestCollection = {
     type: 'collection',
@@ -74,4 +75,28 @@ const ScriptManagerRepository: ManifestRepository = {
     api: () => import('../repositories/ScriptManagerRepository')
 }
 
-export const CollectionManifests = [ScriptManagerCollection, ScriptManagerCollectionView, ScriptManagerCollectionCreateAction, ScriptManagerCollectionTrashBulkAction, ScriptManagerRepository];
+const ScriptManagerSortCollectionAction: ManifestCollectionAction = {
+    type: 'collectionAction',
+    kind: 'button',
+    name: 'ScriptManager Collection Overview Sort',
+    alias: 'seoToolkit.collections.script.sortAction',
+    api: ScriptManagerSortAction,
+    meta: {
+        label: 'Sort',
+    },
+    conditions: [
+        {
+            alias: UMB_COLLECTION_ALIAS_CONDITION,
+            match: 'seoToolkit.collections.scripts',
+        },
+    ],
+}
+
+const ScriptManagerSortModal: ManifestModal = {
+    type: 'modal',
+    alias: 'seoToolkit.modal.scriptManager.sort',
+    name: 'SeoToolkit ScriptManager Sort Modal',
+    js: () => import('../modals/ScriptManagerSortModal.element'),
+}
+
+export const CollectionManifests = [ScriptManagerCollection, ScriptManagerCollectionView, ScriptManagerCollectionCreateAction, ScriptManagerCollectionTrashBulkAction, ScriptManagerRepository, ScriptManagerSortCollectionAction, ScriptManagerSortModal];

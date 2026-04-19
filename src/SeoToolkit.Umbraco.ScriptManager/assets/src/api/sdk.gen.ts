@@ -223,6 +223,17 @@ export class BackofficeSeoToolkitScriptManagerService {
             ...options
         });
     }
+
+    public static postUmbracoSeoToolkitScriptManagerSortScripts<ThrowOnError extends boolean = true>(options?: Options<PostUmbracoSeoToolkitScriptManagerSortScriptsData, ThrowOnError>) {
+        return (options?.client ?? _heyApiClient).post<unknown, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkitScriptManager/sortScripts',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options?.headers
+            }
+        });
+    }
     
 }
 

@@ -12,9 +12,6 @@ export class ScriptManagerDetailWorkspace extends UmbLitElement {
     @state()
 	private _name: string = '';
 
-    @state()
-    private _sortOrder: number = 0;
-
     constructor(){
         super();
 
@@ -26,7 +23,6 @@ export class ScriptManagerDetailWorkspace extends UmbLitElement {
 
             this.observe(this.#context.script, (value) => {
                 this._name = value.name!;
-                this._sortOrder = value.sortOrder ?? 0;
             })
         })
     }
@@ -39,38 +35,21 @@ export class ScriptManagerDetailWorkspace extends UmbLitElement {
         });
 	}
 
-    #onSortOrderInput(event: Event) {
-        const target = event.target as UUIInputElement;
-        const value = Number.parseInt(target.value as string, 10);
-        this.#context?.updateScript({
-            sortOrder: Number.isNaN(value) ? 0 : value,
-        });
-    }
-
     override render(){
         return html`
             <umb-workspace-editor
 				alias="seoToolkit.scriptManager.detail">
                 <div id="workspace-header" slot="header">
-                    <uui-input
-                        placeholder=${this.localize.term('placeholders_entername')}
-                        .value=${this._name}
-                        @input=${this.#onNameInput}
-                        label=${this.localize.term('placeholders_entername')}
+					<uui-input
+						placeholder=${this.localize.term('placeholders_entername')}
+						.value=${this._name}
+						@input=${this.#onNameInput}
+						label=${this.localize.term('placeholders_entername')}
                         required="true"
                         required-message="Name is required"
-                        ${umbFocus()}>
-                    </uui-input>
-                </div>
-                <div id="workspace-content">
-					<uui-input
-						.value=${this._sortOrder.toString()}
-						@input=${this.#onSortOrderInput}
-						label='Sort order'
-                        type='number'
-                        min='0'>
+						${umbFocus()}>
 					</uui-input>
-                </div>
+				</div>
             </umb-workspace-editor>
         `
     }
@@ -84,10 +63,6 @@ export class ScriptManagerDetailWorkspace extends UmbLitElement {
             uui-input {
 				width: 100%;
 			}
-
-            #workspace-content {
-                margin-top: var(--uui-size-space-4);
-            }
         `
     ]
 }

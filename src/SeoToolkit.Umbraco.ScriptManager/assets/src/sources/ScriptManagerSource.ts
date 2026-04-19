@@ -1,7 +1,7 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UmbDataSourceResponse } from "@umbraco-cms/backoffice/repository";
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
-import { BackofficeSeoToolkitScriptManagerService, GetUmbracoSeoToolkitScriptManagerDefinitionsResponse, GetUmbracoSeoToolkitScriptManagerScriptsResponse, ScriptDetailViewModel } from "../api";
+import { BackofficeSeoToolkitScriptManagerService, GetUmbracoSeoToolkitScriptManagerDefinitionsResponse, GetUmbracoSeoToolkitScriptManagerScriptsResponse, ScriptDetailViewModel, SortScriptsPostModel } from "../api";
 
 export class ScriptManagerSource {
     #host: UmbControllerHost;
@@ -50,5 +50,13 @@ export class ScriptManagerSource {
 
     async getScriptDefinitions(): Promise<UmbDataSourceResponse<GetUmbracoSeoToolkitScriptManagerDefinitionsResponse>>{
         return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.getUmbracoSeoToolkitScriptManagerDefinitions());
+    }
+
+    async sortScripts(keys: string[]) {
+        return await tryExecute(this.#host, BackofficeSeoToolkitScriptManagerService.postUmbracoSeoToolkitScriptManagerSortScripts({
+            body: {
+                keys
+            }
+        }));
     }
 }

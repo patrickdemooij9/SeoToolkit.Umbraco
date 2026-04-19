@@ -29,6 +29,10 @@ export type DeleteRedirectsPostModel = {
     ids?: Array<string> | null;
 };
 
+export type SortScriptsPostModel = {
+    keys?: Array<string> | null;
+};
+
 export type DeleteScriptPostModel = {
     ids?: Array<string> | null;
 };
@@ -785,6 +789,13 @@ export type GetUmbracoSeoToolkitScriptManagerScriptsResponses = {
 };
 
 export type GetUmbracoSeoToolkitScriptManagerScriptsResponse = GetUmbracoSeoToolkitScriptManagerScriptsResponses[keyof GetUmbracoSeoToolkitScriptManagerScriptsResponses];
+
+export type PostUmbracoSeoToolkitScriptManagerSortScriptsData = {
+    body?: SortScriptsPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitScriptManager/sortScripts';
+};
 
 export type DeleteUmbracoSeoToolkitSiteAuditSiteAuditData = {
     body?: DeleteAuditsPostModel;

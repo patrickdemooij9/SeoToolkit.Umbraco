@@ -81,5 +81,13 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
             _scriptManagerService.Delete(postModel.Ids);
             return GetAllScripts(domainId);
         }
+
+        [HttpPost("sortScripts")]
+        [ProducesResponseType(200)]
+        public IActionResult SortScripts(SortScriptsPostModel postModel)
+        {
+            _scriptManagerService.Sort(postModel.Keys);
+            return Ok();
+        }
     }
 }
