@@ -363,10 +363,8 @@ export type SitemapContentSettingsPostModel = {
 
 export type SitemapContentSettingsViewModel = {
     excludeFromSitemap: boolean;
-    hideFromSitemap?: boolean | null;
     changeFrequency?: string | null;
     priority?: number | null;
-    effectiveHideFromSitemap: boolean;
     effectiveChangeFrequency?: string | null;
     effectivePriority?: number | null;
 };

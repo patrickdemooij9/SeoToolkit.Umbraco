@@ -1,4 +1,6 @@
 import { ManifestWorkspaceContext } from '@umbraco-cms/backoffice/workspace';
+import { SitemapEnabledCondition } from '../conditions/SitemapEnabledCondition';
+import { ManifestCondition } from '@umbraco-cms/backoffice/extension-api';
 
 const documentView: any = {
     type: 'seoToolkitDocumentView',
@@ -36,6 +38,13 @@ const documentWorkspaceContext: ManifestWorkspaceContext = {
     ]
 };
 
+const sitemapEnabledConditionManifest: ManifestCondition = {
+  type: "condition",
+  name: "Sitemap Enabled Condition",
+  alias: "SeoToolkit.SitemapEnabled",
+  api: SitemapEnabledCondition,
+};
+
 const contentView: any = {
     type: 'seoToolkitContentView',
     alias: 'seoToolkit.sitemap.contentView',
@@ -51,6 +60,9 @@ const contentView: any = {
         {
             alias: 'SeoToolkit.SeoModuleEnabled',
             moduleAlias: 'sitemap'
+        },
+        {
+            alias: 'SeoToolkit.SitemapEnabled'
         }
     ]
 };
@@ -68,8 +80,11 @@ const contentWorkspaceContext: ManifestWorkspaceContext = {
         {
             alias: 'SeoToolkit.SeoModuleEnabled',
             moduleAlias: 'sitemap'
+        },
+        {
+            alias: 'SeoToolkit.SitemapEnabled'
         }
     ]
 };
 
-export const DocumentManifests = [documentView, documentWorkspaceContext, contentView, contentWorkspaceContext];
+export const DocumentManifests = [documentView, documentWorkspaceContext, contentView, contentWorkspaceContext, sitemapEnabledConditionManifest];
