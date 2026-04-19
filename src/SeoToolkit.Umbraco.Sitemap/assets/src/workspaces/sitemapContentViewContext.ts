@@ -18,6 +18,7 @@ export default class SitemapContentViewContext
     #lastUpdateDate?: string;
 
     #model = new UmbObjectState<SitemapContentSettingsViewModel>({
+        excludeFromSitemap: false,
         effectiveHideFromSitemap: false,
     });
     public readonly model = this.#model.asObservable();
@@ -66,6 +67,7 @@ export default class SitemapContentViewContext
         const value = this.#model.getValue();
         this.#repository.setContentSettings({
             nodeKey: this.#nodeId,
+            excludeFromSitemap: value.excludeFromSitemap ?? false,
             hideFromSitemap: value.hideFromSitemap,
             changeFrequency: value.changeFrequency,
             priority: value.priority,

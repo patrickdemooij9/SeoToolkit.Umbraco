@@ -34,6 +34,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Repositories
             scope.Database.Save(new SitemapContentEntity
             {
                 NodeKey = settings.NodeKey,
+                ExcludeFromSitemap = settings.ExcludeFromSitemap,
                 HideFromSitemap = settings.HideFromSitemap,
                 ChangeFrequency = settings.ChangeFrequency,
                 Priority = settings.Priority
@@ -56,6 +57,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Repositories
             return new SitemapContentSettings
             {
                 NodeKey = entity.NodeKey,
+                ExcludeFromSitemap = entity.ExcludeFromSitemap,
                 HideFromSitemap = entity.HideFromSitemap,
                 ChangeFrequency = entity.ChangeFrequency,
                 Priority = entity.Priority

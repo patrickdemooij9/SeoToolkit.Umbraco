@@ -129,8 +129,9 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                 var docTypeSettings = GetPageTypeSettings(content.ContentType.Key);
                 var contentOverride = GetContentSettings(content.Key);
 
-                // Resolve HideFromSitemap: content override → doc type → false
-                var hideFromSitemap = contentOverride?.HideFromSitemap ?? docTypeSettings?.HideFromSitemap ?? false;
+                // Resolve HideFromSitemap: excludeFromSitemap (content) → content override → doc type → false
+                var hideFromSitemap = contentOverride?.ExcludeFromSitemap == true
+                    || (contentOverride?.HideFromSitemap ?? docTypeSettings?.HideFromSitemap ?? false);
 
                 var item = new SitemapNodeItem(content.Url(culture, UrlMode.Absolute))
                 {

@@ -355,12 +355,14 @@ export type SitemapPageTypeSettingsViewModel = {
 
 export type SitemapContentSettingsPostModel = {
     nodeKey: string;
+    excludeFromSitemap: boolean;
     hideFromSitemap?: boolean | null;
     changeFrequency?: string | null;
     priority?: number | null;
 };
 
 export type SitemapContentSettingsViewModel = {
+    excludeFromSitemap: boolean;
     hideFromSitemap?: boolean | null;
     changeFrequency?: string | null;
     priority?: number | null;

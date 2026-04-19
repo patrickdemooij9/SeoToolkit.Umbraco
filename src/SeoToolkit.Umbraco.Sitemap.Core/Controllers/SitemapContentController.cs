@@ -34,12 +34,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
             var contentOverride = _sitemapService.GetContentSettings(nodeKey);
             var docTypeSettings = _sitemapService.GetPageTypeSettings(content.ContentType.Key);
 
-            bool effectiveHide = contentOverride?.HideFromSitemap ?? docTypeSettings?.HideFromSitemap ?? false;
+            bool effectiveHide = contentOverride?.ExcludeFromSitemap == true
+                || (contentOverride?.HideFromSitemap ?? docTypeSettings?.HideFromSitemap ?? false);
             string effectiveFrequency = contentOverride?.ChangeFrequency ?? docTypeSettings?.ChangeFrequency;
             double? effectivePriority = contentOverride?.Priority ?? docTypeSettings?.Priority;
 
             return Ok(new SitemapContentSettingsViewModel
             {
+                ExcludeFromSitemap = contentOverride?.ExcludeFromSitemap ?? false,
                 HideFromSitemap = contentOverride?.HideFromSitemap,
                 ChangeFrequency = contentOverride?.ChangeFrequency,
                 Priority = contentOverride?.Priority,
@@ -59,6 +61,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
             _sitemapService.SetContentSettings(new SitemapContentSettings
             {
                 NodeKey = model.NodeKey,
+                ExcludeFromSitemap = model.ExcludeFromSitemap,
                 HideFromSitemap = model.HideFromSitemap,
                 ChangeFrequency = model.ChangeFrequency,
                 Priority = model.Priority

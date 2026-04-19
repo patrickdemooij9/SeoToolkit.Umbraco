@@ -12,6 +12,9 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Models.Database
         [PrimaryKeyColumn(AutoIncrement = false)]
         public Guid NodeKey { get; set; }
 
+        [Column("ExcludeFromSitemap")]
+        public bool ExcludeFromSitemap { get; set; }
+
         [Column("HideFromSitemap")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public bool? HideFromSitemap { get; set; }

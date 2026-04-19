@@ -1,6 +1,6 @@
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
 import { customElement, state } from "@umbraco-cms/backoffice/external/lit";
-import { html, LitElement } from "lit";
+import { css, html, LitElement } from "lit";
 import { UmbPropertyDatasetElement, UmbPropertyValueData } from "@umbraco-cms/backoffice/property";
 import ChangeFrequence from "../models/changeFrequency";
 import Priority from "../models/priority";
@@ -9,17 +9,32 @@ import SitemapContentViewContext, { ST_SITEMAP_CONTENT_TOKEN_CONTEXT } from "./s
 // Label for the "no override / inherit from document type" option
 const INHERITED_LABEL = "Inherited";
 
-type HideFromSitemapOption = { name: string; value: boolean | undefined };
-
 @customElement("st-sitemap-content-view")
 export default class SitemapContentViewElement extends UmbElementMixin(LitElement) {
-    #context?: SitemapContentViewContext;
+    static styles = css`
+        .effective-value {
+            font-size: 0.8125rem;
+            color: var(--uui-color-text-alt, #666);
+            margin: -6px 0 12px 0;
+            padding: 4px 8px;
+            background: var(--uui-color-surface-alt, #f5f5f5);
+            border-radius: var(--uui-border-radius, 3px);
+            border-left: 3px solid var(--uui-color-border, #ccc);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .effective-value uui-icon {
+            flex-shrink: 0;
+            color: var(--uui-color-interactive, #006DF4);
+        }
+        .effective-value-label {
+            font-weight: 500;
+            color: var(--uui-color-text, #333);
+        }
+    `;
 
-    #hideOptions: HideFromSitemapOption[] = [
-        { name: INHERITED_LABEL, value: undefined },
-        { name: "Hide from sitemap", value: true },
-        { name: "Show in sitemap", value: false },
-    ];
+    #context?: SitemapContentViewContext;
 
     #changeFrequences: ChangeFrequence[] = [
         { name: INHERITED_LABEL, value: undefined },
@@ -50,9 +65,6 @@ export default class SitemapContentViewElement extends UmbElementMixin(LitElemen
     _content?: UmbPropertyValueData[] = [];
 
     @state()
-    _effectiveHideFromSitemap?: boolean;
-
-    @state()
     _effectiveChangeFrequency?: string | null;
 
     @state()
@@ -68,13 +80,8 @@ export default class SitemapContentViewElement extends UmbElementMixin(LitElemen
             this.observe(instance.model, (item) => {
                 if (!item) return;
 
-                this._effectiveHideFromSitemap = item.effectiveHideFromSitemap;
                 this._effectiveChangeFrequency = item.effectiveChangeFrequency;
                 this._effectivePriority = item.effectivePriority;
-
-                const hideOption = item.hideFromSitemap == null
-                    ? this.#hideOptions[0]
-                    : this.#hideOptions.find((o) => o.value === item.hideFromSitemap) ?? this.#hideOptions[0];
 
                 const changeFrequence = item.changeFrequency == null
                     ? INHERITED_LABEL
@@ -85,7 +92,7 @@ export default class SitemapContentViewElement extends UmbElementMixin(LitElemen
                     : (this.#priorities.find((p) => p.value === item.priority)?.name ?? INHERITED_LABEL);
 
                 this._content = [
-                    { alias: "hideFromSitemap", value: [hideOption.name] },
+                    { alias: "excludeFromSitemap", value: item.excludeFromSitemap ?? false },
                     { alias: "changeFrequency", value: [changeFrequence] },
                     { alias: "priority", value: [priority] },
                 ];
@@ -98,21 +105,21 @@ export default class SitemapContentViewElement extends UmbElementMixin(LitElemen
 
         const newValue: Record<string, unknown> = {};
         value.forEach((item) => {
-            const itemValue = item.value as string[] | undefined;
-            const selected = itemValue?.[0];
+            const itemValue = item.value as any;
 
             switch (item.alias) {
-                case "hideFromSitemap": {
-                    const option = this.#hideOptions.find((o) => o.name === selected);
-                    newValue[item.alias] = option?.name === INHERITED_LABEL ? null : option?.value;
+                case "excludeFromSitemap": {
+                    newValue[item.alias] = itemValue;
                     break;
                 }
                 case "changeFrequency": {
+                    const selected = (itemValue as string[] | undefined)?.[0];
                     const opt = this.#changeFrequences.find((f) => f.name === selected);
                     newValue[item.alias] = opt?.name === INHERITED_LABEL ? null : opt?.value;
                     break;
                 }
                 case "priority": {
+                    const selected = (itemValue as string[] | undefined)?.[0];
                     const opt = this.#priorities.find((p) => p.name === selected);
                     newValue[item.alias] = opt?.name === INHERITED_LABEL ? null : opt?.value;
                     break;
@@ -123,10 +130,14 @@ export default class SitemapContentViewElement extends UmbElementMixin(LitElemen
         this.#context?.update(newValue as any);
     }
 
-    #effectiveHideLabel() {
-        if (this._effectiveHideFromSitemap === true) return "Hide from sitemap";
-        if (this._effectiveHideFromSitemap === false) return "Show in sitemap";
-        return "Show in sitemap";
+    #renderEffectiveNote(label: string, value: string | number | null | undefined) {
+        const displayValue = value != null ? String(value) : "None";
+        return html`
+            <div class="effective-value">
+                <uui-icon name="icon-info"></uui-icon>
+                Effective ${label}: <span class="effective-value-label">${displayValue}</span>
+            </div>
+        `;
     }
 
     render() {
@@ -136,35 +147,33 @@ export default class SitemapContentViewElement extends UmbElementMixin(LitElemen
                     .value=${this._content!}
                     @change=${this.#onPropertyDataChange}>
                     <umb-property
-                        alias="hideFromSitemap"
-                        label="Hide from sitemap"
-                        description="Override whether this page is hidden from the sitemap. 'Inherited' uses the document type setting (currently: ${this.#effectiveHideLabel()})."
-                        property-editor-ui-alias="Umb.PropertyEditorUi.Dropdown"
-                        .config=${[{
-                            alias: "items",
-                            value: this.#hideOptions.map((o) => o.name),
-                        }]}>
+                        alias="excludeFromSitemap"
+                        label="Exclude from sitemap"
+                        description="When checked, this page is excluded from the sitemap regardless of all other settings."
+                        property-editor-ui-alias="Umb.PropertyEditorUi.Toggle">
                     </umb-property>
                     <umb-property
                         alias="changeFrequency"
                         label="Change frequency"
-                        description="Override the change frequency for this page. 'Inherited' uses the document type setting${this._effectiveChangeFrequency ? ` (currently: ${this._effectiveChangeFrequency})` : ''}."
+                        description="Override the change frequency for this page. Select 'Inherited' to use the document type default."
                         property-editor-ui-alias="Umb.PropertyEditorUi.Dropdown"
                         .config=${[{
                             alias: "items",
                             value: this.#changeFrequences.map((f) => f.name),
                         }]}>
                     </umb-property>
+                    ${this.#renderEffectiveNote("change frequency", this._effectiveChangeFrequency)}
                     <umb-property
                         alias="priority"
                         label="Priority"
-                        description="Override the priority for this page. 'Inherited' uses the document type setting${this._effectivePriority != null ? ` (currently: ${this._effectivePriority})` : ''}."
+                        description="Override the priority for this page. Select 'Inherited' to use the document type default."
                         property-editor-ui-alias="Umb.PropertyEditorUi.Dropdown"
                         .config=${[{
                             alias: "items",
                             value: this.#priorities.map((p) => p.name),
                         }]}>
                     </umb-property>
+                    ${this.#renderEffectiveNote("priority", this._effectivePriority)}
                 </umb-property-dataset>
             </uui-box>
         `;
