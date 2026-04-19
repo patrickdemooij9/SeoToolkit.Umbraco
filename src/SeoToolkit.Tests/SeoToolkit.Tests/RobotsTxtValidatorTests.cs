@@ -6,6 +6,8 @@ namespace SeoToolkit.Tests
     [TestFixture]
     public class RobotsTxtValidatorTests
     {
+        private const string DisallowAllWarning = "You are currently blocking all bots which will impact your SEO. Make sure to check if this is correct.";
+
         [Test]
         public void Validate_WhenDisallowAllForWildcardUserAgent_ReturnsWarning()
         {
@@ -17,7 +19,7 @@ namespace SeoToolkit.Tests
             var results = validator.Validate(content).ToArray();
 
             // Assert
-            Assert.That(results.Any(it => it.Error == "You are currently blocking all bots which will impact your SEO. Make sure to check if this is correct."), Is.True);
+            Assert.That(results.Any(it => it.Error == DisallowAllWarning), Is.True);
         }
 
         [Test]
@@ -31,7 +33,35 @@ namespace SeoToolkit.Tests
             var results = validator.Validate(content).ToArray();
 
             // Assert
-            Assert.That(results.Any(it => it.Error == "You are currently blocking all bots which will impact your SEO. Make sure to check if this is correct."), Is.False);
+            Assert.That(results.Any(it => it.Error == DisallowAllWarning), Is.False);
+        }
+
+        [Test]
+        public void Validate_WhenMultipleDisallowAllInWildcardBlock_ReturnsSingleWarning()
+        {
+            // Arrange
+            var validator = new DefaultRobotsTxtValidator();
+            var content = "User-agent: *\nDisallow: /\nDisallow: /";
+
+            // Act
+            var results = validator.Validate(content).ToArray();
+
+            // Assert
+            Assert.That(results.Count(it => it.Error == DisallowAllWarning), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Validate_WhenWildcardBlockFollowedBySpecificUserAgent_WarnsOnlyForWildcardBlock()
+        {
+            // Arrange
+            var validator = new DefaultRobotsTxtValidator();
+            var content = "User-agent: *\nDisallow: /\nUser-agent: Googlebot\nDisallow: /";
+
+            // Act
+            var results = validator.Validate(content).ToArray();
+
+            // Assert
+            Assert.That(results.Count(it => it.Error == DisallowAllWarning), Is.EqualTo(1));
         }
     }
 }

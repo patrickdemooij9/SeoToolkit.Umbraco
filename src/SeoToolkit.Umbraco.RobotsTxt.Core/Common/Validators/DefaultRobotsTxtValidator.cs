@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
@@ -19,6 +19,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Common.Validators
         {
             var lines = content.Split(Environment.NewLine.ToCharArray());
             var hasWildcardUserAgent = false;
+            var warningShownForCurrentUserAgent = false;
 
             for (var i = 0; i < lines.Length; i++)
             {
@@ -26,14 +27,20 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Common.Validators
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
-                if (line.StartsWith("USER-AGENT"))
+                var lineParts = line.Split(':', 2);
+                var directive = lineParts[0].Trim();
+                var value = lineParts.Length > 1 ? lineParts[1].Trim() : string.Empty;
+
+                if (directive == "USER-AGENT")
                 {
-                    hasWildcardUserAgent = line == "USER-AGENT:*" || line == "USER-AGENT: *";
+                    hasWildcardUserAgent = value == "*";
+                    warningShownForCurrentUserAgent = false;
                 }
 
-                if (hasWildcardUserAgent && (line == "DISALLOW:/" || line == "DISALLOW: /"))
+                if (hasWildcardUserAgent && !warningShownForCurrentUserAgent && directive == "DISALLOW" && value == "/")
                 {
                     yield return new RobotsTxtValidation(i + 1, DisallowAllWarning);
+                    warningShownForCurrentUserAgent = true;
                 }
 
                 var valid = ValidLineStarts.Any(validLineStart => line.StartsWith(validLineStart));
