@@ -40,6 +40,15 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Repositories
             });
         }
 
+        public void Delete(Guid nodeKey)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            scope.Database.Delete<SitemapContentEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SitemapContentEntity>()
+                .Where<SitemapContentEntity>(it => it.NodeKey == nodeKey));
+        }
+
         public SitemapContentSettings[] GetAll()
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);

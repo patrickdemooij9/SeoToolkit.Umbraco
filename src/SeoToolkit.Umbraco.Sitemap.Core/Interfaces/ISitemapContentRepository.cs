@@ -7,6 +7,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Interfaces
     {
         SitemapContentSettings? Get(Guid nodeKey);
         void Set(SitemapContentSettings settings);
+        void Delete(Guid nodeKey);
         SitemapContentSettings[] GetAll();
     }
 }

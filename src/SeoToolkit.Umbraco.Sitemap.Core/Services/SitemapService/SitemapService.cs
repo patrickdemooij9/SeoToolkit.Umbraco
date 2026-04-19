@@ -52,6 +52,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
 
         public void SetContentSettings(SitemapContentSettings settings)
         {
+            var isDefault = !settings.ExcludeFromSitemap && string.IsNullOrEmpty(settings.ChangeFrequency) && !settings.Priority.HasValue;
+
+            if (isDefault)
+            {
+                _sitemapContentRepository.Delete(settings.NodeKey);
+                return;
+            }
+
             _sitemapContentRepository.Set(settings);
         }
 

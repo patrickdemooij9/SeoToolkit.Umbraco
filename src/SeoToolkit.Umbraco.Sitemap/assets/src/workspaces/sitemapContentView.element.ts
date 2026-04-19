@@ -49,10 +49,10 @@ export default class SitemapContentViewElement extends UmbElementMixin(
   _content?: UmbPropertyValueData[] = [];
 
   @state()
-  _effectiveChangeFrequency?: string | null;
+  _inheritedChangeFrequency?: string | null;
 
   @state()
-  _effectivePriority?: number | null;
+  _inheritedPriority?: number | null;
 
   constructor() {
     super();
@@ -64,8 +64,8 @@ export default class SitemapContentViewElement extends UmbElementMixin(
       this.observe(instance.model, (item) => {
         if (!item) return;
 
-        this._effectiveChangeFrequency = item.effectiveChangeFrequency;
-        this._effectivePriority = item.effectivePriority;
+        this._inheritedChangeFrequency = item.inheritedChangeFrequency;
+        this._inheritedPriority = item.inheritedPriority;
 
         const changeFrequence =
           item.changeFrequency == null
@@ -124,16 +124,16 @@ export default class SitemapContentViewElement extends UmbElementMixin(
     this.#context?.update(newValue as any);
   }
 
-  #renderEffectiveNote(
+  #renderInheritedNote(
     label: string,
     value: string | number | null | undefined,
   ) {
     const displayValue = value != null ? String(value) : "None";
     return html`
-      <div class="effective-value">
+      <div class="inherited-value">
         <uui-icon name="icon-info"></uui-icon>
         Inherited ${label}:
-        <span class="effective-value-label">${displayValue}</span>
+        <span class="inherited-value-label">${displayValue}</span>
       </div>
     `;
   }
@@ -169,9 +169,9 @@ export default class SitemapContentViewElement extends UmbElementMixin(
             ]}
           >
           </umb-property>
-          ${this.#renderEffectiveNote(
+          ${this.#renderInheritedNote(
             "change frequency",
-            this._effectiveChangeFrequency,
+            this._inheritedChangeFrequency,
           )}
           <umb-property
             alias="priority"
@@ -190,14 +190,14 @@ export default class SitemapContentViewElement extends UmbElementMixin(
             ]}
           >
           </umb-property>
-          ${this.#renderEffectiveNote("priority", this._effectivePriority)}
+          ${this.#renderInheritedNote("priority", this._inheritedPriority)}
         </umb-property-dataset>
       </uui-box>
     `;
   }
 
   static styles = css`
-    .effective-value {
+    .inherited-value {
       font-size: 0.8125rem;
       color: var(--uui-color-text-alt, #666);
       margin: -6px 0 12px 0;
@@ -209,11 +209,11 @@ export default class SitemapContentViewElement extends UmbElementMixin(
       align-items: center;
       gap: 6px;
     }
-    .effective-value uui-icon {
+    .inherited-value uui-icon {
       flex-shrink: 0;
       color: var(--uui-color-interactive, #006df4);
     }
-    .effective-value-label {
+    .inherited-value-label {
       font-weight: 500;
       color: var(--uui-color-text, #333);
     }

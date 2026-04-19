@@ -8,74 +8,78 @@ import { SitemapContentSettingsViewModel } from "../api";
 import { ContentSettingsRepository } from "../repositories/contentSettingsRepository";
 
 export default class SitemapContentViewContext
-    extends UmbContextBase
-    implements UmbWorkspaceContext
+  extends UmbContextBase
+  implements UmbWorkspaceContext
 {
-    workspaceAlias: string = "Umb.Workspace.Document";
+  workspaceAlias: string = "Umb.Workspace.Document";
 
-    #repository: ContentSettingsRepository;
-    #nodeId?: string;
-    #lastUpdateDate?: string;
+  #repository: ContentSettingsRepository;
+  #nodeId?: string;
+  #lastUpdateDate?: string;
 
-    #model = new UmbObjectState<SitemapContentSettingsViewModel>({
-        excludeFromSitemap: false,
+  #model = new UmbObjectState<SitemapContentSettingsViewModel>({
+    excludeFromSitemap: false,
+  });
+  public readonly model = this.#model.asObservable();
+
+  constructor(host: UmbControllerHost) {
+    super(host, ST_SITEMAP_CONTENT_TOKEN_CONTEXT.toString());
+
+    this.#repository = new ContentSettingsRepository(host);
+
+    this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
+      if (!instance) return;
+
+      this.observe(instance.unique, (unique) => {
+        if (!unique) return;
+        this.#nodeId = unique.toString();
+        this.#loadData();
+      });
+
+      this.observe(instance.data, (item) => {
+        let shouldSave = false;
+        item?.variants.forEach((variant: any) => {
+          const updateDate = variant.updateDate ?? variant.update_date;
+          if (this.#lastUpdateDate && this.#lastUpdateDate !== updateDate) {
+            shouldSave = true;
+          }
+          this.#lastUpdateDate = updateDate;
+        });
+        if (shouldSave) {
+          this.save();
+        }
+      });
     });
-    public readonly model = this.#model.asObservable();
+  }
 
-    constructor(host: UmbControllerHost) {
-        super(host, ST_SITEMAP_CONTENT_TOKEN_CONTEXT.toString());
+  #loadData() {
+    if (!this.#nodeId) return;
+    this.#repository.getContentSettings(this.#nodeId).then((resp) => {
+      if (resp?.data) {
+        this.#model.setValue(resp.data);
+      }
+    });
+  }
 
-        this.#repository = new ContentSettingsRepository(host);
+  update(model: Partial<SitemapContentSettingsViewModel>) {
+    this.#model.update(model);
+  }
 
-        this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
-            if (!instance) return;
+  save() {
+    if (!this.#nodeId) return;
+    const value = this.#model.getValue();
+    this.#repository.setContentSettings({
+      nodeKey: this.#nodeId,
+      excludeFromSitemap: value.excludeFromSitemap ?? false,
+      changeFrequency: value.changeFrequency,
+      priority: value.priority,
+    });
+  }
 
-            this.observe(instance.unique, (unique) => {
-                if (!unique) return;
-                this.#nodeId = unique.toString();
-                this.#loadData();
-            });
-
-            this.observe(instance.data, (item) => {
-                item?.variants.forEach((variant: any) => {
-                    const updateDate = variant.updateDate ?? variant.update_date;
-                    if (this.#lastUpdateDate && this.#lastUpdateDate !== updateDate) {
-                        this.save();
-                    }
-                    this.#lastUpdateDate = updateDate;
-                });
-            });
-        });
-    }
-
-    #loadData() {
-        if (!this.#nodeId) return;
-        this.#repository.getContentSettings(this.#nodeId).then((resp) => {
-            if (resp?.data) {
-                this.#model.setValue(resp.data);
-            }
-        });
-    }
-
-    update(model: Partial<SitemapContentSettingsViewModel>) {
-        this.#model.update(model);
-    }
-
-    save() {
-        if (!this.#nodeId) return;
-        const value = this.#model.getValue();
-        this.#repository.setContentSettings({
-            nodeKey: this.#nodeId,
-            excludeFromSitemap: value.excludeFromSitemap ?? false,
-            changeFrequency: value.changeFrequency,
-            priority: value.priority,
-        });
-    }
-
-    getEntityType(): string {
-        return "st-sitemap-content";
-    }
+  getEntityType(): string {
+    return "st-sitemap-content";
+  }
 }
 
 export const ST_SITEMAP_CONTENT_TOKEN_CONTEXT =
-    new UmbContextToken<SitemapContentViewContext>("ST-SitemapContent-Context");
+  new UmbContextToken<SitemapContentViewContext>("ST-SitemapContent-Context");

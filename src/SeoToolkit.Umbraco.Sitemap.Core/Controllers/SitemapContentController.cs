@@ -34,16 +34,16 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
             var contentOverride = _sitemapService.GetContentSettings(nodeKey);
             var docTypeSettings = _sitemapService.GetPageTypeSettings(content.ContentType.Key);
 
-            var effectiveFrequency = docTypeSettings?.ChangeFrequency;
-            var effectivePriority = docTypeSettings?.Priority;
+            var inheritedFrequency = docTypeSettings?.ChangeFrequency;
+            var inheritedPriority = docTypeSettings?.Priority;
 
             return Ok(new SitemapContentSettingsViewModel
             {
                 ExcludeFromSitemap = contentOverride?.ExcludeFromSitemap ?? false,
                 ChangeFrequency = contentOverride?.ChangeFrequency,
                 Priority = contentOverride?.Priority,
-                EffectiveChangeFrequency = effectiveFrequency,
-                EffectivePriority = effectivePriority
+                InheritedChangeFrequency = inheritedFrequency,
+                InheritedPriority = inheritedPriority
             });
         }
 

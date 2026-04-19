@@ -11,10 +11,10 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Models.ViewModels
         /// <summary>Per-content override – null means not overridden (inheriting from document type).</summary>
         public double? Priority { get; set; }
 
-        /// <summary>Resolved effective value: content override → document-type setting → null.</summary>
-        public string EffectiveChangeFrequency { get; set; }
+        /// <summary>Inherited value from document-type setting.</summary>
+        public string InheritedChangeFrequency { get; set; }
 
-        /// <summary>Resolved effective value: content override → document-type setting → null.</summary>
-        public double? EffectivePriority { get; set; }
+        /// <summary>Inherited value from document-type setting.</summary>
+        public double? InheritedPriority { get; set; }
     }
 }
