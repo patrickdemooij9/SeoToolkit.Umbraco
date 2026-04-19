@@ -13,5 +13,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Business
         public IScriptDefinition Definition { get; set; }
         public Dictionary<string, string> Config { get; set; }
         public Guid? DomainId { get; set; }
+        public int SortOrder { get; set; }
     }
 }

@@ -34,6 +34,7 @@ export default class ScriptManagerDetailContext
   #script = new UmbObjectState<ScriptDetailViewModel>({
     id: 0,
     name: "",
+    sortOrder: 0,
   });
   public readonly script = this.#script.asObservable();
 

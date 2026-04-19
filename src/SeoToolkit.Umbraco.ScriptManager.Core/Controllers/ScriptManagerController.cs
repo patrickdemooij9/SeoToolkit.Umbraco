@@ -50,7 +50,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Controllers
                 Name = postModel.Name,
                 Definition = definition,
                 Config = postModel.Fields.ToDictionary(it => it.Key, it => it.Value),
-                DomainId = postModel.DomainId
+                DomainId = postModel.DomainId,
+                SortOrder = postModel.SortOrder ?? 0
             };
             script = _scriptManagerService.Save(script);
             return Ok(new ScriptDetailViewModel(script));

@@ -34,7 +34,8 @@ export class ScriptManagerSource {
                 name: model.name!,
                 definitionAlias: model.definitionAlias!,
                 fields: model.config,
-                domainId: model.domainId
+                domainId: model.domainId,
+                sortOrder: model.sortOrder
             }
         }));
     }

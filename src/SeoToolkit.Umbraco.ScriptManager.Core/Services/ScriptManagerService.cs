@@ -35,6 +35,11 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
         {
             if (script.Key is null)
             {
+                if (script.SortOrder <= 0)
+                {
+                    script.SortOrder = _scriptRepository.GetAll(script.DomainId).Select(it => it.SortOrder).DefaultIfEmpty(0).Max() + 1;
+                }
+
                 script.Key = Guid.NewGuid();
                 script = _scriptRepository.Add(script);
             }

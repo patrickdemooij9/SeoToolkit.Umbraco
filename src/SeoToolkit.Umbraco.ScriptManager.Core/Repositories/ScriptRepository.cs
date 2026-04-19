@@ -81,6 +81,10 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
             {
                 sql = sql.Where<ScriptEntity>(it => it.DomainId == null);
             }
+
+            sql = sql.OrderBy<ScriptEntity>(it => it.SortOrder)
+                .OrderBy<ScriptEntity>(it => it.Id);
+
             return scope.Database.Fetch<ScriptEntity>(sql).Select(ToModel);
         }
 
@@ -94,7 +98,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
                 Name = script.Name,
                 DefinitionAlias = script.Definition?.Alias,
                 Config = JsonSerializer.Serialize(script.Config),
-                DomainId = script.DomainId
+                DomainId = script.DomainId,
+                SortOrder = script.SortOrder
             };
         }
 
@@ -107,7 +112,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
                 Name = entity.Name,
                 Definition = _scriptDefinitionCollection.Get(entity.DefinitionAlias),
                 Config = JsonSerializer.Deserialize<Dictionary<string, string>>(entity.Config),
-                DomainId = entity.DomainId
+                DomainId = entity.DomainId,
+                SortOrder = entity.SortOrder
             };
         }
     }
