@@ -21,4 +21,11 @@ const SchemaPropertyModalManifest : ManifestModal = {
     js: () => import('../popups/SchemaPropertyModal.element'),
 }
 
-export const ModalManifests = [ ItemGroupModalManifest, SchemaPickerModalManifest, SchemaPropertyModalManifest] ;
+const SchemaSourceModalManifest : ManifestModal = {
+    type: 'modal',
+    alias: 'seoToolkit.modal.schemaSource',
+    name: 'SeoToolkit SchemaSource',
+    js: () => import('../popups/SchemaSourceModal.element'),
+}
+
+export const ModalManifests = [ ItemGroupModalManifest, SchemaPickerModalManifest, SchemaPropertyModalManifest, SchemaSourceModalManifest] ;

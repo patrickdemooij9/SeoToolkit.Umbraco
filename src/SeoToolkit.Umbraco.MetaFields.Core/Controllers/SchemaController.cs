@@ -1,9 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using SeoToolkit.Umbraco.Common.Core.Controllers;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.Business;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.PostModels;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.ViewModels;
+using SeoToolkit.Umbraco.MetaFields.Core.Services.SchemaEntryService;
+using System;
 using System.Linq;
+using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
@@ -13,10 +19,14 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
     public class SchemaController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly SchemaResolverCollection _schemaResolvers;
+        private readonly ISchemaEntryService _schemaEntryService;
+        private readonly IUmbracoContextFactory _umbracoContextFactory;
 
-        public SchemaController(SchemaResolverCollection schemaResolvers)
+        public SchemaController(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService, IUmbracoContextFactory umbracoContextFactory)
         {
             _schemaResolvers = schemaResolvers;
+            _schemaEntryService = schemaEntryService;
+            _umbracoContextFactory = umbracoContextFactory;
         }
 
         [HttpGet("types")]
@@ -36,6 +46,101 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             }).ToArray();
 
             return Ok(schemas);
+        }
+
+        [HttpGet("entries")]
+        [ProducesResponseType(typeof(SchemaEntryViewModel[]), 200)]
+        public IActionResult GetEntries(string ownerType, Guid ownerKey)
+        {
+            var entries = _schemaEntryService.GetAll(ownerType, ownerKey);
+            return Ok(entries.Select(MapToViewModel).ToArray());
+        }
+
+        [HttpGet("entries/{id:guid}")]
+        [ProducesResponseType(typeof(SchemaEntryViewModel), 200)]
+        public IActionResult GetEntry(Guid id)
+        {
+            var entry = _schemaEntryService.GetById(id);
+            if (entry is null)
+                return NotFound();
+            return Ok(MapToViewModel(entry));
+        }
+
+        [HttpGet("entries/reusable")]
+        [ProducesResponseType(typeof(SchemaEntryViewModel[]), 200)]
+        public IActionResult GetReusableEntries(string ownerType, Guid ownerKey)
+        {
+            if (ownerType == "content")
+            {
+                using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
+                var content = ctx.UmbracoContext.Content.GetById(true, ownerKey);
+                if (content is null)
+                    return Ok(Array.Empty<SchemaEntryViewModel>());
+
+                var docTypeEntries = _schemaEntryService.GetAll("documentType", content.ContentType.Key);
+                return Ok(docTypeEntries.Select(MapToViewModel).ToArray());
+            }
+
+            var entries = _schemaEntryService.GetAll(ownerType, ownerKey);
+            return Ok(entries.Select(MapToViewModel).ToArray());
+        }
+
+        [HttpPost("entries")]
+        [ProducesResponseType(typeof(SchemaEntryViewModel), 200)]
+        public IActionResult CreateEntry([FromBody] SchemaEntryPostModel model)
+        {
+            if (model is null)
+                return BadRequest("Request body is required.");
+
+            var dto = new SchemaEntryDto
+            {
+                Id = Guid.NewGuid(),
+                OwnerType = model.OwnerType,
+                OwnerKey = model.OwnerKey,
+                SchemaAlias = model.SchemaAlias,
+                Properties = model.Properties ?? new System.Collections.Generic.Dictionary<string, SchemaPropertyValue>()
+            };
+
+            var result = _schemaEntryService.Add(dto);
+            return Ok(MapToViewModel(result));
+        }
+
+        [HttpPut("entries/{id:guid}")]
+        [ProducesResponseType(typeof(SchemaEntryViewModel), 200)]
+        public IActionResult UpdateEntry(Guid id, [FromBody] SchemaEntryPostModel model)
+        {
+            var existing = _schemaEntryService.GetById(id);
+            if (existing is null)
+                return NotFound();
+
+            existing.SchemaAlias = model.SchemaAlias;
+            existing.Properties = model.Properties ?? new System.Collections.Generic.Dictionary<string, SchemaPropertyValue>();
+
+            var result = _schemaEntryService.Update(existing);
+            return Ok(MapToViewModel(result));
+        }
+
+        [HttpDelete("entries/{id:guid}")]
+        public IActionResult DeleteEntry(Guid id)
+        {
+            var existing = _schemaEntryService.GetById(id);
+            if (existing is null)
+                return NotFound();
+
+            _schemaEntryService.Delete(id);
+            return Ok();
+        }
+
+        private static SchemaEntryViewModel MapToViewModel(SchemaEntryDto dto)
+        {
+            return new SchemaEntryViewModel
+            {
+                Id = dto.Id,
+                OwnerType = dto.OwnerType,
+                OwnerKey = dto.OwnerKey,
+                SchemaAlias = dto.SchemaAlias,
+                Properties = dto.Properties
+            };
         }
     }
 }

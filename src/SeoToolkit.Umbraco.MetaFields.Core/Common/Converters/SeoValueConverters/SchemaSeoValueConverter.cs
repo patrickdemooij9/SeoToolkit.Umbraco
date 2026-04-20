@@ -2,6 +2,7 @@ using Schema.NET;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor;
+using SeoToolkit.Umbraco.MetaFields.Core.Services.SchemaEntryService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,34 +14,37 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
     public class SchemaSeoValueConverter : ISeoValueConverter
     {
         private readonly SchemaResolverCollection _schemaResolvers;
+        private readonly ISchemaEntryService _schemaEntryService;
 
-        public SchemaSeoValueConverter(SchemaResolverCollection schemaResolvers)
+        public SchemaSeoValueConverter(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService)
         {
             _schemaResolvers = schemaResolvers;
+            _schemaEntryService = schemaEntryService;
         }
 
-        public Type FromValue => typeof(SchemaEditorModel[]);
+        public Type FromValue => typeof(Guid[]);
         public Type ToValue => typeof(IThing[]);
 
         public object Convert(object value, IPublishedContent currentContent, string fieldAlias)
         {
-            if (value is not SchemaEditorModel[] schemaModels || schemaModels.Length == 0)
+            if (value is not Guid[] guids || guids.Length == 0)
                 return Array.Empty<IThing>();
 
+            var entries = _schemaEntryService.GetByIds(guids);
             var schemas = new List<IThing>();
 
-            foreach (var schemaModel in schemaModels)
+            foreach (var entry in entries)
             {
-                if (schemaModel?.SchemaAlias is null)
+                if (entry?.SchemaAlias is null)
                     continue;
 
-                var resolver = _schemaResolvers.FirstOrDefault(it => it.Alias.Equals(schemaModel.SchemaAlias, StringComparison.OrdinalIgnoreCase));
+                var resolver = _schemaResolvers.FirstOrDefault(it => it.Alias.Equals(entry.SchemaAlias, StringComparison.OrdinalIgnoreCase));
                 if (resolver is null)
                     continue;
 
                 var values = resolver.Properties.ToDictionary(
                     keySelector: property => property.Alias,
-                    elementSelector: property => ResolveValue(schemaModel.Properties, property.Alias, currentContent));
+                    elementSelector: property => ResolveValue(entry.Properties, property.Alias, currentContent));
 
                 try
                 {

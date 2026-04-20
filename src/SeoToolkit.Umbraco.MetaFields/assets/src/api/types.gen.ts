@@ -558,6 +558,144 @@ export type GetUmbracoSeoToolkitSchemaTypesResponses = {
 
 export type GetUmbracoSeoToolkitSchemaTypesResponse = GetUmbracoSeoToolkitSchemaTypesResponses[keyof GetUmbracoSeoToolkitSchemaTypesResponses];
 
+export type SchemaPropertyValueModel = {
+    value?: string | null;
+    isReference: boolean;
+    referenceKey?: string | null;
+};
+
+export type SchemaEntryViewModel = {
+    id: string;
+    ownerType: string;
+    ownerKey: string;
+    schemaAlias: string;
+    properties?: {
+        [key: string]: SchemaPropertyValueModel | null;
+    } | null;
+};
+
+export type SchemaEntryPostModel = {
+    ownerType: string;
+    ownerKey: string;
+    schemaAlias: string;
+    properties?: {
+        [key: string]: SchemaPropertyValueModel | null;
+    } | null;
+};
+
+export type SchemaEntryUpdateModel = {
+    schemaAlias: string;
+    properties?: {
+        [key: string]: SchemaPropertyValueModel | null;
+    } | null;
+};
+
+export type GetUmbracoSeoToolkitSchemaEntriesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        ownerType?: string;
+        ownerKey?: string;
+    };
+    url: '/umbraco/seoToolkit/schema/entries';
+};
+
+export type GetUmbracoSeoToolkitSchemaEntriesResponses = {
+    /**
+     * OK
+     */
+    200: Array<SchemaEntryViewModel>;
+};
+
+export type GetUmbracoSeoToolkitSchemaEntriesResponse = GetUmbracoSeoToolkitSchemaEntriesResponses[keyof GetUmbracoSeoToolkitSchemaEntriesResponses];
+
+export type GetUmbracoSeoToolkitSchemaEntryData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/umbraco/seoToolkit/schema/entries/{id}';
+};
+
+export type GetUmbracoSeoToolkitSchemaEntryResponses = {
+    /**
+     * OK
+     */
+    200: SchemaEntryViewModel;
+};
+
+export type GetUmbracoSeoToolkitSchemaEntryResponse = GetUmbracoSeoToolkitSchemaEntryResponses[keyof GetUmbracoSeoToolkitSchemaEntryResponses];
+
+export type GetUmbracoSeoToolkitSchemaEntriesReusableData = {
+    body?: never;
+    path?: never;
+    query?: {
+        ownerType?: string;
+        ownerKey?: string;
+    };
+    url: '/umbraco/seoToolkit/schema/entries/reusable';
+};
+
+export type GetUmbracoSeoToolkitSchemaEntriesReusableResponses = {
+    /**
+     * OK
+     */
+    200: Array<SchemaEntryViewModel>;
+};
+
+export type GetUmbracoSeoToolkitSchemaEntriesReusableResponse = GetUmbracoSeoToolkitSchemaEntriesReusableResponses[keyof GetUmbracoSeoToolkitSchemaEntriesReusableResponses];
+
+export type PostUmbracoSeoToolkitSchemaEntryData = {
+    body?: SchemaEntryPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkit/schema/entries';
+};
+
+export type PostUmbracoSeoToolkitSchemaEntryResponses = {
+    /**
+     * OK
+     */
+    200: SchemaEntryViewModel;
+};
+
+export type PostUmbracoSeoToolkitSchemaEntryResponse = PostUmbracoSeoToolkitSchemaEntryResponses[keyof PostUmbracoSeoToolkitSchemaEntryResponses];
+
+export type PutUmbracoSeoToolkitSchemaEntryData = {
+    body?: SchemaEntryUpdateModel;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/umbraco/seoToolkit/schema/entries/{id}';
+};
+
+export type PutUmbracoSeoToolkitSchemaEntryResponses = {
+    /**
+     * OK
+     */
+    200: SchemaEntryViewModel;
+};
+
+export type PutUmbracoSeoToolkitSchemaEntryResponse = PutUmbracoSeoToolkitSchemaEntryResponses[keyof PutUmbracoSeoToolkitSchemaEntryResponses];
+
+export type DeleteUmbracoSeoToolkitSchemaEntryData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/umbraco/seoToolkit/schema/entries/{id}';
+};
+
+export type DeleteUmbracoSeoToolkitSchemaEntryResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetUmbracoSeoToolkitNotFoundNotFoundData = {
     body?: never;
     path?: never;

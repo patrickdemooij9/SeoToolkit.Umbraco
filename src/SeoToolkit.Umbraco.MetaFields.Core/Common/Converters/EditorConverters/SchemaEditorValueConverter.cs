@@ -2,6 +2,7 @@ using Newtonsoft.Json.Linq;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
@@ -11,75 +12,99 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
     {
         public object ConvertEditorToDatabaseValue(object value)
         {
-            return GetSchemas(value);
+            return GetGuids(value);
         }
 
         public object ConvertObjectToEditorValue(object value)
         {
+            var guids = GetGuids(value);
             return new SchemaEditorValueModel
             {
-                Schemas = GetSchemas(value)
+                Schemas = guids.Select(g => g.ToString()).ToArray()
             };
         }
 
         public object ConvertDatabaseToObject(object value)
         {
-            return GetSchemas(value);
+            return GetGuids(value);
         }
 
         public bool IsEmpty(object value)
         {
-            return GetSchemas(value).Any() == false;
+            return GetGuids(value).Length == 0;
         }
 
-        private static SchemaEditorModel[] GetSchemas(object value)
+        private static Guid[] GetGuids(object value)
         {
             if (value is null)
                 return [];
 
-            if (value is SchemaEditorModel[] schemaArray)
-                return schemaArray;
-
-            if (value is SchemaEditorValueModel model)
-                return model.Schemas ?? [];
-
-            if (value is JObject jObject)
-            {
-                if (jObject["schemas"] is JToken schemasToken)
-                    return schemasToken.ToObject<SchemaEditorModel[]>() ?? [];
-
-                return jObject.ToObject<SchemaEditorModel[]>() ?? [];
-            }
+            if (value is Guid[] guidArray)
+                return guidArray;
 
             if (value is JArray jArray)
-                return jArray.ToObject<SchemaEditorModel[]>() ?? [];
+                return ParseGuidsFromJArray(jArray);
+
+            if (value is JObject jObj)
+            {
+                if (jObj["schemas"] is JArray schemasArr)
+                    return ParseGuidsFromJArray(schemasArr);
+                return [];
+            }
 
             if (value is JsonElement jsonElement)
             {
-                if (jsonElement.ValueKind == JsonValueKind.Object && jsonElement.TryGetProperty("schemas", out var schemasProperty))
-                    return JsonSerializer.Deserialize<SchemaEditorModel[]>(schemasProperty.GetRawText()) ?? [];
-
                 if (jsonElement.ValueKind == JsonValueKind.Array)
-                    return JsonSerializer.Deserialize<SchemaEditorModel[]>(jsonElement.GetRawText()) ?? [];
+                    return ParseGuidsFromJsonArray(jsonElement);
+
+                if (jsonElement.ValueKind == JsonValueKind.Object &&
+                    jsonElement.TryGetProperty("schemas", out var schemasEl) &&
+                    schemasEl.ValueKind == JsonValueKind.Array)
+                    return ParseGuidsFromJsonArray(schemasEl);
+
+                return [];
             }
 
-            var valueString = value.ToString();
-            if (string.IsNullOrWhiteSpace(valueString))
+            var str = value.ToString();
+            if (string.IsNullOrWhiteSpace(str))
                 return [];
 
             try
             {
-                var wrapper = JsonSerializer.Deserialize<SchemaEditorValueModel>(valueString);
-                if (wrapper?.Schemas != null)
-                    return wrapper.Schemas;
-
-                var schemas = JsonSerializer.Deserialize<SchemaEditorModel[]>(valueString);
-                return schemas ?? [];
+                var token = JToken.Parse(str);
+                if (token is JArray arr)
+                    return ParseGuidsFromJArray(arr);
+                if (token is JObject obj && obj["schemas"] is JArray schemasArrFromStr)
+                    return ParseGuidsFromJArray(schemasArrFromStr);
             }
             catch
             {
-                return [];
+                // ignore
             }
+
+            return [];
+        }
+
+        private static Guid[] ParseGuidsFromJArray(JArray arr)
+        {
+            var result = new List<Guid>();
+            foreach (var token in arr)
+            {
+                if (token.Type == JTokenType.String && Guid.TryParse(token.Value<string>(), out var g))
+                    result.Add(g);
+            }
+            return result.ToArray();
+        }
+
+        private static Guid[] ParseGuidsFromJsonArray(JsonElement element)
+        {
+            var result = new List<Guid>();
+            foreach (var item in element.EnumerateArray())
+            {
+                if (item.ValueKind == JsonValueKind.String && Guid.TryParse(item.GetString(), out var g))
+                    result.Add(g);
+            }
+            return result.ToArray();
         }
     }
 }

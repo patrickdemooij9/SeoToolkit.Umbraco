@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
@@ -23,9 +23,11 @@ using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Providers;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.DocumentTypeSettingsRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepository;
+using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SchemaEntryRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.MetaFieldsService;
+using SeoToolkit.Umbraco.MetaFields.Core.Services.SchemaEntryService;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService;
 using System;
 using System.Linq;
@@ -62,6 +64,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.Services.AddTransient(typeof(IMetaTagsProvider), typeof(DefaultMetaTagsProvider));
             builder.Services.AddTransient(typeof(IMetaFieldsValueService), typeof(MetaFieldsValueService));
             builder.Services.AddTransient(typeof(IMetaFieldsValueRepository), typeof(MetaFieldsDatabaseRepository));
+            builder.Services.AddTransient(typeof(ISchemaEntryRepository), typeof(SchemaEntryDatabaseRepository));
+            builder.Services.AddTransient(typeof(ISchemaEntryService), typeof(SchemaEntryService));
 
             if (!disabledModules.Contains(DisabledModuleConstant.Api))
             {

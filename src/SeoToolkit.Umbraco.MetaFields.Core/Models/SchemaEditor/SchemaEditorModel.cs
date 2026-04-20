@@ -4,7 +4,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor
 {
     public class SchemaEditorValueModel
     {
-        public SchemaEditorModel[] Schemas { get; set; } = [];
+        public string[] Schemas { get; set; } = [];
     }
 
     public class SchemaEditorModel
