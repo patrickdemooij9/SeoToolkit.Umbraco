@@ -36,13 +36,16 @@ export default class SchemaPickerModal extends UmbModalBaseElement<
   }
 
   #handleSubmit() {
+    if (!this.selectedAlias) {
+      return;
+    }
     this.modalContext?.submit();
   }
 
   override render() {
     return html`
       <umb-body-layout headline="Select Schema Type">
-        ${this.data?.availableSchemas.map(
+        ${(this.data?.availableSchemas ?? []).map(
           (item) => html`
             <div
               class=${classMap({
@@ -88,15 +91,10 @@ export default class SchemaPickerModal extends UmbModalBaseElement<
         border-radius: 8px;
         margin-bottom: 8px;
         border: 1px solid var(--uui-palette-gravel);
-      }
+      }      
 
-      &.selected,
-      &:hover {
-        border: 1px solid var(--uui-palette-gravel);
-        background-color: var(--uui-palette-gravel-light);
-      }
-
-      .selected {
+      .select-item.selected,
+      .select-item:hover {
         background-color: var(--uui-palette-gravel-light);
       }
     `,

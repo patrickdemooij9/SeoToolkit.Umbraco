@@ -62,6 +62,14 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
   }
 
   #handleSubmit() {
+    if (!this._selectedSchemaAlias) {
+      return;
+    }
+
+    this.value = {
+      schemaAlias: this._selectedSchemaAlias,
+      properties: this._propertyValues,
+    };
     this.modalContext?.submit();
   }
 

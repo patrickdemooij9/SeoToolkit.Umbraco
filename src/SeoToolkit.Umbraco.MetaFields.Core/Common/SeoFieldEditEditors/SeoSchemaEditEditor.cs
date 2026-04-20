@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
@@ -13,7 +13,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldEditEditors
 
         public SeoSchemaEditEditor()
         {
-            ValueConverter = new TextValueConverter();
+            ValueConverter = new SchemaEditorValueConverter();
         }
     }
 }

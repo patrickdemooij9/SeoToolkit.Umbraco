@@ -12,6 +12,7 @@ import {
 import { UMB_MODAL_MANAGER_CONTEXT } from "@umbraco-cms/backoffice/modal";
 import { SchemaTypeViewModel } from "../api";
 import { MetaFieldsSchemaSource } from "../dataAccess/MetaFieldsSchemaSource";
+import { SchemaPickerItem } from "../popups/SchemaPickerModal.element";
 
 interface PropertyValue {
   value: string;
@@ -66,9 +67,14 @@ export default class SchemaEditorPropertyEditor
     this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (modalManager) => {
       if (!modalManager) return;
 
-      const editSchema = editIndex !== undefined
-        ? this._value.schemas[editIndex]
-        : undefined;
+      const editSchema =
+        editIndex !== undefined
+          ? this._value.schemas[editIndex]
+          : await this.#pickSchemaType(modalManager);
+
+      if (!editSchema) {
+        return;
+      }
 
       const modal = modalManager.open<
         {
@@ -99,6 +105,34 @@ export default class SchemaEditorPropertyEditor
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
       }
     });
+  }
+
+  async #pickSchemaType(modalManager: any) {
+    const availableSchemas: SchemaPickerItem[] = this._schemaTypes.map((schema) => ({
+      alias: schema.alias ?? "",
+      name: schema.name ?? schema.alias ?? "",
+    }));
+
+    const modal = modalManager.open<
+      { availableSchemas: SchemaPickerItem[] },
+      string
+    >(this, "seoToolkit.modal.schemaPicker", {
+      modal: { type: "sidebar", size: "small" },
+      data: {
+        availableSchemas,
+      },
+      value: "",
+    });
+
+    const selectedAlias = await modal.onSubmit();
+    if (!selectedAlias) {
+      return undefined;
+    }
+
+    return {
+      schemaAlias: selectedAlias,
+      properties: {},
+    } as SchemaItemValue;
   }
 
   #removeSchema(index: number, e: Event) {

@@ -23,15 +23,18 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
 
         public IThing ToSchema(Dictionary<string, string> values)
         {
+            Uri.TryCreate(values.GetValueOrDefault("url"), UriKind.Absolute, out var url);
+            Uri.TryCreate(values.GetValueOrDefault("logo"), UriKind.Absolute, out var logo);
+
             return new Organization
             {
-                Url = new Uri(values["url"]),
-                Logo = new Uri(values["logo"]),
-                Name = values["name"],
-                Description = values["description"],
-                Email = values["email"],
-                Telephone = values["telephone"],
-                VatID = values["vatID"],
+                Url = url,
+                Logo = logo,
+                Name = values.GetValueOrDefault("name"),
+                Description = values.GetValueOrDefault("description"),
+                Email = values.GetValueOrDefault("email"),
+                Telephone = values.GetValueOrDefault("telephone"),
+                VatID = values.GetValueOrDefault("vatID"),
             };
         }
     }

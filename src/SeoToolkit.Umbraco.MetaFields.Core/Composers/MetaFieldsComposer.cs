@@ -90,6 +90,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
 
             builder.WithCollectionBuilder<SeoConverterCollectionBuilder>()
                 .Add<TextSeoValueConverter>()
+                .Add<SchemaSeoValueConverter>()
                 .Add<PublishedContentSeoValueConverter>()
                 .Add<FieldSeoValueConverter>()
                 .Add<MultiplePublishedContentSeoValueConverter>()
