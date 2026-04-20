@@ -22,6 +22,7 @@ export type CreateScriptPostModel = {
         [key: string]: string | null;
     } | null;
     domainId?: string | null;
+    sortOrder?: number | null;
 };
 
 export type DeleteAuditsPostModel = {
@@ -208,6 +209,7 @@ export type ScriptDetailViewModel = {
         [key: string]: string | null;
     } | null;
     domainId?: string | null;
+    sortOrder: number;
 };
 
 export type ScriptField = {
@@ -221,6 +223,7 @@ export type ScriptListViewModel = {
     id: string;
     name?: string | null;
     definitionName?: string | null;
+    sortOrder: number;
 };
 
 export type SeoDisplayViewModel = {
@@ -382,6 +385,22 @@ export type SiteAuditResultDetailViewModel = {
     isWarning: boolean;
 };
 
+export type SitemapContentSettingsPostModel = {
+    nodeKey: string;
+    excludeFromSitemap: boolean;
+    hideFromSitemap?: boolean | null;
+    changeFrequency?: string | null;
+    priority?: number | null;
+};
+
+export type SitemapContentSettingsViewModel = {
+    excludeFromSitemap: boolean;
+    changeFrequency?: string | null;
+    priority?: number | null;
+    inheritedChangeFrequency?: string | null;
+    inheritedPriority?: number | null;
+};
+
 export type SitemapPageTypeSettingsPostModel = {
     contentTypeGuid: string;
     hideFromSitemap: boolean;
@@ -393,6 +412,10 @@ export type SitemapPageTypeSettingsViewModel = {
     hideFromSitemap: boolean;
     changeFrequency?: string | null;
     priority?: number | null;
+};
+
+export type SortScriptsPostModel = {
+    keys?: Array<string> | null;
 };
 
 export type StopAuditPostModel = {
@@ -440,6 +463,22 @@ export type UmbracoDomainModelWritable = {
     rootContentId?: number | null;
     sortOrder: number;
 };
+
+export type GetUmbracoSeoToolkitSchemaTypesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkit/schema/types';
+};
+
+export type GetUmbracoSeoToolkitSchemaTypesResponses = {
+    /**
+     * OK
+     */
+    200: Array<SchemaTypeViewModel>;
+};
+
+export type GetUmbracoSeoToolkitSchemaTypesResponse = GetUmbracoSeoToolkitSchemaTypesResponses[keyof GetUmbracoSeoToolkitSchemaTypesResponses];
 
 export type GetUmbracoSeoToolkitMetaFieldsImagePreviewData = {
     body?: never;
@@ -541,22 +580,6 @@ export type PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponses =
      */
     200: unknown;
 };
-
-export type GetUmbracoSeoToolkitSchemaTypesData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/umbraco/seoToolkitSchema/types';
-};
-
-export type GetUmbracoSeoToolkitSchemaTypesResponses = {
-    /**
-     * OK
-     */
-    200: Array<SchemaTypeViewModel>;
-};
-
-export type GetUmbracoSeoToolkitSchemaTypesResponse = GetUmbracoSeoToolkitSchemaTypesResponses[keyof GetUmbracoSeoToolkitSchemaTypesResponses];
 
 export type GetUmbracoSeoToolkitNotFoundNotFoundData = {
     body?: never;
@@ -879,6 +902,20 @@ export type GetUmbracoSeoToolkitScriptManagerScriptsResponses = {
 
 export type GetUmbracoSeoToolkitScriptManagerScriptsResponse = GetUmbracoSeoToolkitScriptManagerScriptsResponses[keyof GetUmbracoSeoToolkitScriptManagerScriptsResponses];
 
+export type PostUmbracoSeoToolkitScriptManagerSortScriptsData = {
+    body?: SortScriptsPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitScriptManager/sortScripts';
+};
+
+export type PostUmbracoSeoToolkitScriptManagerSortScriptsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetUmbracoSeoToolkitSiteAuditPageChecksData = {
     body?: never;
     path?: never;
@@ -1036,6 +1073,56 @@ export type PostUmbracoSeoToolkitSitemapSitemapSettingsResponses = {
      */
     200: unknown;
 };
+
+export type GetUmbracoSeoToolkitSitemapContentContentSettingsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        nodeKey?: string;
+    };
+    url: '/umbraco/seoToolkitSitemapContent/contentSettings';
+};
+
+export type GetUmbracoSeoToolkitSitemapContentContentSettingsResponses = {
+    /**
+     * OK
+     */
+    200: SitemapContentSettingsViewModel;
+};
+
+export type GetUmbracoSeoToolkitSitemapContentContentSettingsResponse = GetUmbracoSeoToolkitSitemapContentContentSettingsResponses[keyof GetUmbracoSeoToolkitSitemapContentContentSettingsResponses];
+
+export type PostUmbracoSeoToolkitSitemapContentContentSettingsData = {
+    body?: SitemapContentSettingsPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitSitemapContent/contentSettings';
+};
+
+export type PostUmbracoSeoToolkitSitemapContentContentSettingsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetUmbracoSeoToolkitIsEnabledData = {
+    body?: never;
+    path?: never;
+    query?: {
+        moduleAlias?: string;
+    };
+    url: '/umbraco/seoToolkit/isEnabled';
+};
+
+export type GetUmbracoSeoToolkitIsEnabledResponses = {
+    /**
+     * OK
+     */
+    200: boolean;
+};
+
+export type GetUmbracoSeoToolkitIsEnabledResponse = GetUmbracoSeoToolkitIsEnabledResponses[keyof GetUmbracoSeoToolkitIsEnabledResponses];
 
 export type GetUmbracoSeoToolkitModulesData = {
     body?: never;

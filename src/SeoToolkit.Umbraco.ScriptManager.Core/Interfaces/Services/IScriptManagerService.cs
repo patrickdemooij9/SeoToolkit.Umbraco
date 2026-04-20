@@ -15,5 +15,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services
         Script Get(int id);
         Script? Get(Guid id);
         ScriptRenderModel GetRender(Guid? domainId);
+        void Sort(Guid[] orderedKeys);
     }
 }

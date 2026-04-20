@@ -13,4 +13,8 @@ export class ModuleRepository extends UmbControllerBase {
     async getModules() {
         return this.#moduleDataSource.getModules();
     }
+
+    async isEnabled(moduleAlias: string) {
+        return this.#moduleDataSource.isEnabled(moduleAlias);
+    }
 }

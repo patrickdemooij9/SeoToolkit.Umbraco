@@ -25,6 +25,10 @@ export default class ScriptManagerCollection extends UmbLitElement {
         {
             name: 'Definition',
             alias: 'definition',
+        },
+        {
+            name: 'Sort order',
+            alias: 'sortOrder',
         }
     ];
 
@@ -45,7 +49,9 @@ export default class ScriptManagerCollection extends UmbLitElement {
 
             this.observe(this.#context.selection.selection, (selection) => this._selection = selection.filter(it => it) as string[]);
             this.observe(this.#context.items, (items) => {
-                this._tableItems = items.map<UmbTableItem>((item) => {
+                this._tableItems = [...items]
+                .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+                .map<UmbTableItem>((item) => {
                     return {
                         id: item.id.toString(),
                         icon: 'icon-script',
@@ -58,6 +64,9 @@ export default class ScriptManagerCollection extends UmbLitElement {
                         }, {
                             columnAlias: 'definition',
                             value: item.definitionName
+                        }, {
+                            columnAlias: 'sortOrder',
+                            value: item.sortOrder
                         }]
                     }
                 })
