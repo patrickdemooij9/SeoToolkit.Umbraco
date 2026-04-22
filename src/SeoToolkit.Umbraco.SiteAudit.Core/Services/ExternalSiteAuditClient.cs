@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SeoToolkit.Umbraco.SiteAudit.Core.Config.Models;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
@@ -14,11 +15,13 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IOptionsMonitor<SiteAuditAppSettingsModel> _appSettings;
+        private readonly ILogger<ExternalSiteAuditClient> _logger;
 
-        public ExternalSiteAuditClient(HttpClient httpClient, IOptionsMonitor<SiteAuditAppSettingsModel> appSettings)
+        public ExternalSiteAuditClient(HttpClient httpClient, IOptionsMonitor<SiteAuditAppSettingsModel> appSettings, ILogger<ExternalSiteAuditClient> logger)
         {
             _httpClient = httpClient;
             _appSettings = appSettings;
+            _logger = logger;
         }
 
         public bool IsEnabled()
@@ -40,6 +43,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
             var response = await _httpClient.PostAsJsonAsync(settings.ExternalCrawlRequestEndpoint, request);
             if (!response.IsSuccessStatusCode)
             {
+                _logger.LogWarning("External site audit start failed with status code {StatusCode}", response.StatusCode);
                 return null;
             }
 
@@ -64,6 +68,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
             var response = await _httpClient.GetAsync(endpoint);
             if (!response.IsSuccessStatusCode)
             {
+                _logger.LogWarning("External site audit detail fetch failed for {AuditId} with status code {StatusCode}", auditId, response.StatusCode);
                 return null;
             }
 
@@ -89,7 +94,11 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
                 return;
             }
 
-            await _httpClient.PostAsync(endpoint, null);
+            var response = await _httpClient.PostAsync(endpoint, null);
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("External site audit stop failed for {AuditId} with status code {StatusCode}", auditId, response.StatusCode);
+            }
         }
 
         private string FormatEndpoint(string endpoint, Guid auditId)
@@ -99,7 +108,21 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
                 return null;
             }
 
-            return endpoint.Replace("{id}", Uri.EscapeDataString(auditId.ToString()));
+            const string placeholder = "{id}";
+            var firstPlaceholderIndex = endpoint.IndexOf(placeholder, StringComparison.Ordinal);
+            if (firstPlaceholderIndex < 0)
+            {
+                _logger.LogWarning("External site audit endpoint does not contain {Placeholder}", placeholder);
+                return null;
+            }
+
+            if (firstPlaceholderIndex != endpoint.LastIndexOf(placeholder, StringComparison.Ordinal))
+            {
+                _logger.LogWarning("External site audit endpoint contains placeholder {Placeholder} more than once", placeholder);
+                return null;
+            }
+
+            return endpoint.Replace(placeholder, Uri.EscapeDataString(auditId.ToString()), StringComparison.Ordinal);
         }
     }
 }

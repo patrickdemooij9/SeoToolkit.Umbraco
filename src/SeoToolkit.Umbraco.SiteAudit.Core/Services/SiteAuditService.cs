@@ -107,12 +107,12 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
             return model;
         }
 
-        public void StopSiteAudit(int siteAuditId)
+        public async Task StopSiteAudit(int siteAuditId)
         {
             var persistentAudit = Get(siteAuditId);
             if (persistentAudit?.ExternalAuditId is not null)
             {
-                _externalSiteAuditClient.StopAudit(persistentAudit.ExternalAuditId.Value).GetAwaiter().GetResult();
+                await _externalSiteAuditClient.StopAudit(persistentAudit.ExternalAuditId.Value);
                 return;
             }
 
@@ -147,7 +147,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
             return currentlyRunningAudit;
         }
 
-        public SiteAuditDetailViewModel GetDetail(int id)
+        public async Task<SiteAuditDetailViewModel> GetDetail(int id)
         {
             var model = Get(id);
             if (model is null)
@@ -163,7 +163,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
 
             try
             {
-                var remoteDetail = _externalSiteAuditClient.GetAuditDetail(model.ExternalAuditId.Value).GetAwaiter().GetResult();
+                var remoteDetail = await _externalSiteAuditClient.GetAuditDetail(model.ExternalAuditId.Value);
                 if (remoteDetail is null)
                 {
                     return localDetail;
@@ -175,11 +175,12 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
                 remoteDetail.Checks ??= localDetail.Checks;
                 remoteDetail.Status ??= model.Status.ToString();
 
-                if (remoteDetail.TotalPagesFound != model.TotalPagesFound
-                    || Enum.TryParse<SiteAuditStatus>(remoteDetail.Status, true, out var externalStatus) && externalStatus != model.Status)
+                var hasExternalStatus = Enum.TryParse<SiteAuditStatus>(remoteDetail.Status, true, out var externalStatus);
+                var hasStatusChanges = hasExternalStatus && externalStatus != model.Status;
+                if (remoteDetail.TotalPagesFound != model.TotalPagesFound || hasStatusChanges)
                 {
                     model.TotalPagesFound = remoteDetail.TotalPagesFound;
-                    if (Enum.TryParse<SiteAuditStatus>(remoteDetail.Status, true, out externalStatus))
+                    if (hasExternalStatus)
                     {
                         model.Status = externalStatus;
                     }

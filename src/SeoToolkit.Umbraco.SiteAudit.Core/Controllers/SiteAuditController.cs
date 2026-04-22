@@ -45,9 +45,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
 
         [HttpGet("siteAudit")]
         [ProducesResponseType(typeof(SiteAuditDetailViewModel), 200)]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var model = _siteAuditService.GetDetail(id);
+            var model = await _siteAuditService.GetDetail(id);
             if (model is null)
                 return NotFound();
 
@@ -135,9 +135,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
         }
 
         [HttpPost("stopSiteAudit")]
-        public IActionResult StopAudit(StopAuditPostModel model)
+        public async Task<IActionResult> StopAudit(StopAuditPostModel model)
         {
-            _siteAuditService.StopSiteAudit(model.Id);
+            await _siteAuditService.StopSiteAudit(model.Id);
             return Ok();
         }
     }

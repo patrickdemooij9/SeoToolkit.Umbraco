@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
@@ -50,10 +51,12 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
                 .ConfigurePrimaryHttpMessageHandler(x =>
                 {
                     var allowInvalidCerts = x.GetRequiredService<ISettingsService<SiteAuditConfigModel>>().GetSettings().AllowInvalidCerts;
+                    var isDevelopment = x.GetRequiredService<IHostEnvironment>().IsDevelopment();
+                    var shouldIgnoreCertErrors = allowInvalidCerts && isDevelopment;
 
                     return new HttpClientHandler()
                     {
-                        ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => allowInvalidCerts
+                        ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => shouldIgnoreCertErrors || sslPolicyErrors == System.Net.Security.SslPolicyErrors.None
                     };
                 });
 

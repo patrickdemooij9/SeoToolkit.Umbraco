@@ -101,7 +101,11 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Repositories
         
         public SiteAuditDto Get(Guid key)
         {
-            return GetAll().FirstOrDefault(it => it.ExternalAuditId == key);
+            var entity = Database.FirstOrDefault<SiteAuditEntity>(AmbientScope.SqlContext.Sql()
+                .SelectAll()
+                .From<SiteAuditEntity>()
+                .Where<SiteAuditEntity>(it => it.ExternalAuditId == key));
+            return entity is null ? null : Get(entity.Id);
         }
 
         public IEnumerable<SiteAuditDto> GetAll()
