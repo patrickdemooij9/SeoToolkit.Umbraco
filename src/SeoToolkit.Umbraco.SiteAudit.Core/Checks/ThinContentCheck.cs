@@ -41,12 +41,20 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
                         { MinimumWordCountKey, MinimumRecommendedWordCount.ToString() }
                     }
                 };
+                yield break;
             }
         }
 
         public string FormatMessage(CheckPageCrawlResult crawlResult)
         {
-            return $"Thin content detected: {crawlResult.ExtraValues[WordCountKey]} words (recommended at least {crawlResult.ExtraValues[MinimumWordCountKey]}).";
+            if (crawlResult.ExtraValues != null
+                && crawlResult.ExtraValues.TryGetValue(WordCountKey, out var wordCount)
+                && crawlResult.ExtraValues.TryGetValue(MinimumWordCountKey, out var minimumWordCount))
+            {
+                return $"Thin content detected: {wordCount} words (recommended at least {minimumWordCount}).";
+            }
+
+            return "Thin content detected.";
         }
 
         public bool Compare(CheckPageCrawlResult result, CheckPageCrawlResult otherResult)

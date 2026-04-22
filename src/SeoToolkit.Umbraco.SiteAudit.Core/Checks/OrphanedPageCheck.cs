@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using HtmlAgilityPack;
 using SeoToolkit.Umbraco.SiteAudit.Core.Enums;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.Business;

@@ -39,12 +39,23 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
 
         public string FormatMessage(CheckPageCrawlResult crawlResult)
         {
-            return $"Performance signal: {crawlResult.ExtraValues["Rating"]} ({crawlResult.ExtraValues["ResponseTimeMs"]} ms response time).";
+            if (crawlResult.ExtraValues != null
+                && crawlResult.ExtraValues.TryGetValue("Rating", out var rating)
+                && crawlResult.ExtraValues.TryGetValue("ResponseTimeMs", out var responseTime))
+            {
+                return $"Performance signal: {rating} ({responseTime} ms response time).";
+            }
+
+            return "Performance signal indicates potential Core Web Vitals issues.";
         }
 
         public bool Compare(CheckPageCrawlResult result, CheckPageCrawlResult otherResult)
         {
-            return result.ExtraValues["Rating"] == otherResult.ExtraValues["Rating"];
+            return result.ExtraValues != null
+                   && otherResult.ExtraValues != null
+                   && result.ExtraValues.TryGetValue("Rating", out var resultRating)
+                   && otherResult.ExtraValues.TryGetValue("Rating", out var otherResultRating)
+                   && resultRating == otherResultRating;
         }
     }
 }
