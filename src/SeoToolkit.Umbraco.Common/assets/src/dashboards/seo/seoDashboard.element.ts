@@ -7,7 +7,15 @@ import {
   repeat,
 } from "@umbraco-cms/backoffice/external/lit";
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
-import { SeoToolkitModule, SeoToolkitModuleStatus } from "../../api";
+import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
+import { tryExecute } from "@umbraco-cms/backoffice/resources";
+import {
+  SeoToolkitModule,
+  SeoToolkitModuleStatus,
+  BackofficeSeoToolkitRobotsTxt,
+  BackofficeSeoToolkitNotFound,
+  BackofficeSeoToolkitRedirects,
+} from "../../api";
 import { ModuleRepository } from "../../repositories/moduleRepository";
 
 type InsightCategory = "on_page" | "technical" | "indexability";
@@ -28,95 +36,106 @@ interface Insight {
 interface InsightProvider {
   module: string;
   categories: InsightCategory[];
-  getInsights: () => Insight[] | Promise<Insight[]>;
+  getInsights: (host: UmbControllerHost) => Insight[] | Promise<Insight[]>;
 }
 
-const sampleInsightsByModule: Record<string, Insight[]> = {
-  metaFields: [
-    {
-      id: "1",
-      type: "missing_meta_description",
-      category: "on_page",
-      severity: "high",
-      count: 34,
-      description: "Pages missing meta descriptions",
-      actionLabel: "Fix meta descriptions",
-      actionUrl: "/meta",
-      module: "metaFields",
-    },
-    {
-      id: "2",
-      type: "missing_titles",
-      category: "on_page",
-      severity: "high",
-      count: 5,
-      description: "Pages missing titles",
-      actionLabel: "Fix titles",
-      actionUrl: "/meta",
-      module: "metaFields",
-    },
-  ],
-  siteAudit: [
-    {
-      id: "3",
-      type: "broken_links",
-      category: "technical",
-      severity: "high",
-      count: 12,
-      description: "Broken internal links",
-      actionLabel: "View broken links",
-      actionUrl: "/links",
-      module: "siteAudit",
-    },
-  ],
-  redirects: [
-    {
-      id: "4",
-      type: "redirect_chains",
-      category: "technical",
-      severity: "medium",
-      count: 3,
-      description: "Redirect chains detected",
-      actionLabel: "Fix redirects",
-      actionUrl: "/redirects",
-      module: "redirects",
-    },
-  ],
-  sitemap: [
-    {
-      id: "5",
-      type: "sitemap_ok",
-      category: "indexability",
-      severity: "low",
-      count: 1,
-      description: "Sitemap is valid",
-      actionLabel: "View sitemap",
-      actionUrl: "/sitemap",
-      module: "sitemap",
-    },
-  ],
-};
+function robotsTxtDisallowsAll(content: string): boolean {
+  const lines = content.split("\n").map((l) => l.trim());
+  let inWildcardBlock = false;
+  for (const line of lines) {
+    if (line.toLowerCase().startsWith("user-agent:")) {
+      const agent = line.slice("user-agent:".length).trim();
+      inWildcardBlock = agent === "*";
+    } else if (inWildcardBlock && line.toLowerCase().startsWith("disallow:")) {
+      const path = line.slice("disallow:".length).trim();
+      if (path === "/") return true;
+    }
+  }
+  return false;
+}
 
 const insightProviders: InsightProvider[] = [
   {
-    module: "metaFields",
-    categories: ["on_page"],
-    getInsights: () => sampleInsightsByModule.metaFields,
+    module: "robotsTxt",
+    categories: ["indexability"],
+    getInsights: async (host) => {
+      const resp = await tryExecute(
+        host,
+        BackofficeSeoToolkitRobotsTxt.getUmbracoSeoToolkitRobotsTxt(),
+      );
+      const content = resp.data ?? "";
+      if (!robotsTxtDisallowsAll(content)) return [];
+      return [
+        {
+          id: "robots_disallow_all",
+          type: "robots_disallow_all",
+          category: "indexability",
+          severity: "high",
+          count: 1,
+          description: "Robots.txt is blocking all crawlers",
+          actionLabel: "Fix robots.txt",
+          actionUrl: "/section/seoToolkit/view/robots",
+          module: "robotsTxt",
+        },
+      ];
+    },
   },
   {
-    module: "siteAudit",
+    module: "notFound",
     categories: ["technical"],
-    getInsights: () => sampleInsightsByModule.siteAudit,
+    getInsights: async (host) => {
+      const resp = await tryExecute(
+        host,
+        BackofficeSeoToolkitNotFound.getUmbracoSeoToolkitNotFoundNotFound(),
+      );
+      if (resp.data) return [];
+      return [
+        {
+          id: "notfound_not_configured",
+          type: "notfound_not_configured",
+          category: "technical",
+          severity: "medium",
+          count: 1,
+          description: "404 page is not configured",
+          actionLabel: "Configure 404 page",
+          actionUrl: "/section/seoToolkit/view/notfound",
+          module: "notFound",
+        },
+      ];
+    },
   },
   {
     module: "redirects",
     categories: ["technical"],
-    getInsights: () => sampleInsightsByModule.redirects,
-  },
-  {
-    module: "sitemap",
-    categories: ["indexability"],
-    getInsights: () => sampleInsightsByModule.sitemap,
+    getInsights: async (host) => {
+      const resp = await tryExecute(
+        host,
+        BackofficeSeoToolkitRedirects.getUmbracoSeoToolkitRedirectsRedirects({
+          query: { pageNumber: 1, pageSize: 10000 },
+        }),
+      );
+      const items = resp.data?.items ?? [];
+      const oldUrls = new Set(
+        items.map((r) => r.oldUrl?.toLowerCase()).filter(Boolean),
+      );
+      const chainCount = items.filter(
+        (r) => r.newUrl && oldUrls.has(r.newUrl.toLowerCase()),
+      ).length;
+      if (chainCount === 0) return [];
+      return [
+        {
+          id: "redirect_chains",
+          type: "redirect_chains",
+          category: "technical",
+          severity: "medium",
+          count: chainCount,
+          description: "Redirects pointing to other redirects",
+          actionLabel: "Fix redirect chains",
+          actionUrl: "/section/seoToolkit/view/redirects",
+          module: "redirects",
+        },
+      ];
+    },
   },
 ];
 
@@ -173,7 +192,7 @@ export class SeoDashboardElement extends UmbElementMixin(LitElement) {
     );
 
     const insightsByProvider = await Promise.all(
-      activeProviders.map(async (provider) => provider.getInsights()),
+      activeProviders.map(async (provider) => provider.getInsights(this)),
     );
 
     this.insights = insightsByProvider
