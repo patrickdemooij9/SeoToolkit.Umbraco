@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Logging;
 using SeoToolkit.Umbraco.MetaFields.AI.Models;
@@ -19,6 +20,9 @@ namespace SeoToolkit.Umbraco.MetaFields.AI.Services
             SeoFieldAliasConstants.OpenGraphTitle,
             SeoFieldAliasConstants.OpenGraphDescription,
         ];
+
+        private static readonly Regex HtmlTagRegex = new("<[^>]+>", RegexOptions.Compiled);
+        private static readonly Regex WhitespaceRegex = new(@"\s+", RegexOptions.Compiled);
 
         private readonly IAIChatService _chatService;
         private readonly IMetaFieldsService _metaFieldsService;
@@ -96,8 +100,8 @@ namespace SeoToolkit.Umbraco.MetaFields.AI.Services
                 if (value is string stringValue && !string.IsNullOrWhiteSpace(stringValue) && stringValue.Length > 10)
                 {
                     // Strip HTML tags for a plain-text summary
-                    var plainText = System.Text.RegularExpressions.Regex.Replace(stringValue, "<[^>]+>", " ");
-                    plainText = System.Text.RegularExpressions.Regex.Replace(plainText, @"\s+", " ").Trim();
+                    var plainText = HtmlTagRegex.Replace(stringValue, " ");
+                    plainText = WhitespaceRegex.Replace(plainText, " ").Trim();
                     if (!string.IsNullOrWhiteSpace(plainText))
                         textParts.Add(plainText);
                 }
