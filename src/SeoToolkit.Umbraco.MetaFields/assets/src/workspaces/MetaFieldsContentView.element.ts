@@ -26,6 +26,12 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
   @state()
   _culture?: string;
 
+  @state()
+  _isAIAvailable = false;
+
+  @state()
+  _isGenerating = false;
+
   constructor() {
     super();
 
@@ -44,6 +50,14 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
         this.observe(instance.getModel(this._culture!), (value) => {
           this._model = value;
         });
+
+        this.observe(instance.isAIAvailable, (value) => {
+          this._isAIAvailable = value;
+        });
+
+        this.observe(instance.isGenerating, (value) => {
+          this._isGenerating = value;
+        });
       });
     });
   }
@@ -57,12 +71,36 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
     this.#context?.updateField(this._culture!, field!.alias!, field!.userValue);
   }
 
+  async #onGenerateWithAI() {
+    await this.#context?.generate(this._culture!);
+  }
+
   override render() {
     return html`
       ${when(
         this._model,
         () => html`
           <div>
+            ${when(
+              this._isAIAvailable,
+              () => html`
+                <div class="ai-toolbar">
+                  <uui-button
+                    look="secondary"
+                    label="Generate with AI"
+                    ?disabled=${this._isGenerating}
+                    @click=${this.#onGenerateWithAI}
+                  >
+                    ${when(
+                      this._isGenerating,
+                      () => html`<uui-loader-circle></uui-loader-circle>&nbsp;Generating…`,
+                      () => html`✨ Generate with AI`
+                    )}
+                  </uui-button>
+                  <small class="ai-hint">AI suggestions will be applied to text meta fields. Review and save when ready.</small>
+                </div>
+              `
+            )}
             ${repeat(
               this._model!.groups!,
               (group) => group.alias,
@@ -113,6 +151,20 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
         .fields {
           width: 60%;
         }
+      }
+
+      .ai-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding: 12px;
+        background: var(--uui-color-surface-alt, #f5f5f5);
+        border-radius: var(--uui-border-radius, 3px);
+      }
+
+      .ai-hint {
+        color: var(--uui-color-text-alt, #888);
       }
     `,
   ];

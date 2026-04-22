@@ -60,6 +60,28 @@ Each of these functionalities can also be found in separate packages. So if you 
 ### Meta Fields
 Meta Fields allow you to easily set your meta fields like Title, Description, Open Graph Title/Description/Image and canonical URL based on already existing fields on your content node. This allows your users to see where the values are coming from and also what their values will be. At the same time your users can also change these values themselves, so not code is required.
 
+### Meta Fields AI (Add-on)
+The `SeoToolkit.Umbraco.MetaFields.AI` add-on integrates with the [Umbraco.AI](https://marketplace.umbraco.com/packages/umbraco.ai) package to let editors automatically generate SEO meta field suggestions for any content node with a single click.
+
+**Prerequisites**: Umbraco.AI (v1.x) must be installed and configured with at least one chat profile.
+
+**Installation**:
+
+```
+Install-Package SeoToolkit.Umbraco.MetaFields.AI
+```
+
+Once installed, a **✨ Generate with AI** button appears in the Meta Fields workspace for each content node. Clicking it calls your configured AI chat profile and fills in suggested values for:
+
+- **Title** (50–60 characters)
+- **Meta Description** (150–160 characters)
+- **Open Graph Title**
+- **Open Graph Description**
+
+The generated suggestions are applied directly to the fields so you can review and adjust them before saving. No values are automatically persisted — the normal save flow in Umbraco still applies.
+
+**Availability detection**: The button is only shown when the `SeoToolkit.Umbraco.MetaFields.AI` package is installed and reachable. When the package is absent the Meta Fields workspace behaves exactly as before.
+
 ### Sitemap
 Sitemap gives you an sitemap.xml where all your pages are listed. This package works with multiple domains and languages. It creates a /sitemap.xml for each domain and also a sitemap index with all your sitemaps listed within.
 
