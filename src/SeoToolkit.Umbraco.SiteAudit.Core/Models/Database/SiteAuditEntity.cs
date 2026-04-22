@@ -33,5 +33,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Models.Database
         
         [Column("TotalPagesFound")]
         public int TotalPagesFound { get; set; }
+
+        [Column("ExternalAuditId")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public Guid? ExternalAuditId { get; set; }
     }
 }

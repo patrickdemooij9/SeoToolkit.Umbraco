@@ -10,6 +10,7 @@ using SeoToolkit.Umbraco.SiteAudit.Core.Factories.SiteCrawler;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.Business;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.EventArgs;
+using SeoToolkit.Umbraco.SiteAudit.Core.Models.ViewModels;
 using SeoToolkit.Umbraco.SiteAudit.Core.Notifications;
 using Umbraco.Cms.Infrastructure.Scoping;
 
@@ -22,6 +23,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
         private readonly ILogger<SiteAuditService> _logger;
         private readonly IEventAggregator _eventAggregator;
         private readonly IScopeProvider _scopeProvider;
+        private readonly IExternalSiteAuditClient _externalSiteAuditClient;
 
         private static readonly ConcurrentDictionary<ISiteCrawler, SiteAuditDto> CurrentlyRunningSiteAudits = new ConcurrentDictionary<ISiteCrawler, SiteAuditDto>();
 
@@ -29,13 +31,15 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
             ISiteCrawlerFactory siteCrawlerFactory,
             ILogger<SiteAuditService> logger,
             IEventAggregator eventAggregator,
-            IScopeProvider scopeProvider)
+            IScopeProvider scopeProvider,
+            IExternalSiteAuditClient externalSiteAuditClient)
         {
             _siteAuditRepository = siteAuditRepository;
             _siteCrawlerFactory = siteCrawlerFactory;
             _logger = logger;
             _eventAggregator = eventAggregator;
             _scopeProvider = scopeProvider;
+            _externalSiteAuditClient = externalSiteAuditClient;
         }
 
         public async Task<SiteAuditDto> StartSiteAudit(SiteAuditDto model)
@@ -48,6 +52,38 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
 
             model.Status = SiteAuditStatus.Running;
             Save(model);
+
+            if (_externalSiteAuditClient.IsEnabled())
+            {
+                try
+                {
+                    var externalAuditId = await _externalSiteAuditClient.StartAudit(new ExternalSiteAuditCreateRequestDto
+                    {
+                        Name = model.Name,
+                        StartingUrl = model.StartingUrl,
+                        MaxPagesToCrawl = model.MaxPagesToCrawl,
+                        DelayBetweenRequests = model.DelayBetweenRequests,
+                        CheckIds = model.SiteChecks?.Select(it => it.Id).ToArray() ?? []
+                    });
+                    if (!externalAuditId.HasValue)
+                    {
+                        model.Status = SiteAuditStatus.Error;
+                    }
+                    else
+                    {
+                        model.ExternalAuditId = externalAuditId;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Something went wrong while starting an external site audit!");
+                    model.Status = SiteAuditStatus.Error;
+                }
+
+                Save(model);
+                await _eventAggregator.PublishAsync(new SiteAuditUpdatedNotification(model));
+                return model;
+            }
 
             var siteCrawler = _siteCrawlerFactory.CreateNew();
             CurrentlyRunningSiteAudits.TryAdd(siteCrawler, model);
@@ -73,6 +109,13 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
 
         public void StopSiteAudit(int siteAuditId)
         {
+            var persistentAudit = Get(siteAuditId);
+            if (persistentAudit?.ExternalAuditId is not null)
+            {
+                _externalSiteAuditClient.StopAudit(persistentAudit.ExternalAuditId.Value).GetAwaiter().GetResult();
+                return;
+            }
+
             foreach (var (key, value) in CurrentlyRunningSiteAudits)
             {
                 if (value.Id == siteAuditId)
@@ -103,6 +146,55 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
             }
             return currentlyRunningAudit;
         }
+
+        public SiteAuditDetailViewModel GetDetail(int id)
+        {
+            var model = Get(id);
+            if (model is null)
+            {
+                return null;
+            }
+
+            var localDetail = new SiteAuditDetailViewModel(model);
+            if (!model.ExternalAuditId.HasValue || !_externalSiteAuditClient.IsEnabled())
+            {
+                return localDetail;
+            }
+
+            try
+            {
+                var remoteDetail = _externalSiteAuditClient.GetAuditDetail(model.ExternalAuditId.Value).GetAwaiter().GetResult();
+                if (remoteDetail is null)
+                {
+                    return localDetail;
+                }
+
+                remoteDetail.Id = model.Id;
+                remoteDetail.Name ??= model.Name;
+                remoteDetail.MaxPagesToCrawl ??= model.MaxPagesToCrawl;
+                remoteDetail.Checks ??= localDetail.Checks;
+                remoteDetail.Status ??= model.Status.ToString();
+
+                if (remoteDetail.TotalPagesFound != model.TotalPagesFound
+                    || Enum.TryParse<SiteAuditStatus>(remoteDetail.Status, true, out var externalStatus) && externalStatus != model.Status)
+                {
+                    model.TotalPagesFound = remoteDetail.TotalPagesFound;
+                    if (Enum.TryParse<SiteAuditStatus>(remoteDetail.Status, true, out externalStatus))
+                    {
+                        model.Status = externalStatus;
+                    }
+                    Save(model);
+                }
+
+                return remoteDetail;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Could not load external site audit details for audit {AuditId}", id);
+                return localDetail;
+            }
+        }
+
         public IEnumerable<SiteAuditDto> GetAll()
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);

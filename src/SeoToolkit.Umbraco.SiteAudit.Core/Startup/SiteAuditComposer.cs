@@ -46,6 +46,16 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
             builder.Services.AddSingleton(typeof(ISettingsService<SiteAuditConfigModel>), typeof(SiteAuditConfigurationService));
             builder.Services.AddSingleton(typeof(ISiteCheckRepository), typeof(SiteCheckDatabaseRepository));
             builder.Services.AddSingleton(typeof(ISiteAuditScheduler), typeof(SiteAuditScheduler));
+            builder.Services.AddHttpClient<IExternalSiteAuditClient, ExternalSiteAuditClient>()
+                .ConfigurePrimaryHttpMessageHandler(x =>
+                {
+                    var allowInvalidCerts = x.GetRequiredService<ISettingsService<SiteAuditConfigModel>>().GetSettings().AllowInvalidCerts;
+
+                    return new HttpClientHandler()
+                    {
+                        ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => allowInvalidCerts
+                    };
+                });
 
             if (!disabledModules.Contains(DisabledModuleConstant.SectionTree))
             {

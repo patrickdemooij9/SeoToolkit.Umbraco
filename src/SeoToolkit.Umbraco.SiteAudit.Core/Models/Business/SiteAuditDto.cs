@@ -17,6 +17,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Models.Business
         public int? MaxPagesToCrawl { get; set; }
         public int TotalPagesFound { get; set; }
         public int DelayBetweenRequests { get; set; }
+        public Guid? ExternalAuditId { get; set; }
         public List<SiteCheckDto> SiteChecks { get; set; }
         public ConcurrentQueue<CrawledPageDto> CrawledPages { get; set; }
         public bool Persistent { get; set; } = true;

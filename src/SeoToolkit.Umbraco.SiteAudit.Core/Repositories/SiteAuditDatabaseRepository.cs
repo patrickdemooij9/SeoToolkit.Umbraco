@@ -101,7 +101,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Repositories
         
         public SiteAuditDto Get(Guid key)
         {
-            throw new NotImplementedException();
+            return GetAll().FirstOrDefault(it => it.ExternalAuditId == key);
         }
 
         public IEnumerable<SiteAuditDto> GetAll()
@@ -120,17 +120,20 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Repositories
                         MaxPagesToCrawl = entity.MaxPagesToCrawl,
                         DelayBetweenRequests = entity.DelayBetweenRequests,
                         TotalPagesFound = entity.TotalPagesFound,
+                        ExternalAuditId = entity.ExternalAuditId,
                         StartingUrl = new Uri(entity.StartingUrl),
                         SiteChecks = Database.Fetch<SiteAuditCheckEntity>(AmbientScope.SqlContext.Sql()
                                 .SelectAll()
                                 .From<SiteAuditCheckEntity>()
                                 .Where<SiteAuditCheckEntity>(it => it.AuditId == entity.Id))
                             .Select(it => _siteCheckService.GetAll().FirstOrDefault(s => s.Id == it.CheckId)).ToList(),
-                        CrawledPages = new ConcurrentQueue<CrawledPageDto>(Database.Fetch<SiteAuditPageEntity>(AmbientScope.SqlContext.Sql()
-                                .SelectAll()
-                                .From<SiteAuditPageEntity>()
-                                .Where<SiteAuditPageEntity>(it => it.AuditId == entity.Id)).Select(it => Map(AmbientScope, it))
-                            .ToArray())
+                        CrawledPages = entity.ExternalAuditId.HasValue
+                            ? new ConcurrentQueue<CrawledPageDto>()
+                            : new ConcurrentQueue<CrawledPageDto>(Database.Fetch<SiteAuditPageEntity>(AmbientScope.SqlContext.Sql()
+                                    .SelectAll()
+                                    .From<SiteAuditPageEntity>()
+                                    .Where<SiteAuditPageEntity>(it => it.AuditId == entity.Id)).Select(it => Map(AmbientScope, it))
+                                .ToArray())
                     };
                 }
             }
@@ -150,7 +153,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Repositories
                     StartingUrl = model.StartingUrl.ToString(),
                     MaxPagesToCrawl = model.MaxPagesToCrawl,
                     DelayBetweenRequests = model.DelayBetweenRequests,
-                    TotalPagesFound = model.TotalPagesFound
+                    TotalPagesFound = model.TotalPagesFound,
+                    ExternalAuditId = model.ExternalAuditId
                 };
 
                 if (isNew)

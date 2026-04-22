@@ -47,11 +47,11 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
         [ProducesResponseType(typeof(SiteAuditDetailViewModel), 200)]
         public IActionResult Get(int id)
         {
-            var model = _siteAuditService.Get(id);
+            var model = _siteAuditService.GetDetail(id);
             if (model is null)
                 return NotFound();
 
-            return new JsonResult(new SiteAuditDetailViewModel(model));
+            return new JsonResult(model);
         }
 
         [HttpDelete("siteAudit")]

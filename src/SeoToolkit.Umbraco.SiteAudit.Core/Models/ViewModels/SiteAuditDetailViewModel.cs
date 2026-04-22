@@ -15,6 +15,10 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Models.ViewModels
         public SiteAuditCheckViewModel[] Checks { get; set; }
         public SiteAuditPageDetailViewModel[] PagesCrawled { get; set; }
 
+        public SiteAuditDetailViewModel()
+        {
+        }
+
         public SiteAuditDetailViewModel(SiteAuditDto model)
         {
             //TODO: Move most of this to a mapper
