@@ -2,20 +2,21 @@
 using SeoToolkit.Umbraco.Common.Core.Migrations;
 using SeoToolkit.Umbraco.Sitemap.Core.Migrations.Entities._5_0_0;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Database;
+using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
 {
-    public class SitemapChangeFrequencyOptionalMigration : MigrationBase
+    public class SitemapChangeFrequencyOptionalMigration : AsyncMigrationBase
     {
         public SitemapChangeFrequencyOptionalMigration(IMigrationContext context) : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
-            if (!ColumnExists("SeoToolkitSitemapPageType", "ChangeFrequency")) return;
+            if (!ColumnExists("SeoToolkitSitemapPageType", "ChangeFrequency")) return Task.CompletedTask;
 
             if (DatabaseType == DatabaseType.SQLite)
             {
@@ -26,6 +27,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
             {
                 Alter.Table("SeoToolkitSitemapPageType").AlterColumn("ChangeFrequency").AsString().Nullable().Do();
             }
+            return Task.CompletedTask;
         }
     }
 }
