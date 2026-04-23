@@ -2,19 +2,20 @@
 using NPoco;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database;
 using System.Linq;
+using System.Threading.Tasks;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
 {
-    public class MetaFieldsUmbraco14Migration : MigrationBase
+    public class MetaFieldsUmbraco14Migration : AsyncMigrationBase
     {
         public MetaFieldsUmbraco14Migration(IMigrationContext context) : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             var itemsWithImages = Database.Fetch<OldMetaFieldsValueEntity>().Where(it => it.Alias == "openGraphImage");
             foreach (var item in itemsWithImages)
@@ -30,6 +31,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
 
                 Database.Update(item);
             }
+            return Task.CompletedTask;
         }
 
         [TableName("SeoToolkitMetaFieldsValue")]

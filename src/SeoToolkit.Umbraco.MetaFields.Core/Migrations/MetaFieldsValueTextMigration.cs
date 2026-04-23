@@ -1,17 +1,18 @@
 ﻿using SeoToolkit.Umbraco.MetaFields.Core.Migrations.Entities._5_0_0;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database;
+using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
 {
-    public class MetaFieldsValueTextMigration : MigrationBase
+    public class MetaFieldsValueTextMigration : AsyncMigrationBase
     {
         public MetaFieldsValueTextMigration(IMigrationContext context) : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             if (DatabaseType == NPoco.DatabaseType.SQLite)
             {
@@ -27,6 +28,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
             {
                 Database.Execute($"ALTER TABLE SeoToolkitMetaFieldsValue ALTER COLUMN UserValue nvarchar(max);");
             }
+            return Task.CompletedTask;
         }
     }
 }
