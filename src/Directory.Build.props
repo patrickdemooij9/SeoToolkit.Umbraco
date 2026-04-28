@@ -7,9 +7,9 @@
     <SeoToolkitVersionRobotsTxt>6.2.1</SeoToolkitVersionRobotsTxt>
     <SeoToolkitVersionScriptManager>6.2.1</SeoToolkitVersionScriptManager>
     <SeoToolkitVersionSiteAudit>6.2.1</SeoToolkitVersionSiteAudit>
-    <SeoToolkitVersionSitemap>6.2.1</SeoToolkitVersionSitemap>
-    <SeoToolkitVersionCore>6.2.2</SeoToolkitVersionCore>
-    <SeoToolkitVersionPackage>6.2.2</SeoToolkitVersionPackage>
+    <SeoToolkitVersionSitemap>6.2.2-beta1</SeoToolkitVersionSitemap>
+    <SeoToolkitVersionCore>6.2.3-beta1</SeoToolkitVersionCore>
+    <SeoToolkitVersionPackage>6.2.3-beta1</SeoToolkitVersionPackage>
 	<SeoToolkitVersionUsync>1.0.0-beta1</SeoToolkitVersionUsync>
 
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.Common'))">$(SeoToolkitVersionCommon)</VersionPrefix>
