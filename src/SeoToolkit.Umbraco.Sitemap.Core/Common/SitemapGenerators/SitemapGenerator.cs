@@ -55,9 +55,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             _sitemapCollectionProviders = sitemapCollectionProviders;
 
             _pageTypeSettings = new Dictionary<Guid, SitemapPageSettings>();
-            _contentSettings = new Dictionary<Guid, SitemapContentSettings>();
         }
-
         public XDocument Generate(SitemapGeneratorOptions options)
         {
             // Pre-load all content overrides once per generation to avoid N+1 queries
