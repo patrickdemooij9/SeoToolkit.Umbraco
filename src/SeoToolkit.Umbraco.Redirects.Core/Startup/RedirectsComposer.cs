@@ -60,7 +60,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Composers
             {
                 //Default to PrePipeline
                 var redirectMiddlewarePosition = RedirectMiddlewarePosition.PrePipeline;
-                var redirectMiddleWarePositionAppSetting = appSettingsModel.RedirectMiddleWarePosition;
+                var redirectMiddleWarePositionAppSetting = appSettingsModel?.RedirectMiddleWarePosition;
                 if (!string.IsNullOrEmpty(redirectMiddleWarePositionAppSetting) &&
                     Enum.TryParse(redirectMiddleWarePositionAppSetting, out RedirectMiddlewarePosition parsedValue))
                 {
