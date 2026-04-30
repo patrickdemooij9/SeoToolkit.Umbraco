@@ -32,6 +32,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
 
         private List<string> _validAlternateCultures;
         private Dictionary<Guid, SitemapPageSettings> _pageTypeSettings; //Used to cache the types for the generation
+        private Dictionary<Guid, SitemapContentSettings> _contentSettings; //Used to cache the per-content overrides for the generation
 
         private XNamespace _namespace => XNamespace.Get("http://www.sitemaps.org/schemas/sitemap/0.9");
         private XNamespace _xHtmlNamespace = XNamespace.Get("http://www.w3.org/1999/xhtml");
@@ -57,10 +58,17 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             _noIndexFilters = noIndexFilters ?? Enumerable.Empty<ISitemapNoIndexFilter>();
 
             _pageTypeSettings = new Dictionary<Guid, SitemapPageSettings>();
+            _contentSettings = new Dictionary<Guid, SitemapContentSettings>();
         }
 
         public XDocument Generate(SitemapGeneratorOptions options)
         {
+            // Pre-load all content overrides once per generation to avoid N+1 queries
+            foreach (var contentSetting in _sitemapService.GetAllContentSettings())
+            {
+                _contentSettings[contentSetting.NodeKey] = contentSetting;
+            }
+
             _validAlternateCultures = new List<string>();
             var rootNamespace = new XElement(_namespace + "urlset", _settings.ShowAlternatePages ? new XAttribute(XNamespace.Xmlns + "xhtml", _xHtmlNamespace) : null);
 
@@ -121,7 +129,12 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             //Only show item if it actually has an template, so we don't index data objects and such
             if (content.TemplateId > 0 && !_publicAccessService.IsProtected(content.Path))
             {
-                var settings = GetPageTypeSettings(content.ContentType.Key);
+                var docTypeSettings = GetPageTypeSettings(content.ContentType.Key);
+                var contentOverride = GetContentSettings(content.Key);
+
+                // Resolve HideFromSitemap: excludeFromSitemap (content) → doc type → false
+                var hideFromSitemap = contentOverride?.ExcludeFromSitemap == true
+                    || (docTypeSettings?.HideFromSitemap ?? false);
 
                 if (_noIndexFilters.Any(f => f.IsNoIndex(content, culture)))
                 {
@@ -134,33 +147,35 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
 
                 var item = new SitemapNodeItem(content.Url(culture, UrlMode.Absolute))
                 {
-                    HideFromSitemap = settings?.HideFromSitemap is true,
+                    HideFromSitemap = hideFromSitemap,
                     Content = content
                 };
 
-                if (settings is null || !settings.HideFromSitemap)
+                if (!hideFromSitemap)
                 {
                     if (!string.IsNullOrWhiteSpace(_settings.LastModifiedFieldAlias) && HasValue(content, _settings.LastModifiedFieldAlias, culture)) 
                         item.LastModifiedDate = Value<DateTime>(content, _settings.LastModifiedFieldAlias, culture);
                     else 
                         item.LastModifiedDate = content.UpdateDate;
-                    
 
-                    if (settings != null)
+                    // Resolve ChangeFrequency: content override → doc type → config field alias
+                    var changeFrequency = contentOverride?.ChangeFrequency ?? docTypeSettings?.ChangeFrequency;
+                    if (!string.IsNullOrWhiteSpace(changeFrequency))
                     {
-                        if (!string.IsNullOrWhiteSpace(settings.ChangeFrequency))
-                            item.ChangeFrequency = settings.ChangeFrequency;
-
-                        if (settings.Priority != null)
-                            item.Priority = settings.Priority;
+                        item.ChangeFrequency = changeFrequency;
                     }
-
-                    if (string.IsNullOrWhiteSpace(item.ChangeFrequency) && !string.IsNullOrWhiteSpace(_settings.ChangeFrequencyFieldAlias) && HasValue(content, _settings.ChangeFrequencyFieldAlias, culture))
+                    else if (!string.IsNullOrWhiteSpace(_settings.ChangeFrequencyFieldAlias) && HasValue(content, _settings.ChangeFrequencyFieldAlias, culture))
                     {
                         item.ChangeFrequency = Value<string>(content, _settings.ChangeFrequencyFieldAlias, culture);
                     }
 
-                    if (item.Priority is null && !string.IsNullOrWhiteSpace(_settings.PriorityFieldAlias) && HasValue(content, _settings.PriorityFieldAlias, culture))
+                    // Resolve Priority: content override → doc type → config field alias
+                    var priority = contentOverride?.Priority ?? docTypeSettings?.Priority;
+                    if (priority != null)
+                    {
+                        item.Priority = priority;
+                    }
+                    else if (!string.IsNullOrWhiteSpace(_settings.PriorityFieldAlias) && HasValue(content, _settings.PriorityFieldAlias, culture))
                     {
                         item.Priority = Value<double?>(content, _settings.PriorityFieldAlias, culture);
                     }
@@ -244,6 +259,12 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             if (!_pageTypeSettings.ContainsKey(contentTypeId))
                 _pageTypeSettings[contentTypeId] = _sitemapService.GetPageTypeSettings(contentTypeId);
             return _pageTypeSettings[contentTypeId];
+        }
+
+        private SitemapContentSettings GetContentSettings(Guid nodeKey)
+        {
+            _contentSettings.TryGetValue(nodeKey, out var result);
+            return result;
         }
     }
 }

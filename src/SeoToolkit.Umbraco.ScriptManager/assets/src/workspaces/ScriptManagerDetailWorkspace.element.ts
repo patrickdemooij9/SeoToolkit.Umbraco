@@ -30,7 +30,7 @@ export class ScriptManagerDetailWorkspace extends UmbLitElement {
     #onNameInput(event: Event) {
 		const target = event.target as UUIInputElement;
 		const value = target.value as string;
-		this.#context?.updateScript({
+        this.#context?.updateScript({
             name: value
         });
 	}

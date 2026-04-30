@@ -1,15 +1,16 @@
 ﻿using Umbraco.Cms.Infrastructure.Migrations;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Database;
+using System.Threading.Tasks;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
 {
-    public class SitemapInitialMigration : MigrationBase
+    public class SitemapInitialMigration : AsyncMigrationBase
     {
         public SitemapInitialMigration(IMigrationContext context) : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             if (TableExists("uSeoToolkitSitemapPageType"))
             {
@@ -19,6 +20,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
             {
                 Create.Table<SitemapPageTypeEntity>().Do();
             }
+            return Task.CompletedTask;
         }
     }
 }

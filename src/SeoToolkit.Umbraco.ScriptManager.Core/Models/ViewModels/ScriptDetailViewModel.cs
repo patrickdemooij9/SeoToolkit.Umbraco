@@ -12,6 +12,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels
         public string DefinitionAlias { get; set; }
         public Dictionary<string, string> Config { get; set; }
         public Guid? DomainId { get; set; }
+        public int SortOrder { get; set; }
 
         public ScriptDetailViewModel(Script script)
         {
@@ -21,6 +22,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.ViewModels
             DefinitionAlias = script.Definition.Alias;
             Config = script.Config;
             DomainId = script.DomainId;
+            SortOrder = script.SortOrder;
         }
     }
 }

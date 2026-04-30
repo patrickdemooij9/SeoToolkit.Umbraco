@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
@@ -11,5 +11,9 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
         SitemapPageSettings GetPageTypeSettings(int contentTypeId);
         SitemapPageSettings? GetPageTypeSettings(Guid contentTypeGuid);
         SitemapPageSettings[] GetAll();
+
+        void SetContentSettings(SitemapContentSettings settings);
+        SitemapContentSettings? GetContentSettings(Guid nodeKey);
+        SitemapContentSettings[] GetAllContentSettings();
     }
 }

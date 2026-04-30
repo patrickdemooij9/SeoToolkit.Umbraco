@@ -370,6 +370,22 @@ export type SiteAuditResultDetailViewModel = {
     isWarning: boolean;
 };
 
+export type SitemapContentSettingsPostModel = {
+    nodeKey: string;
+    excludeFromSitemap: boolean;
+    hideFromSitemap?: boolean | null;
+    changeFrequency?: string | null;
+    priority?: number | null;
+};
+
+export type SitemapContentSettingsViewModel = {
+    excludeFromSitemap: boolean;
+    changeFrequency?: string | null;
+    priority?: number | null;
+    inheritedChangeFrequency?: string | null;
+    inheritedPriority?: number | null;
+};
+
 export type SitemapPageTypeSettingsPostModel = {
     contentTypeGuid: string;
     hideFromSitemap: boolean;
@@ -1008,6 +1024,56 @@ export type PostUmbracoSeoToolkitSitemapSitemapSettingsResponses = {
      */
     200: unknown;
 };
+
+export type GetUmbracoSeoToolkitSitemapContentContentSettingsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        nodeKey?: string;
+    };
+    url: '/umbraco/seoToolkitSitemapContent/contentSettings';
+};
+
+export type GetUmbracoSeoToolkitSitemapContentContentSettingsResponses = {
+    /**
+     * OK
+     */
+    200: SitemapContentSettingsViewModel;
+};
+
+export type GetUmbracoSeoToolkitSitemapContentContentSettingsResponse = GetUmbracoSeoToolkitSitemapContentContentSettingsResponses[keyof GetUmbracoSeoToolkitSitemapContentContentSettingsResponses];
+
+export type PostUmbracoSeoToolkitSitemapContentContentSettingsData = {
+    body?: SitemapContentSettingsPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitSitemapContent/contentSettings';
+};
+
+export type PostUmbracoSeoToolkitSitemapContentContentSettingsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetUmbracoSeoToolkitIsEnabledData = {
+    body?: never;
+    path?: never;
+    query?: {
+        moduleAlias?: string;
+    };
+    url: '/umbraco/seoToolkit/isEnabled';
+};
+
+export type GetUmbracoSeoToolkitIsEnabledResponses = {
+    /**
+     * OK
+     */
+    200: boolean;
+};
+
+export type GetUmbracoSeoToolkitIsEnabledResponse = GetUmbracoSeoToolkitIsEnabledResponses[keyof GetUmbracoSeoToolkitIsEnabledResponses];
 
 export type GetUmbracoSeoToolkitModulesData = {
     body?: never;

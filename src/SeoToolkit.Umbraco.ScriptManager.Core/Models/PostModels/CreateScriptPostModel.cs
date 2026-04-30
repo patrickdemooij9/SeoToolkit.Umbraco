@@ -19,5 +19,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.PostModels
         public Dictionary<string, string> Fields { get; set; }
 
         public Guid? DomainId { get; set; }
+
+        public int? SortOrder { get; set; }
     }
 }

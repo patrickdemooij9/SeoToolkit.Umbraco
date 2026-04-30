@@ -81,7 +81,29 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
             {
                 sql = sql.Where<ScriptEntity>(it => it.DomainId == null);
             }
-            return scope.Database.Fetch<ScriptEntity>(sql).Select(ToModel);
+            return scope.Database.Fetch<ScriptEntity>(sql)
+                .OrderBy(it => it.SortOrder)
+                .ThenBy(it => it.Id)
+                .Select(ToModel);
+        }
+
+        public int GetMaxSortOrder(Guid? domainId)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var sql = scope.SqlContext.Sql()
+                .SelectAll()
+                .From<ScriptEntity>();
+
+            if (domainId.HasValue)
+            {
+                sql = sql.Where<ScriptEntity>(it => it.DomainId == domainId.Value);
+            }
+            else
+            {
+                sql = sql.Where<ScriptEntity>(it => it.DomainId == null);
+            }
+
+            return scope.Database.Fetch<ScriptEntity>(sql).Select(it => it.SortOrder).DefaultIfEmpty(0).Max();
         }
 
         //TODO: Probably move to a mapper
@@ -94,7 +116,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
                 Name = script.Name,
                 DefinitionAlias = script.Definition?.Alias,
                 Config = JsonSerializer.Serialize(script.Config),
-                DomainId = script.DomainId
+                DomainId = script.DomainId,
+                SortOrder = script.SortOrder
             };
         }
 
@@ -107,7 +130,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
                 Name = entity.Name,
                 Definition = _scriptDefinitionCollection.Get(entity.DefinitionAlias),
                 Config = JsonSerializer.Deserialize<Dictionary<string, string>>(entity.Config),
-                DomainId = entity.DomainId
+                DomainId = entity.DomainId,
+                SortOrder = entity.SortOrder
             };
         }
     }
