@@ -1,23 +1,38 @@
-﻿using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
+﻿using Newtonsoft.Json;
+using SeoToolkit.Umbraco.MetaFields.Core.Constants;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 using System;
-using Umbraco.Cms.Core.Models.PublishedContent;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SeoToolkit.Umbraco.Core.Connectors
 {
     public class MetaFieldsNoIndexFilter : ISitemapNoIndexFilter
     {
-        private readonly IMetaFieldsService _metaFieldsService;
+        private readonly IMetaFieldsValueService _metaFieldsValueService;
+        private HashSet<Guid> _noIndexKeys;
 
-        public MetaFieldsNoIndexFilter(IMetaFieldsService metaFieldsService)
+        public MetaFieldsNoIndexFilter(IMetaFieldsValueService metaFieldsValueService)
         {
-            _metaFieldsService = metaFieldsService;
+            _metaFieldsValueService = metaFieldsValueService;
+            _noIndexKeys = new HashSet<Guid>();
         }
 
-        public bool IsNoIndex(IPublishedContent content, string culture)
+        public void Prepare(string culture)
         {
-            var metaTags = _metaFieldsService.Get(content, true);
-            return metaTags?.Robots != null && Array.Exists(metaTags.Robots, r => r.Equals("noindex", StringComparison.OrdinalIgnoreCase));
+            var allRobotsValues = _metaFieldsValueService.GetAllValuesByFieldAlias(SeoFieldAliasConstants.Robots, culture);
+            _noIndexKeys = new HashSet<Guid>(
+                allRobotsValues
+                    .Where(v => v.UserValue != null)
+                    .Where(v =>
+                    {
+                        var robots = JsonConvert.DeserializeObject<string[]>(v.UserValue);
+                        return robots != null && robots.Any(r => r.Equals("noindex", StringComparison.OrdinalIgnoreCase));
+                    })
+                    .Select(v => v.NodeKey));
         }
+
+        public bool IsNoIndex(Guid contentKey) => _noIndexKeys.Contains(contentKey);
     }
 }

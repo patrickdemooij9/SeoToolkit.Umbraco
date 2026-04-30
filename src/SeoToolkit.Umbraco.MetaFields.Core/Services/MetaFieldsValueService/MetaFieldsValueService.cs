@@ -57,6 +57,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
             _repository.Delete(nodeId, fieldAlias, culture.IfNullOrWhiteSpace(GetCulture()));
         }
 
+        public IEnumerable<(Guid NodeKey, string UserValue)> GetAllValuesByFieldAlias(string fieldAlias, string culture = null)
+        {
+            var foundCulture = culture.IfNullOrWhiteSpace(GetCulture());
+            return _repository.GetAllValuesByFieldAlias(fieldAlias, foundCulture);
+        }
+
         public Dictionary<string, object> GetUserValues(Guid nodeId, string culture = null)
         {
             var foundCulture = culture.IfNullOrWhiteSpace(GetCulture());

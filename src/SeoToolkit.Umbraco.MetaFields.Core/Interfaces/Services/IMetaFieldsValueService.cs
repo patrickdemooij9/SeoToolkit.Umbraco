@@ -42,5 +42,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services
         /// <param name="culture"></param>
         void AddValues(Guid nodeId, Dictionary<string, object> values, string culture = null);
         void Delete(Guid nodeId, string fieldAlias, string culture = null);
+
+        /// <summary>
+        /// Get all stored values for a specific field alias across all nodes in a single query.
+        /// If culture is NULL, the variation context culture will be used.
+        /// </summary>
+        IEnumerable<(Guid NodeKey, string UserValue)> GetAllValuesByFieldAlias(string fieldAlias, string culture = null);
     }
 }

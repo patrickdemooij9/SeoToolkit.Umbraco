@@ -1,9 +1,10 @@
-﻿using Umbraco.Cms.Core.Models.PublishedContent;
+﻿using System;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Interfaces
 {
     public interface ISitemapNoIndexFilter
     {
-        bool IsNoIndex(IPublishedContent content, string culture);
+        void Prepare(string culture);
+        bool IsNoIndex(Guid contentKey);
     }
 }

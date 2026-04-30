@@ -23,5 +23,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         bool Exists(Guid nodeId, string fieldAlias, string culture);
 
         Dictionary<string, object> GetAllValues(Guid nodeId, string culture);
+
+        IEnumerable<(Guid NodeKey, string UserValue)> GetAllValuesByFieldAlias(string fieldAlias, string culture);
     }
 }

@@ -76,6 +76,9 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             {
                 _variationContextAccessor.VariationContext = new VariationContext(options.Culture);
             }
+
+            foreach (var filter in _noIndexFilters)
+                filter.Prepare(options.Culture);
             
             using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
             {
@@ -136,7 +139,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                 var hideFromSitemap = contentOverride?.ExcludeFromSitemap == true
                     || (docTypeSettings?.HideFromSitemap ?? false);
 
-                if (_noIndexFilters.Any(f => f.IsNoIndex(content, culture)))
+                if (_noIndexFilters.Any(f => f.IsNoIndex(content.Key)))
                 {
                     foreach (var child in content.Children(culture))
                     {
