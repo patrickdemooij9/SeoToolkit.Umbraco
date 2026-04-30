@@ -1,7 +1,7 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
 import { BackofficeSeoToolkitMetaFields } from "../api";
-import { SchemaEntryPostModel, SchemaEntryUpdateModel } from "../api/types.gen";
+import { SchemaEntryPostModel } from "../api/types.gen";
 
 export class SchemaEntrySource {
   #host: UmbControllerHost;
@@ -22,7 +22,7 @@ export class SchemaEntrySource {
   getEntry(id: string) {
     return tryExecute(
       this.#host,
-      BackofficeSeoToolkitMetaFields.getUmbracoSeoToolkitSchemaEntry({
+      BackofficeSeoToolkitMetaFields.getUmbracoSeoToolkitSchemaEntriesById({
         path: { id },
       })
     );
@@ -40,16 +40,16 @@ export class SchemaEntrySource {
   createEntry(model: SchemaEntryPostModel) {
     return tryExecute(
       this.#host,
-      BackofficeSeoToolkitMetaFields.postUmbracoSeoToolkitSchemaEntry({
+      BackofficeSeoToolkitMetaFields.postUmbracoSeoToolkitSchemaEntries({
         body: model,
       })
     );
   }
 
-  updateEntry(id: string, model: SchemaEntryUpdateModel) {
+  updateEntry(id: string, model: SchemaEntryPostModel) {
     return tryExecute(
       this.#host,
-      BackofficeSeoToolkitMetaFields.putUmbracoSeoToolkitSchemaEntry({
+      BackofficeSeoToolkitMetaFields.putUmbracoSeoToolkitSchemaEntriesById({
         path: { id },
         body: model,
       })
@@ -59,7 +59,7 @@ export class SchemaEntrySource {
   deleteEntry(id: string) {
     return tryExecute(
       this.#host,
-      BackofficeSeoToolkitMetaFields.deleteUmbracoSeoToolkitSchemaEntry({
+      BackofficeSeoToolkitMetaFields.deleteUmbracoSeoToolkitSchemaEntriesById({
         path: { id },
       })
     );

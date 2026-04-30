@@ -11,7 +11,7 @@ import {
   UmbPropertyValueChangeEvent,
 } from "@umbraco-cms/backoffice/property-editor";
 import { UMB_MODAL_MANAGER_CONTEXT } from "@umbraco-cms/backoffice/modal";
-import { SchemaEntryViewModel, SchemaTypeViewModel } from "../api";
+import { SchemaEntryViewModel, SchemaPropertyValue, SchemaTypeViewModel } from "../api";
 import { MetaFieldsSchemaSource } from "../dataAccess/MetaFieldsSchemaSource";
 import { SchemaEntrySource } from "../dataAccess/SchemaEntrySource";
 import { SchemaPickerItem } from "../popups/SchemaPickerModal.element";
@@ -103,7 +103,7 @@ export default class SchemaEditorPropertyEditor
   #getEntryDisplayName(id: string): string {
     const entry = this._loadedEntries.get(id);
     if (!entry) return id;
-    return this.#getSchemaName(entry.schemaAlias);
+    return this.#getSchemaName(entry.schemaAlias!);
   }
 
   async #openAddSchemaFlow() {
@@ -193,7 +193,7 @@ export default class SchemaEditorPropertyEditor
   }
 
   #toPropertyValues(
-    apiProps: { [key: string]: import("../api/types.gen").SchemaPropertyValueModel | null | undefined } | null | undefined
+    apiProps: { [key: string]: SchemaPropertyValue | null | undefined } | null | undefined
   ): { [key: string]: import("../popups/SchemaPropertyModal.element").PropertyValue } {
     if (!apiProps) return {};
     const result: { [key: string]: import("../popups/SchemaPropertyModal.element").PropertyValue } = {};
@@ -224,12 +224,12 @@ export default class SchemaEditorPropertyEditor
         data: {
           availableSchemas: this._schemaTypes,
           editSchema: {
-            schemaAlias: entry.schemaAlias,
+            schemaAlias: entry.schemaAlias!,
             properties: editableProps,
           },
         },
         value: {
-          schemaAlias: entry.schemaAlias,
+          schemaAlias: entry.schemaAlias!,
           properties: editableProps,
         },
       });
@@ -239,8 +239,9 @@ export default class SchemaEditorPropertyEditor
 
       // PUT to update the entry
       const result = await this.#entrySource!.updateEntry(entryId, {
-        schemaAlias: schemaData.schemaAlias,
-        properties: schemaData.properties,
+        schemaAlias: schemaData.schemaAlias!,
+        properties: schemaData.properties!,
+        ownerKey: this.#getNodeGuid()
       });
 
       if (result.data) {

@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteUmbracoSeoToolkitDomainsDeleteData, DeleteUmbracoSeoToolkitDomainsDeleteResponses, DeleteUmbracoSeoToolkitRedirectsRedirectData, DeleteUmbracoSeoToolkitRedirectsRedirectResponses, DeleteUmbracoSeoToolkitScriptManagerScriptData, DeleteUmbracoSeoToolkitScriptManagerScriptResponses, DeleteUmbracoSeoToolkitSiteAuditSiteAuditData, DeleteUmbracoSeoToolkitSiteAuditSiteAuditResponses, GetApiSeoData, GetApiSeoResponses, GetUmbracoSeoToolkitDomainsConfigData, GetUmbracoSeoToolkitDomainsConfigResponses, GetUmbracoSeoToolkitDomainsGetData, GetUmbracoSeoToolkitDomainsGetPredefinedData, GetUmbracoSeoToolkitDomainsGetPredefinedResponses, GetUmbracoSeoToolkitDomainsGetResponses, GetUmbracoSeoToolkitMetaFieldsImagePreviewData, GetUmbracoSeoToolkitMetaFieldsImagePreviewResponses, GetUmbracoSeoToolkitMetaFieldsMetaFieldsData, GetUmbracoSeoToolkitMetaFieldsMetaFieldsResponses, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFieldsData, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFieldsResponses, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponses, GetUmbracoSeoToolkitModulesData, GetUmbracoSeoToolkitModulesResponses, GetUmbracoSeoToolkitNotFoundNotFoundData, GetUmbracoSeoToolkitNotFoundNotFoundResponses, GetUmbracoSeoToolkitRedirectsDomainsData, GetUmbracoSeoToolkitRedirectsDomainsResponses, GetUmbracoSeoToolkitRedirectsExportData, GetUmbracoSeoToolkitRedirectsExportResponses, GetUmbracoSeoToolkitRedirectsRedirectData, GetUmbracoSeoToolkitRedirectsRedirectResponses, GetUmbracoSeoToolkitRedirectsRedirectsData, GetUmbracoSeoToolkitRedirectsRedirectsResponses, GetUmbracoSeoToolkitRobotsTxtData, GetUmbracoSeoToolkitRobotsTxtResponses, GetUmbracoSeoToolkitSchemaEntriesData, GetUmbracoSeoToolkitSchemaEntriesReusableData, GetUmbracoSeoToolkitSchemaEntriesReusableResponses, GetUmbracoSeoToolkitSchemaEntriesResponses, GetUmbracoSeoToolkitSchemaEntryData, GetUmbracoSeoToolkitSchemaEntryResponses, GetUmbracoSeoToolkitSchemaTypesData, GetUmbracoSeoToolkitSchemaTypesResponses, GetUmbracoSeoToolkitScriptManagerDefinitionsData, GetUmbracoSeoToolkitScriptManagerDefinitionsResponses, GetUmbracoSeoToolkitScriptManagerScriptData, GetUmbracoSeoToolkitScriptManagerScriptResponses, GetUmbracoSeoToolkitScriptManagerScriptsData, GetUmbracoSeoToolkitScriptManagerScriptsResponses, GetUmbracoSeoToolkitSeoKeyValueSettingsData, GetUmbracoSeoToolkitSeoKeyValueSettingsResponses, GetUmbracoSeoToolkitSeoKeyValueSettingsValueData, GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses, GetUmbracoSeoToolkitSettingsSeoSettingsData, GetUmbracoSeoToolkitSettingsSeoSettingsResponses, GetUmbracoSeoToolkitSiteAuditPageChecksData, GetUmbracoSeoToolkitSiteAuditPageChecksResponses, GetUmbracoSeoToolkitSiteAuditSiteAuditConfigurationData, GetUmbracoSeoToolkitSiteAuditSiteAuditConfigurationResponses, GetUmbracoSeoToolkitSiteAuditSiteAuditData, GetUmbracoSeoToolkitSiteAuditSiteAuditResponses, GetUmbracoSeoToolkitSiteAuditSiteAuditsData, GetUmbracoSeoToolkitSiteAuditSiteAuditsResponses, GetUmbracoSeoToolkitSitemapSitemapSettingsData, GetUmbracoSeoToolkitSitemapSitemapSettingsResponses, GetUmbracoSeoToolkitTreeInfoAncestorsData, GetUmbracoSeoToolkitTreeInfoAncestorsResponses, GetUmbracoSeoToolkitTreeInfoChildrenData, GetUmbracoSeoToolkitTreeInfoChildrenResponses, GetUmbracoSeoToolkitTreeInfoRootData, GetUmbracoSeoToolkitTreeInfoRootResponses, PostUmbracoSeoToolkitDomainsSaveData, PostUmbracoSeoToolkitDomainsSaveResponses, PostUmbracoSeoToolkitMetaFieldsMetaFieldsData, PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponses, PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData, PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponses, PostUmbracoSeoToolkitNotFoundNotFoundData, PostUmbracoSeoToolkitNotFoundNotFoundResponses, PostUmbracoSeoToolkitRedirectsImportData, PostUmbracoSeoToolkitRedirectsImportErrors, PostUmbracoSeoToolkitRedirectsImportResponses, PostUmbracoSeoToolkitRedirectsRedirectData, PostUmbracoSeoToolkitRedirectsRedirectResponses, PostUmbracoSeoToolkitRedirectsUpdateStatusCodesData, PostUmbracoSeoToolkitRedirectsUpdateStatusCodesResponses, PostUmbracoSeoToolkitRedirectsValidateData, PostUmbracoSeoToolkitRedirectsValidateErrors, PostUmbracoSeoToolkitRedirectsValidateResponses, PostUmbracoSeoToolkitRobotsTxtData, PostUmbracoSeoToolkitRobotsTxtResponses, PostUmbracoSeoToolkitSchemaEntryData, PostUmbracoSeoToolkitSchemaEntryResponses, PostUmbracoSeoToolkitScriptManagerScriptData, PostUmbracoSeoToolkitScriptManagerScriptResponses, PostUmbracoSeoToolkitSeoKeyValueSettingsSaveData, PostUmbracoSeoToolkitSeoKeyValueSettingsSaveResponses, PostUmbracoSeoToolkitSettingsSeoSettingsData, PostUmbracoSeoToolkitSettingsSeoSettingsResponses, PostUmbracoSeoToolkitSiteAuditRunData, PostUmbracoSeoToolkitSiteAuditRunResponses, PostUmbracoSeoToolkitSiteAuditSiteAuditData, PostUmbracoSeoToolkitSiteAuditSiteAuditResponses, PostUmbracoSeoToolkitSiteAuditStopSiteAuditData, PostUmbracoSeoToolkitSiteAuditStopSiteAuditResponses, PostUmbracoSeoToolkitSitemapSitemapSettingsData, PostUmbracoSeoToolkitSitemapSitemapSettingsResponses, PutUmbracoSeoToolkitSchemaEntryData, PutUmbracoSeoToolkitSchemaEntryResponses, DeleteUmbracoSeoToolkitSchemaEntryData, DeleteUmbracoSeoToolkitSchemaEntryResponses } from './types.gen';
+import type { DeleteUmbracoSeoToolkitDomainsDeleteData, DeleteUmbracoSeoToolkitDomainsDeleteResponses, DeleteUmbracoSeoToolkitRedirectsRedirectData, DeleteUmbracoSeoToolkitRedirectsRedirectResponses, DeleteUmbracoSeoToolkitSchemaEntriesByIdData, DeleteUmbracoSeoToolkitSchemaEntriesByIdResponses, DeleteUmbracoSeoToolkitScriptManagerScriptData, DeleteUmbracoSeoToolkitScriptManagerScriptResponses, DeleteUmbracoSeoToolkitSiteAuditSiteAuditData, DeleteUmbracoSeoToolkitSiteAuditSiteAuditResponses, GetApiSeoData, GetApiSeoResponses, GetUmbracoSeoToolkitDomainsConfigData, GetUmbracoSeoToolkitDomainsConfigResponses, GetUmbracoSeoToolkitDomainsGetData, GetUmbracoSeoToolkitDomainsGetPredefinedData, GetUmbracoSeoToolkitDomainsGetPredefinedResponses, GetUmbracoSeoToolkitDomainsGetResponses, GetUmbracoSeoToolkitIsEnabledData, GetUmbracoSeoToolkitIsEnabledResponses, GetUmbracoSeoToolkitMetaFieldsImagePreviewData, GetUmbracoSeoToolkitMetaFieldsImagePreviewResponses, GetUmbracoSeoToolkitMetaFieldsMetaFieldsData, GetUmbracoSeoToolkitMetaFieldsMetaFieldsResponses, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFieldsData, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsAdditionalFieldsResponses, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData, GetUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponses, GetUmbracoSeoToolkitModulesData, GetUmbracoSeoToolkitModulesResponses, GetUmbracoSeoToolkitNotFoundNotFoundData, GetUmbracoSeoToolkitNotFoundNotFoundResponses, GetUmbracoSeoToolkitRedirectsDomainsData, GetUmbracoSeoToolkitRedirectsDomainsResponses, GetUmbracoSeoToolkitRedirectsExportData, GetUmbracoSeoToolkitRedirectsExportResponses, GetUmbracoSeoToolkitRedirectsRedirectData, GetUmbracoSeoToolkitRedirectsRedirectResponses, GetUmbracoSeoToolkitRedirectsRedirectsData, GetUmbracoSeoToolkitRedirectsRedirectsResponses, GetUmbracoSeoToolkitRobotsTxtData, GetUmbracoSeoToolkitRobotsTxtResponses, GetUmbracoSeoToolkitSchemaEntriesByIdData, GetUmbracoSeoToolkitSchemaEntriesByIdResponses, GetUmbracoSeoToolkitSchemaEntriesData, GetUmbracoSeoToolkitSchemaEntriesResponses, GetUmbracoSeoToolkitSchemaEntriesReusableData, GetUmbracoSeoToolkitSchemaEntriesReusableResponses, GetUmbracoSeoToolkitSchemaTypesData, GetUmbracoSeoToolkitSchemaTypesResponses, GetUmbracoSeoToolkitScriptManagerDefinitionsData, GetUmbracoSeoToolkitScriptManagerDefinitionsResponses, GetUmbracoSeoToolkitScriptManagerScriptData, GetUmbracoSeoToolkitScriptManagerScriptResponses, GetUmbracoSeoToolkitScriptManagerScriptsData, GetUmbracoSeoToolkitScriptManagerScriptsResponses, GetUmbracoSeoToolkitSeoKeyValueSettingsData, GetUmbracoSeoToolkitSeoKeyValueSettingsResponses, GetUmbracoSeoToolkitSeoKeyValueSettingsValueData, GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses, GetUmbracoSeoToolkitSettingsSeoSettingsData, GetUmbracoSeoToolkitSettingsSeoSettingsResponses, GetUmbracoSeoToolkitSiteAuditPageChecksData, GetUmbracoSeoToolkitSiteAuditPageChecksResponses, GetUmbracoSeoToolkitSiteAuditSiteAuditConfigurationData, GetUmbracoSeoToolkitSiteAuditSiteAuditConfigurationResponses, GetUmbracoSeoToolkitSiteAuditSiteAuditData, GetUmbracoSeoToolkitSiteAuditSiteAuditResponses, GetUmbracoSeoToolkitSiteAuditSiteAuditsData, GetUmbracoSeoToolkitSiteAuditSiteAuditsResponses, GetUmbracoSeoToolkitSitemapContentContentSettingsData, GetUmbracoSeoToolkitSitemapContentContentSettingsResponses, GetUmbracoSeoToolkitSitemapSitemapSettingsData, GetUmbracoSeoToolkitSitemapSitemapSettingsResponses, GetUmbracoSeoToolkitTreeInfoAncestorsData, GetUmbracoSeoToolkitTreeInfoAncestorsResponses, GetUmbracoSeoToolkitTreeInfoChildrenData, GetUmbracoSeoToolkitTreeInfoChildrenResponses, GetUmbracoSeoToolkitTreeInfoRootData, GetUmbracoSeoToolkitTreeInfoRootResponses, PostUmbracoSeoToolkitDomainsSaveData, PostUmbracoSeoToolkitDomainsSaveResponses, PostUmbracoSeoToolkitMetaFieldsMetaFieldsData, PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponses, PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsData, PostUmbracoSeoToolkitMetaFieldsSettingsMetaFieldsSettingsResponses, PostUmbracoSeoToolkitNotFoundNotFoundData, PostUmbracoSeoToolkitNotFoundNotFoundResponses, PostUmbracoSeoToolkitRedirectsImportData, PostUmbracoSeoToolkitRedirectsImportErrors, PostUmbracoSeoToolkitRedirectsImportResponses, PostUmbracoSeoToolkitRedirectsRedirectData, PostUmbracoSeoToolkitRedirectsRedirectResponses, PostUmbracoSeoToolkitRedirectsUpdateStatusCodesData, PostUmbracoSeoToolkitRedirectsUpdateStatusCodesResponses, PostUmbracoSeoToolkitRedirectsValidateData, PostUmbracoSeoToolkitRedirectsValidateErrors, PostUmbracoSeoToolkitRedirectsValidateResponses, PostUmbracoSeoToolkitRobotsTxtData, PostUmbracoSeoToolkitRobotsTxtResponses, PostUmbracoSeoToolkitSchemaEntriesData, PostUmbracoSeoToolkitSchemaEntriesResponses, PostUmbracoSeoToolkitScriptManagerScriptData, PostUmbracoSeoToolkitScriptManagerScriptResponses, PostUmbracoSeoToolkitScriptManagerSortScriptsData, PostUmbracoSeoToolkitScriptManagerSortScriptsResponses, PostUmbracoSeoToolkitSeoKeyValueSettingsSaveData, PostUmbracoSeoToolkitSeoKeyValueSettingsSaveResponses, PostUmbracoSeoToolkitSettingsSeoSettingsData, PostUmbracoSeoToolkitSettingsSeoSettingsResponses, PostUmbracoSeoToolkitSiteAuditRunData, PostUmbracoSeoToolkitSiteAuditRunResponses, PostUmbracoSeoToolkitSiteAuditSiteAuditData, PostUmbracoSeoToolkitSiteAuditSiteAuditResponses, PostUmbracoSeoToolkitSiteAuditStopSiteAuditData, PostUmbracoSeoToolkitSiteAuditStopSiteAuditResponses, PostUmbracoSeoToolkitSitemapContentContentSettingsData, PostUmbracoSeoToolkitSitemapContentContentSettingsResponses, PostUmbracoSeoToolkitSitemapSitemapSettingsData, PostUmbracoSeoToolkitSitemapSitemapSettingsResponses, PutUmbracoSeoToolkitSchemaEntriesByIdData, PutUmbracoSeoToolkitSchemaEntriesByIdResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -19,6 +19,63 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 };
 
 export class BackofficeSeoToolkitMetaFields {
+    public static getUmbracoSeoToolkitSchemaEntries<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitSchemaEntriesData, ThrowOnError>) {
+        return (options?.client ?? client).get<GetUmbracoSeoToolkitSchemaEntriesResponses, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkit/schema/entries',
+            ...options
+        });
+    }
+    
+    public static postUmbracoSeoToolkitSchemaEntries<ThrowOnError extends boolean = true>(options?: Options<PostUmbracoSeoToolkitSchemaEntriesData, ThrowOnError>) {
+        return (options?.client ?? client).post<PostUmbracoSeoToolkitSchemaEntriesResponses, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkit/schema/entries',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options?.headers
+            }
+        });
+    }
+    
+    public static deleteUmbracoSeoToolkitSchemaEntriesById<ThrowOnError extends boolean = true>(options: Options<DeleteUmbracoSeoToolkitSchemaEntriesByIdData, ThrowOnError>) {
+        return (options.client ?? client).delete<DeleteUmbracoSeoToolkitSchemaEntriesByIdResponses, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkit/schema/entries/{id}',
+            ...options
+        });
+    }
+    
+    public static getUmbracoSeoToolkitSchemaEntriesById<ThrowOnError extends boolean = true>(options: Options<GetUmbracoSeoToolkitSchemaEntriesByIdData, ThrowOnError>) {
+        return (options.client ?? client).get<GetUmbracoSeoToolkitSchemaEntriesByIdResponses, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkit/schema/entries/{id}',
+            ...options
+        });
+    }
+    
+    public static putUmbracoSeoToolkitSchemaEntriesById<ThrowOnError extends boolean = true>(options: Options<PutUmbracoSeoToolkitSchemaEntriesByIdData, ThrowOnError>) {
+        return (options.client ?? client).put<PutUmbracoSeoToolkitSchemaEntriesByIdResponses, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkit/schema/entries/{id}',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    public static getUmbracoSeoToolkitSchemaEntriesReusable<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitSchemaEntriesReusableData, ThrowOnError>) {
+        return (options?.client ?? client).get<GetUmbracoSeoToolkitSchemaEntriesReusableResponses, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkit/schema/entries/reusable',
+            ...options
+        });
+    }
+    
+    public static getUmbracoSeoToolkitSchemaTypes<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitSchemaTypesData, ThrowOnError>) {
+        return (options?.client ?? client).get<GetUmbracoSeoToolkitSchemaTypesResponses, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkit/schema/types',
+            ...options
+        });
+    }
+    
     public static getUmbracoSeoToolkitMetaFieldsImagePreview<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitMetaFieldsImagePreviewData, ThrowOnError>) {
         return (options?.client ?? client).get<GetUmbracoSeoToolkitMetaFieldsImagePreviewResponses, unknown, ThrowOnError>({
             url: '/umbraco/seoToolkitMetaFields/imagePreview',
@@ -66,63 +123,6 @@ export class BackofficeSeoToolkitMetaFields {
                 'Content-Type': 'application/json',
                 ...options?.headers
             }
-        });
-    }
-    
-    public static getUmbracoSeoToolkitSchemaTypes<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitSchemaTypesData, ThrowOnError>) {
-        return (options?.client ?? client).get<GetUmbracoSeoToolkitSchemaTypesResponses, unknown, ThrowOnError>({
-            url: '/umbraco/seoToolkitSchema/types',
-            ...options
-        });
-    }
-    
-    public static getUmbracoSeoToolkitSchemaEntries<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitSchemaEntriesData, ThrowOnError>) {
-        return (options?.client ?? client).get<GetUmbracoSeoToolkitSchemaEntriesResponses, unknown, ThrowOnError>({
-            url: '/umbraco/seoToolkit/schema/entries',
-            ...options
-        });
-    }
-    
-    public static getUmbracoSeoToolkitSchemaEntry<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitSchemaEntryData, ThrowOnError>) {
-        return (options?.client ?? client).get<GetUmbracoSeoToolkitSchemaEntryResponses, unknown, ThrowOnError>({
-            url: '/umbraco/seoToolkit/schema/entries/{id}',
-            ...options
-        });
-    }
-    
-    public static getUmbracoSeoToolkitSchemaEntriesReusable<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitSchemaEntriesReusableData, ThrowOnError>) {
-        return (options?.client ?? client).get<GetUmbracoSeoToolkitSchemaEntriesReusableResponses, unknown, ThrowOnError>({
-            url: '/umbraco/seoToolkit/schema/entries/reusable',
-            ...options
-        });
-    }
-    
-    public static postUmbracoSeoToolkitSchemaEntry<ThrowOnError extends boolean = true>(options?: Options<PostUmbracoSeoToolkitSchemaEntryData, ThrowOnError>) {
-        return (options?.client ?? client).post<PostUmbracoSeoToolkitSchemaEntryResponses, unknown, ThrowOnError>({
-            url: '/umbraco/seoToolkit/schema/entries',
-            ...options,
-            headers: {
-                'Content-Type': 'application/json',
-                ...options?.headers
-            }
-        });
-    }
-    
-    public static putUmbracoSeoToolkitSchemaEntry<ThrowOnError extends boolean = true>(options?: Options<PutUmbracoSeoToolkitSchemaEntryData, ThrowOnError>) {
-        return (options?.client ?? client).put<PutUmbracoSeoToolkitSchemaEntryResponses, unknown, ThrowOnError>({
-            url: '/umbraco/seoToolkit/schema/entries/{id}',
-            ...options,
-            headers: {
-                'Content-Type': 'application/json',
-                ...options?.headers
-            }
-        });
-    }
-    
-    public static deleteUmbracoSeoToolkitSchemaEntry<ThrowOnError extends boolean = true>(options?: Options<DeleteUmbracoSeoToolkitSchemaEntryData, ThrowOnError>) {
-        return (options?.client ?? client).delete<DeleteUmbracoSeoToolkitSchemaEntryResponses, unknown, ThrowOnError>({
-            url: '/umbraco/seoToolkit/schema/entries/{id}',
-            ...options
         });
     }
 }
@@ -281,6 +281,17 @@ export class BackofficeSeoToolkitScriptManager {
         return (options?.client ?? client).get<GetUmbracoSeoToolkitScriptManagerScriptsResponses, unknown, ThrowOnError>({
             url: '/umbraco/seoToolkitScriptManager/scripts',
             ...options
+        });
+    }
+    
+    public static postUmbracoSeoToolkitScriptManagerSortScripts<ThrowOnError extends boolean = true>(options?: Options<PostUmbracoSeoToolkitScriptManagerSortScriptsData, ThrowOnError>) {
+        return (options?.client ?? client).post<PostUmbracoSeoToolkitScriptManagerSortScriptsResponses, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkitScriptManager/sortScripts',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options?.headers
+            }
         });
     }
 }
