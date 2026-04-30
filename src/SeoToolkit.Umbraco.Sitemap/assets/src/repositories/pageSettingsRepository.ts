@@ -19,4 +19,8 @@ export default class PageSettingsRepository extends UmbRepositoryBase {
     async setPageSettings(settings: SitemapPageTypeSettingsPostModel){
         this.#source.setPageSettings(settings);
     }
+
+    async isModuleEnabled() {
+        return this.#source.isModuleEnabled();
+    }
 }

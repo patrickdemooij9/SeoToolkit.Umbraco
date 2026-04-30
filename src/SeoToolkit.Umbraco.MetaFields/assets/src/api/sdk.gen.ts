@@ -377,9 +377,34 @@ export class BackofficeSeoToolkitSitemap {
             }
         });
     }
+    
+    public static getUmbracoSeoToolkitSitemapContentContentSettings<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitSitemapContentContentSettingsData, ThrowOnError>) {
+        return (options?.client ?? client).get<GetUmbracoSeoToolkitSitemapContentContentSettingsResponses, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkitSitemapContent/contentSettings',
+            ...options
+        });
+    }
+    
+    public static postUmbracoSeoToolkitSitemapContentContentSettings<ThrowOnError extends boolean = true>(options?: Options<PostUmbracoSeoToolkitSitemapContentContentSettingsData, ThrowOnError>) {
+        return (options?.client ?? client).post<PostUmbracoSeoToolkitSitemapContentContentSettingsResponses, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkitSitemapContent/contentSettings',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options?.headers
+            }
+        });
+    }
 }
 
 export class BackofficeSeoToolkit {
+    public static getUmbracoSeoToolkitIsEnabled<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitIsEnabledData, ThrowOnError>) {
+        return (options?.client ?? client).get<GetUmbracoSeoToolkitIsEnabledResponses, unknown, ThrowOnError>({
+            url: '/umbraco/seoToolkit/isEnabled',
+            ...options
+        });
+    }
+    
     public static getUmbracoSeoToolkitModules<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitModulesData, ThrowOnError>) {
         return (options?.client ?? client).get<GetUmbracoSeoToolkitModulesResponses, unknown, ThrowOnError>({
             url: '/umbraco/seoToolkit/modules',

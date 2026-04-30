@@ -31,7 +31,10 @@ export default class RedirectRepository
     const pageNumber = !filter ? 1 : filter.skip! / filter.take! + 1;
     const data = await this.#source.getRedirects(
       pageNumber,
-      filter?.take ?? 10
+      filter?.take ?? 10,
+      undefined,
+      undefined,
+      filter?.filter
     );
     const result: UmbRepositoryResponse<UmbPagedModel<RedirectOverviewItem>> = {
       data: {

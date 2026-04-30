@@ -1,15 +1,16 @@
 ﻿using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
+using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Migrations;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
 {
-    internal class OldUrlIndexMigration : MigrationBase
+    internal class OldUrlIndexMigration : AsyncMigrationBase
     {
         public OldUrlIndexMigration(IMigrationContext context) : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             if (!IndexExists("IX_SeoToolkitOldUrl"))
             {
@@ -19,6 +20,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
             {
                 CreateIndex<RedirectEntity>("IX_SeoToolkitRegex");
             }
+            return Task.CompletedTask;
         }
     }
 }

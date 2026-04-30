@@ -7,20 +7,19 @@ using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
+using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.Redirects.Core.BackgroundTasks;
+using SeoToolkit.Umbraco.Redirects.Core.Caching;
 using SeoToolkit.Umbraco.Redirects.Core.Components;
 using SeoToolkit.Umbraco.Redirects.Core.Config;
 using SeoToolkit.Umbraco.Redirects.Core.Config.Models;
-using SeoToolkit.Umbraco.Redirects.Core.Controllers;
 using SeoToolkit.Umbraco.Redirects.Core.Helpers;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Middleware;
 using SeoToolkit.Umbraco.Redirects.Core.Repositories;
 using SeoToolkit.Umbraco.Redirects.Core.Services;
-using SeoToolkit.Umbraco.Redirects.Core.Caching;
-using SeoToolkit.Umbraco.Redirects.Core.BackgroundTasks;
-using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Redirects.Core.Startup;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Composers
@@ -33,7 +32,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Composers
             builder.Services.Configure<RedirectsAppSettingsModel>(section);
             builder.Services.AddSingleton(typeof(ISettingsService<RedirectsConfigModel>), typeof(RedirectsConfigurationService));
 
-            var disabledModules = section?.Get<RedirectsAppSettingsModel>()?.DisabledModules ?? Array.Empty<string>();
+            var appSettingsModel = section?.Get<RedirectsAppSettingsModel>();
+            var disabledModules = appSettingsModel?.DisabledModules ?? Array.Empty<string>();
 
             if (disabledModules.Contains(DisabledModuleConstant.All))
             {
@@ -58,19 +58,35 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Composers
 
             if (!disabledModules.Contains(DisabledModuleConstant.Middleware))
             {
+                //Default to PrePipeline
+                var redirectMiddlewarePosition = RedirectMiddlewarePosition.PrePipeline;
+                var redirectMiddleWarePositionAppSetting = appSettingsModel?.RedirectMiddleWarePosition;
+                if (!string.IsNullOrEmpty(redirectMiddleWarePositionAppSetting) &&
+                    Enum.TryParse(redirectMiddleWarePositionAppSetting, out RedirectMiddlewarePosition parsedValue))
+                {
+                    redirectMiddlewarePosition = parsedValue;
+                }
+
+                Action<IApplicationBuilder> middleware = applicationBuilder =>
+                {
+                    applicationBuilder.UseMiddleware<RedirectMiddleware>();
+                };
+
                 builder.Services.Configure<UmbracoPipelineOptions>(options =>
                 {
-                    options.AddFilter(new UmbracoPipelineFilter(
-                        "SeoToolkitRedirects",
-                        applicationBuilder =>
-                        {
-                            applicationBuilder.UseMiddleware<RedirectMiddleware>();
-                        },
-                        applicationBuilder =>
-                        {
-                        },
-                        applicationBuilder => { }
-                    ));
+                    options.AddFilter(new UmbracoPipelineFilter("SeoToolkitRedirects")
+                    {
+                        PrePipeline = redirectMiddlewarePosition == RedirectMiddlewarePosition.PrePipeline ?
+                            middleware : null,
+                        PreRouting = redirectMiddlewarePosition == RedirectMiddlewarePosition.PreRouting ?
+                            middleware : null,
+                        PostRouting = redirectMiddlewarePosition == RedirectMiddlewarePosition.PostRouting ?
+                            middleware : null,
+                        PostPipeline = redirectMiddlewarePosition == RedirectMiddlewarePosition.PostPipeline ?
+                            middleware : null,
+                        Endpoints = redirectMiddlewarePosition == RedirectMiddlewarePosition.Endpoints ?
+                            middleware : null,
+                    });
                 });
             }
         }

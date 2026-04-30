@@ -3,6 +3,7 @@ import { SeoEnabledCondition } from "../conditions/SeoEnabledCondition";
 import {
   ManifestWorkspaceView,
 } from "@umbraco-cms/backoffice/workspace";
+import { SeoModuleEnabledCondition } from "../conditions/SeoModuleEnabledCondition";
 
 const workSpaceView: ManifestWorkspaceView = {
   type: "workspaceView",
@@ -22,7 +23,7 @@ const workSpaceView: ManifestWorkspaceView = {
     },
     {
       alias: "SeoToolkit.SeoEnabled",
-    },
+    }
   ],
 };
 
@@ -53,7 +54,15 @@ const seoConditionManifest: ManifestCondition = {
   api: SeoEnabledCondition,
 };
 
+const seoModuleEnabledConditionManifest: ManifestCondition = {
+  type: "condition",
+  name: "Seo Module Enabled Condition",
+  alias: "SeoToolkit.SeoModuleEnabled",
+  api: SeoModuleEnabledCondition,
+};
+
 export const ContentViewManifests = [
   workSpaceView,
   seoConditionManifest,
+  seoModuleEnabledConditionManifest,
 ];

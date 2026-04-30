@@ -29,5 +29,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Models.Database
         [Column("DomainId")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public Guid? DomainId { get; set; }
+
+        [Column("SortOrder")]
+        public int SortOrder { get; set; }
     }
 }
