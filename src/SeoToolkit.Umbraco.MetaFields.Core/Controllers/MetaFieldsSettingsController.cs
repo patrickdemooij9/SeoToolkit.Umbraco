@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Mapping;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
@@ -58,8 +59,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
                         if (fieldVm.Editor != null)
                         {
-                            var config = new System.Collections.Generic.Dictionary<string, object>(
-                                fieldVm.Editor.Config ?? new System.Collections.Generic.Dictionary<string, object>())
+                            var config = new Dictionary<string, object>(
+                                fieldVm.Editor.Config ?? new Dictionary<string, object>())
                             {
                                 ["nodeGuid"] = contentType.Key.ToString(),
                                 ["ownerType"] = "documentType"

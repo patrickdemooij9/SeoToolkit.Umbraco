@@ -16,7 +16,7 @@ import { MetaFieldsSchemaSource } from "../dataAccess/MetaFieldsSchemaSource";
 import { SchemaEntrySource } from "../dataAccess/SchemaEntrySource";
 import { SchemaPickerItem } from "../popups/SchemaPickerModal.element";
 import type { SchemaSourceModalData, SchemaSourceModalResult } from "../popups/SchemaSourceModal.element";
-import type { EditableSchema } from "../popups/SchemaPropertyModal.element";
+import type { EditableSchema, PropertyValue } from "../popups/SchemaPropertyModal.element";
 
 interface SchemaEditorValue {
   schemas: string[];
@@ -200,9 +200,9 @@ export default class SchemaEditorPropertyEditor
 
   #toPropertyValues(
     apiProps: { [key: string]: SchemaPropertyValue | null | undefined } | null | undefined
-  ): { [key: string]: import("../popups/SchemaPropertyModal.element").PropertyValue } {
+  ): { [key: string]: PropertyValue } {
     if (!apiProps) return {};
-    const result: { [key: string]: import("../popups/SchemaPropertyModal.element").PropertyValue } = {};
+    const result: { [key: string]: PropertyValue } = {};
     for (const [key, val] of Object.entries(apiProps)) {
       result[key] = {
         value: val?.value ?? "",

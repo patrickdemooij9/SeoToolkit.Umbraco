@@ -8,6 +8,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.PostModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.ViewModels;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.SchemaEntryService;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.Routing;
@@ -99,7 +100,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 OwnerKey = model.OwnerKey,
                 SchemaAlias = model.SchemaAlias,
                 DisplayName = model.DisplayName,
-                Properties = model.Properties ?? new System.Collections.Generic.Dictionary<string, SchemaPropertyValue>()
+                Properties = model.Properties ?? new Dictionary<string, SchemaPropertyValue>()
             };
 
             var result = _schemaEntryService.Add(dto);
@@ -116,7 +117,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
             existing.SchemaAlias = model.SchemaAlias;
             existing.DisplayName = model.DisplayName;
-            existing.Properties = model.Properties ?? new System.Collections.Generic.Dictionary<string, SchemaPropertyValue>();
+            existing.Properties = model.Properties ?? new Dictionary<string, SchemaPropertyValue>();
 
             var result = _schemaEntryService.Update(existing);
             return Ok(MapToViewModel(result));
