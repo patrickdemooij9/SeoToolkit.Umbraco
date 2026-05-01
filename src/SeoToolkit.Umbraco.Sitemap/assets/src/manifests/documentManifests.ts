@@ -58,10 +58,6 @@ const contentView: any = {
     },
     conditions: [
         {
-            alias: 'SeoToolkit.SeoModuleEnabled',
-            moduleAlias: 'sitemap'
-        },
-        {
             alias: 'SeoToolkit.SitemapEnabled'
         }
     ]
@@ -76,10 +72,6 @@ const contentWorkspaceContext: ManifestWorkspaceContext = {
         {
             alias: 'Umb.Condition.WorkspaceAlias',
             match: 'Umb.Workspace.Document'
-        },
-        {
-            alias: 'SeoToolkit.SeoModuleEnabled',
-            moduleAlias: 'sitemap'
         },
         {
             alias: 'SeoToolkit.SitemapEnabled'

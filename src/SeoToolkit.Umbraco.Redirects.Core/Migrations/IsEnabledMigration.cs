@@ -3,17 +3,18 @@ using SeoToolkit.Umbraco.Common.Core.Migrations;
 using SeoToolkit.Umbraco.Redirects.Core.Migrations.Entities;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
 using System;
+using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Migrations;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
 {
-    internal class IsEnabledMigration : MigrationBase
+    internal class IsEnabledMigration : AsyncMigrationBase
     {
         public IsEnabledMigration(IMigrationContext context) : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             if (!ColumnExists("SeoToolkitRedirects", "IsEnabled"))
             {
@@ -25,13 +26,14 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
                     Database.Execute("UPDATE SeoToolkitRedirects SET IsEnabled = 1");
 
                     MigrationHelper.RecreateTable<IsEnabledEntity>(Database, Create, Sql(), "SeoToolkitRedirects");
-                    return;
+                    return Task.CompletedTask;
                 }
 
                 Alter.Table("SeoToolkitRedirects").AddColumn("IsEnabled").AsBoolean().Nullable().Do();
                 Update.Table("SeoToolkitRedirects").Set(new { IsEnabled = true}).AllRows().Do();
                 Alter.Table("SeoToolkitRedirects").AlterColumn("IsEnabled").AsBoolean().NotNullable().Do();
             }
+            return Task.CompletedTask;
         }
     }
 }

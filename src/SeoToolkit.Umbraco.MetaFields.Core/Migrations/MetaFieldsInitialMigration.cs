@@ -2,16 +2,17 @@
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Database;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsSettings.Database;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database;
+using System.Threading.Tasks;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
 {
-    public class MetaFieldsInitialMigration : MigrationBase
+    public class MetaFieldsInitialMigration : AsyncMigrationBase
     {
         public MetaFieldsInitialMigration(IMigrationContext context) : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             if (TableExists("uSeoToolkitMetaFieldsSettings"))
             {
@@ -30,6 +31,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
             {
                 Create.Table<MetaFieldsValueEntity>().Do();
             }
+            return Task.CompletedTask;
         }
     }
 }
