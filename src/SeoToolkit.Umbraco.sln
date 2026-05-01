@@ -65,7 +65,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeoToolkit.Umbraco.uSync", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeoToolkit.Umbraco.AI.Core", "SeoToolkit.Umbraco.AI.Core\SeoToolkit.Umbraco.AI.Core.csproj", "{A4C7E3D1-5B89-4F12-B631-3D7A56F82E04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeoToolkit.Umbraco.AI.Integration", "SeoToolkit.Umbraco.AI.Integration\SeoToolkit.Umbraco.AI.Integration.csproj", "{C5D8F4E2-6A90-4023-C742-4E8B67G93F15}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeoToolkit.Umbraco.AI.Integration", "SeoToolkit.Umbraco.AI.Integration\SeoToolkit.Umbraco.AI.Integration.csproj", "{D22A5058-D337-B2C2-DDA2-2BD74EE3AE62}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,10 +161,10 @@ Global
 		{A4C7E3D1-5B89-4F12-B631-3D7A56F82E04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4C7E3D1-5B89-4F12-B631-3D7A56F82E04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4C7E3D1-5B89-4F12-B631-3D7A56F82E04}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C5D8F4E2-6A90-4023-C742-4E8B67G93F15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C5D8F4E2-6A90-4023-C742-4E8B67G93F15}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C5D8F4E2-6A90-4023-C742-4E8B67G93F15}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C5D8F4E2-6A90-4023-C742-4E8B67G93F15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D22A5058-D337-B2C2-DDA2-2BD74EE3AE62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D22A5058-D337-B2C2-DDA2-2BD74EE3AE62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D22A5058-D337-B2C2-DDA2-2BD74EE3AE62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D22A5058-D337-B2C2-DDA2-2BD74EE3AE62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -187,7 +187,7 @@ Global
 		{63A8EF02-250D-496D-9628-5E79EAA4D13F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{33C38047-3F08-4B39-82D6-5A9F96D9FDB5} = {953E1D85-9AF1-4E25-B5C7-69C420C2E64B}
 		{A4C7E3D1-5B89-4F12-B631-3D7A56F82E04} = {953E1D85-9AF1-4E25-B5C7-69C420C2E64B}
-		{C5D8F4E2-6A90-4023-C742-4E8B67G93F15} = {953E1D85-9AF1-4E25-B5C7-69C420C2E64B}
+		{D22A5058-D337-B2C2-DDA2-2BD74EE3AE62} = {953E1D85-9AF1-4E25-B5C7-69C420C2E64B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {551ADBA5-3DFB-4300-929C-2BE0DB346636}

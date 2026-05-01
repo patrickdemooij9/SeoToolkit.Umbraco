@@ -1,4 +1,5 @@
 import { ManifestWorkspaceAction, ManifestWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
+import { MetaFieldsAIGenerateAction } from "../actions/MetaFieldsAIGenerateAction";
 
 
 const documentView: any = {
@@ -61,7 +62,7 @@ const generateWithAIAction: ManifestWorkspaceAction = {
   kind: "default",
   alias: "seoToolkit.metaFields.generateWithAI",
   name: "SeoToolkit MetaFields Generate with AI",
-  api: () => import("../actions/MetaFieldsAIGenerateAction"),
+  api: MetaFieldsAIGenerateAction,
   meta: {
     label: "✨ Generate with AI",
     look: "secondary",
