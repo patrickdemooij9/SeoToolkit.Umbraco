@@ -1,4 +1,4 @@
-import { UmbEntryPointOnInit } from "@umbraco-cms/backoffice/extension-api";
+import { ManifestCondition, UmbEntryPointOnInit } from "@umbraco-cms/backoffice/extension-api";
 import { UMB_AUTH_CONTEXT } from "@umbraco-cms/backoffice/auth";
 import { DocumentManifests } from "./manifests/DocumentManifests";
 import { PropertyEditorManifests } from "./manifests/PropertyEditorManifests";
@@ -38,6 +38,6 @@ export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
     name: "SeoToolkit AI Available Condition",
     alias: "SeoToolkit.AI.IsAvailable",
     api: AIAvailableCondition,
-  });
+  } as ManifestCondition);
 };
 

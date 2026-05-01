@@ -69,14 +69,6 @@ export type DomainViewModel = {
     name?: string | null;
 };
 
-export enum EventMessageTypeModel {
-    DEFAULT = 'Default',
-    INFO = 'Info',
-    ERROR = 'Error',
-    SUCCESS = 'Success',
-    WARNING = 'Warning'
-}
-
 export type FieldItemViewModel = {
     name?: string | null;
     value?: string | null;
@@ -119,12 +111,6 @@ export type MetaFieldsSettingsViewModel = {
     fields?: Array<SeoSettingsFieldViewModel> | null;
     groups?: Array<SeoFieldGroupViewModel> | null;
     previewers?: Array<FieldPreviewerViewModel> | null;
-};
-
-export type NotificationHeaderModel = {
-    message: string;
-    category: string;
-    type: EventMessageTypeModel;
 };
 
 export type PagedRedirectListModel = {
@@ -466,35 +452,37 @@ export type UmbracoDomainModelWritable = {
     sortOrder: number;
 };
 
-export type PostUmbracoSeoToolkitMetaFieldsAiGenerateData = {
+export type PostUmbracoSeoToolkitAiGenerateData = {
     body?: MetaFieldsAiGenerateRequestModel;
     path?: never;
     query?: never;
-    url: '/umbraco/seoToolkitMetaFieldsAI/generate';
+    url: '/umbraco/seoToolkitAI/generate';
 };
 
-export type PostUmbracoSeoToolkitMetaFieldsAiGenerateResponses = {
+export type PostUmbracoSeoToolkitAiGenerateResponses = {
     /**
      * OK
      */
     200: MetaFieldsAiGenerateResponseModel;
 };
 
-export type PostUmbracoSeoToolkitMetaFieldsAiGenerateResponse = PostUmbracoSeoToolkitMetaFieldsAiGenerateResponses[keyof PostUmbracoSeoToolkitMetaFieldsAiGenerateResponses];
+export type PostUmbracoSeoToolkitAiGenerateResponse = PostUmbracoSeoToolkitAiGenerateResponses[keyof PostUmbracoSeoToolkitAiGenerateResponses];
 
-export type GetUmbracoSeoToolkitMetaFieldsAiIsAvailableData = {
+export type GetUmbracoSeoToolkitAiIsAvailableData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/umbraco/seoToolkitMetaFieldsAI/isAvailable';
+    url: '/umbraco/seoToolkitAI/isAvailable';
 };
 
-export type GetUmbracoSeoToolkitMetaFieldsAiIsAvailableResponses = {
+export type GetUmbracoSeoToolkitAiIsAvailableResponses = {
     /**
      * OK
      */
-    200: unknown;
+    200: boolean;
 };
+
+export type GetUmbracoSeoToolkitAiIsAvailableResponse = GetUmbracoSeoToolkitAiIsAvailableResponses[keyof GetUmbracoSeoToolkitAiIsAvailableResponses];
 
 export type GetUmbracoSeoToolkitMetaFieldsImagePreviewData = {
     body?: never;
