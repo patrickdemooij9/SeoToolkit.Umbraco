@@ -31,10 +31,10 @@ namespace SeoToolkit.Umbraco.MetaFields.AI.Controllers
         }
 
         [HttpGet("isAvailable")]
-        [ProducesResponseType(typeof(object), 200)]
+        [ProducesResponseType(typeof(bool), 200)]
         public IActionResult IsAvailable()
         {
-            return Ok(new { isAvailable = true });
+            return Ok(true);
         }
 
         [HttpPost("generate")]

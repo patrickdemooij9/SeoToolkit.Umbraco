@@ -22,6 +22,7 @@ export type CreateScriptPostModel = {
         [key: string]: string | null;
     } | null;
     domainId?: string | null;
+    sortOrder?: number | null;
 };
 
 export type DeleteAuditsPostModel = {
@@ -91,6 +92,20 @@ export enum ImportRedirectsFileExtension {
     CSV = 'Csv',
     EXCEL = 'Excel'
 }
+
+export type MetaFieldsAiFieldSuggestion = {
+    alias: string;
+    value: string;
+};
+
+export type MetaFieldsAiGenerateRequestModel = {
+    nodeId: string;
+    culture?: string | null;
+};
+
+export type MetaFieldsAiGenerateResponseModel = {
+    suggestions: Array<MetaFieldsAiFieldSuggestion>;
+};
 
 export type MetaFieldsSettingsPostViewModel = {
     nodeId: string;
@@ -196,6 +211,7 @@ export type ScriptDetailViewModel = {
         [key: string]: string | null;
     } | null;
     domainId?: string | null;
+    sortOrder: number;
 };
 
 export type ScriptField = {
@@ -209,6 +225,7 @@ export type ScriptListViewModel = {
     id: string;
     name?: string | null;
     definitionName?: string | null;
+    sortOrder: number;
 };
 
 export type SeoDisplayViewModel = {
@@ -399,6 +416,10 @@ export type SitemapPageTypeSettingsViewModel = {
     priority?: number | null;
 };
 
+export type SortScriptsPostModel = {
+    keys?: Array<string> | null;
+};
+
 export type StopAuditPostModel = {
     id: number;
 };
@@ -443,6 +464,36 @@ export type UmbracoDomainModelWritable = {
     languageIsoCode?: string | null;
     rootContentId?: number | null;
     sortOrder: number;
+};
+
+export type PostUmbracoSeoToolkitMetaFieldsAiGenerateData = {
+    body?: MetaFieldsAiGenerateRequestModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitMetaFieldsAI/generate';
+};
+
+export type PostUmbracoSeoToolkitMetaFieldsAiGenerateResponses = {
+    /**
+     * OK
+     */
+    200: MetaFieldsAiGenerateResponseModel;
+};
+
+export type PostUmbracoSeoToolkitMetaFieldsAiGenerateResponse = PostUmbracoSeoToolkitMetaFieldsAiGenerateResponses[keyof PostUmbracoSeoToolkitMetaFieldsAiGenerateResponses];
+
+export type GetUmbracoSeoToolkitMetaFieldsAiIsAvailableData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitMetaFieldsAI/isAvailable';
+};
+
+export type GetUmbracoSeoToolkitMetaFieldsAiIsAvailableResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
 };
 
 export type GetUmbracoSeoToolkitMetaFieldsImagePreviewData = {
@@ -866,6 +917,20 @@ export type GetUmbracoSeoToolkitScriptManagerScriptsResponses = {
 };
 
 export type GetUmbracoSeoToolkitScriptManagerScriptsResponse = GetUmbracoSeoToolkitScriptManagerScriptsResponses[keyof GetUmbracoSeoToolkitScriptManagerScriptsResponses];
+
+export type PostUmbracoSeoToolkitScriptManagerSortScriptsData = {
+    body?: SortScriptsPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitScriptManager/sortScripts';
+};
+
+export type PostUmbracoSeoToolkitScriptManagerSortScriptsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
 
 export type GetUmbracoSeoToolkitSiteAuditPageChecksData = {
     body?: never;

@@ -141,7 +141,7 @@ export default class MetaFieldsContentContext
 
   async #checkAIAvailability() {
     const { data } = await this.#aiSource.isAvailable();
-    this.#isAIAvailable.setValue(data?.isAvailable === true);
+    this.#isAIAvailable.setValue(data === true);
   }
 
   async generate(culture: string) {
