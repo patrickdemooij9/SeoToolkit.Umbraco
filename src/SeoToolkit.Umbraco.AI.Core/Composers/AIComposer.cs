@@ -1,11 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
-using SeoToolkit.Umbraco.MetaFields.AI.Services;
+using SeoToolkit.Umbraco.AI.Core.Services;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 
-namespace SeoToolkit.Umbraco.MetaFields.AI.Composers
+namespace SeoToolkit.Umbraco.AI.Core.Composers
 {
-    public class MetaFieldsAIComposer : IComposer
+    public class AIComposer : IComposer
     {
         public void Compose(IUmbracoBuilder builder)
         {

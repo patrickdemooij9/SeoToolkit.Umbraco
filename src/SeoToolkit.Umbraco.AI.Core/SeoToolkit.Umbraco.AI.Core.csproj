@@ -2,23 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Product>SeoToolkit MetaFields AI</Product>
-    <PackageId>SeoToolkit.Umbraco.MetaFields.AI</PackageId>
-    <Title>SeoToolkit MetaFields AI</Title>
-    <Description>Integrates Umbraco.AI with SeoToolkit MetaFields to automatically generate meta field suggestions using AI.</Description>
+    <Product>SeoToolkit AI Core</Product>
+    <PackageId>SeoToolkit.Umbraco.AI.Core</PackageId>
+    <Title>SeoToolkit AI Core</Title>
+    <Description>Core AI services and prompt-building logic for SeoToolkit. Install an integration package (e.g. SeoToolkit.Umbraco.AI.Integration) to connect to an AI provider.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>umbraco plugin package ai seo</PackageTags>
-    <RootNamespace>SeoToolkit.Umbraco.MetaFields.AI</RootNamespace>
+    <RootNamespace>SeoToolkit.Umbraco.AI.Core</RootNamespace>
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
     <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Umbraco.AI" Version="[1.0.0,2.0.0)" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SeoToolkit.Umbraco.MetaFields.Core\SeoToolkit.Umbraco.MetaFields.Core.csproj" />

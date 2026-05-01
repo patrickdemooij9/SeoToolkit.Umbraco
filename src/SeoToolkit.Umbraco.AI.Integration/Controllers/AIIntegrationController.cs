@@ -1,24 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
+using SeoToolkit.Umbraco.AI.Core.Models;
+using SeoToolkit.Umbraco.AI.Core.Services;
 using SeoToolkit.Umbraco.Common.Core.Controllers;
-using SeoToolkit.Umbraco.MetaFields.AI.Models;
-using SeoToolkit.Umbraco.MetaFields.AI.Services;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.Routing;
 
-namespace SeoToolkit.Umbraco.MetaFields.AI.Controllers
+namespace SeoToolkit.Umbraco.AI.Integration.Controllers
 {
-    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit MetaFields AI")]
-    [BackOfficeRoute("seoToolkitMetaFieldsAI")]
-    public class MetaFieldsAIController : SeoToolkitAuthenticatedControllerBase
+    [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit AI Integration")]
+    [BackOfficeRoute("seoToolkitAI")]
+    public class AIIntegrationController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly IMetaFieldsAIService _metaFieldsAIService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly IVariationContextAccessor _variationContextAccessor;
         private readonly ILocalizationService _localizationService;
 
-        public MetaFieldsAIController(
+        public AIIntegrationController(
             IMetaFieldsAIService metaFieldsAIService,
             IUmbracoContextFactory umbracoContextFactory,
             IVariationContextAccessor variationContextAccessor,

@@ -1,4 +1,4 @@
-namespace SeoToolkit.Umbraco.MetaFields.AI.Models
+namespace SeoToolkit.Umbraco.AI.Core.Models
 {
     public class MetaFieldsAIGenerateRequestModel
     {

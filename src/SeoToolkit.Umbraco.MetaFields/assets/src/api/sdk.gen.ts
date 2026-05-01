@@ -18,10 +18,10 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
     meta?: Record<string, unknown>;
 };
 
-export class BackofficeSeoToolkitMetaFieldsAi {
-    public static postUmbracoSeoToolkitMetaFieldsAiGenerate<ThrowOnError extends boolean = true>(options?: Options<PostUmbracoSeoToolkitMetaFieldsAiGenerateData, ThrowOnError>) {
+export class BackofficeSeoToolkitAI {
+    public static postUmbracoSeoToolkitAiGenerate<ThrowOnError extends boolean = true>(options?: Options<PostUmbracoSeoToolkitMetaFieldsAiGenerateData, ThrowOnError>) {
         return (options?.client ?? client).post<PostUmbracoSeoToolkitMetaFieldsAiGenerateResponses, unknown, ThrowOnError>({
-            url: '/umbraco/seoToolkitMetaFieldsAI/generate',
+            url: '/umbraco/seoToolkitAI/generate',
             ...options,
             headers: {
                 'Content-Type': 'application/json',
@@ -30,9 +30,9 @@ export class BackofficeSeoToolkitMetaFieldsAi {
         });
     }
     
-    public static getUmbracoSeoToolkitMetaFieldsAiIsAvailable<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitMetaFieldsAiIsAvailableData, ThrowOnError>) {
+    public static getUmbracoSeoToolkitAiIsAvailable<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitMetaFieldsAiIsAvailableData, ThrowOnError>) {
         return (options?.client ?? client).get<GetUmbracoSeoToolkitMetaFieldsAiIsAvailableResponses, unknown, ThrowOnError>({
-            url: '/umbraco/seoToolkitMetaFieldsAI/isAvailable',
+            url: '/umbraco/seoToolkitAI/isAvailable',
             ...options
         });
     }

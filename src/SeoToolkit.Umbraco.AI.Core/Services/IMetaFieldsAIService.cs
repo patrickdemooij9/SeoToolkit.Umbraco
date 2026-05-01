@@ -1,7 +1,7 @@
-using SeoToolkit.Umbraco.MetaFields.AI.Models;
+using SeoToolkit.Umbraco.AI.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 
-namespace SeoToolkit.Umbraco.MetaFields.AI.Services
+namespace SeoToolkit.Umbraco.AI.Core.Services
 {
     public interface IMetaFieldsAIService
     {

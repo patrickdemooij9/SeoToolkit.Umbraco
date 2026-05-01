@@ -1,15 +1,13 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Logging;
-using SeoToolkit.Umbraco.MetaFields.AI.Models;
+using SeoToolkit.Umbraco.AI.Core.Models;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
-using Umbraco.AI.Core.Chat;
 using Umbraco.Cms.Core.Models.PublishedContent;
 
-namespace SeoToolkit.Umbraco.MetaFields.AI.Services
+namespace SeoToolkit.Umbraco.AI.Core.Services
 {
     public class MetaFieldsAIService : IMetaFieldsAIService
     {
@@ -24,16 +22,16 @@ namespace SeoToolkit.Umbraco.MetaFields.AI.Services
         private static readonly Regex HtmlTagRegex = new("<[^>]+>", RegexOptions.Compiled);
         private static readonly Regex WhitespaceRegex = new(@"\s+", RegexOptions.Compiled);
 
-        private readonly IAIChatService _chatService;
+        private readonly IAIGenerationService _generationService;
         private readonly IMetaFieldsService _metaFieldsService;
         private readonly ILogger<MetaFieldsAIService> _logger;
 
         public MetaFieldsAIService(
-            IAIChatService chatService,
+            IAIGenerationService generationService,
             IMetaFieldsService metaFieldsService,
             ILogger<MetaFieldsAIService> logger)
         {
-            _chatService = chatService;
+            _generationService = generationService;
             _metaFieldsService = metaFieldsService;
             _logger = logger;
         }
@@ -50,7 +48,6 @@ namespace SeoToolkit.Umbraco.MetaFields.AI.Services
             contextBuilder.AppendLine($"URL segment: {content.UrlSegment}");
             contextBuilder.AppendLine($"Content type: {content.ContentType.Alias}");
 
-            // Include existing computed values for context (not user-overridden, these are the fallback values)
             var currentTitle = existingMeta?.Title;
             var currentDescription = existingMeta?.MetaDescription;
             if (!string.IsNullOrWhiteSpace(currentTitle))
@@ -58,7 +55,6 @@ namespace SeoToolkit.Umbraco.MetaFields.AI.Services
             if (!string.IsNullOrWhiteSpace(currentDescription))
                 contextBuilder.AppendLine($"Existing meta description: {currentDescription}");
 
-            // Sample text properties for additional context
             var textSummary = BuildTextSummary(content, culture);
             if (!string.IsNullOrWhiteSpace(textSummary))
                 contextBuilder.AppendLine($"Page text content: {textSummary}");
@@ -78,14 +74,8 @@ namespace SeoToolkit.Umbraco.MetaFields.AI.Services
                 "Respond with a JSON object only, for example:\n" +
                 "{\"title\":\"...\",\"metaDescription\":\"...\",\"openGraphTitle\":\"...\",\"openGraphDescription\":\"...\"}";
 
-            var messages = new List<ChatMessage>
-            {
-                new(ChatRole.System, systemPrompt),
-                new(ChatRole.User, userPrompt),
-            };
-
-            var response = await _chatService.GetChatResponseAsync(messages, cancellationToken: cancellationToken);
-            var responseText = response.Text ?? string.Empty;
+            var responseText = await _generationService.GenerateRawResponseAsync(
+                systemPrompt, userPrompt, cancellationToken);
 
             return ParseResponse(responseText);
         }
@@ -99,7 +89,6 @@ namespace SeoToolkit.Umbraco.MetaFields.AI.Services
                 var value = property.GetValue(culture: culture);
                 if (value is string stringValue && !string.IsNullOrWhiteSpace(stringValue) && stringValue.Length > 10)
                 {
-                    // Strip HTML tags for a plain-text summary
                     var plainText = HtmlTagRegex.Replace(stringValue, " ");
                     plainText = WhitespaceRegex.Replace(plainText, " ").Trim();
                     if (!string.IsNullOrWhiteSpace(plainText))
@@ -108,7 +97,6 @@ namespace SeoToolkit.Umbraco.MetaFields.AI.Services
             }
 
             var combined = string.Join(" ", textParts);
-            // Limit to 500 characters to keep the prompt manageable
             return combined.Length > 500 ? combined[..500] + "..." : combined;
         }
 
@@ -116,7 +104,6 @@ namespace SeoToolkit.Umbraco.MetaFields.AI.Services
         {
             var result = new MetaFieldsAIGenerateResponseModel();
 
-            // Strip markdown code fences if the model wraps in ```json ... ```
             var json = responseText.Trim();
             if (json.StartsWith("```"))
             {
