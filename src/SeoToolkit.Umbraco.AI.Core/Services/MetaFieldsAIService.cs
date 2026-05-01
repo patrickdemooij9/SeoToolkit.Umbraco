@@ -64,8 +64,8 @@ namespace SeoToolkit.Umbraco.AI.Core.Services
                 "Return ONLY a valid JSON object with no additional text, markdown, or explanation. " +
                 "The JSON must contain exactly these fields: title, metaDescription, openGraphTitle, openGraphDescription. " +
                 "Follow these guidelines:\n" +
-                "- title: SEO-optimized page title, 50-60 characters\n" +
-                "- metaDescription: Compelling meta description, 150-160 characters\n" +
+                "- title: SEO-optimized page title, 55 characters max\n" +
+                "- metaDescription: Compelling meta description, 150 characters max\n" +
                 "- openGraphTitle: Open Graph title for social sharing, can match or vary from title\n" +
                 "- openGraphDescription: Open Graph description for social sharing, 200 characters max";
 

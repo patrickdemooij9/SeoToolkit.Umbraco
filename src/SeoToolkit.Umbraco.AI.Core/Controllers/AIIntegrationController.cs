@@ -7,7 +7,7 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.Routing;
 
-namespace SeoToolkit.Umbraco.AI.Integration.Controllers
+namespace SeoToolkit.Umbraco.AI.Core.Controllers
 {
     [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit AI Integration")]
     [BackOfficeRoute("seoToolkitAI")]
@@ -31,13 +31,6 @@ namespace SeoToolkit.Umbraco.AI.Integration.Controllers
             _umbracoContextFactory = umbracoContextFactory;
             _variationContextAccessor = variationContextAccessor;
             _localizationService = localizationService;
-        }
-
-        [HttpGet("isAvailable")]
-        [ProducesResponseType(typeof(bool), 200)]
-        public IActionResult IsAvailable()
-        {
-            return Ok(true);
         }
 
         [HttpPost("generate")]

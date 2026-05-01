@@ -468,22 +468,6 @@ export type PostUmbracoSeoToolkitAiGenerateResponses = {
 
 export type PostUmbracoSeoToolkitAiGenerateResponse = PostUmbracoSeoToolkitAiGenerateResponses[keyof PostUmbracoSeoToolkitAiGenerateResponses];
 
-export type GetUmbracoSeoToolkitAiIsAvailableData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/umbraco/seoToolkitAI/isAvailable';
-};
-
-export type GetUmbracoSeoToolkitAiIsAvailableResponses = {
-    /**
-     * OK
-     */
-    200: boolean;
-};
-
-export type GetUmbracoSeoToolkitAiIsAvailableResponse = GetUmbracoSeoToolkitAiIsAvailableResponses[keyof GetUmbracoSeoToolkitAiIsAvailableResponses];
-
 export type GetUmbracoSeoToolkitMetaFieldsImagePreviewData = {
     body?: never;
     path?: never;
@@ -1338,6 +1322,22 @@ export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses = {
 };
 
 export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponse = GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses[keyof GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses];
+
+export type GetUmbracoSeoToolkitSettingsIsAiAvailableData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitSettings/isAIAvailable';
+};
+
+export type GetUmbracoSeoToolkitSettingsIsAiAvailableResponses = {
+    /**
+     * OK
+     */
+    200: boolean;
+};
+
+export type GetUmbracoSeoToolkitSettingsIsAiAvailableResponse = GetUmbracoSeoToolkitSettingsIsAiAvailableResponses[keyof GetUmbracoSeoToolkitSettingsIsAiAvailableResponses];
 
 export type GetUmbracoSeoToolkitSettingsSeoSettingsData = {
     body?: never;

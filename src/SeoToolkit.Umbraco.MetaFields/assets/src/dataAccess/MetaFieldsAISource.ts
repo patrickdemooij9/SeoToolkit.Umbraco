@@ -1,6 +1,6 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
-import { BackofficeSeoToolkitAiIntegration } from "../api";
+import { BackofficeSeoToolkit, BackofficeSeoToolkitAiIntegration } from "../api";
 
 export interface MetaFieldsAIFieldSuggestion {
   alias: string;
@@ -19,7 +19,7 @@ export class MetaFieldsAISource {
   }
 
   async isAvailable() {
-    return tryExecute(this.#host, BackofficeSeoToolkitAiIntegration.getUmbracoSeoToolkitAiIsAvailable());
+    return tryExecute(this.#host, BackofficeSeoToolkit.getUmbracoSeoToolkitSettingsIsAiAvailable());
   }
 
   async generate(nodeId: string, culture: string) {

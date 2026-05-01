@@ -9,6 +9,7 @@ using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.Routing;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Models.PublishedContent;
+using SeoToolkit.Umbraco.Common.Core.Helpers;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
 {
@@ -57,6 +58,13 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
 
             _seoSettingsService.ToggleSeoSettings(contentType.Key, postModel.Enabled);
             return Ok();
+        }
+
+        [HttpGet("isAIAvailable")]
+        [ProducesResponseType(typeof(bool), 200)]
+        public IActionResult IsAIAvailable()
+        {
+            return Ok(AIHelper.IsAIEnabled);
         }
     }
 }
