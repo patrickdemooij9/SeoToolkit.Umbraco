@@ -98,6 +98,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 OwnerType = model.OwnerType,
                 OwnerKey = model.OwnerKey,
                 SchemaAlias = model.SchemaAlias,
+                DisplayName = model.DisplayName,
                 Properties = model.Properties ?? new System.Collections.Generic.Dictionary<string, SchemaPropertyValue>()
             };
 
@@ -114,6 +115,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 return NotFound();
 
             existing.SchemaAlias = model.SchemaAlias;
+            existing.DisplayName = model.DisplayName;
             existing.Properties = model.Properties ?? new System.Collections.Generic.Dictionary<string, SchemaPropertyValue>();
 
             var result = _schemaEntryService.Update(existing);
@@ -139,6 +141,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 OwnerType = dto.OwnerType,
                 OwnerKey = dto.OwnerKey,
                 SchemaAlias = dto.SchemaAlias,
+                DisplayName = dto.DisplayName,
                 Properties = dto.Properties
             };
         }

@@ -84,7 +84,11 @@ export default class SchemaEditorPropertyEditor
   }
 
   #getNodeGuid(): string {
-    return this.config?.getValueByAlias<string>("nodeGuid") ?? "";
+    const nodeGuid = this.config?.getValueByAlias<string>("nodeGuid") ?? "";
+    if (!nodeGuid && this.#getOwnerType() === "documentType") {
+      return this.config?.getValueByAlias<string>("documentTypeKey") ?? "";
+    }
+    return nodeGuid;
   }
 
   #getOwnerType(): string {
@@ -103,7 +107,7 @@ export default class SchemaEditorPropertyEditor
   #getEntryDisplayName(id: string): string {
     const entry = this._loadedEntries.get(id);
     if (!entry) return id;
-    return this.#getSchemaName(entry.schemaAlias!);
+    return entry.displayName || this.#getSchemaName(entry.schemaAlias!);
   }
 
   async #openAddSchemaFlow() {
@@ -132,6 +136,7 @@ export default class SchemaEditorPropertyEditor
       // Step 2: Pick source (new vs existing)
       const sourceData: SchemaSourceModalData = {
         schemaAlias: selectedAlias,
+        schemaTypeName: this.#getSchemaName(selectedAlias),
         ownerType: this.#getOwnerType(),
         ownerKey: this.#getNodeGuid(),
         documentTypeKey: this.#getDocumentTypeKey(),
@@ -181,6 +186,7 @@ export default class SchemaEditorPropertyEditor
         ownerType: this.#getOwnerType(),
         ownerKey: this.#getNodeGuid(),
         schemaAlias: schemaData.schemaAlias,
+        displayName: schemaData.displayName || undefined,
         properties: schemaData.properties,
       });
 
@@ -232,11 +238,13 @@ export default class SchemaEditorPropertyEditor
           availableSchemas: this._schemaTypes,
           editSchema: {
             schemaAlias: entry.schemaAlias!,
+            displayName: entry.displayName ?? undefined,
             properties: editableProps,
           },
         },
         value: {
           schemaAlias: entry.schemaAlias!,
+          displayName: entry.displayName ?? undefined,
           properties: editableProps,
         },
       });
@@ -247,6 +255,7 @@ export default class SchemaEditorPropertyEditor
       // PUT to update the entry
       const result = await this.#entrySource!.updateEntry(entryId, {
         schemaAlias: schemaData.schemaAlias!,
+        displayName: schemaData.displayName || undefined,
         properties: schemaData.properties!,
         ownerKey: this.#getNodeGuid()
       });

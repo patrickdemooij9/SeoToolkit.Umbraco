@@ -6,6 +6,7 @@ import { SchemaEntrySource } from "../dataAccess/SchemaEntrySource";
 
 export interface SchemaSourceModalData {
   schemaAlias: string;
+  schemaTypeName: string;
   ownerType: string;
   ownerKey: string;
   documentTypeKey?: string;
@@ -89,6 +90,7 @@ export default class SchemaSourceModal extends UmbModalBaseElement<
     if (entries.length === 0) {
       return html`<p class="no-items">No existing entries found.</p>`;
     }
+    const schemaTypeName = this.data?.schemaTypeName ?? this.data?.schemaAlias ?? "";
     return html`
       <div class="entry-list">
         ${entries.map(
@@ -97,7 +99,7 @@ export default class SchemaSourceModal extends UmbModalBaseElement<
               class="entry-item"
               @click="${() => this.#handleSelectExisting(entry.id)}"
             >
-              <span class="entry-id">${entry.id}</span>
+              <span class="entry-name">${entry.displayName || schemaTypeName}</span>
             </div>
           `
         )}
@@ -220,10 +222,8 @@ export default class SchemaSourceModal extends UmbModalBaseElement<
         background-color: var(--uui-palette-gravel-light);
       }
 
-      .entry-id {
-        font-family: monospace;
-        font-size: 0.85em;
-        color: var(--uui-palette-grey-4);
+      .entry-name {
+        font-size: 0.95em;
       }
 
       .no-items {

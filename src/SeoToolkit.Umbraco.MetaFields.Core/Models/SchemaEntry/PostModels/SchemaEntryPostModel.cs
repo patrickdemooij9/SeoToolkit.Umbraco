@@ -9,6 +9,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.PostModels
         public string OwnerType { get; set; }
         public Guid OwnerKey { get; set; }
         public string SchemaAlias { get; set; }
+        public string DisplayName { get; set; }
         public Dictionary<string, SchemaPropertyValue> Properties { get; set; } = new();
     }
 }

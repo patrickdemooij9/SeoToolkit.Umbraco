@@ -5,6 +5,7 @@ import { SchemaPropertyViewModel, SchemaTypeViewModel } from "../api";
 
 export interface EditableSchema {
   schemaAlias: string;
+  displayName?: string;
   properties: { [key: string]: PropertyValue };
 }
 
@@ -30,6 +31,9 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
   private _selectedSchemaAlias: string = "";
 
   @state()
+  private _displayName: string = "";
+
+  @state()
   private _propertyValues: { [key: string]: PropertyValue } = {};
 
   override connectedCallback() {
@@ -37,9 +41,11 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
 
     if (this.data?.editSchema) {
       this._selectedSchemaAlias = this.data.editSchema.schemaAlias;
+      this._displayName = this.data.editSchema.displayName ?? "";
       this._propertyValues = { ...this.data.editSchema.properties };
     } else {
       this._selectedSchemaAlias = this.value?.schemaAlias ?? "";
+      this._displayName = this.value?.displayName ?? "";
       this._propertyValues = this.value?.properties ? { ...this.value.properties } : {};
     }
   }
@@ -68,6 +74,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
 
     this.value = {
       schemaAlias: this._selectedSchemaAlias,
+      displayName: this._displayName || undefined,
       properties: this._propertyValues,
     };
     this.modalContext?.submit();
@@ -105,7 +112,8 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
         ${value.isReference
           ? html`
               <div class="property-input">
-                <uui-select
+                <select
+                  class="native-select"
                   .value=${value.referenceKey}
                   @change="${(e: Event) => {
                     const referenceKey = (e.target as HTMLSelectElement).value;
@@ -117,10 +125,13 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
                 >
                   ${REFERENCE_OPTIONS.map(
                     (opt) => html`
-                      <uui-option .value=${opt.key}>${opt.label}</uui-option>
+                      <option
+                        .value=${opt.key}
+                        ?selected=${opt.key === value.referenceKey}
+                      >${opt.label}</option>
                     `
                   )}
-                </uui-select>
+                </select>
               </div>
             `
           : html`
@@ -157,6 +168,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
   }
 
   override render() {
+    const isEditing = !!this.data?.editSchema;
     const selectedSchema = this.data?.availableSchemas.find(
       (s) => s.alias === this._selectedSchemaAlias
     );
@@ -165,21 +177,36 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
 
     return html`
       <umb-body-layout headline="Edit Schema">
-        <div class="schema-selector">
-          <uui-select
-            label="Select Schema Type"
-            .value=${this._selectedSchemaAlias}
-            @change="${(e: Event) => {
-              this.#onSchemaSelect((e.target as HTMLSelectElement).value);
+        ${!isEditing
+          ? html`
+              <div class="schema-selector">
+                <uui-select
+                  label="Select Schema Type"
+                  .value=${this._selectedSchemaAlias}
+                  @change="${(e: Event) => {
+                    this.#onSchemaSelect((e.target as HTMLSelectElement).value);
+                  }}"
+                >
+                  <uui-option value="">Select a schema type...</uui-option>
+                  ${this.data?.availableSchemas.map(
+                    (schema) => html`
+                      <uui-option .value=${schema.alias}>${schema.name}</uui-option>
+                    `
+                  )}
+                </uui-select>
+              </div>
+            `
+          : ""}
+
+        <div class="display-name-row">
+          <label class="display-name-label">Display Name (optional)</label>
+          <uui-input
+            placeholder="Leave empty to use the schema type name"
+            .value=${this._displayName}
+            @input="${(e: Event) => {
+              this._displayName = (e.target as HTMLInputElement).value;
             }}"
-          >
-            <uui-option value="">Select a schema type...</uui-option>
-            ${this.data?.availableSchemas.map(
-              (schema) => html`
-                <uui-option .value=${schema.alias}>${schema.name}</uui-option>
-              `
-            )}
-          </uui-select>
+          ></uui-input>
         </div>
 
         ${properties.length > 0
@@ -229,6 +256,21 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
         width: 100%;
       }
 
+      .display-name-row {
+        margin-bottom: 16px;
+      }
+
+      .display-name-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 4px;
+        font-size: 0.875rem;
+      }
+
+      .display-name-row uui-input {
+        width: 100%;
+      }
+
       .schema-properties {
         display: flex;
         flex-direction: column;
@@ -257,8 +299,19 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
       .property-input,
       .property-input uui-select,
       .property-input uui-input,
-      .property-input uui-textarea {
+      .property-input uui-textarea,
+      .property-input .native-select {
         width: 100%;
+      }
+
+      .native-select {
+        padding: 8px;
+        border: 1px solid var(--uui-palette-gravel);
+        border-radius: 4px;
+        background-color: var(--uui-palette-surface);
+        font-size: 14px;
+        cursor: pointer;
+        box-sizing: border-box;
       }
     `,
   ];

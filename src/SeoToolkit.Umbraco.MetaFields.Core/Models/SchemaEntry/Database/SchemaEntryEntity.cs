@@ -22,6 +22,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.Database
         [Column("SchemaAlias")]
         public string SchemaAlias { get; set; }
 
+        [Column("DisplayName")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        [Length(500)]
+        public string DisplayName { get; set; }
+
         [Column("PropertiesJson")]
         [NullSetting(NullSetting = NullSettings.Null)]
         [SpecialDbType(SpecialDbTypes.NVARCHARMAX)]

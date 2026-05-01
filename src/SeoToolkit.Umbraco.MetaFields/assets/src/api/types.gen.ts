@@ -186,6 +186,7 @@ export type SchemaEntryPostModel = {
     ownerType?: string | null;
     ownerKey: string;
     schemaAlias?: string | null;
+    displayName?: string | null;
     properties?: {
         [key: string]: SchemaPropertyValue | null;
     } | null;
@@ -196,6 +197,7 @@ export type SchemaEntryViewModel = {
     ownerType?: string | null;
     ownerKey: string;
     schemaAlias?: string | null;
+    displayName?: string | null;
     properties?: {
         [key: string]: SchemaPropertyValue | null;
     } | null;
