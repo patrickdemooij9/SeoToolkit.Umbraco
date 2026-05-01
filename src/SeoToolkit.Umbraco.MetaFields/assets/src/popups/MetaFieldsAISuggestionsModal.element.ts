@@ -3,6 +3,8 @@ import { UmbModalBaseElement } from "@umbraco-cms/backoffice/modal";
 import { css, html } from "lit";
 import type { MetaFieldsAIFieldSuggestion } from "../dataAccess/MetaFieldsAISource";
 
+export const ST_AI_SUGGESTIONS_MODAL = "seoToolkit.modal.aiSuggestions";
+
 export interface MetaFieldsAISuggestionsModalConfig {
   suggestions: MetaFieldsAIFieldSuggestion[];
 }

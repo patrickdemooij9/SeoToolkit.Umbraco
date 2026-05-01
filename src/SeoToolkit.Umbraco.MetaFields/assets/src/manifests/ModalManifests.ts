@@ -1,5 +1,5 @@
 import { ManifestModal } from '@umbraco-cms/backoffice/modal';
-import { ST_AI_SUGGESTIONS_MODAL } from '../actions/MetaFieldsAIGenerateAction';
+import { ST_AI_SUGGESTIONS_MODAL } from '../popups/MetaFieldsAISuggestionsModal.element';
 
 const ItemGroupModalManifest : ManifestModal = {
     type: 'modal',

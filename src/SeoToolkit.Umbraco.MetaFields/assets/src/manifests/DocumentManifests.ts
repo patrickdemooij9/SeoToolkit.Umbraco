@@ -1,5 +1,4 @@
-import { ManifestWorkspaceAction, ManifestWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
-import { MetaFieldsAIGenerateAction } from "../actions/MetaFieldsAIGenerateAction";
+import { ManifestWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
 
 
 const documentView: any = {
@@ -57,35 +56,10 @@ const contentWorkspaceContext: ManifestWorkspaceContext = {
     ],
   };
 
-const generateWithAIAction: ManifestWorkspaceAction = {
-  type: "workspaceAction",
-  kind: "default",
-  alias: "seoToolkit.metaFields.generateWithAI",
-  name: "SeoToolkit MetaFields Generate with AI",
-  api: MetaFieldsAIGenerateAction,
-  meta: {
-    label: "✨ Generate with AI",
-    look: "secondary",
-  },
-  conditions: [
-    {
-      alias: "Umb.Condition.WorkspaceAlias",
-      match: "Umb.Workspace.Document",
-    },
-    {
-      alias: "SeoToolkit.SeoEnabled",
-    },
-    {
-      alias: "SeoToolkit.AI.IsAvailable",
-    },
-  ],
-};
-
 export const DocumentManifests = [
   documentView,
   documentWorkspaceContext,
   contentView,
   contentWorkspaceContext,
-  generateWithAIAction,
 ];
 
