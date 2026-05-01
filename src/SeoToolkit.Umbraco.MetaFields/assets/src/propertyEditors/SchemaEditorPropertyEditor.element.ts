@@ -59,7 +59,7 @@ export default class SchemaEditorPropertyEditor
   }
 
   override updated(changedProperties: Map<string, unknown>) {
-    if (changedProperties.has("_value")) {
+    if (changedProperties.has("value")) {
       this.#loadEntryDetails();
     }
   }
@@ -208,8 +208,15 @@ export default class SchemaEditorPropertyEditor
   }
 
   async #openEditSchemaModal(entryId: string) {
-    const entry = this._loadedEntries.get(entryId);
-    if (!entry) return;
+    let entry = this._loadedEntries.get(entryId);
+    if (!entry) {
+      const result = await this.#entrySource!.getEntry(entryId);
+      if (result.data) {
+        this._loadedEntries = new Map(this._loadedEntries).set(entryId, result.data);
+        entry = result.data;
+      }
+      if (!entry) return;
+    }
 
     this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (modalManager) => {
       if (!modalManager) return;

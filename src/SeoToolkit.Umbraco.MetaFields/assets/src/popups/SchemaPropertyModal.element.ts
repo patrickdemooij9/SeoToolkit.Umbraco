@@ -125,19 +125,31 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
             `
           : html`
               <div class="property-input">
-                <umb-property
-                  .alias=${alias}
-                  .label=${displayName}
-                  .value=${value.value}
-                  .propertyEditorUiAlias=${propEditor}
-                  @change="${(e: Event) => {
-                    const val = (e as any).target.value;
-                    this.#onPropertyValueChange(alias, {
-                      ...value,
-                      value: val ?? "",
-                    });
-                  }}"
-                ></umb-property>
+                ${propEditor === "Umb.PropertyEditorUi.TextArea"
+                  ? html`
+                      <uui-textarea
+                        .value=${value.value ?? ""}
+                        @input="${(e: Event) => {
+                          const val = (e.target as HTMLTextAreaElement).value;
+                          this.#onPropertyValueChange(alias, {
+                            ...value,
+                            value: val ?? "",
+                          });
+                        }}"
+                      ></uui-textarea>
+                    `
+                  : html`
+                      <uui-input
+                        .value=${value.value ?? ""}
+                        @input="${(e: Event) => {
+                          const val = (e.target as HTMLInputElement).value;
+                          this.#onPropertyValueChange(alias, {
+                            ...value,
+                            value: val ?? "",
+                          });
+                        }}"
+                      ></uui-input>
+                    `}
               </div>
             `}
       </div>
@@ -244,7 +256,8 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
 
       .property-input,
       .property-input uui-select,
-      .property-input umb-property {
+      .property-input uui-input,
+      .property-input uui-textarea {
         width: 100%;
       }
     `,

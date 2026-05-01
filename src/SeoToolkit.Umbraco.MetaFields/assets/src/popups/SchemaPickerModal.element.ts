@@ -28,7 +28,7 @@ export default class SchemaPickerModal extends UmbModalBaseElement<
   clickItem(item: SchemaPickerItem) {
     this.selectedAlias = item.alias;
     this.value = item.alias;
-    this.requestUpdate();
+    this.modalContext?.submit();
   }
 
   #handleClose() {
