@@ -136,7 +136,22 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
             `
           : html`
               <div class="property-input">
-                ${propEditor === "Umb.PropertyEditorUi.TextArea"
+                ${propEditor === "Umb.PropertyEditorUi.MediaPicker"
+                  ? html`
+                      <umb-input-media
+                        max="1"
+                        .selection=${value.value ? [{ unique: value.value }] : []}
+                        @change="${(e: Event) => {
+                          const selection = (e.target as any).selection as Array<{ unique: string }>;
+                          const guid = selection.length > 0 ? selection[0].unique : "";
+                          this.#onPropertyValueChange(alias, {
+                            ...value,
+                            value: guid,
+                          });
+                        }}"
+                      ></umb-input-media>
+                    `
+                  : propEditor === "Umb.PropertyEditorUi.TextArea"
                   ? html`
                       <uui-textarea
                         .value=${value.value ?? ""}

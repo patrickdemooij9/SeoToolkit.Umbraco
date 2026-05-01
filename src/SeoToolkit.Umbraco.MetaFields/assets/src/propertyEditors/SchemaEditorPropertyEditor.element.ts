@@ -48,6 +48,9 @@ export default class SchemaEditorPropertyEditor
   @state()
   private _loadedEntries: Map<string, SchemaEntryViewModel> = new Map();
 
+  @state()
+  private _docTypeEntries: SchemaEntryViewModel[] = [];
+
   #schemaSource?: MetaFieldsSchemaSource;
   #entrySource?: SchemaEntrySource;
 
@@ -61,6 +64,9 @@ export default class SchemaEditorPropertyEditor
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has("value")) {
       this.#loadEntryDetails();
+    }
+    if (changedProperties.has("config")) {
+      this.#loadDocTypeEntries();
     }
   }
 
@@ -81,6 +87,16 @@ export default class SchemaEditorPropertyEditor
       })
     );
     this.requestUpdate();
+  }
+
+  async #loadDocTypeEntries() {
+    const docTypeKey = this.#getDocumentTypeKey();
+    if (!docTypeKey || this.#getOwnerType() !== "content") {
+      this._docTypeEntries = [];
+      return;
+    }
+    const result = await this.#entrySource!.getEntries("documentType", docTypeKey);
+    this._docTypeEntries = result.data ?? [];
   }
 
   #getNodeGuid(): string {
@@ -107,6 +123,10 @@ export default class SchemaEditorPropertyEditor
   #getEntryDisplayName(id: string): string {
     const entry = this._loadedEntries.get(id);
     if (!entry) return id;
+    return entry.displayName || this.#getSchemaName(entry.schemaAlias!);
+  }
+
+  #getDocTypeEntryDisplayName(entry: SchemaEntryViewModel): string {
     return entry.displayName || this.#getSchemaName(entry.schemaAlias!);
   }
 
@@ -275,27 +295,53 @@ export default class SchemaEditorPropertyEditor
   }
 
   #renderSchemaList() {
+    const hasInherited = this._docTypeEntries.length > 0;
+    const hasOwn = this._value.schemas.length > 0;
+
     return html`
       <div class="schema-list">
-        ${this._value.schemas.length === 0
+        ${hasInherited
+          ? html`
+              <div class="schema-section-header">Inherited from document type</div>
+              ${this._docTypeEntries.map(
+                (entry) => html`
+                  <div class="schema-item schema-item--inherited">
+                    <div class="schema-item-info">
+                      <span class="schema-name">${this.#getDocTypeEntryDisplayName(entry)}</span>
+                      <span class="schema-badge">Document type</span>
+                    </div>
+                  </div>
+                `
+              )}
+            `
+          : ""}
+
+        ${hasOwn
+          ? html`
+              ${hasInherited
+                ? html`<div class="schema-section-header">This item</div>`
+                : ""}
+              ${this._value.schemas.map(
+                (id) => html`
+                  <div class="schema-item" @click="${() => this.#openEditSchemaModal(id)}">
+                    <div class="schema-item-info">
+                      <span class="schema-name">${this.#getEntryDisplayName(id)}</span>
+                    </div>
+                    <div class="schema-item-actions">
+                      <uui-button
+                        color="danger"
+                        @click="${(e: Event) => this.#removeSchema(id, e)}"
+                      >
+                        Remove
+                      </uui-button>
+                    </div>
+                  </div>
+                `
+              )}
+            `
+          : !hasInherited
           ? html`<p class="no-schemas">No schemas added yet. Click "Add Schema" to get started.</p>`
-          : this._value.schemas.map(
-              (id) => html`
-                <div class="schema-item" @click="${() => this.#openEditSchemaModal(id)}">
-                  <div class="schema-item-info">
-                    <span class="schema-name">${this.#getEntryDisplayName(id)}</span>
-                  </div>
-                  <div class="schema-item-actions">
-                    <uui-button
-                      color="danger"
-                      @click="${(e: Event) => this.#removeSchema(id, e)}"
-                    >
-                      Remove
-                    </uui-button>
-                  </div>
-                </div>
-              `
-            )}
+          : ""}
       </div>
       <div class="add-button">
         <uui-button look="primary" @click="${() => this.#openAddSchemaFlow()}">
@@ -322,6 +368,15 @@ export default class SchemaEditorPropertyEditor
         text-align: center;
       }
 
+      .schema-section-header {
+        font-size: 0.8em;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--uui-palette-grey-4);
+        margin: 8px 0 4px;
+        letter-spacing: 0.05em;
+      }
+
       .schema-list {
         display: flex;
         flex-direction: column;
@@ -344,8 +399,33 @@ export default class SchemaEditorPropertyEditor
         background-color: var(--uui-palette-gravel-light);
       }
 
+      .schema-item--inherited {
+        cursor: default;
+        opacity: 0.8;
+        border-style: dashed;
+      }
+
+      .schema-item--inherited:hover {
+        background-color: var(--uui-palette-surface);
+      }
+
+      .schema-item-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
       .schema-name {
         font-weight: 500;
+      }
+
+      .schema-badge {
+        font-size: 0.75em;
+        padding: 2px 6px;
+        border-radius: 10px;
+        background-color: var(--uui-palette-gravel-light);
+        color: var(--uui-palette-grey-4);
+        border: 1px solid var(--uui-palette-gravel);
       }
 
       .add-button {

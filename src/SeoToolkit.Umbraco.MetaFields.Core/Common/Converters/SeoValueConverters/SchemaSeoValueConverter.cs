@@ -2,11 +2,13 @@ using Schema.NET;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.Business;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.SchemaEntryService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters
@@ -15,11 +17,13 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
     {
         private readonly SchemaResolverCollection _schemaResolvers;
         private readonly ISchemaEntryService _schemaEntryService;
+        private readonly IUmbracoContextFactory _umbracoContextFactory;
 
-        public SchemaSeoValueConverter(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService)
+        public SchemaSeoValueConverter(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService, IUmbracoContextFactory umbracoContextFactory)
         {
             _schemaResolvers = schemaResolvers;
             _schemaEntryService = schemaEntryService;
+            _umbracoContextFactory = umbracoContextFactory;
         }
 
         public Type FromValue => typeof(Guid[]);
@@ -27,13 +31,24 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
 
         public object Convert(object value, IPublishedContent currentContent, string fieldAlias)
         {
-            if (value is not Guid[] guids || guids.Length == 0)
-                return Array.Empty<IThing>();
+            var guids = value is Guid[] arr ? arr : Array.Empty<Guid>();
 
-            var entries = _schemaEntryService.GetByIds(guids);
+            // Load content-level entries
+            var contentEntries = guids.Length > 0
+                ? _schemaEntryService.GetByIds(guids)
+                : Enumerable.Empty<SchemaEntryDto>();
+
+            // Additively combine with document type schemas
+            IEnumerable<SchemaEntryDto> allEntries = contentEntries;
+            if (currentContent?.ContentType?.Key is Guid docTypeKey)
+            {
+                var docTypeEntries = _schemaEntryService.GetAll("documentType", docTypeKey);
+                allEntries = docTypeEntries.Concat(contentEntries);
+            }
+
             var schemas = new List<IThing>();
 
-            foreach (var entry in entries)
+            foreach (var entry in allEntries)
             {
                 if (entry?.SchemaAlias is null)
                     continue;
@@ -44,7 +59,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
 
                 var values = resolver.Properties.ToDictionary(
                     keySelector: property => property.Alias,
-                    elementSelector: property => ResolveValue(entry.Properties, property.Alias, currentContent));
+                    elementSelector: property => ResolveValue(entry.Properties, property, currentContent));
 
                 try
                 {
@@ -61,13 +76,24 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
             return schemas.ToArray();
         }
 
-        private static string ResolveValue(Dictionary<string, SchemaPropertyValue> properties, string alias, IPublishedContent currentContent)
+        private string ResolveValue(Dictionary<string, SchemaPropertyValue> properties, Common.SchemaResolvers.SchemaProperty propertyDef, IPublishedContent currentContent)
         {
-            if (properties is null || properties.TryGetValue(alias, out var property) == false || property is null)
+            if (properties is null || properties.TryGetValue(propertyDef.Alias, out var property) == false || property is null)
                 return string.Empty;
 
             if (property.IsReference)
                 return ResolveReference(property.ReferenceKey, currentContent);
+
+            // Resolve media picker GUIDs to absolute URLs
+            if (propertyDef.PropertyEditor == "Umb.PropertyEditorUi.MediaPicker"
+                && !string.IsNullOrWhiteSpace(property.Value)
+                && Guid.TryParse(property.Value, out var mediaGuid))
+            {
+                using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
+                var mediaItem = ctx.UmbracoContext.Media.GetById(true, mediaGuid);
+                if (mediaItem != null)
+                    return mediaItem.Url(mode: UrlMode.Absolute);
+            }
 
             return property.Value ?? string.Empty;
         }
