@@ -45,7 +45,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
 
             if (!disabledModules.Contains(DisabledModuleConstant.Api))
             {
-                builder.Services.AddScoped<IApiDataHandler, ScriptManagerApiHandler>();
+                builder.Services.AddSingleton<IApiDataHandler, ScriptManagerApiHandler>();
             }
 
             builder.ScriptDefinitions()
@@ -57,8 +57,8 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
 
             builder.Components().Append<EnableModuleComponent>();
 
-            builder.Services.AddScoped<IScriptRepository, ScriptRepository>();
-            builder.Services.AddScoped<IScriptManagerService, ScriptManagerService>();
+            builder.Services.AddSingleton<IScriptRepository, ScriptRepository>();
+            builder.Services.AddSingleton<IScriptManagerService, ScriptManagerService>();
             builder.Services.AddSingleton<ViewRenderHelper>();
         }
     }
