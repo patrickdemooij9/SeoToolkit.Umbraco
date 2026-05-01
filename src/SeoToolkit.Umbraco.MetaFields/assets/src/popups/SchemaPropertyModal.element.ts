@@ -85,6 +85,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     const alias = property.alias ?? "";
     const displayName = property.displayName ?? "";
     const propEditor = property.propertyEditor ?? "Umb.PropertyEditorUi.TextBox";
+    const allowReference = property.allowReference !== false;
 
     return html`
       <div class="property-row">
@@ -92,24 +93,28 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
           <strong>${displayName}</strong>
         </div>
 
-        <div class="property-toggle">
-          <uui-toggle
-            .checked=${value.isReference}
-            @change="${(e: Event) => {
-              const checked = (e.target as HTMLInputElement).checked;
-              this.#onPropertyValueChange(alias, {
-                ...value,
-                isReference: checked,
-                value: checked ? "" : value.value,
-                referenceKey: checked ? REFERENCE_OPTIONS[0].key : "",
-              });
-            }}"
-          >
-            Use reference from context
-          </uui-toggle>
-        </div>
+        ${allowReference
+          ? html`
+              <div class="property-toggle">
+                <uui-toggle
+                  .checked=${value.isReference}
+                  @change="${(e: Event) => {
+                    const checked = (e.target as HTMLInputElement).checked;
+                    this.#onPropertyValueChange(alias, {
+                      ...value,
+                      isReference: checked,
+                      value: checked ? "" : value.value,
+                      referenceKey: checked ? REFERENCE_OPTIONS[0].key : "",
+                    });
+                  }}"
+                >
+                  Use reference from context
+                </uui-toggle>
+              </div>
+            `
+          : ""}
 
-        ${value.isReference
+        ${value.isReference && allowReference
           ? html`
               <div class="property-input">
                 <select

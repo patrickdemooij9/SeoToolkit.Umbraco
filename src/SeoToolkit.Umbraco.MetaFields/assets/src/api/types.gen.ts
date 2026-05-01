@@ -213,6 +213,7 @@ export type SchemaPropertyViewModel = {
     alias?: string | null;
     displayName?: string | null;
     propertyEditor?: string | null;
+    allowReference?: boolean;
 };
 
 export type SchemaTypeViewModel = {

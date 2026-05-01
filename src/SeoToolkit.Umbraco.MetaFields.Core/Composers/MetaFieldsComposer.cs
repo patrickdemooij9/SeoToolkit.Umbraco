@@ -113,7 +113,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<PageTitleTemplateSetting>();
 
             builder.WithCollectionBuilder<SchemaResolverCollectionBuilder>()
-                .Add<OrganizationSchemaResolver>();
+                .Add<OrganizationSchemaResolver>()
+                .Add<RawJsonSchemaResolver>();
         }
     }
 }

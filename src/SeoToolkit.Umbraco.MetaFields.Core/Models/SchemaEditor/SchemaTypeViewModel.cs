@@ -12,5 +12,6 @@
         public string Alias { get; set; }
         public string DisplayName { get; set; }
         public string PropertyEditor { get; set; }
+        public bool AllowReference { get; set; }
     }
 }

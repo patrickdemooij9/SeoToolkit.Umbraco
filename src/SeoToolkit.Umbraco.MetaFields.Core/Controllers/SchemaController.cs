@@ -42,7 +42,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 {
                     Alias = prop.Alias,
                     DisplayName = prop.DisplayName,
-                    PropertyEditor = prop.PropertyEditor
+                    PropertyEditor = prop.PropertyEditor,
+                    AllowReference = prop.AllowReference
                 }).ToArray()
             }).ToArray();
 
