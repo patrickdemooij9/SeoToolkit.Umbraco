@@ -42,6 +42,7 @@
     <Watch Remove="umbraco\**" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco.AI.Integration\SeoToolkit.Umbraco.AI.Integration.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco.uSync\SeoToolkit.Umbraco.uSync.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco\SeoToolkit.Umbraco.csproj" />
   </ItemGroup>

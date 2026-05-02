@@ -3,9 +3,11 @@ import { MetaFieldsSettingsViewModel } from "../api";
 import { UmbWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
 import { UmbContextToken } from "@umbraco-cms/backoffice/context-api";
 import { MetaFieldsContentRepository } from "../dataAccess/MetaFieldsContentRepository";
+import { MetaFieldsAISource } from "../dataAccess/MetaFieldsAISource";
+import type { MetaFieldsAIFieldSuggestion } from "../dataAccess/MetaFieldsAISource";
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/document";
-import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
+import { UmbBooleanState, UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 
 interface MetaFieldsSettingsVariant {
   variant: string;
@@ -20,16 +22,23 @@ export default class MetaFieldsContentContext
   workspaceAlias: string = "Umb.Workspace.Document";
 
   #repository: MetaFieldsContentRepository;
+  #aiSource: MetaFieldsAISource;
 
   #nodeId?: string;
   #cultures: string[] = [];
 
   #variants: { [key: string]: MetaFieldsSettingsVariant } = {};
 
+  #isAIAvailable = new UmbBooleanState(false);
+  readonly isAIAvailable = this.#isAIAvailable.asObservable();
+
   constructor(host: UmbControllerHost) {
     super(host, ST_METAFIELDS_CONTENT_TOKEN_CONTEXT.toString());
 
     this.#repository = new MetaFieldsContentRepository(host);
+    this.#aiSource = new MetaFieldsAISource(host);
+
+    this.#checkAIAvailability();
 
     this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
       this.#nodeId = instance?.getUnique()?.toString();
@@ -128,6 +137,34 @@ export default class MetaFieldsContentContext
     });
   }
 
+  applyAISuggestions(culture: string, suggestions: MetaFieldsAIFieldSuggestion[]) {
+    const model = this.#variants[culture]?.model;
+    if (!model) return;
+
+    const fields = [...model.getValue().fields!];
+    for (const suggestion of suggestions) {
+      const foundField = fields.find((item) => item.alias === suggestion.alias);
+      if (foundField) {
+        fields[fields.indexOf(foundField)] = {
+          ...foundField,
+          userValue: suggestion.value,
+        };
+      }
+    }
+    model.update({ fields });
+  }
+
+  async #checkAIAvailability() {
+    const { data } = await this.#aiSource.isAvailable();
+    this.#isAIAvailable.setValue(data === true);
+  }
+
+  async generateSuggestions(culture: string): Promise<MetaFieldsAIFieldSuggestion[]> {
+    if (!this.#nodeId) return [];
+    const { data } = await this.#aiSource.generate(this.#nodeId, culture);
+    return data?.suggestions ?? [];
+  }
+
   getEntityType(): string {
     return "st-metafield";
   }
@@ -135,3 +172,4 @@ export default class MetaFieldsContentContext
 
 export const ST_METAFIELDS_CONTENT_TOKEN_CONTEXT =
   new UmbContextToken<MetaFieldsContentContext>("ST-MetaFieldsContent-Context");
+

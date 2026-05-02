@@ -1,4 +1,5 @@
 import { ManifestModal } from '@umbraco-cms/backoffice/modal';
+import { ST_AI_SUGGESTIONS_MODAL } from '../popups/MetaFieldsAISuggestionsModal.element';
 
 const ItemGroupModalManifest : ManifestModal = {
     type: 'modal',
@@ -7,4 +8,11 @@ const ItemGroupModalManifest : ManifestModal = {
     js: () => import('../popups/ItemGroupPicker.element'),
 }
 
-export const ModalManifests = [ ItemGroupModalManifest] ;
+const AIGenerateSuggestionsModalManifest: ManifestModal = {
+    type: 'modal',
+    alias: ST_AI_SUGGESTIONS_MODAL,
+    name: 'SeoToolkit AI Suggestions',
+    js: () => import('../popups/MetaFieldsAISuggestionsModal.element'),
+};
+
+export const ModalManifests = [ ItemGroupModalManifest, AIGenerateSuggestionsModalManifest ];

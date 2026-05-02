@@ -32,3 +32,4 @@ export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
   extensionRegistry.registerMany(ModalManifests);
   extensionRegistry.registerMany(PreviewerManifests);
 };
+

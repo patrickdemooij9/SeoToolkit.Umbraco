@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Product>SeoToolkit AI Core</Product>
+    <PackageId>SeoToolkit.Umbraco.AI.Core</PackageId>
+    <Title>SeoToolkit AI Core</Title>
+    <Description>Core AI services and prompt-building logic for SeoToolkit. Install an integration package (e.g. SeoToolkit.Umbraco.AI.Integration) to connect to an AI provider.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>umbraco plugin package ai seo</PackageTags>
+    <RootNamespace>SeoToolkit.Umbraco.AI.Core</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Common.Core\SeoToolkit.Umbraco.Common.Core.csproj" />
+    <ProjectReference Include="..\SeoToolkit.Umbraco.MetaFields.Core\SeoToolkit.Umbraco.MetaFields.Core.csproj" />
+  </ItemGroup>
+
+</Project>
