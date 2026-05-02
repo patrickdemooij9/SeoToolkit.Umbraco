@@ -1,11 +1,10 @@
-import { ManifestCondition, UmbEntryPointOnInit } from "@umbraco-cms/backoffice/extension-api";
+import { UmbEntryPointOnInit } from "@umbraco-cms/backoffice/extension-api";
 import { UMB_AUTH_CONTEXT } from "@umbraco-cms/backoffice/auth";
 import { DocumentManifests } from "./manifests/DocumentManifests";
 import { PropertyEditorManifests } from "./manifests/PropertyEditorManifests";
 import { ModalManifests } from "./manifests/ModalManifests";
 import { PreviewerManifests } from "./manifests/PreviewerManifests";
 import { client } from "./api";
-import { AIAvailableCondition } from "./conditions/AIAvailableCondition";
 
 export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
   host.consumeContext(UMB_AUTH_CONTEXT, (auth) => {
@@ -32,12 +31,5 @@ export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
   extensionRegistry.registerMany(PropertyEditorManifests);
   extensionRegistry.registerMany(ModalManifests);
   extensionRegistry.registerMany(PreviewerManifests);
-
-  extensionRegistry.register({
-    type: "condition",
-    name: "SeoToolkit AI Available Condition",
-    alias: "SeoToolkit.AI.IsAvailable",
-    api: AIAvailableCondition,
-  } as ManifestCondition);
 };
 

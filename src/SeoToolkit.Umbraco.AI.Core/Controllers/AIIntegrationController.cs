@@ -11,9 +11,6 @@ namespace SeoToolkit.Umbraco.AI.Core.Controllers
 {
     [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit AI Integration")]
     [BackOfficeRoute("seoToolkitAI")]
-    // CSRF tokens are not required: all requests must carry a valid JWT Bearer token via
-    // the BackOffice authorization policy inherited from SeoToolkitAuthenticatedControllerBase.
-    [IgnoreAntiforgeryToken]
     public class AIIntegrationController : SeoToolkitAuthenticatedControllerBase
     {
         private readonly IMetaFieldsAIService _metaFieldsAIService;
