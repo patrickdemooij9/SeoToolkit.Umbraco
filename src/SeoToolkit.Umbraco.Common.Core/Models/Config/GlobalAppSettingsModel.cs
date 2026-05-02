@@ -6,6 +6,7 @@
         public bool EnableSeoSettingsByDefaultForTemplated { get; set; } = true;
         public bool SupressContentAppSavingNotification { get; set; }
         public bool EnableApiEndpoints { get; set; } = false;
+        public bool EnableDeliveryApiSupport { get; set; } = false;
         public bool SyncContentDomains { get; set; } = true;
     }
 }

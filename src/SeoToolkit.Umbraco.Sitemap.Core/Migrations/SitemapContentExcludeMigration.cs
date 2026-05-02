@@ -1,14 +1,15 @@
+using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Migrations;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
 {
-    public class SitemapContentExcludeMigration : MigrationBase
+    public class SitemapContentExcludeMigration : AsyncMigrationBase
     {
         public SitemapContentExcludeMigration(IMigrationContext context) : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             if (!ColumnExists("SeoToolkitSitemapContent", "ExcludeFromSitemap"))
             {
@@ -19,6 +20,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
                     .WithDefaultValue(false)
                     .Do();
             }
+            return Task.CompletedTask;
         }
     }
 }

@@ -56,16 +56,16 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
 
             _pageTypeSettings = new Dictionary<Guid, SitemapPageSettings>();
             _contentSettings = new Dictionary<Guid, SitemapContentSettings>();
+        }
 
+        public XDocument Generate(SitemapGeneratorOptions options)
+        {
             // Pre-load all content overrides once per generation to avoid N+1 queries
             foreach (var contentSetting in _sitemapService.GetAllContentSettings())
             {
                 _contentSettings[contentSetting.NodeKey] = contentSetting;
             }
-        }
 
-        public XDocument Generate(SitemapGeneratorOptions options)
-        {
             _validAlternateCultures = new List<string>();
             var rootNamespace = new XElement(_namespace + "urlset", _settings.ShowAlternatePages ? new XAttribute(XNamespace.Xmlns + "xhtml", _xHtmlNamespace) : null);
 

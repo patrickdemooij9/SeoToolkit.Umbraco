@@ -22,6 +22,7 @@ export type CreateScriptPostModel = {
         [key: string]: string | null;
     } | null;
     domainId?: string | null;
+    sortOrder?: number | null;
 };
 
 export type DeleteAuditsPostModel = {
@@ -68,14 +69,6 @@ export type DomainViewModel = {
     name?: string | null;
 };
 
-export enum EventMessageTypeModel {
-    DEFAULT = 'Default',
-    INFO = 'Info',
-    ERROR = 'Error',
-    SUCCESS = 'Success',
-    WARNING = 'Warning'
-}
-
 export type FieldItemViewModel = {
     name?: string | null;
     value?: string | null;
@@ -92,6 +85,20 @@ export enum ImportRedirectsFileExtension {
     EXCEL = 'Excel'
 }
 
+export type MetaFieldsAiFieldSuggestion = {
+    alias: string;
+    value: string;
+};
+
+export type MetaFieldsAiGenerateRequestModel = {
+    nodeId: string;
+    culture?: string | null;
+};
+
+export type MetaFieldsAiGenerateResponseModel = {
+    suggestions: Array<MetaFieldsAiFieldSuggestion>;
+};
+
 export type MetaFieldsSettingsPostViewModel = {
     nodeId: string;
     culture?: string | null;
@@ -104,12 +111,6 @@ export type MetaFieldsSettingsViewModel = {
     fields?: Array<SeoSettingsFieldViewModel> | null;
     groups?: Array<SeoFieldGroupViewModel> | null;
     previewers?: Array<FieldPreviewerViewModel> | null;
-};
-
-export type NotificationHeaderModel = {
-    message: string;
-    category: string;
-    type: EventMessageTypeModel;
 };
 
 export type PagedRedirectListModel = {
@@ -196,6 +197,7 @@ export type ScriptDetailViewModel = {
         [key: string]: string | null;
     } | null;
     domainId?: string | null;
+    sortOrder: number;
 };
 
 export type ScriptField = {
@@ -209,6 +211,7 @@ export type ScriptListViewModel = {
     id: string;
     name?: string | null;
     definitionName?: string | null;
+    sortOrder: number;
 };
 
 export type SeoDisplayViewModel = {
@@ -399,6 +402,10 @@ export type SitemapPageTypeSettingsViewModel = {
     priority?: number | null;
 };
 
+export type SortScriptsPostModel = {
+    keys?: Array<string> | null;
+};
+
 export type StopAuditPostModel = {
     id: number;
 };
@@ -444,6 +451,22 @@ export type UmbracoDomainModelWritable = {
     rootContentId?: number | null;
     sortOrder: number;
 };
+
+export type PostUmbracoSeoToolkitAiGenerateData = {
+    body?: MetaFieldsAiGenerateRequestModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitAI/generate';
+};
+
+export type PostUmbracoSeoToolkitAiGenerateResponses = {
+    /**
+     * OK
+     */
+    200: MetaFieldsAiGenerateResponseModel;
+};
+
+export type PostUmbracoSeoToolkitAiGenerateResponse = PostUmbracoSeoToolkitAiGenerateResponses[keyof PostUmbracoSeoToolkitAiGenerateResponses];
 
 export type GetUmbracoSeoToolkitMetaFieldsImagePreviewData = {
     body?: never;
@@ -867,6 +890,20 @@ export type GetUmbracoSeoToolkitScriptManagerScriptsResponses = {
 
 export type GetUmbracoSeoToolkitScriptManagerScriptsResponse = GetUmbracoSeoToolkitScriptManagerScriptsResponses[keyof GetUmbracoSeoToolkitScriptManagerScriptsResponses];
 
+export type PostUmbracoSeoToolkitScriptManagerSortScriptsData = {
+    body?: SortScriptsPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitScriptManager/sortScripts';
+};
+
+export type PostUmbracoSeoToolkitScriptManagerSortScriptsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetUmbracoSeoToolkitSiteAuditPageChecksData = {
     body?: never;
     path?: never;
@@ -1285,6 +1322,22 @@ export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses = {
 };
 
 export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponse = GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses[keyof GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses];
+
+export type GetUmbracoSeoToolkitSettingsIsAiAvailableData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitSettings/isAIAvailable';
+};
+
+export type GetUmbracoSeoToolkitSettingsIsAiAvailableResponses = {
+    /**
+     * OK
+     */
+    200: boolean;
+};
+
+export type GetUmbracoSeoToolkitSettingsIsAiAvailableResponse = GetUmbracoSeoToolkitSettingsIsAiAvailableResponses[keyof GetUmbracoSeoToolkitSettingsIsAiAvailableResponses];
 
 export type GetUmbracoSeoToolkitSettingsSeoSettingsData = {
     body?: never;

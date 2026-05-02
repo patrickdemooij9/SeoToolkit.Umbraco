@@ -60,5 +60,6 @@ export const DocumentManifests = [
   documentView,
   documentWorkspaceContext,
   contentView,
-  contentWorkspaceContext
+  contentWorkspaceContext,
 ];
+
