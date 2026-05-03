@@ -105,6 +105,77 @@ Script manager easily allows your users to add new scripts to the website. They 
 ### Redirects
 Redirects allow you with an easy interface to create redirects from content/media to other nodes. You are also able to use regex redirects to handle a lot of redirects at once.
 
+#### Importing redirects
+
+Redirects can be imported in bulk via the **Import** action in the Redirects backoffice section. The import flow has two steps:
+
+1. **Validate** — upload the file and choose a domain. The file is checked for errors before anything is saved.
+2. **Import** — if validation passes, click **Submit** to write the redirects to the database.
+
+**Supported file formats**
+
+| Format | Accepted extensions |
+|--------|---------------------|
+| CSV    | `.csv`              |
+| Excel  | `.xls`, `.xlsx`     |
+
+**CSV format**
+
+The file must be comma-delimited (`,`) and contain **2 to 4 columns** in this order:
+
+| Column | Required | Description |
+|--------|----------|-------------|
+| `From` | ✅ | The old (source) URL. Must be a relative path, e.g. `/old-page`. Query strings are preserved. |
+| `To`   | ✅ | The new (destination) URL. Can be a relative path or an absolute URL. |
+| `StatusCode` | ❌ | The HTTP redirect code. Accepted values: `301` (permanent, default) or `302` (temporary). |
+| `Enabled` | ❌ | Whether the redirect is active. Accepted values: `true` (default) or `false`. |
+
+An optional header row (`From,To,StatusCode,Enabled`) is recognised and skipped automatically.
+
+Example CSV with all four columns:
+
+```csv
+From,To,StatusCode,Enabled
+/old-page,/new-page,301,true
+/another-old-page,https://example.com/,302,true
+/disabled-redirect,/target-page,301,false
+```
+
+Minimal example (only required columns):
+
+```csv
+/old-page,/new-page
+/another-old-page,https://example.com/
+```
+
+**Excel format**
+
+The same column structure applies as for CSV. The first sheet of the workbook is read. Values follow the same rules (relative or absolute URLs, `301`/`302` status codes, `true`/`false` enabled flag).
+
+**Domain scoping**
+
+Before importing you are asked to select a domain. Choose **All Sites** to create redirects that apply across all domains, or pick a specific domain to scope the redirects to that domain only.
+
+**Validation rules**
+
+- Every row must have at least a `From` and a `To` value.
+- The `From` URL must be a valid relative URL.
+- A redirect for the same `From` URL must not already exist in the database for the chosen domain.
+- The same `From` URL must not appear more than once in the import file.
+- Only status codes `301` and `302` are accepted.
+
+#### Exporting redirects
+
+All existing redirects can be exported via the **Export** action in the Redirects backoffice section. This downloads a file called `redirects.csv` that contains every redirect in the following format:
+
+```csv
+From,To,StatusCode,Enabled
+/old-page,/new-page,301,true
+/another-old-page,https://example.com/,302,false
+```
+
+The exported file is fully compatible with the import format, making it easy to migrate redirects between environments or use the export as a starting point for bulk edits.
+
 ### Site audit
 Site audits crawl your website and find issues that could impact the user experience.
 
