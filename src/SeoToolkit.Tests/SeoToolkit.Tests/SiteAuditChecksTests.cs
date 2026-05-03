@@ -79,32 +79,9 @@ namespace SeoToolkit.Tests
         }
 
         [Test]
-        public void OrphanedPageCheck_WhenNoInternalLinks_ReturnsWarning()
-        {
-            var check = new OrphanedPageCheck();
-            var page = CreatePage("<html><head></head><body><a href=\"https://external.com/page\">External</a></body></html>");
-
-            var result = check.RunCheck(page, new SiteAuditContext()).ToArray();
-
-            Assert.That(result.Length, Is.EqualTo(1));
-            Assert.That(result[0].Result, Is.EqualTo(SiteCrawlResultType.Warning));
-        }
-
-        [Test]
-        public void OrphanedPageCheck_WhenInternalLinkExists_ReturnsNoResults()
-        {
-            var check = new OrphanedPageCheck();
-            var page = CreatePage("<html><head></head><body><a href=\"/contact\">Contact</a></body></html>");
-
-            var result = check.RunCheck(page, new SiteAuditContext()).ToArray();
-
-            Assert.That(result, Is.Empty);
-        }
-
-        [Test]
         public void CoreWebVitalsCheck_WhenResponseIsSlow_ReturnsWarning()
         {
-            var check = new CoreWebVitalsCheck();
+            var check = new PagePerformanceCheck();
             var page = CreatePage("<html><head></head><body></body></html>");
             page.RequestStarted = DateTime.UtcNow;
             page.RequestCompleted = page.RequestStarted.AddMilliseconds(3000);
@@ -118,7 +95,7 @@ namespace SeoToolkit.Tests
         [Test]
         public void CoreWebVitalsCheck_WhenResponseIsPoor_ReturnsError()
         {
-            var check = new CoreWebVitalsCheck();
+            var check = new PagePerformanceCheck();
             var page = CreatePage("<html><head></head><body></body></html>");
             page.RequestStarted = DateTime.UtcNow;
             page.RequestCompleted = page.RequestStarted.AddMilliseconds(4500);

@@ -43,10 +43,11 @@ export default class SiteAuditCreateContext
 
     this.#repository = new SiteAuditRepository(host);
     this.#repository.getConfiguration().then((resp) => {
+      this.#config.update(resp.data);
       this.#model.update({
         delayBetweenRequests: resp.data.minimumDelayBetweenRequest,
+        checks: resp.data.checks?.map((check) => check.id) ?? [],
       });
-      this.#config.update(resp.data);
     });
 
     this.routes.setRoutes([
@@ -82,8 +83,11 @@ export default class SiteAuditCreateContext
       });
     });
 
-    //TODO: Find a way to SPA to another page
-    location.href = `/umbraco/section/SeoToolkit/workspace/st-siteAudit/detail/${auditId}`;
+    history.pushState(
+      {},
+      "",
+      `/umbraco/section/SeoToolkit/workspace/st-siteAudit/detail/${auditId.data}`
+    );
   }
 
   getEntityType(): string {

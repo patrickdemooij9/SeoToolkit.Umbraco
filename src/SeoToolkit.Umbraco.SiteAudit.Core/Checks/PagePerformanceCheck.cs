@@ -6,15 +6,15 @@ using SeoToolkit.Umbraco.SiteAudit.Core.Models.Business;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
 {
-    public class CoreWebVitalsCheck : ISiteCheck
+    public class PagePerformanceCheck : ISiteCheck
     {
         private const int WarningThresholdMs = 2500;
         private const int ErrorThresholdMs = 4000;
 
-        public string Name => "Core Web Vitals Signal Check";
-        public string Alias => "CoreWebVitalsCheck";
-        public string Description => "Checks response time as a Core Web Vitals performance signal";
-        public string ErrorMessage => "Some pages are likely to perform poorly.";
+        public string Name => "Page performance check";
+        public string Alias => "PagePerformanceCheck";
+        public string Description => "Checks the response time of your pages";
+        public string ErrorMessage => "Some pages are taking a long time to respond.";
 
         public IEnumerable<CheckPageCrawlResult> RunCheck(CrawledPageModel page, SiteAuditContext context)
         {
@@ -43,10 +43,10 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
                 && crawlResult.ExtraValues.TryGetValue("Rating", out var rating)
                 && crawlResult.ExtraValues.TryGetValue("ResponseTimeMs", out var responseTime))
             {
-                return $"Performance signal: {rating} ({responseTime} ms response time).";
+                return $"Page performance: {rating} ({responseTime} ms response time).";
             }
 
-            return "Performance signal indicates potential Core Web Vitals issues.";
+            return "Your load time for this page is taking longer than the thresholds specified.";
         }
 
         public bool Compare(CheckPageCrawlResult result, CheckPageCrawlResult otherResult)
