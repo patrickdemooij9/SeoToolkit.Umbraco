@@ -60,39 +60,6 @@ Each of these functionalities can also be found in separate packages. So if you 
 ### Meta Fields
 Meta Fields allow you to easily set your meta fields like Title, Description, Open Graph Title/Description/Image and canonical URL based on already existing fields on your content node. This allows your users to see where the values are coming from and also what their values will be. At the same time your users can also change these values themselves, so not code is required.
 
-### Meta Fields AI (Add-on)
-Two packages power the AI integration, following the same layered add-on pattern as `SeoToolkit.Umbraco.uSync`:
-
-| Package | Purpose |
-|---|---|
-| `SeoToolkit.Umbraco.AI.Core` | Prompt-building logic and the `IMetaFieldsAIService` abstraction. No AI provider dependency — install your own integration on top. |
-| `SeoToolkit.Umbraco.AI.Integration` | Wires `SeoToolkit.Umbraco.AI.Core` to [Umbraco.AI](https://marketplace.umbraco.com/packages/umbraco.ai). Install this when using the official Umbraco AI package. |
-
-**Prerequisites**: Umbraco.AI (v1.x) must be installed and configured with at least one chat profile.
-
-**Installation** (typical setup):
-
-```
-Install-Package SeoToolkit.Umbraco.AI.Integration
-```
-
-This also pulls in `SeoToolkit.Umbraco.AI.Core` automatically.
-
-Once installed, a **✨ Generate with AI** button appears in the **document workspace action bar** (bottom bar, next to the Save button) for any SEO-enabled content node. Clicking it:
-
-1. Calls the configured Umbraco.AI chat profile to generate suggestions.
-2. Opens a sidebar modal showing the generated values for:
-   - **Page Title** (50–60 characters)
-   - **Meta Description** (150–160 characters)
-   - **OG Title**
-   - **OG Description**
-3. Editors can toggle individual suggestions on or off before clicking **Apply**.
-4. Applied values are written into the fields. No values are auto-saved — the normal save flow still applies.
-
-**Availability detection**: The button is shown only when `SeoToolkit.Umbraco.AI.Integration` is installed (the `SeoToolkit.AI.IsAvailable` condition checks the endpoint). When the package is absent the Meta Fields workspace behaves exactly as before.
-
-**Custom AI provider**: If you want to use a different AI backend, install only `SeoToolkit.Umbraco.AI.Core` and register your own implementation of `IAIGenerationService`.
-
 ### Sitemap
 Sitemap gives you an sitemap.xml where all your pages are listed. This package works with multiple domains and languages. It creates a /sitemap.xml for each domain and also a sitemap index with all your sitemaps listed within.
 
@@ -110,6 +77,15 @@ Site audits crawl your website and find issues that could impact the user experi
 
 ### Not found handling
 Easily select a page which is used for your 404 pages. No need to develop anything custom, just select your content node and everything will be working out of the box.
+
+### Headless support
+Even if you are using Umbraco in a headless setup, SeoToolkit can still be valuable for you to allow your editors a good experience in Umbraco. The package is able to integrate with the Delivery API or just normal REST api's. Both methods are described in more detail at https://seotoolkit.gitbook.io/useotoolkit/extensions/headless-setup
+
+## Addons
+SeoToolkit connects with other packages as well. They aren't shipped with the standard package, but must be installed as additional nuget packages. 
+
+### AI
+If you want to connect with the Umbraco.AI package, you can download `SeoToolkit.Umbraco.AI.Integration`. This will allow you to automatically generate metafields like title, description and open graphs for your pages. Additional information can be found on the documentation page: https://seotoolkit.gitbook.io/useotoolkit/extensions/ai.
 
 ## Documentation
 All documentation about the package can be found here: https://seotoolkit.gitbook.io/useotoolkit/
