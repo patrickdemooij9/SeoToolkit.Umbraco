@@ -1,15 +1,15 @@
 <Project>
   <PropertyGroup>
-    <SeoToolkitVersionCommon>6.2.2</SeoToolkitVersionCommon>
-    <SeoToolkitVersionMetaFields>6.2.1</SeoToolkitVersionMetaFields>
-    <SeoToolkitVersionNotFound>6.2.1</SeoToolkitVersionNotFound>
-    <SeoToolkitVersionRedirects>6.2.2</SeoToolkitVersionRedirects>
-    <SeoToolkitVersionRobotsTxt>6.2.1</SeoToolkitVersionRobotsTxt>
-    <SeoToolkitVersionScriptManager>6.2.1</SeoToolkitVersionScriptManager>
-    <SeoToolkitVersionSiteAudit>6.2.1</SeoToolkitVersionSiteAudit>
-    <SeoToolkitVersionSitemap>6.2.2</SeoToolkitVersionSitemap>
-    <SeoToolkitVersionCore>6.2.3</SeoToolkitVersionCore>
-    <SeoToolkitVersionPackage>6.2.3</SeoToolkitVersionPackage>
+    <SeoToolkitVersionCommon>6.3.0</SeoToolkitVersionCommon>
+    <SeoToolkitVersionMetaFields>6.3.0</SeoToolkitVersionMetaFields>
+    <SeoToolkitVersionNotFound>6.3.0</SeoToolkitVersionNotFound>
+    <SeoToolkitVersionRedirects>6.3.0</SeoToolkitVersionRedirects>
+    <SeoToolkitVersionRobotsTxt>6.3.0</SeoToolkitVersionRobotsTxt>
+    <SeoToolkitVersionScriptManager>6.3.0</SeoToolkitVersionScriptManager>
+    <SeoToolkitVersionSiteAudit>6.3.0</SeoToolkitVersionSiteAudit>
+    <SeoToolkitVersionSitemap>6.3.0</SeoToolkitVersionSitemap>
+    <SeoToolkitVersionCore>6.3.0</SeoToolkitVersionCore>
+    <SeoToolkitVersionPackage>6.3.0</SeoToolkitVersionPackage>
 	<SeoToolkitVersionUsync>1.0.0-beta1</SeoToolkitVersionUsync>
 	<SeoToolkitVersionAICore>1.0.0</SeoToolkitVersionAICore>
 	<SeoToolkitVersionAIIntegration>1.0.0</SeoToolkitVersionAIIntegration>
