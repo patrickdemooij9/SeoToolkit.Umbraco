@@ -57,6 +57,10 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
                 .Append<BrokenLinkCheck>()
                 .Append<MissingTitleCheck>()
                 .Append<MissingDescriptionCheck>()
+                .Append<MissingH1Check>()
+                .Append<MissingCanonicalCheck>()
+                .Append<ThinContentCheck>()
+                .Append<PagePerformanceCheck>()
                 .Append<BrokenImageCheck>()
                 .Append<MissingImageAltCheck>();
 
