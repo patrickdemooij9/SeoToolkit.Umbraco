@@ -72,13 +72,16 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Models.ViewModels
             // Score is only meaningful once crawling is complete
             if (model.Status == SiteAuditStatus.Finished && PagesCrawled.Length > 0)
             {
+                const int MaxErrorPenalty = 60;
+                const int MaxWarningPenalty = 20;
+
                 var pagesWithErrors = PagesCrawled.Count(p => p.Results?.Any(r => r.IsError) == true);
                 var pagesWithWarningsOnly = PagesCrawled.Count(p =>
                     p.Results?.Any(r => r.IsWarning) == true &&
                     p.Results?.Any(r => r.IsError) != true);
 
-                var errorPenalty = (double)pagesWithErrors / PagesCrawled.Length * 60;
-                var warningPenalty = (double)pagesWithWarningsOnly / PagesCrawled.Length * 20;
+                var errorPenalty = (double)pagesWithErrors / PagesCrawled.Length * MaxErrorPenalty;
+                var warningPenalty = (double)pagesWithWarningsOnly / PagesCrawled.Length * MaxWarningPenalty;
                 Score = (int)Math.Max(0, 100 - errorPenalty - warningPenalty);
             }
         }
