@@ -25,6 +25,8 @@ export default class SiteAuditDetailContext
   #model = new UmbObjectState<SiteAuditDetailViewModel>({
     id: 0,
     totalPagesFound: 0,
+    totalErrors: 0,
+    totalWarnings: 0,
     progress: 0,
   });
   public readonly model = this.#model.asObservable();

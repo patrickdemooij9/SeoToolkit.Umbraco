@@ -332,6 +332,9 @@ export type SiteAuditDetailViewModel = {
     totalPagesFound: number;
     progress: number;
     status?: string | null;
+    score?: number | null;
+    totalErrors: number;
+    totalWarnings: number;
     checks?: Array<SiteAuditCheckViewModel> | null;
     pagesCrawled?: Array<SiteAuditPageDetailViewModel> | null;
 };
