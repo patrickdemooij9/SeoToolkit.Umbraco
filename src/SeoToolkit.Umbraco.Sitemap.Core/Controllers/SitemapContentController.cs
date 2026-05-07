@@ -29,7 +29,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             var content = ctx.UmbracoContext.Content?.GetById(true, nodeKey);
-            if (content is null) return NotFound();
+            if (content is null) return NotFound(CreateContentNotFoundProblem(nodeKey));
 
             var contentOverride = _sitemapService.GetContentSettings(nodeKey);
             var docTypeSettings = _sitemapService.GetPageTypeSettings(content.ContentType.Key);
@@ -52,7 +52,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             var content = ctx.UmbracoContext.Content?.GetById(true, model.NodeKey);
-            if (content is null) return NotFound();
+            if (content is null) return NotFound(CreateContentNotFoundProblem(model.NodeKey));
 
             _sitemapService.SetContentSettings(new SitemapContentSettings
             {
@@ -63,6 +63,16 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
             });
 
             return Ok();
+        }
+
+        private static ProblemDetails CreateContentNotFoundProblem(Guid nodeKey)
+        {
+            return new ProblemDetails
+            {
+                Status = 404,
+                Title = "Content not found",
+                Detail = $"Cannot find content by key: {nodeKey}"
+            };
         }
     }
 }
