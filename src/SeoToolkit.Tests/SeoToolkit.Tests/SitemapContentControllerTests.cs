@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SeoToolkit.Umbraco.Sitemap.Core.Controllers;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.PostModels;
+using SeoToolkit.Umbraco.Sitemap.Core.Models.ViewModels;
 using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models.PublishedContent;
@@ -35,24 +36,24 @@ namespace SeoToolkit.Tests
         }
 
         [Test]
-        public void GetContentSettings_WhenContentDoesNotExist_ReturnsProblemDetailsNotFound()
+        public void GetContentSettings_WhenContentDoesNotExist_ReturnsEmptySettingsWithOk()
         {
-            var nodeKey = Guid.NewGuid();
+            var result = _controller.GetContentSettings(Guid.NewGuid());
 
-            var result = _controller.GetContentSettings(nodeKey);
+            Assert.That(result, Is.TypeOf<OkObjectResult>());
+            var ok = (OkObjectResult)result;
+            Assert.That(ok.Value, Is.TypeOf<SitemapContentSettingsViewModel>());
 
-            Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
-            var notFound = (NotFoundObjectResult)result;
-            Assert.That(notFound.Value, Is.TypeOf<ProblemDetails>());
-
-            var problemDetails = (ProblemDetails)notFound.Value!;
-            Assert.That(problemDetails.Status, Is.EqualTo(404));
-            Assert.That(problemDetails.Title, Is.EqualTo("Content not found"));
-            Assert.That(problemDetails.Detail, Is.EqualTo($"Cannot find content by key: {nodeKey}"));
+            var model = (SitemapContentSettingsViewModel)ok.Value!;
+            Assert.That(model.ExcludeFromSitemap, Is.False);
+            Assert.That(model.ChangeFrequency, Is.Null);
+            Assert.That(model.Priority, Is.Null);
+            Assert.That(model.InheritedChangeFrequency, Is.Null);
+            Assert.That(model.InheritedPriority, Is.Null);
         }
 
         [Test]
-        public void SetContentSettings_WhenContentDoesNotExist_ReturnsProblemDetailsNotFound()
+        public void SetContentSettings_WhenContentDoesNotExist_ReturnsNotFound()
         {
             var nodeKey = Guid.NewGuid();
             var model = new SitemapContentSettingsPostModel
@@ -62,14 +63,7 @@ namespace SeoToolkit.Tests
 
             var result = _controller.SetContentSettings(model);
 
-            Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
-            var notFound = (NotFoundObjectResult)result;
-            Assert.That(notFound.Value, Is.TypeOf<ProblemDetails>());
-
-            var problemDetails = (ProblemDetails)notFound.Value!;
-            Assert.That(problemDetails.Status, Is.EqualTo(404));
-            Assert.That(problemDetails.Title, Is.EqualTo("Content not found"));
-            Assert.That(problemDetails.Detail, Is.EqualTo($"Cannot find content by key: {nodeKey}"));
+            Assert.That(result, Is.TypeOf<NotFoundResult>());
         }
     }
 }
