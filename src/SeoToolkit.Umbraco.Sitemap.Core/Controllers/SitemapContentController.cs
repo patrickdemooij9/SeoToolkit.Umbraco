@@ -29,7 +29,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             var content = ctx.UmbracoContext.Content?.GetById(true, nodeKey);
-            if (content is null) return NotFound();
+            if (content is null) return Ok(new SitemapContentSettingsViewModel());
 
             var contentOverride = _sitemapService.GetContentSettings(nodeKey);
             var docTypeSettings = _sitemapService.GetPageTypeSettings(content.ContentType.Key);

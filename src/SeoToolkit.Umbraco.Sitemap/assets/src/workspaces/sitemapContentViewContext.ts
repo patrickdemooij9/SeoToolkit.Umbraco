@@ -34,16 +34,23 @@ export default class SitemapContentViewContext
         if (!unique) return;
         this.#nodeId = unique.toString();
         this.#loadData();
+        instance.getData()?.variants.forEach((variant) => {
+          // Get the latest update data from the variants to compare with later when saving
+          const updateDate = variant.updateDate;
+          if (!this.#lastUpdateDate || (updateDate && this.#lastUpdateDate < updateDate)) {
+            this.#lastUpdateDate = updateDate!;
+          }
+        });
       });
 
       this.observe(instance.data, (item) => {
-        let shouldSave = false;
-        item?.variants.forEach((variant: any) => {
-          const updateDate = variant.updateDate ?? variant.update_date;
-          if (this.#lastUpdateDate && this.#lastUpdateDate !== updateDate) {
+        let shouldSave = false;        
+        item?.variants.forEach((variant) => {
+          const updateDate = variant.updateDate;
+          if (this.#lastUpdateDate && updateDate && this.#lastUpdateDate < updateDate) {
             shouldSave = true;
+            this.#lastUpdateDate = updateDate!;
           }
-          this.#lastUpdateDate = updateDate;
         });
         if (shouldSave) {
           this.save();
