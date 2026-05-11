@@ -49,8 +49,8 @@ export default class SitemapContentViewContext
           const updateDate = variant.updateDate;
           if (this.#lastUpdateDate && updateDate && this.#lastUpdateDate < updateDate) {
             shouldSave = true;
+            this.#lastUpdateDate = updateDate!;
           }
-          this.#lastUpdateDate = updateDate!;
         });
         if (shouldSave) {
           this.save();
