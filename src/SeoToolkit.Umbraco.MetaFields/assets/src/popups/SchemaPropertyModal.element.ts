@@ -63,6 +63,15 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     };
   }
 
+  #extractMediaUnique(event: Event): string {
+    const customEvent = event as CustomEvent<{ selection?: Array<{ unique?: string }> }>;
+    const detailSelection = customEvent.detail?.selection;
+    const targetSelection = (event.target as { selection?: Array<{ unique?: string }> })?.selection;
+    const selection = detailSelection ?? targetSelection ?? [];
+    const unique = selection[0]?.unique;
+    return unique ?? "";
+  }
+
   #handleClose() {
     this.modalContext?.reject();
   }
@@ -147,8 +156,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
                         max="1"
                         .selection=${value.value ? [{ unique: value.value }] : []}
                         @change="${(e: Event) => {
-                          const selection = (e.target as any).selection as Array<{ unique: string }>;
-                          const guid = selection.length > 0 ? selection[0].unique : "";
+                          const guid = this.#extractMediaUnique(e);
                           this.#onPropertyValueChange(alias, {
                             ...value,
                             value: guid,
