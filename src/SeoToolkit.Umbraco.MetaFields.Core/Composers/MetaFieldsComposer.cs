@@ -6,6 +6,7 @@ using SeoToolkit.Umbraco.Common.Core.Interfaces;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Api;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
@@ -66,6 +67,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.Services.AddTransient(typeof(IMetaFieldsValueRepository), typeof(MetaFieldsDatabaseRepository));
             builder.Services.AddTransient(typeof(ISchemaEntryRepository), typeof(SchemaEntryDatabaseRepository));
             builder.Services.AddTransient(typeof(ISchemaEntryService), typeof(SchemaEntryService));
+            builder.Services.AddTransient<UmbracoMediaConverter>();
 
             if (!disabledModules.Contains(DisabledModuleConstant.Api))
             {

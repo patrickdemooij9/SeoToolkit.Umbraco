@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters
@@ -17,13 +16,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
     {
         private readonly SchemaResolverCollection _schemaResolvers;
         private readonly ISchemaEntryService _schemaEntryService;
-        private readonly IUmbracoContextFactory _umbracoContextFactory;
 
-        public SchemaSeoValueConverter(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService, IUmbracoContextFactory umbracoContextFactory)
+        public SchemaSeoValueConverter(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService)
         {
             _schemaResolvers = schemaResolvers;
             _schemaEntryService = schemaEntryService;
-            _umbracoContextFactory = umbracoContextFactory;
         }
 
         public Type FromValue => typeof(Guid[]);
@@ -84,17 +81,13 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
             if (property.IsReference)
                 return ResolveReference(property.ReferenceKey, currentContent);
 
-            // Resolve media picker GUIDs to absolute URLs
-            //TODO: Handle this correctly with the other converters
-            /*if (propertyDef.PropertyEditor == "Umb.PropertyEditorUi.MediaPicker"
-                && !string.IsNullOrWhiteSpace(property.Value)
-                && Guid.TryParse(property.Value, out var mediaGuid))
+            if (propertyDef.ValueConverter != null)
             {
-                using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
-                var mediaItem = ctx.UmbracoContext.Media.GetById(true, mediaGuid);
-                if (mediaItem != null)
-                    return mediaItem.Url(mode: UrlMode.Absolute);
-            }*/
+                var obj = propertyDef.ValueConverter.ConvertDatabaseToObject(property.Value);
+                if (obj is IPublishedContent content)
+                    return content.Url(mode: UrlMode.Absolute);
+                return obj?.ToString() ?? string.Empty;
+            }
 
             return property.Value?.ToString() ?? string.Empty;
         }

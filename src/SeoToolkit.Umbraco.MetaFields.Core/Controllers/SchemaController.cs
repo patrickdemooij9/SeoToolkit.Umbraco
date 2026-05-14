@@ -101,7 +101,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 OwnerKey = model.OwnerKey,
                 SchemaAlias = model.SchemaAlias,
                 DisplayName = model.DisplayName,
-                Properties = model.Properties ?? new Dictionary<string, SchemaPropertyValue>()
+                Properties = ConvertPropertiesFromEditor(model.Properties, model.SchemaAlias)
             };
 
             var result = _schemaEntryService.Add(dto);
@@ -118,7 +118,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
             existing.SchemaAlias = model.SchemaAlias;
             existing.DisplayName = model.DisplayName;
-            existing.Properties = model.Properties ?? new Dictionary<string, SchemaPropertyValue>();
+            existing.Properties = ConvertPropertiesFromEditor(model.Properties, model.SchemaAlias);
 
             var result = _schemaEntryService.Update(existing);
             return Ok(MapToViewModel(result));
@@ -135,8 +135,28 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             return Ok();
         }
 
-        private static SchemaEntryViewModel MapToViewModel(SchemaEntryDto dto)
+        private SchemaEntryViewModel MapToViewModel(SchemaEntryDto dto)
         {
+            var resolver = _schemaResolvers.FirstOrDefault(it =>
+                it.Alias.Equals(dto.SchemaAlias, StringComparison.OrdinalIgnoreCase));
+
+            var properties = dto.Properties?.ToDictionary(
+                kv => kv.Key,
+                kv =>
+                {
+                    var propDef = resolver?.Properties.FirstOrDefault(p => p.Alias == kv.Key);
+                    var converter = propDef?.ValueConverter;
+                    var editorValue = converter != null
+                        ? converter.ConvertObjectToEditorValue(converter.ConvertDatabaseToObject(kv.Value.Value))
+                        : kv.Value.Value;
+                    return new SchemaPropertyValue
+                    {
+                        Value = editorValue,
+                        IsReference = kv.Value.IsReference,
+                        ReferenceKey = kv.Value.ReferenceKey
+                    };
+                }) ?? new Dictionary<string, SchemaPropertyValue>();
+
             return new SchemaEntryViewModel
             {
                 Id = dto.Id,
@@ -144,8 +164,35 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 OwnerKey = dto.OwnerKey,
                 SchemaAlias = dto.SchemaAlias,
                 DisplayName = dto.DisplayName,
-                Properties = dto.Properties
+                Properties = properties
             };
+        }
+
+        private Dictionary<string, SchemaPropertyValue> ConvertPropertiesFromEditor(
+            Dictionary<string, SchemaPropertyValue> properties, string schemaAlias)
+        {
+            if (properties == null)
+                return new Dictionary<string, SchemaPropertyValue>();
+
+            var resolver = _schemaResolvers.FirstOrDefault(it =>
+                it.Alias.Equals(schemaAlias, StringComparison.OrdinalIgnoreCase));
+
+            return properties.ToDictionary(
+                kv => kv.Key,
+                kv =>
+                {
+                    var propDef = resolver?.Properties.FirstOrDefault(p => p.Alias == kv.Key);
+                    var converter = propDef?.ValueConverter;
+                    var dbValue = converter != null
+                        ? converter.ConvertEditorToDatabaseValue(kv.Value.Value)
+                        : kv.Value.Value;
+                    return new SchemaPropertyValue
+                    {
+                        Value = dbValue,
+                        IsReference = kv.Value.IsReference,
+                        ReferenceKey = kv.Value.ReferenceKey
+                    };
+                });
         }
     }
 }
