@@ -69,14 +69,6 @@ export type DomainViewModel = {
     name?: string | null;
 };
 
-export enum EventMessageTypeModel {
-    DEFAULT = 'Default',
-    INFO = 'Info',
-    ERROR = 'Error',
-    SUCCESS = 'Success',
-    WARNING = 'Warning'
-}
-
 export type FieldItemViewModel = {
     name?: string | null;
     value?: string | null;
@@ -105,12 +97,6 @@ export type MetaFieldsSettingsViewModel = {
     fields?: Array<SeoSettingsFieldViewModel> | null;
     groups?: Array<SeoFieldGroupViewModel> | null;
     previewers?: Array<FieldPreviewerViewModel> | null;
-};
-
-export type NotificationHeaderModel = {
-    message: string;
-    category: string;
-    type: EventMessageTypeModel;
 };
 
 export type PagedRedirectListModel = {
@@ -204,7 +190,7 @@ export type SchemaEntryViewModel = {
 };
 
 export type SchemaPropertyValue = {
-    value?: string | null;
+    value?: unknown;
     isReference: boolean;
     referenceKey?: string | null;
 };
@@ -213,7 +199,7 @@ export type SchemaPropertyViewModel = {
     alias?: string | null;
     displayName?: string | null;
     propertyEditor?: string | null;
-    allowReference?: boolean;
+    allowReference: boolean;
 };
 
 export type SchemaTypeViewModel = {

@@ -225,7 +225,7 @@ export default class SchemaEditorPropertyEditor
     const result: { [key: string]: PropertyValue } = {};
     for (const [key, val] of Object.entries(apiProps)) {
       result[key] = {
-        value: val?.value ?? "",
+        value: val?.value,
         isReference: val?.isReference ?? false,
         referenceKey: val?.referenceKey ?? "",
       };

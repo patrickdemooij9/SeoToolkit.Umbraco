@@ -85,7 +85,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                 return ResolveReference(property.ReferenceKey, currentContent);
 
             // Resolve media picker GUIDs to absolute URLs
-            if (propertyDef.PropertyEditor == "Umb.PropertyEditorUi.MediaPicker"
+            //TODO: Handle this correctly with the other converters
+            /*if (propertyDef.PropertyEditor == "Umb.PropertyEditorUi.MediaPicker"
                 && !string.IsNullOrWhiteSpace(property.Value)
                 && Guid.TryParse(property.Value, out var mediaGuid))
             {
@@ -93,9 +94,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                 var mediaItem = ctx.UmbracoContext.Media.GetById(true, mediaGuid);
                 if (mediaItem != null)
                     return mediaItem.Url(mode: UrlMode.Absolute);
-            }
+            }*/
 
-            return property.Value ?? string.Empty;
+            return property.Value?.ToString() ?? string.Empty;
         }
 
         private static string ResolveReference(string referenceKey, IPublishedContent currentContent)

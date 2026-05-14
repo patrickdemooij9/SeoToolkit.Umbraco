@@ -2,6 +2,7 @@ import { customElement, state } from "@umbraco-cms/backoffice/external/lit";
 import { UmbModalBaseElement } from "@umbraco-cms/backoffice/modal";
 import { css, html } from "lit";
 import { SchemaPropertyViewModel, SchemaTypeViewModel } from "../api";
+import { UmbPropertyDatasetElement } from "@umbraco-cms/backoffice/property";
 
 export interface EditableSchema {
   schemaAlias: string;
@@ -10,7 +11,7 @@ export interface EditableSchema {
 }
 
 export interface PropertyValue {
-  value: string;
+  value: unknown | undefined;
   isReference: boolean;
   referenceKey: string;
 }
@@ -46,7 +47,9 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     } else {
       this._selectedSchemaAlias = this.value?.schemaAlias ?? "";
       this._displayName = this.value?.displayName ?? "";
-      this._propertyValues = this.value?.properties ? { ...this.value.properties } : {};
+      this._propertyValues = this.value?.properties
+        ? { ...this.value.properties }
+        : {};
     }
   }
 
@@ -57,19 +60,27 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
   }
 
   #onPropertyValueChange(propertyAlias: string, propertyValue: PropertyValue) {
+    console.log("Property value changed:", propertyAlias, propertyValue);
     this._propertyValues = {
       ...this._propertyValues,
       [propertyAlias]: propertyValue,
     };
   }
 
-  #extractMediaUnique(event: Event): string {
-    const customEvent = event as CustomEvent<{ selection?: Array<{ unique?: string }> }>;
-    const detailSelection = customEvent.detail?.selection;
-    const targetSelection = (event.target as { selection?: Array<{ unique?: string }> })?.selection;
-    const selection = detailSelection ?? targetSelection ?? [];
-    const unique = selection[0]?.unique;
-    return unique ?? "";
+  #handlePropertyInputChange(
+    propertyAlias: string,
+    propertyValue: PropertyValue,
+    event: Event,
+  ) {
+    const target = event.target as UmbPropertyDatasetElement;
+    if (!target) {
+      return;
+    }
+    propertyValue.value = target.value.find((item) => item.alias === propertyAlias)?.value;
+    this._propertyValues = {
+      ...this._propertyValues,
+      [propertyAlias]: propertyValue,
+    };
   }
 
   #handleClose() {
@@ -89,11 +100,19 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     this.modalContext?.submit();
   }
 
-  #renderPropertyInput(property: SchemaPropertyViewModel, propertyValue: PropertyValue) {
-    const value = propertyValue ?? { value: "", isReference: false, referenceKey: "" };
+  #renderPropertyInput(
+    property: SchemaPropertyViewModel,
+    propertyValue: PropertyValue,
+  ) {
+    const value = propertyValue ?? {
+      value: undefined,
+      isReference: false,
+      referenceKey: undefined,
+    };
     const alias = property.alias ?? "";
     const displayName = property.displayName ?? "";
-    const propEditor = property.propertyEditor ?? "Umb.PropertyEditorUi.TextBox";
+    const propEditor =
+      property.propertyEditor ?? "Umb.PropertyEditorUi.TextBox";
     const allowReference = property.allowReference !== false;
 
     return html`
@@ -122,7 +141,6 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
               </div>
             `
           : ""}
-
         ${value.isReference && allowReference
           ? html`
               <div class="property-input">
@@ -142,53 +160,51 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
                       <option
                         .value=${opt.key}
                         ?selected=${opt.key === value.referenceKey}
-                      >${opt.label}</option>
-                    `
+                      >
+                        ${opt.label}
+                      </option>
+                    `,
                   )}
                 </select>
               </div>
             `
           : html`
               <div class="property-input">
-                ${propEditor === "Umb.PropertyEditorUi.MediaPicker"
-                  ? html`
-                      <umb-input-media
-                        max="1"
-                        .selection=${value.value ? [{ unique: value.value }] : []}
-                        @change="${(e: Event) => {
-                          const guid = this.#extractMediaUnique(e);
-                          this.#onPropertyValueChange(alias, {
-                            ...value,
-                            value: guid,
-                          });
-                        }}"
-                      ></umb-input-media>
-                    `
-                  : propEditor === "Umb.PropertyEditorUi.TextArea"
-                  ? html`
-                      <uui-textarea
-                        .value=${value.value ?? ""}
-                        @input="${(e: Event) => {
-                          const val = (e.target as HTMLTextAreaElement).value;
-                          this.#onPropertyValueChange(alias, {
-                            ...value,
-                            value: val ?? "",
-                          });
-                        }}"
-                      ></uui-textarea>
-                    `
-                  : html`
-                      <uui-input
-                        .value=${value.value ?? ""}
-                        @input="${(e: Event) => {
-                          const val = (e.target as HTMLInputElement).value;
-                          this.#onPropertyValueChange(alias, {
-                            ...value,
-                            value: val ?? "",
-                          });
-                        }}"
-                      ></uui-input>
-                    `}
+                <umb-property-dataset
+                  .value=${[{ alias, value: value.value }]}
+                  @change=${(e: Event) => {this.#handlePropertyInputChange(alias, value, e)}}
+                >
+                  <umb-property
+                    .alias=${alias}
+                    property-editor-ui-alias=${propEditor}
+                    .config=${[
+                      {
+                        alias: "disableFolderSelect",
+                        value: false,
+                      },
+                      {
+                        alias: "idType",
+                        value: "udi",
+                      },
+                      {
+                        alias: "ignoreUserStartNodes",
+                        value: false,
+                      },
+                      {
+                        alias: "multiple",
+                        value: false,
+                      },
+                      {
+                        alias: "onlyImages",
+                        value: true,
+                      },
+                      {
+                        alias: "max",
+                        value: 1,
+                      },
+                    ]}
+                  ></umb-property>
+                </umb-property-dataset>
               </div>
             `}
       </div>
@@ -198,7 +214,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
   override render() {
     const isEditing = !!this.data?.editSchema;
     const selectedSchema = this.data?.availableSchemas.find(
-      (s) => s.alias === this._selectedSchemaAlias
+      (s) => s.alias === this._selectedSchemaAlias,
     );
 
     const properties = selectedSchema?.properties ?? [];
@@ -218,8 +234,10 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
                   <uui-option value="">Select a schema type...</uui-option>
                   ${this.data?.availableSchemas.map(
                     (schema) => html`
-                      <uui-option .value=${schema.alias}>${schema.name}</uui-option>
-                    `
+                      <uui-option .value=${schema.alias}
+                        >${schema.name}</uui-option
+                      >
+                    `,
                   )}
                 </uui-select>
               </div>
@@ -240,15 +258,17 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
         ${properties.length > 0
           ? html`
               <div class="schema-properties">
-                ${properties.map(
-                  (prop) =>
-                    this.#renderPropertyInput(prop, this._propertyValues[prop.alias!])
+                ${properties.map((prop) =>
+                  this.#renderPropertyInput(
+                    prop,
+                    this._propertyValues[prop.alias!],
+                  ),
                 )}
               </div>
             `
           : this._selectedSchemaAlias
-          ? html`<p>No properties available for this schema.</p>`
-          : ""}
+            ? html`<p>No properties available for this schema.</p>`
+            : ""}
 
         <umb-footer-layout slot="footer">
           <uui-button

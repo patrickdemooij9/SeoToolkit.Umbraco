@@ -15,7 +15,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor
 
     public class SchemaPropertyValue
     {
-        public string Value { get; set; }
+        public object Value { get; set; }
         public bool IsReference { get; set; }
         public string ReferenceKey { get; set; }
     }
