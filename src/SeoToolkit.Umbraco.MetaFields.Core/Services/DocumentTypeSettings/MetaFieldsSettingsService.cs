@@ -11,7 +11,6 @@ using SeoToolkit.Umbraco.MetaFields.Core.Repositories.DocumentTypeSettingsReposi
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Events;
@@ -131,7 +130,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
             return value switch
             {
                 JToken token => token.DeepClone(),
-                _ => JsonConvert.DeserializeObject(JsonConvert.SerializeObject(value)) ?? value
+                Array array => array.Clone(),
+                ICloneable cloneable => cloneable.Clone(),
+                _ => value
             };
         }
     }

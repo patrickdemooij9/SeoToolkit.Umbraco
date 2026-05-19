@@ -7,7 +7,6 @@ using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SeoToolkit.Umbraco.MetaFields.Core.Caching;
 using System.Linq;
@@ -113,7 +112,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
             return value switch
             {
                 JToken token => token.DeepClone(),
-                _ => JsonConvert.DeserializeObject(JsonConvert.SerializeObject(value)) ?? value
+                Array array => array.Clone(),
+                ICloneable cloneable => cloneable.Clone(),
+                _ => value
             };
         }
     }

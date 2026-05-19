@@ -17,6 +17,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 {
     public class ScriptManagerService : IScriptManagerService
     {
+        private static readonly ScriptPositionType[] ScriptPositions = Enum.GetValues<ScriptPositionType>();
         private readonly IScriptRepository _scriptRepository;
         private readonly DistributedCache _distributedCache;
         private readonly ISettingsService<ScriptManagerConfigModel> _settings;
@@ -162,7 +163,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
                 return null;
 
             var clone = new ScriptRenderModel();
-            foreach (var position in Enum.GetValues<ScriptPositionType>())
+            foreach (var position in ScriptPositions)
             {
                 foreach (var script in renderModel.Get(position))
                 {
