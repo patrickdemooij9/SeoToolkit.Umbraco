@@ -15,6 +15,8 @@ import SiteAuditCreateContext, {
 } from "./SiteAuditCreateContext";
 import { CreateAuditPostModel, SiteAuditCreateConfigViewModel } from "../api";
 
+const UMBRACO_SOURCE = "umbraco";
+
 @customElement("seotoolkit-site-audit-create")
 export default class SiteAuditCreateWorkspace extends UmbLitElement {
   #context?: SiteAuditCreateContext;
@@ -30,6 +32,9 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
 
   @state()
   _canSubmit = false;
+
+  @state()
+  _selectedSource: string = UMBRACO_SOURCE;
 
   constructor() {
     super();
@@ -61,7 +66,11 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
         ];
 
         this._canSubmit =
-          !!value.name && !!value.selectedNodeId && value.selectedNodeId !== "";
+          !!value.name &&
+          (
+            (!!value.selectedNodeId && value.selectedNodeId !== "") ||
+            !!value.startingUrl
+          );
 
         const checkNames =
           this._config?.checks
@@ -79,6 +88,17 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
         this._config = value;
       });
     });
+  }
+
+  #onSourceChange(e: Event) {
+    const select = e.target as HTMLSelectElement;
+    this._selectedSource = select.value;
+
+    if (this._selectedSource === UMBRACO_SOURCE) {
+      this.#context?.update({ startingUrl: null, selectedNodeId: "" });
+    } else {
+      this.#context?.update({ startingUrl: this._selectedSource, selectedNodeId: null });
+    }
   }
 
   #onAuditInfoUpdate(e: Event) {
@@ -129,6 +149,9 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
   }
 
   override render() {
+    const hasDomains = (this._config?.domains?.length ?? 0) > 0;
+    const isUmbracoSource = this._selectedSource === UMBRACO_SOURCE;
+
     return html`
       <umb-body-layout>
         <div class="create-panels">
@@ -137,6 +160,26 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
             headline-variant="h5"
             class="panel"
           >
+            ${when(
+              hasDomains,
+              () => html`
+                <div class="source-picker">
+                  <label class="source-picker__label">Crawl source</label>
+                  <p class="source-picker__description">Choose between using Umbraco pages or a custom domain for the audit</p>
+                  <uui-select
+                    .options=${[
+                      { name: "Standard (Umbraco)", value: UMBRACO_SOURCE },
+                      ...(this._config?.domains?.map((d) => ({
+                        name: d,
+                        value: d,
+                      })) ?? []),
+                    ]}
+                    .value=${this._selectedSource}
+                    @change=${this.#onSourceChange}
+                  ></uui-select>
+                </div>
+              `
+            )}
             <umb-property-dataset
               .value=${this._auditInformationProps}
               @change=${this.#onAuditInfoUpdate}
@@ -152,23 +195,28 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
                 }}
               >
               </umb-property>
-              <umb-property
-                alias="selectedNode"
-                label="Starting node"
-                property-editor-ui-alias="Umb.PropertyEditorUi.DocumentPicker"
-                val
-                .config=${[
-                  {
-                    alias: "max",
-                    value: 1,
-                  },
-                ]}
-                .validation=${{
-                  mandatory: true,
-                  mandatoryMessage: "This field is required",
-                }}
-              >
-              </umb-property>
+              ${when(
+                isUmbracoSource,
+                () => html`
+                  <umb-property
+                    alias="selectedNode"
+                    label="Starting node"
+                    property-editor-ui-alias="Umb.PropertyEditorUi.DocumentPicker"
+                    val
+                    .config=${[
+                      {
+                        alias: "max",
+                        value: 1,
+                      },
+                    ]}
+                    .validation=${{
+                      mandatory: true,
+                      mandatoryMessage: "This field is required",
+                    }}
+                  >
+                  </umb-property>
+                `
+              )}
               <umb-property
                 alias="maxPagesToCrawl"
                 label="Max pages to crawl"
@@ -254,6 +302,22 @@ export default class SiteAuditCreateWorkspace extends UmbLitElement {
 
       .button-bar {
         padding-top: 12px;
+      }
+
+      .source-picker {
+        margin-bottom: 12px;
+      }
+
+      .source-picker__label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+
+      .source-picker__description {
+        margin: 0 0 6px;
+        color: var(--uui-color-text-alt, #6b7280);
+        font-size: 0.875em;
       }
     `,
   ];

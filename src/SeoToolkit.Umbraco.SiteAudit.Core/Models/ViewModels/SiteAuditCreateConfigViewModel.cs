@@ -9,9 +9,12 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Models.ViewModels
         public int MinimumDelayBetweenRequest { get; set; }
         public bool AllowMinimumDelayBetweenRequestSetting { get; set; }
 
+        public string[] Domains { get; set; }
+
         public SiteAuditCreateConfigViewModel()
         {
             Checks = Array.Empty<SiteAuditCheckViewModel>();
+            Domains = Array.Empty<string>();
         }
     }
 }

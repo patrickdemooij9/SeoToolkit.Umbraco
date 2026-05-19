@@ -6,7 +6,8 @@ export type ClientOptions = {
 
 export type CreateAuditPostModel = {
     name: string;
-    selectedNodeId: string;
+    selectedNodeId?: string | null;
+    startingUrl?: string | null;
     checks?: Array<number> | null;
     startAudit: boolean;
     maxPagesToCrawl: number;
@@ -323,6 +324,7 @@ export type SiteAuditCreateConfigViewModel = {
     checks?: Array<SiteAuditCheckViewModel> | null;
     minimumDelayBetweenRequest: number;
     allowMinimumDelayBetweenRequestSetting: boolean;
+    domains?: Array<string> | null;
 };
 
 export type SiteAuditDetailViewModel = {

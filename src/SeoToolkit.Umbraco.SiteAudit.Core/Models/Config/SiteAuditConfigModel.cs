@@ -8,6 +8,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Models.Config
         public bool AllowMinimumDelayBetweenRequestSetting { get; set; } = false;
         public bool AllowInvalidCerts { get; set; } = false;
 
+        public string[] Domains { get; set; } = Array.Empty<string>();
+
         public SiteAuditCheckConfigModel[] Checks { get; set; } = Array.Empty<SiteAuditCheckConfigModel>();
     }
 }

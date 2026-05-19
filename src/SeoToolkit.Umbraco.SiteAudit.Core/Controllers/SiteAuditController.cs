@@ -88,7 +88,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
             {
                 Checks = _siteCheckService.GetAll().Select(it => new SiteAuditCheckViewModel { Id = it.Id, Name = it.Check.Name, Description = it.Check.Description }).ToArray(),
                 AllowMinimumDelayBetweenRequestSetting = config.AllowMinimumDelayBetweenRequestSetting,
-                MinimumDelayBetweenRequest = config.MinimumDelayBetweenRequest
+                MinimumDelayBetweenRequest = config.MinimumDelayBetweenRequest,
+                Domains = config.Domains
             });
         }
 
@@ -98,21 +99,36 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
         {
             var config = _settingsService.GetSettings();
 
-            //TODO: Move to mapper
-            SiteAuditDto model;
-            using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
+            Uri startingUrl;
+            if (postModel.SelectedNodeId.HasValue)
             {
-                model = new SiteAuditDto
-                {
-                    Name = postModel.Name,
-                    CreatedDate = DateTime.UtcNow,
-                    Status = postModel.StartAudit ? SiteAuditStatus.Scheduled : SiteAuditStatus.Created,
-                    StartingUrl = new Uri(ctx.UmbracoContext.Content.GetById(postModel.SelectedNodeId).Url(mode: UrlMode.Absolute)),
-                    SiteChecks = _siteCheckService.GetAll().Where(it => postModel.Checks.Contains(it.Id)).ToList(),
-                    MaxPagesToCrawl = postModel.MaxPagesToCrawl == 0 ? (int?)null : postModel.MaxPagesToCrawl,
-                    DelayBetweenRequests = (config.AllowMinimumDelayBetweenRequestSetting ? postModel.DelayBetweenRequests : config.MinimumDelayBetweenRequest) * 1000
-                };
+                using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
+                var node = ctx.UmbracoContext.Content.GetById(postModel.SelectedNodeId.Value);
+                if (node is null)
+                    return BadRequest("The selected node was not found.");
+                startingUrl = new Uri(node.Url(mode: UrlMode.Absolute));
             }
+            else if (!string.IsNullOrEmpty(postModel.StartingUrl))
+            {
+                if (!Uri.TryCreate(postModel.StartingUrl, UriKind.Absolute, out startingUrl))
+                    return BadRequest("The provided starting URL is not valid.");
+            }
+            else
+            {
+                return BadRequest("Either SelectedNodeId or StartingUrl must be provided.");
+            }
+
+            //TODO: Move to mapper
+            var model = new SiteAuditDto
+            {
+                Name = postModel.Name,
+                CreatedDate = DateTime.UtcNow,
+                Status = postModel.StartAudit ? SiteAuditStatus.Scheduled : SiteAuditStatus.Created,
+                StartingUrl = startingUrl,
+                SiteChecks = _siteCheckService.GetAll().Where(it => postModel.Checks.Contains(it.Id)).ToList(),
+                MaxPagesToCrawl = postModel.MaxPagesToCrawl == 0 ? (int?)null : postModel.MaxPagesToCrawl,
+                DelayBetweenRequests = (config.AllowMinimumDelayBetweenRequestSetting ? postModel.DelayBetweenRequests : config.MinimumDelayBetweenRequest) * 1000
+            };
 
             model = _siteAuditService.Save(model);
             if (postModel.StartAudit)

@@ -10,6 +10,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Config.Models
         public bool AllowInvalidCerts { get; set; } = false;
         public Dictionary<string, CheckAppSettingsModel> Checks { get; set; } = new Dictionary<string, CheckAppSettingsModel>();
 
+        public string[] Domains { get; set; } = Array.Empty<string>();
+
         public string[] DisabledModules { get; set; } = Array.Empty<string>();
     }
 }

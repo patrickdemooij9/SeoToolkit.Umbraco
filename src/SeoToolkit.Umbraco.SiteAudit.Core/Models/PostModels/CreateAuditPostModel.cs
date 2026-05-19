@@ -7,8 +7,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Models.PostModels
     {
         [Required]
         public string Name { get; set; }
-        [Required]
-        public Guid SelectedNodeId { get; set; }
+        public Guid? SelectedNodeId { get; set; }
+        public string StartingUrl { get; set; }
         public int[] Checks { get; set; }
         public bool StartAudit { get; set; }
         public int MaxPagesToCrawl { get; set; }
