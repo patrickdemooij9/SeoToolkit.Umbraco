@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Html;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
@@ -7,6 +8,7 @@ using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 using SeoToolkit.Umbraco.ScriptManager.Core.Caching;
 using SeoToolkit.Umbraco.ScriptManager.Core.Constants;
+using SeoToolkit.Umbraco.ScriptManager.Core.Enums;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.ScriptManager.Core.Config.Models;
 using System;
@@ -80,20 +82,20 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 
         public IEnumerable<Script> GetAll(Guid? domainId)
         {
-            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}GetAll_{domainId}", () =>
+            return Clone(_cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}GetAll_{domainId}", () =>
             {
                 return _scriptRepository.GetAll(domainId).Where(it => it.Definition != null).ToArray();
-            });
+            }));
         }
 
         public Script Get(int id)
         {
-            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}Get_{id}", () => _scriptRepository.Get(id));
+            return Clone(_cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}Get_{id}", () => _scriptRepository.Get(id)));
         }
 
         public Script Get(Guid id)
         {
-            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}Get_{id}", () => _scriptRepository.Get(id));
+            return Clone(_cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}Get_{id}", () => _scriptRepository.Get(id)));
         }
 
         public ScriptRenderModel GetRender(Guid? domainId)
@@ -101,7 +103,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
             if (_settings.GetSettings().DisableRenderCaching)
                 return DoGetRender(domainId);
 
-            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}GetRender_{domainId}", () => DoGetRender(domainId));
+            return Clone(_cache.RuntimeCache.GetCacheItem($"{CacheConstants.ScriptManager}GetRender_{domainId}", () => DoGetRender(domainId)));
         }
 
         private ScriptRenderModel DoGetRender(Guid? domainId)
@@ -130,6 +132,45 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
                 _scriptRepository.Update(script);
             }
             ClearCache();
+        }
+
+        private static Script[] Clone(IEnumerable<Script> scripts)
+        {
+            return scripts?.Select(Clone).ToArray() ?? [];
+        }
+
+        private static Script Clone(Script script)
+        {
+            if (script is null)
+                return null;
+
+            return new Script
+            {
+                Id = script.Id,
+                Key = script.Key,
+                Name = script.Name,
+                Definition = script.Definition,
+                Config = script.Config is null ? [] : new Dictionary<string, string>(script.Config),
+                DomainId = script.DomainId,
+                SortOrder = script.SortOrder
+            };
+        }
+
+        private static ScriptRenderModel Clone(ScriptRenderModel renderModel)
+        {
+            if (renderModel is null)
+                return null;
+
+            var clone = new ScriptRenderModel();
+            foreach (var position in Enum.GetValues<ScriptPositionType>())
+            {
+                foreach (var script in renderModel.Get(position))
+                {
+                    clone.AddScript(position, new HtmlString(script.ToString()));
+                }
+            }
+
+            return clone;
         }
     }
 }

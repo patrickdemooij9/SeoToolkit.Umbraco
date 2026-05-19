@@ -1,4 +1,4 @@
-﻿using SeoToolkit.Umbraco.Common.Core.Interfaces;
+using SeoToolkit.Umbraco.Common.Core.Interfaces;
 using SeoToolkit.Umbraco.Common.Core.Models;
 using SeoToolkit.Umbraco.MetaFields.Core.Caching;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
@@ -10,6 +10,8 @@ using SeoToolkit.Umbraco.MetaFields.Core.Repositories.DocumentTypeSettingsReposi
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Extensions;
@@ -56,18 +58,18 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 
         public DocumentTypeSettingsDto Get(int id)
         {
-            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.DocumentTypeSettings}{id}_Get", () =>
+            return Clone(_cache.RuntimeCache.GetCacheItem($"{CacheConstants.DocumentTypeSettings}{id}_Get", () =>
             {
                 return new CachedNullableModel<DocumentTypeSettingsDto>(_repository.Get(id));
-            }, TimeSpan.FromMinutes(30)).Model;
+            }, TimeSpan.FromMinutes(30)).Model);
         }
 
         public DocumentTypeSettingsDto Get(Guid id)
         {
-            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.DocumentTypeSettings}{id}_Get", () =>
+            return Clone(_cache.RuntimeCache.GetCacheItem($"{CacheConstants.DocumentTypeSettings}{id}_Get", () =>
             {
                 return new CachedNullableModel<DocumentTypeSettingsDto>(_repository.Get(id));
-            }, TimeSpan.FromMinutes(30)).Model;
+            }, TimeSpan.FromMinutes(30)).Model);
         }
 
         public DocumentTypeSettingsDto[] GetAll()
@@ -89,6 +91,43 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
         private void ClearCache(Guid id)
         {
             _distributedCache.Refresh(DocumentTypeSettingsCacheRefresher.CacheGuid, id);
+        }
+
+        private static DocumentTypeSettingsDto Clone(DocumentTypeSettingsDto model)
+        {
+            if (model is null)
+                return null;
+
+            return new DocumentTypeSettingsDto
+            {
+                Content = model.Content,
+                Inheritance = model.Inheritance,
+                Fields = model.Fields?.ToDictionary(it => it.Key, it => Clone(it.Value)) ?? new Dictionary<ISeoField, DocumentTypeValueDto>()
+            };
+        }
+
+        private static DocumentTypeValueDto Clone(DocumentTypeValueDto value)
+        {
+            if (value is null)
+                return null;
+
+            return new DocumentTypeValueDto
+            {
+                UseInheritedValue = value.UseInheritedValue,
+                Value = CloneValue(value.Value)
+            };
+        }
+
+        private static object CloneValue(object value)
+        {
+            if (value is null)
+                return null;
+
+            return value switch
+            {
+                JToken token => token.DeepClone(),
+                _ => JsonConvert.DeserializeObject(JsonConvert.SerializeObject(value)) ?? value
+            };
         }
     }
 }

@@ -7,6 +7,8 @@ using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SeoToolkit.Umbraco.MetaFields.Core.Caching;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
@@ -29,7 +31,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
         public Dictionary<string, object> GetUserValues(int nodeId, string culture = null)
         {
             var foundCulture = culture.IfNullOrWhiteSpace(GetCulture());
-            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoValue}{nodeId}_{foundCulture}", () => _repository.GetAllValues(nodeId, foundCulture), TimeSpan.FromMinutes(30));
+            return Clone(_cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoValue}{nodeId}_{foundCulture}", () => _repository.GetAllValues(nodeId, foundCulture), TimeSpan.FromMinutes(30)));
         }
 
         public void AddValues(int nodeId, Dictionary<string, object> values, string culture = null)
@@ -60,7 +62,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
         public Dictionary<string, object> GetUserValues(Guid nodeId, string culture = null)
         {
             var foundCulture = culture.IfNullOrWhiteSpace(GetCulture());
-            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoValue}{nodeId}_{foundCulture}", () => _repository.GetAllValues(nodeId, foundCulture), TimeSpan.FromMinutes(30));
+            return Clone(_cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoValue}{nodeId}_{foundCulture}", () => _repository.GetAllValues(nodeId, foundCulture), TimeSpan.FromMinutes(30)));
         }
 
         public void AddValues(Guid nodeId, Dictionary<string, object> values, string culture = null)
@@ -92,6 +94,26 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
         private void ClearCache(Guid nodeId)
         {
             _distributedCache.Refresh(SeoValueCacheRefresher.CacheGuid, nodeId);
+        }
+
+        private static Dictionary<string, object> Clone(Dictionary<string, object> values)
+        {
+            if (values is null)
+                return [];
+
+            return values.ToDictionary(it => it.Key, it => CloneValue(it.Value));
+        }
+
+        private static object CloneValue(object value)
+        {
+            if (value is null)
+                return null!;
+
+            return value switch
+            {
+                JToken token => token.DeepClone(),
+                _ => JsonConvert.DeserializeObject(JsonConvert.SerializeObject(value)) ?? value
+            };
         }
     }
 }

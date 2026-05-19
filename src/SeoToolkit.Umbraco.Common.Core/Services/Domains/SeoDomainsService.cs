@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Distributed;
 using SeoToolkit.Umbraco.Common.Core.Caching;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Models.Business;
 using SeoToolkit.Umbraco.Common.Core.Repositories.Domains;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Services;
@@ -26,7 +27,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
 
         public SeoDomainCollection[] GetAll()
         {
-            return _cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoDomains}GetAll", _seoDomainsRepository.GetAll, TimeSpan.FromMinutes(10)) ?? [];
+            var collections = _cache.RuntimeCache.GetCacheItem($"{CacheConstants.SeoDomains}GetAll", _seoDomainsRepository.GetAll, TimeSpan.FromMinutes(10)) ?? [];
+            return Clone(collections);
         }
 
         public SeoDomainCollection? Get(Guid id)
@@ -50,6 +52,22 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
         {
             _seoDomainsRepository.Delete(domainId);
             _distributedCache.RefreshAll(SeoDomainsCacheRefresher.CacheRefreshGuid);
+        }
+
+        private static SeoDomainCollection[] Clone(SeoDomainCollection[] collections)
+        {
+            return collections.Select(Clone).ToArray();
+        }
+
+        private static SeoDomainCollection Clone(SeoDomainCollection collection)
+        {
+            return new SeoDomainCollection
+            {
+                Id = collection.Id,
+                Name = collection.Name,
+                DomainIds = collection.DomainIds is null ? [] : [.. collection.DomainIds],
+                Settings = collection.Settings is null ? [] : new Dictionary<string, string>(collection.Settings)
+            };
         }
     }
 }

@@ -151,7 +151,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 
         public IEnumerable<Redirect> GetAllRegexRedirects()
         {
-            return _appCaches.RuntimeCache.GetCacheItem($"{CacheConstants.Redirects}GetRegexRedirects", () =>
+            return Clone(_appCaches.RuntimeCache.GetCacheItem($"{CacheConstants.Redirects}GetRegexRedirects", () =>
             {
                 using (var scope = _scopeProvider.CreateScope(autoComplete: true))
                 {
@@ -161,7 +161,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                             .Where<RedirectEntity>(it => it.IsEnabled && it.IsRegex))
                         .Select(ToModel).ToArray();
                 }
-            }, TimeSpan.FromMinutes(10));
+            }, TimeSpan.FromMinutes(10)));
         }
 
         public IEnumerable<Redirect> GetByUrls(params string[] paths)
@@ -226,6 +226,34 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
         private void ClearCache(Guid redirectKey)
         {
             _distributedCache.Refresh(RedirectsCacheRefresher.CacheGuid, redirectKey);
+        }
+
+        private static Redirect[] Clone(IEnumerable<Redirect> redirects)
+        {
+            return redirects?.Select(Clone).ToArray() ?? [];
+        }
+
+        private static Redirect Clone(Redirect redirect)
+        {
+            if (redirect is null)
+                return null;
+
+            return new Redirect
+            {
+                Id = redirect.Id,
+                Key = redirect.Key,
+                IsEnabled = redirect.IsEnabled,
+                IsRegex = redirect.IsRegex,
+                Domain = redirect.Domain,
+                CustomDomain = redirect.CustomDomain,
+                OldUrl = redirect.OldUrl,
+                NewUrl = redirect.NewUrl,
+                NewNode = redirect.NewNode,
+                NewNodeCulture = redirect.NewNodeCulture,
+                LastUpdated = redirect.LastUpdated,
+                CreatedBy = redirect.CreatedBy,
+                RedirectCode = redirect.RedirectCode
+            };
         }
 
         private Expression<Func<RedirectEntity, object>> GetOrderingColumn(string orderBy)
