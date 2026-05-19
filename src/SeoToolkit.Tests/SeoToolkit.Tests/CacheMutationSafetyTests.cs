@@ -25,6 +25,7 @@ using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Sync;
+using ScriptModel = SeoToolkit.Umbraco.ScriptManager.Core.Models.Business.Script;
 
 namespace SeoToolkit.Tests
 {
@@ -139,7 +140,7 @@ namespace SeoToolkit.Tests
         {
             var repository = new Mock<IScriptRepository>();
             var scriptKey = Guid.NewGuid();
-            repository.Setup(x => x.Get(scriptKey)).Returns(new Script
+            repository.Setup(x => x.Get(scriptKey)).Returns(new ScriptModel
             {
                 Key = scriptKey,
                 Name = "Analytics",
@@ -178,7 +179,7 @@ namespace SeoToolkit.Tests
 
             var repository = new Mock<IScriptRepository>();
             repository.Setup(x => x.GetAll(null)).Returns([
-                new Script
+                new ScriptModel
                 {
                     Key = Guid.NewGuid(),
                     Name = "Analytics",

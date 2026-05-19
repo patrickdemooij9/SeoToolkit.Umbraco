@@ -4,6 +4,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Caching;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
 using SeoToolkit.Umbraco.MetaFields.Core.Notifications;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.DocumentTypeSettingsRepository;
@@ -98,11 +99,15 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
             if (model is null)
                 return null;
 
+            var fields = model.Fields is null
+                ? new Dictionary<ISeoField, DocumentTypeValueDto>()
+                : model.Fields.ToDictionary(it => it.Key, it => Clone(it.Value));
+
             return new DocumentTypeSettingsDto
             {
                 Content = model.Content,
                 Inheritance = model.Inheritance,
-                Fields = model.Fields?.ToDictionary(it => it.Key, it => Clone(it.Value)) ?? new Dictionary<ISeoField, DocumentTypeValueDto>()
+                Fields = fields
             };
         }
 

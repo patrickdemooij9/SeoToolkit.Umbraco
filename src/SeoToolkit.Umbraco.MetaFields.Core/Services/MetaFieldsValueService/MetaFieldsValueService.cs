@@ -10,6 +10,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SeoToolkit.Umbraco.MetaFields.Core.Caching;
+using System.Linq;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
 {
