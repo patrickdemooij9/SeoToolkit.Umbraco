@@ -105,17 +105,17 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
                 using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
                 var node = ctx.UmbracoContext.Content.GetById(postModel.SelectedNodeId.Value);
                 if (node is null)
-                    return BadRequest("The selected node was not found.");
+                    return BadRequest("The selected node with the provided ID was not found. Please verify the node exists and try again.");
                 startingUrl = new Uri(node.Url(mode: UrlMode.Absolute));
             }
             else if (!string.IsNullOrEmpty(postModel.StartingUrl))
             {
                 if (!Uri.TryCreate(postModel.StartingUrl, UriKind.Absolute, out startingUrl))
-                    return BadRequest("The provided starting URL is not valid.");
+                    return BadRequest("The provided starting URL is not a valid absolute URL. Please provide a complete URL including the protocol (e.g., https://example.com).");
             }
             else
             {
-                return BadRequest("Either SelectedNodeId or StartingUrl must be provided.");
+                return BadRequest("A starting point must be provided. Please select either an Umbraco node or provide a starting URL.");
             }
 
             //TODO: Move to mapper
