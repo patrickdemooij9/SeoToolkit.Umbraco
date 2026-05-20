@@ -14,7 +14,14 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
         {
             if (TableExists("uSeoToolkitRedirects"))
             {
-                Database.Execute("exec sp_rename 'uSeoToolkitRedirects', 'SeoToolkitRedirects'");
+                if (DatabaseType == NPoco.DatabaseType.SQLite)
+                {
+                    Database.Execute("ALTER TABLE uSeoToolkitRedirects RENAME TO SeoToolkitRedirects");
+                }
+                else
+                {
+                    Database.Execute("exec sp_rename 'uSeoToolkitRedirects', 'SeoToolkitRedirects'");
+                }
             }
             else if (!TableExists("SeoToolkitRedirects"))
             {
