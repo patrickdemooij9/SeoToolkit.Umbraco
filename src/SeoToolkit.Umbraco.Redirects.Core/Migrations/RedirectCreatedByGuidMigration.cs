@@ -1,5 +1,7 @@
-﻿using SeoToolkit.Umbraco.Redirects.Core.Migrations.Entities;
+﻿using SeoToolkit.Umbraco.Common.Core.Migrations;
+using SeoToolkit.Umbraco.Redirects.Core.Migrations.Entities;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
+using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +49,19 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
 
                 Database.Execute("UPDATE SeoToolkitRedirects SET CreatedBy = @0 WHERE [Key] = @1", createdByKey, redirect.Key);
             }
-            Database.Execute("ALTER TABLE SeoToolkitRedirects DROP COLUMN CreatedBy_Old");
+            if (DatabaseType == NPoco.DatabaseType.SQLite)
+            {
+                // ALTER TABLE ... DROP COLUMN is only supported in SQLite 3.35+.
+                // Use RecreateTable<RedirectEntity> instead: it reads the new TEXT-typed CreatedBy
+                // column (populated above) and ignores CreatedBy_Old, producing a clean final table.
+                Database.Execute("DROP INDEX IF EXISTS IX_SeoToolkitOldUrl");
+                Database.Execute("DROP INDEX IF EXISTS IX_SeoToolkitRegex");
+                MigrationHelper.RecreateTable<RedirectEntity>(Database, Create, Sql(), "SeoToolkitRedirects");
+            }
+            else
+            {
+                Database.Execute("ALTER TABLE SeoToolkitRedirects DROP COLUMN CreatedBy_Old");
+            }
             return;
         }
 

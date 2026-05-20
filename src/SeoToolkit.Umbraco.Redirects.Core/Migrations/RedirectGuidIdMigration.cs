@@ -36,14 +36,23 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
                 return Task.CompletedTask;
             }
 
-            Database.Execute("ALTER TABLE SeoToolkitRedirects ADD [Key] UNIQUEIDENTIFIER NULL");
-            Database.Execute("ALTER TABLE SeoToolkitRedirects ADD NewNodeKey UNIQUEIDENTIFIER NULL");
+            if (DatabaseType == NPoco.DatabaseType.SQLite)
+            {
+                Database.Execute("ALTER TABLE SeoToolkitRedirects ADD \"Key\" TEXT NULL");
+                Database.Execute("ALTER TABLE SeoToolkitRedirects ADD NewNodeKey TEXT NULL");
+            }
+            else
+            {
+                Database.Execute("ALTER TABLE SeoToolkitRedirects ADD [Key] UNIQUEIDENTIFIER NULL");
+                Database.Execute("ALTER TABLE SeoToolkitRedirects ADD NewNodeKey UNIQUEIDENTIFIER NULL");
+            }
+
             var redirects = Database.Fetch<RedirectCreatedByGuidEntity>(Sql().SelectAll().From<RedirectCreatedByGuidEntity>());
             foreach (var entry in redirects)
             {
                 if (DatabaseType == NPoco.DatabaseType.SQLite)
                 {
-                    Database.Execute("UPDATE SeoToolkitRedirects SET [Key] = @0 WHERE Id = @1", Guid.NewGuid(), entry.Id);
+                    Database.Execute("UPDATE SeoToolkitRedirects SET \"Key\" = @0 WHERE Id = @1", Guid.NewGuid(), entry.Id);
                 }
 
                 if (entry.NewNodeId.HasValue)
@@ -69,10 +78,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
 
             if (DatabaseType == NPoco.DatabaseType.SQLite)
             {
-                Database.Execute("DROP INDEX IF EXISTS IX_SeoToolkitOldUrl");
-                Database.Execute("DROP INDEX IF EXISTS IX_SeoToolkitRegex");
-
-                MigrationHelper.RecreateTable<RedirectCreatedByGuidEntity>(Database, Create, Sql(), "SeoToolkitRedirects");
+                // For SQLite, the columns have been added and populated above.
+                // RecreateTable is intentionally avoided here: if InsertBulk were to fail after
+                // the table rename, the newly-created empty table would survive (ColumnExists("Key")
+                // would return true) and all redirects would appear deleted on the next startup.
                 return Task.CompletedTask;
             }
 
