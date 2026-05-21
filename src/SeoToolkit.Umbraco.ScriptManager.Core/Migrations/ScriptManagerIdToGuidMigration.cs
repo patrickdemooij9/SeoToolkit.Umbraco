@@ -30,7 +30,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Migrations
                 return Task.CompletedTask;
             }
 
-            Database.Execute("ALTER TABLE SeoToolkitScript ADD [Key] UNIQUEIDENTIFIER NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitScript ADD [Key] {MigrationHelper.GetUniqueIdentifierDataType(Database)} NULL");
             if (DatabaseType == NPoco.DatabaseType.SQLite)
             {
                 foreach (var entry in Database.Fetch<ScriptEntity>(Sql().SelectAll().From<ScriptEntity>()))
@@ -44,7 +44,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Migrations
             }
 
             Database.Execute("UPDATE SeoToolkitScript SET [Key] = NEWID()");
-            Database.Execute("ALTER TABLE SeoToolkitScript ALTER COLUMN [Key] UNIQUEIDENTIFIER NOT NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitScript ALTER COLUMN [Key] {MigrationHelper.GetUniqueIdentifierDataType(Database)} NOT NULL");
 
             Database.Execute("ALTER TABLE SeoToolkitScript DROP CONSTRAINT pk_SeoToolkitScript");
             Database.Execute("ALTER TABLE SeoToolkitScript ADD CONSTRAINT pk_SeoToolkitScript PRIMARY KEY ([Key])");

@@ -26,7 +26,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
 
             if (ColumnExists("SeoToolkitSitemapPageType", "ContentTypeGuid")) return Task.CompletedTask;
 
-            Database.Execute("ALTER TABLE SeoToolkitSitemapPageType ADD ContentTypeGuid UNIQUEIDENTIFIER NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitSitemapPageType ADD ContentTypeGuid {MigrationHelper.GetUniqueIdentifierDataType(Database)} NULL");
             foreach (var entry in Database.Fetch<SitemapPageTypeEntity_5>(Sql().SelectAll().From<SitemapPageTypeEntity_5>()))
             {
                 var contentType = _contentTypeService.Get(entry.ContentTypeId);
@@ -45,7 +45,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Migrations
                 return Task.CompletedTask;
             }
 
-            Database.Execute("ALTER TABLE SeoToolkitSitemapPageType ALTER COLUMN ContentTypeGuid UNIQUEIDENTIFIER NOT NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitSitemapPageType ALTER COLUMN ContentTypeGuid {MigrationHelper.GetUniqueIdentifierDataType(Database)} NOT NULL");
 
             Database.Execute("ALTER TABLE SeoToolkitSitemapPageType DROP CONSTRAINT pk_SeoToolkitSitemapPageType");
             Database.Execute("ALTER TABLE SeoToolkitSitemapPageType ADD CONSTRAINT pk_SeoToolkitSitemapPageType PRIMARY KEY (ContentTypeGuid)");

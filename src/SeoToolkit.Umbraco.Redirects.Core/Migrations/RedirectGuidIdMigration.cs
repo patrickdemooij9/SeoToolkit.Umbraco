@@ -36,8 +36,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
                 return Task.CompletedTask;
             }
 
-            Database.Execute("ALTER TABLE SeoToolkitRedirects ADD [Key] UNIQUEIDENTIFIER NULL");
-            Database.Execute("ALTER TABLE SeoToolkitRedirects ADD NewNodeKey UNIQUEIDENTIFIER NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitRedirects ADD [Key] {MigrationHelper.GetUniqueIdentifierDataType(Database)} NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitRedirects ADD NewNodeKey {MigrationHelper.GetUniqueIdentifierDataType(Database)} NULL");
             var redirects = Database.Fetch<RedirectCreatedByGuidEntity>(Sql().SelectAll().From<RedirectCreatedByGuidEntity>());
             foreach (var entry in redirects)
             {
@@ -77,7 +77,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Migrations
             }
 
             Database.Execute("UPDATE SeoToolkitRedirects SET [Key] = NEWID()");
-            Database.Execute("ALTER TABLE SeoToolkitRedirects ALTER COLUMN [Key] UNIQUEIDENTIFIER NOT NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitRedirects ALTER COLUMN [Key] {MigrationHelper.GetUniqueIdentifierDataType(Database)} NOT NULL");
 
             Database.Execute("ALTER TABLE SeoToolkitRedirects DROP CONSTRAINT pk_SeoToolkitRedirects");
             Database.Execute("ALTER TABLE SeoToolkitRedirects ADD CONSTRAINT pk_SeoToolkitRedirects PRIMARY KEY ([Key])");
