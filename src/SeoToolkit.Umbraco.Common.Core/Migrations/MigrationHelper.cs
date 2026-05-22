@@ -34,5 +34,10 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
                 throw new Exception($"Migration for {module} is outdated (found: {version}, required: {minVersion}), please run the migrations to ensure the module works correctly.");
             }
         }
+
+        public static string GetUniqueIdentifierDataType(IUmbracoDatabase database)
+        {
+            return database.DatabaseType == DatabaseType.SQLite ? "TEXT" : "UNIQUEIDENTIFIER";
+        }
     }
 }

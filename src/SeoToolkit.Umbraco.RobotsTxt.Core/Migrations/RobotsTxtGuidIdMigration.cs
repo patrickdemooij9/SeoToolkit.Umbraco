@@ -30,7 +30,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Migrations
                 return Task.CompletedTask;
             }
 
-            Database.Execute("ALTER TABLE SeoToolkitRobotsTxt ADD [Key] UNIQUEIDENTIFIER NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitRobotsTxt ADD [Key] {MigrationHelper.GetUniqueIdentifierDataType(Database)} NULL");
             if (DatabaseType == NPoco.DatabaseType.SQLite)
             {
                 foreach (var entry in Database.Fetch<RobotsTxtEntity>(Sql().SelectAll().From<RobotsTxtEntity>()))
@@ -44,7 +44,7 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Migrations
             }
 
             Database.Execute("UPDATE SeoToolkitRobotsTxt SET [Key] = NEWID()");
-            Database.Execute("ALTER TABLE SeoToolkitRobotsTxt ALTER COLUMN [Key] UNIQUEIDENTIFIER NOT NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitRobotsTxt ALTER COLUMN [Key] {MigrationHelper.GetUniqueIdentifierDataType(Database)} NOT NULL");
 
             Database.Execute("ALTER TABLE SeoToolkitRobotsTxt DROP CONSTRAINT pk_SeoToolkitRobotsTxt");
             Database.Execute("ALTER TABLE SeoToolkitRobotsTxt ADD CONSTRAINT pk_SeoToolkitRobotsTxt PRIMARY KEY ([Key])");
