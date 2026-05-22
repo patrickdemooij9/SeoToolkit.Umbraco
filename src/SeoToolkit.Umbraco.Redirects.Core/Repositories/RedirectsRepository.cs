@@ -225,6 +225,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 
         private void ClearCache(Guid redirectKey)
         {
+            _appCaches.RuntimeCache.ClearByKey(CacheConstants.Redirects);
             _distributedCache.Refresh(RedirectsCacheRefresher.CacheGuid, redirectKey);
         }
 
