@@ -62,6 +62,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService
 
             _seoSettingsRepository.Toggle(contentTypeId, value);
 
+            _cache.RuntimeCache.ClearByKey($"{CacheConstants.SeoSettings}{contentTypeId}");
             _distributedCache.Refresh(SeoSettingsCacheRefresher.CacheGuid, contentTypeId);
             _eventAggregator.Publish(new SeoSettingSavedNotification(contentTypeId, value));
         }
