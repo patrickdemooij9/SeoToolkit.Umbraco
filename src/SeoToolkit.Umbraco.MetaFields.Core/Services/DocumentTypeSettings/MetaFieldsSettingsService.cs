@@ -88,6 +88,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings
 
         private void ClearCache(Guid id)
         {
+            _cache.RuntimeCache.ClearByKey($"{CacheConstants.DocumentTypeSettings}{id}");
             _distributedCache.Refresh(DocumentTypeSettingsCacheRefresher.CacheGuid, id);
         }
     }
