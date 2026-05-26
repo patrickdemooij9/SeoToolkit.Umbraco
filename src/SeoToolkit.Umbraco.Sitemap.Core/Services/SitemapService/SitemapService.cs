@@ -56,7 +56,10 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
 
             if (isDefault)
             {
-                _sitemapContentRepository.Delete(settings.NodeKey);
+                if (_sitemapContentRepository.Get(settings.NodeKey) is not null)
+                {
+                    _sitemapContentRepository.Delete(settings.NodeKey);
+                }
                 return;
             }
 
