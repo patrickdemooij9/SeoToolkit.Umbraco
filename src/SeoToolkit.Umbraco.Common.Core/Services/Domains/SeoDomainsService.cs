@@ -42,7 +42,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
         public Guid Save(SeoDomainCollection collection)
         {
             var id =  _seoDomainsRepository.Save(collection);
-            _cache.RuntimeCache.ClearByKey($"{CacheConstants.SeoDomains}");
             _distributedCache.RefreshAll(SeoDomainsCacheRefresher.CacheRefreshGuid);
             return id;
         }
@@ -50,7 +49,6 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
         public void Delete(Guid domainId)
         {
             _seoDomainsRepository.Delete(domainId);
-            _cache.RuntimeCache.ClearByKey($"{CacheConstants.SeoDomains}");
             _distributedCache.RefreshAll(SeoDomainsCacheRefresher.CacheRefreshGuid);
         }
     }
