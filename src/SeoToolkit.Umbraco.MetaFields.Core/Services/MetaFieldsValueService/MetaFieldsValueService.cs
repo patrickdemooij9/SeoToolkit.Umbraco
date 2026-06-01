@@ -86,13 +86,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
 
         private void ClearCache(int nodeId)
         {
-            _cache.RuntimeCache.ClearByKey($"{CacheConstants.SeoValue}{nodeId}");
             _distributedCache.Refresh(SeoValueCacheRefresher.CacheGuid, nodeId);
         }
 
         private void ClearCache(Guid nodeId)
         {
-            _cache.RuntimeCache.ClearByKey($"{CacheConstants.SeoValue}{nodeId}");
             _distributedCache.Refresh(SeoValueCacheRefresher.CacheGuid, nodeId);
         }
     }

@@ -117,7 +117,6 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
 
         private void ClearCache()
         {
-            _cache.RuntimeCache.ClearByKey(CacheConstants.ScriptManager);
             _distributedCache.RefreshAll(ScriptManagerCacheRefresher.CacheGuid);
         }
 
