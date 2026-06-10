@@ -126,10 +126,6 @@ export default class SchemaEditorPropertyEditor
     return entry.displayName || this.#getSchemaName(entry.schemaAlias!);
   }
 
-  #getDocTypeEntryDisplayName(entry: SchemaEntryViewModel): string {
-    return entry.displayName || this.#getSchemaName(entry.schemaAlias!);
-  }
-
   async #openAddSchemaFlow() {
     this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (modalManager) => {
       if (!modalManager) return;
@@ -302,17 +298,7 @@ export default class SchemaEditorPropertyEditor
       <div class="schema-list">
         ${hasInherited
           ? html`
-              <div class="schema-section-header">Inherited from document type</div>
-              ${this._docTypeEntries.map(
-                (entry) => html`
-                  <div class="schema-item schema-item--inherited">
-                    <div class="schema-item-info">
-                      <span class="schema-name">${this.#getDocTypeEntryDisplayName(entry)}</span>
-                      <span class="schema-badge">Document type</span>
-                    </div>
-                  </div>
-                `
-              )}
+              <span class="schema-info">Number of inherited schemas: ${this._docTypeEntries.length}</span>
             `
           : ""}
 
@@ -388,7 +374,7 @@ export default class SchemaEditorPropertyEditor
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 12px;
+        padding: 6px 12px;
         border: 1px solid var(--uui-palette-gravel);
         border-radius: 4px;
         cursor: pointer;
@@ -419,9 +405,10 @@ export default class SchemaEditorPropertyEditor
         font-weight: 500;
       }
 
-      .schema-badge {
+      .schema-info {
+        width: fit-content;
         font-size: 0.75em;
-        padding: 2px 6px;
+        padding: 4px 6px;
         border-radius: 10px;
         background-color: var(--uui-palette-gravel-light);
         color: var(--uui-palette-grey-4);

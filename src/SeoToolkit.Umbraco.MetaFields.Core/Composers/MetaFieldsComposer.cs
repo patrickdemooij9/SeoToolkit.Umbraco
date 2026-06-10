@@ -116,6 +116,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
 
             builder.WithCollectionBuilder<SchemaResolverCollectionBuilder>()
                 .Add<OrganizationSchemaResolver>()
+                .Add<PostalAddressSchemaResolver>()
                 .Add<RawJsonSchemaResolver>();
         }
     }

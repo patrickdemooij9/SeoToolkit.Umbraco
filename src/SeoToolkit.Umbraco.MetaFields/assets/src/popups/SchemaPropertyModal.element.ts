@@ -3,6 +3,7 @@ import { UmbModalBaseElement } from "@umbraco-cms/backoffice/modal";
 import { css, html } from "lit";
 import { SchemaPropertyViewModel, SchemaTypeViewModel } from "../api";
 import { UmbPropertyDatasetElement } from "@umbraco-cms/backoffice/property";
+import { UmbPropertyTypeAppearanceModel } from "@umbraco-cms/backoffice/content-type";
 
 export interface EditableSchema {
   schemaAlias: string;
@@ -37,6 +38,10 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
   @state()
   private _propertyValues: { [key: string]: PropertyValue } = {};
 
+  propertyAppearance: UmbPropertyTypeAppearanceModel = {
+    labelOnTop: true,
+  };
+
   override connectedCallback() {
     super.connectedCallback();
 
@@ -53,14 +58,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     }
   }
 
-  #onSchemaSelect(alias: string) {
-    this._selectedSchemaAlias = alias;
-    this._propertyValues = {};
-    this.requestUpdate();
-  }
-
   #onPropertyValueChange(propertyAlias: string, propertyValue: PropertyValue) {
-    console.log("Property value changed:", propertyAlias, propertyValue);
     this._propertyValues = {
       ...this._propertyValues,
       [propertyAlias]: propertyValue,
@@ -76,10 +74,13 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     if (!target) {
       return;
     }
-    propertyValue.value = target.value.find((item) => item.alias === propertyAlias)?.value;
+    const value = target.value.find((item) => item.alias === propertyAlias)?.value;
     this._propertyValues = {
       ...this._propertyValues,
-      [propertyAlias]: propertyValue,
+      [propertyAlias]: {
+        ...propertyValue,
+        value,
+      },
     };
   }
 
@@ -177,6 +178,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
                   <umb-property
                     .alias=${alias}
                     property-editor-ui-alias=${propEditor}
+                    .appearance=${this.propertyAppearance}
                     .config=${[
                       {
                         alias: "disableFolderSelect",
@@ -212,7 +214,6 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
   }
 
   override render() {
-    const isEditing = !!this.data?.editSchema;
     const selectedSchema = this.data?.availableSchemas.find(
       (s) => s.alias === this._selectedSchemaAlias,
     );
@@ -221,29 +222,6 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
 
     return html`
       <umb-body-layout headline="Edit Schema">
-        ${!isEditing
-          ? html`
-              <div class="schema-selector">
-                <uui-select
-                  label="Select Schema Type"
-                  .value=${this._selectedSchemaAlias}
-                  @change="${(e: Event) => {
-                    this.#onSchemaSelect((e.target as HTMLSelectElement).value);
-                  }}"
-                >
-                  <uui-option value="">Select a schema type...</uui-option>
-                  ${this.data?.availableSchemas.map(
-                    (schema) => html`
-                      <uui-option .value=${schema.alias}
-                        >${schema.name}</uui-option
-                      >
-                    `,
-                  )}
-                </uui-select>
-              </div>
-            `
-          : ""}
-
         <div class="display-name-row">
           <label class="display-name-label">Display Name (optional)</label>
           <uui-input
@@ -296,14 +274,6 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
 
   static styles = [
     css`
-      .schema-selector {
-        margin-bottom: 16px;
-      }
-
-      .schema-selector uui-select {
-        width: 100%;
-      }
-
       .display-name-row {
         margin-bottom: 16px;
       }
@@ -342,24 +312,17 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
 
       .property-input {
         margin-top: 8px;
-      }
 
-      .property-input,
-      .property-input uui-select,
-      .property-input uui-input,
-      .property-input uui-textarea,
-      .property-input .native-select {
-        width: 100%;
+        --uui-size-layout-1: 0;
       }
 
       .native-select {
         padding: 8px;
         border: 1px solid var(--uui-palette-gravel);
         border-radius: 4px;
-        background-color: var(--uui-palette-surface);
         font-size: 14px;
         cursor: pointer;
-        box-sizing: border-box;
+        width: 100%;
       }
     `,
   ];

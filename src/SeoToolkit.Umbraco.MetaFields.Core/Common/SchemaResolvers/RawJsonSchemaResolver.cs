@@ -1,5 +1,4 @@
 using Schema.NET;
-using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
 using System.Collections.Generic;
 using System.Text.Json;
 
@@ -12,7 +11,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
 
         public SchemaProperty[] Properties =>
             [
-                new("json", "JSON", "Umb.PropertyEditorUi.TextArea", allowReference: false, valueConverter: new TextValueConverter())
+                new("json", "JSON", "Umb.PropertyEditorUi.TextArea", allowReference: false)
             ];
 
         public IThing ToSchema(Dictionary<string, string> values)

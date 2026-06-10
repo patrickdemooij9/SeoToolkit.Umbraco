@@ -2,14 +2,12 @@
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
 {
     public class OrganizationSchemaResolver : ISchemaResolver
     {
         private readonly UmbracoMediaConverter _mediaConverter;
-        private readonly TextValueConverter _textConverter = new TextValueConverter();
 
         public OrganizationSchemaResolver(UmbracoMediaConverter mediaConverter)
         {
@@ -21,13 +19,14 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
 
         public SchemaProperty[] Properties =>
             [
-                new("url", "Url", "Umb.PropertyEditorUi.TextBox", valueConverter: _textConverter),
+                new("url", "Url", "Umb.PropertyEditorUi.TextBox"),
                 new("logo", "Logo", "Umb.PropertyEditorUi.MediaPicker", allowReference: false, valueConverter: _mediaConverter),
-                new("name", "Name", "Umb.PropertyEditorUi.TextBox", valueConverter: _textConverter),
-                new("description", "Description", "Umb.PropertyEditorUi.TextArea", valueConverter: _textConverter),
-                new("email", "Email", "Umb.PropertyEditorUi.TextBox", valueConverter: _textConverter),
-                new("telephone", "Telephone", "Umb.PropertyEditorUi.TextBox", valueConverter: _textConverter),
-                new("vatID", "Vat ID", "Umb.PropertyEditorUi.TextBox", valueConverter: _textConverter)
+                new("name", "Name", "Umb.PropertyEditorUi.TextBox"),
+                new("description", "Description", "Umb.PropertyEditorUi.TextArea"),
+                new("email", "Email", "Umb.PropertyEditorUi.TextBox"),
+                new("telephone", "Telephone", "Umb.PropertyEditorUi.TextBox"),
+                new("vatID", "Vat ID", "Umb.PropertyEditorUi.TextBox"),
+                new("address", "Address", "SeoToolkit.SchemaEditor", valueConverter: new SchemaEditorValueConverter())
             ];
 
         public IThing ToSchema(Dictionary<string, string> values)

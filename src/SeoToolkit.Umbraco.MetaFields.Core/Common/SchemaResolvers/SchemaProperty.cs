@@ -1,4 +1,5 @@
-﻿using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
+﻿using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
 {
@@ -16,7 +17,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
             DisplayName = displayName;
             PropertyEditor = propertyEditor;
             AllowReference = allowReference;
-            ValueConverter = valueConverter;
+            ValueConverter = valueConverter ?? new TextValueConverter();
         }
     }
 }
