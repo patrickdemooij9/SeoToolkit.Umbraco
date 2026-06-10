@@ -26,7 +26,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
                 new("email", "Email", "Umb.PropertyEditorUi.TextBox"),
                 new("telephone", "Telephone", "Umb.PropertyEditorUi.TextBox"),
                 new("vatID", "Vat ID", "Umb.PropertyEditorUi.TextBox"),
-                new("address", "Address", "SeoToolkit.SchemaEditor", valueConverter: new SchemaEditorValueConverter())
+                new("address", "Address", "SeoToolkit.SchemaEditor", allowReference: false, valueConverter: new SchemaEditorValueConverter(), config: new Dictionary<string, object>
+                {
+                    ["ownerType"] = "schemaEntry",
+                    ["allowedSchemas"] = new[] { "postalAddress" }
+                })
             ];
 
         public IThing ToSchema(Dictionary<string, string> values)

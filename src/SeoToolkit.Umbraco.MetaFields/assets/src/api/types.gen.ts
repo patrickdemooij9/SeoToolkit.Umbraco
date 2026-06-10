@@ -169,6 +169,7 @@ export type SaveRedirectPostModel = {
 };
 
 export type SchemaEntryPostModel = {
+    id?: string | null;
     ownerType?: string | null;
     ownerKey: string;
     schemaAlias?: string | null;
@@ -200,6 +201,7 @@ export type SchemaPropertyViewModel = {
     displayName?: string | null;
     propertyEditor?: string | null;
     allowReference: boolean;
+    config?: { [key: string]: unknown } | null;
 };
 
 export type SchemaTypeViewModel = {

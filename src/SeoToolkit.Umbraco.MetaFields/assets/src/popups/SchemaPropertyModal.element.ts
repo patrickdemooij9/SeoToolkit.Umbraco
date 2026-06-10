@@ -26,7 +26,7 @@ const REFERENCE_OPTIONS = [
 
 @customElement("st-schema-property-modal")
 export default class SchemaPropertyModal extends UmbModalBaseElement<
-  { availableSchemas: SchemaTypeViewModel[]; editSchema?: EditableSchema },
+  { availableSchemas: SchemaTypeViewModel[]; editSchema?: EditableSchema; entryId?: string },
   EditableSchema
 > {
   @state()
@@ -101,6 +101,19 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     this.modalContext?.submit();
   }
 
+  #buildPropertyConfig(property: SchemaPropertyViewModel): Array<{ alias: string; value: unknown }> {
+    const entryId = this.data?.entryId;
+    // Convert static config from the property definition into the Umbraco config array format
+    const staticConfig = Object.entries(property.config ?? {}).map(([alias, value]) => ({ alias, value }));
+
+    // For nested schema editors, inject the current entry's ID as ownerKey so they can save sub-entries
+    if (property.propertyEditor === "SeoToolkit.SchemaEditor" && entryId) {
+      staticConfig.push({ alias: "nodeGuid", value: entryId });
+    }
+
+    return staticConfig;
+  }
+
   #renderPropertyInput(
     property: SchemaPropertyViewModel,
     propertyValue: PropertyValue,
@@ -115,6 +128,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     const propEditor =
       property.propertyEditor ?? "Umb.PropertyEditorUi.TextBox";
     const allowReference = property.allowReference !== false;
+    const config = this.#buildPropertyConfig(property);
 
     return html`
       <div class="property-row">
@@ -179,32 +193,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
                     .alias=${alias}
                     property-editor-ui-alias=${propEditor}
                     .appearance=${this.propertyAppearance}
-                    .config=${[
-                      {
-                        alias: "disableFolderSelect",
-                        value: false,
-                      },
-                      {
-                        alias: "idType",
-                        value: "udi",
-                      },
-                      {
-                        alias: "ignoreUserStartNodes",
-                        value: false,
-                      },
-                      {
-                        alias: "multiple",
-                        value: false,
-                      },
-                      {
-                        alias: "onlyImages",
-                        value: true,
-                      },
-                      {
-                        alias: "max",
-                        value: 1,
-                      },
-                    ]}
+                    .config=${config}
                   ></umb-property>
                 </umb-property-dataset>
               </div>

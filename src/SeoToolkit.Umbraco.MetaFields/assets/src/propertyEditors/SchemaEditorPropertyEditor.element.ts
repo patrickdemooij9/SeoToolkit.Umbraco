@@ -115,6 +115,20 @@ export default class SchemaEditorPropertyEditor
     return this.config?.getValueByAlias<string>("documentTypeKey") ?? "";
   }
 
+  /** Returns the list of schema aliases that are allowed, or all schemas if not configured. */
+  #getAllowedSchemaAliases(): string[] | null {
+    const allowed = this.config?.getValueByAlias<string[]>("allowedSchemas");
+    if (Array.isArray(allowed) && allowed.length > 0) return allowed;
+    return null;
+  }
+
+  /** Filter the full schema type list down to only those permitted by config. */
+  #getAvailableSchemas(): SchemaTypeViewModel[] {
+    const allowed = this.#getAllowedSchemaAliases();
+    if (!allowed) return this._schemaTypes;
+    return this._schemaTypes.filter((s) => s.alias != null && allowed.includes(s.alias));
+  }
+
   #getSchemaName(alias: string): string {
     const schema = this._schemaTypes.find((s) => s.alias === alias);
     return schema?.name ?? alias;
@@ -130,8 +144,10 @@ export default class SchemaEditorPropertyEditor
     this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (modalManager) => {
       if (!modalManager) return;
 
+      const availableSchemas = this.#getAvailableSchemas();
+
       // Step 1: Pick schema type
-      const availableSchemas: SchemaPickerItem[] = this._schemaTypes.map((s) => ({
+      const availableSchemaItems: SchemaPickerItem[] = availableSchemas.map((s) => ({
         alias: s.alias ?? "",
         name: s.name ?? s.alias ?? "",
       }));
@@ -141,7 +157,7 @@ export default class SchemaEditorPropertyEditor
         "seoToolkit.modal.schemaPicker",
         {
           modal: { type: "sidebar", size: "small" },
-          data: { availableSchemas },
+          data: { availableSchemas: availableSchemaItems },
           value: "",
         }
       );
@@ -179,17 +195,22 @@ export default class SchemaEditorPropertyEditor
       }
 
       // Step 3: Configure new schema properties
-      const schemaType = this._schemaTypes.find((s) => s.alias === selectedAlias);
+      const schemaType = availableSchemas.find((s) => s.alias === selectedAlias);
       if (!schemaType) return;
 
+      // Pre-generate the entry ID so nested schema editors (e.g. address in organization)
+      // can use it as their ownerKey before the parent entry is persisted.
+      const preGeneratedId = crypto.randomUUID();
+
       const propertyModal = modalManager.open<
-        { availableSchemas: SchemaTypeViewModel[]; editSchema?: EditableSchema },
+        { availableSchemas: SchemaTypeViewModel[]; editSchema?: EditableSchema; entryId?: string },
         EditableSchema
       >(this, "seoToolkit.modal.schemaProperty", {
         modal: { type: "sidebar", size: "medium" },
         data: {
           availableSchemas: this._schemaTypes,
           editSchema: { schemaAlias: selectedAlias, properties: {} },
+          entryId: preGeneratedId,
         },
         value: { schemaAlias: selectedAlias, properties: {} },
       });
@@ -197,8 +218,9 @@ export default class SchemaEditorPropertyEditor
       const schemaData = await propertyModal.onSubmit().catch(() => null);
       if (!schemaData) return;
 
-      // POST to create the entry
+      // POST to create the entry, using the pre-generated ID
       const result = await this.#entrySource!.createEntry({
+        id: preGeneratedId,
         ownerType: this.#getOwnerType(),
         ownerKey: this.#getNodeGuid(),
         schemaAlias: schemaData.schemaAlias,
@@ -246,7 +268,7 @@ export default class SchemaEditorPropertyEditor
       const editableProps = this.#toPropertyValues(entry.properties);
 
       const modal = modalManager.open<
-        { availableSchemas: SchemaTypeViewModel[]; editSchema?: EditableSchema },
+        { availableSchemas: SchemaTypeViewModel[]; editSchema?: EditableSchema; entryId?: string },
         EditableSchema
       >(this, "seoToolkit.modal.schemaProperty", {
         modal: { type: "sidebar", size: "medium" },
@@ -257,6 +279,7 @@ export default class SchemaEditorPropertyEditor
             displayName: entry.displayName ?? undefined,
             properties: editableProps,
           },
+          entryId,
         },
         value: {
           schemaAlias: entry.schemaAlias!,

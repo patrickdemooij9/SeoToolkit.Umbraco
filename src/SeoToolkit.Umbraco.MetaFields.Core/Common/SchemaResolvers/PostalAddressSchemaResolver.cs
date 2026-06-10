@@ -13,7 +13,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
         {
             new SchemaProperty("streetAddress", "Street Address", "Umb.PropertyEditorUi.TextBox"),
             new SchemaProperty("addressLocality", "Address Locality", "Umb.PropertyEditorUi.TextBox"),
-            new SchemaProperty("addressCountry", "Address Region", "Umb.PropertyEditorUi.TextBox"),
+            new SchemaProperty("addressCountry", "Address Country", "Umb.PropertyEditorUi.TextBox"),
             new SchemaProperty("addressRegion", "Address Region", "Umb.PropertyEditorUi.TextBox"),
             new SchemaProperty("postalCode", "Postal Code", "Umb.PropertyEditorUi.TextBox"),
         };

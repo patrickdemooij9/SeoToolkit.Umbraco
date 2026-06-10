@@ -43,7 +43,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                     Alias = prop.Alias,
                     DisplayName = prop.DisplayName,
                     PropertyEditor = prop.PropertyEditor,
-                    AllowReference = prop.AllowReference
+                    AllowReference = prop.AllowReference,
+                    Config = prop.Config
                 }).ToArray()
             }).ToArray();
 
@@ -96,7 +97,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
             var dto = new SchemaEntryDto
             {
-                Id = Guid.NewGuid(),
+                Id = model.Id.HasValue && model.Id.Value != Guid.Empty ? model.Id.Value : Guid.Empty,
                 OwnerType = model.OwnerType,
                 OwnerKey = model.OwnerKey,
                 SchemaAlias = model.SchemaAlias,

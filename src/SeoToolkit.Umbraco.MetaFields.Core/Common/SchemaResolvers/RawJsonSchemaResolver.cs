@@ -23,9 +23,16 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
             if (string.IsNullOrWhiteSpace(json))
                 return null;
 
-            using var doc = JsonDocument.Parse(json);
-            if (doc.RootElement.ValueKind != JsonValueKind.Object && doc.RootElement.ValueKind != JsonValueKind.Array)
+            try
+            {
+                using var doc = JsonDocument.Parse(json);
+                if (doc.RootElement.ValueKind != JsonValueKind.Object && doc.RootElement.ValueKind != JsonValueKind.Array)
+                    return null;
+            }
+            catch (JsonException)
+            {
                 return null;
+            }
 
             return new RawJsonThing(json);
         }
