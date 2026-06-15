@@ -16,6 +16,11 @@ export default class SitemapContentViewContext
   #repository: ContentSettingsRepository;
   #nodeId?: string;
   #lastUpdateDate?: string;
+  // Guards against posting before the current node's settings have loaded.
+  // Without this, a save triggered right after navigation would persist the
+  // previous page's model (overwriting the new node) or post empty defaults
+  // (which the backend treats as "default" and deletes the existing row).
+  #loaded = false;
 
   #model = new UmbObjectState<SitemapContentSettingsViewModel>({
     excludeFromSitemap: false,
@@ -32,24 +37,27 @@ export default class SitemapContentViewContext
 
       this.observe(instance.unique, (unique) => {
         if (!unique) return;
+        // The document workspace context is reused across navigation, so reset
+        // all per-node state before loading the new node's settings.
         this.#nodeId = unique.toString();
+        this.#lastUpdateDate = undefined;
+        this.#loaded = false;
+        this.#model.setValue({ excludeFromSitemap: false });
         this.#loadData();
-        instance.getData()?.variants.forEach((variant) => {
-          // Get the latest update data from the variants to compare with later when saving
-          const updateDate = variant.updateDate;
-          if (!this.#lastUpdateDate || (updateDate && this.#lastUpdateDate < updateDate)) {
-            this.#lastUpdateDate = updateDate!;
-          }
-        });
       });
 
       this.observe(instance.data, (item) => {
-        let shouldSave = false;        
+        let shouldSave = false;
         item?.variants.forEach((variant) => {
           const updateDate = variant.updateDate;
-          if (this.#lastUpdateDate && updateDate && this.#lastUpdateDate < updateDate) {
+          // The document was saved when a variant's update date changes.
+          // Track the latest value each time (not a monotonic max) so the
+          // detection keeps working after navigating between pages.
+          if (this.#lastUpdateDate && updateDate && this.#lastUpdateDate !== updateDate) {
             shouldSave = true;
-            this.#lastUpdateDate = updateDate!;
+          }
+          if (updateDate) {
+            this.#lastUpdateDate = updateDate;
           }
         });
         if (shouldSave) {
@@ -61,10 +69,14 @@ export default class SitemapContentViewContext
 
   #loadData() {
     if (!this.#nodeId) return;
-    this.#repository.getContentSettings(this.#nodeId).then((resp) => {
+    const node = this.#nodeId;
+    this.#repository.getContentSettings(node).then((resp) => {
+      // Ignore late responses if the user already navigated to another node.
+      if (this.#nodeId !== node) return;
       if (resp?.data) {
         this.#model.setValue(resp.data);
       }
+      this.#loaded = true;
     });
   }
 
@@ -73,7 +85,9 @@ export default class SitemapContentViewContext
   }
 
   save() {
-    if (!this.#nodeId) return;
+    // Don't persist until this node's settings have loaded, otherwise we'd
+    // write stale/default values over the node's real settings.
+    if (!this.#nodeId || !this.#loaded) return;
     const value = this.#model.getValue();
     this.#repository.setContentSettings({
       nodeKey: this.#nodeId,
