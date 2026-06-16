@@ -78,6 +78,15 @@ Site audits crawl your website and find issues that could impact the user experi
 ### Not found handling
 Easily select a page which is used for your 404 pages. No need to develop anything custom, just select your content node and everything will be working out of the box.
 
+### Headless support
+Even if you are using Umbraco in a headless setup, SeoToolkit can still be valuable for you to allow your editors a good experience in Umbraco. The package is able to integrate with the Delivery API or just normal REST api's. Both methods are described in more detail at https://seotoolkit.gitbook.io/useotoolkit/extensions/headless-setup
+
+## Addons
+SeoToolkit connects with other packages as well. They aren't shipped with the standard package, but must be installed as additional nuget packages. 
+
+### AI
+If you want to connect with the Umbraco.AI package, you can download `SeoToolkit.Umbraco.AI.Integration`. This will allow you to automatically generate metafields like title, description and open graphs for your pages. Additional information can be found on the documentation page: https://seotoolkit.gitbook.io/useotoolkit/extensions/ai.
+
 ## Documentation
 All documentation about the package can be found here: https://seotoolkit.gitbook.io/useotoolkit/
 

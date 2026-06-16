@@ -44,7 +44,6 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Repositories
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
             scope.Database.Delete<SitemapContentEntity>(scope.SqlContext.Sql()
-                .SelectAll()
                 .From<SitemapContentEntity>()
                 .Where<SitemapContentEntity>(it => it.NodeKey == nodeKey));
         }

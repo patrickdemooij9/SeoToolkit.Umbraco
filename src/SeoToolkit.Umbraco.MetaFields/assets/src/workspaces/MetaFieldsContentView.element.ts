@@ -15,6 +15,12 @@ import "./../components/MetaFieldsContentField.element";
 import "./../previewers/SeoContentPreviewer.element";
 import { MetaFieldsContentField } from "./../components/MetaFieldsContentField.element";
 import { UMB_PROPERTY_DATASET_CONTEXT } from "@umbraco-cms/backoffice/property";
+import { UMB_MODAL_MANAGER_CONTEXT } from "@umbraco-cms/backoffice/modal";
+import {
+  ST_AI_SUGGESTIONS_MODAL,
+  type MetaFieldsAISuggestionsModalConfig,
+  type MetaFieldsAISuggestionsModalValue,
+} from "../popups/MetaFieldsAISuggestionsModal.element";
 
 @customElement("st-metafield-content-view")
 export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
@@ -25,6 +31,12 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
 
   @state()
   _culture?: string;
+
+  @state()
+  _isAIAvailable: boolean = false;
+
+  @state()
+  _isGenerating: boolean = false;
 
   constructor() {
     super();
@@ -40,9 +52,13 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
           return;
         }
         this.#context = instance;
-        
+
         this.observe(instance.getModel(this._culture!), (value) => {
           this._model = value;
+        });
+
+        this.observe(instance.isAIAvailable, (value) => {
+          this._isAIAvailable = value;
         });
       });
     });
@@ -57,12 +73,58 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
     this.#context?.updateField(this._culture!, field!.alias!, field!.userValue);
   }
 
+  async #generateWithAI() {
+    if (!this.#context || !this._culture) return;
+
+    this._isGenerating = true;
+    try {
+      const suggestions = await this.#context.generateSuggestions(this._culture);
+      if (!suggestions.length) return;
+
+      const modalManager = await this.getContext(UMB_MODAL_MANAGER_CONTEXT);
+      if (!modalManager) return;
+
+      const modal = modalManager.open<
+        MetaFieldsAISuggestionsModalConfig,
+        MetaFieldsAISuggestionsModalValue
+      >(this, ST_AI_SUGGESTIONS_MODAL, {
+        modal: { type: "sidebar", size: "medium" },
+        data: { suggestions },
+        value: [],
+      });
+
+      try {
+        await modal.onSubmit();
+        const accepted = modal.getValue();
+        if (accepted?.length) {
+          this.#context.applyAISuggestions(this._culture, accepted);
+        }
+      } catch {
+        // user cancelled — do nothing
+      }
+    } finally {
+      this._isGenerating = false;
+    }
+  }
+
   override render() {
     return html`
       ${when(
         this._model,
         () => html`
           <div>
+            ${when(
+              this._isAIAvailable,
+              () => html`
+                <div class="view-toolbar">
+                  <uui-button
+                    look="secondary"
+                    ?disabled=${this._isGenerating}
+                    @click=${this.#generateWithAI}
+                  >✨ Generate with AI</uui-button>
+                </div>
+              `
+            )}
             ${repeat(
               this._model!.groups!,
               (group) => group.alias,
@@ -114,6 +176,13 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
           width: 60%;
         }
       }
+
+      .view-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 16px;
+      }
     `,
   ];
 }
+

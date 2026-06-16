@@ -85,6 +85,20 @@ export enum ImportRedirectsFileExtension {
     EXCEL = 'Excel'
 }
 
+export type MetaFieldsAiFieldSuggestion = {
+    alias: string;
+    value: string;
+};
+
+export type MetaFieldsAiGenerateRequestModel = {
+    nodeId: string;
+    culture?: string | null;
+};
+
+export type MetaFieldsAiGenerateResponseModel = {
+    suggestions: Array<MetaFieldsAiFieldSuggestion>;
+};
+
 export type MetaFieldsSettingsPostViewModel = {
     nodeId: string;
     culture?: string | null;
@@ -480,127 +494,21 @@ export type UmbracoDomainModelWritable = {
     sortOrder: number;
 };
 
-export type GetUmbracoSeoToolkitSchemaEntriesData = {
-    body?: never;
-    path?: never;
-    query?: {
-        ownerType?: string;
-        ownerKey?: string;
-    };
-    url: '/umbraco/seoToolkit/schema/entries';
-};
-
-export type GetUmbracoSeoToolkitSchemaEntriesResponses = {
-    /**
-     * OK
-     */
-    200: Array<SchemaEntryViewModel>;
-};
-
-export type GetUmbracoSeoToolkitSchemaEntriesResponse = GetUmbracoSeoToolkitSchemaEntriesResponses[keyof GetUmbracoSeoToolkitSchemaEntriesResponses];
-
-export type PostUmbracoSeoToolkitSchemaEntriesData = {
-    body?: SchemaEntryPostModel;
+export type PostUmbracoSeoToolkitAiGenerateData = {
+    body?: MetaFieldsAiGenerateRequestModel;
     path?: never;
     query?: never;
-    url: '/umbraco/seoToolkit/schema/entries';
+    url: '/umbraco/seoToolkitAI/generate';
 };
 
-export type PostUmbracoSeoToolkitSchemaEntriesResponses = {
+export type PostUmbracoSeoToolkitAiGenerateResponses = {
     /**
      * OK
      */
-    200: SchemaEntryViewModel;
+    200: MetaFieldsAiGenerateResponseModel;
 };
 
-export type PostUmbracoSeoToolkitSchemaEntriesResponse = PostUmbracoSeoToolkitSchemaEntriesResponses[keyof PostUmbracoSeoToolkitSchemaEntriesResponses];
-
-export type DeleteUmbracoSeoToolkitSchemaEntriesByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/umbraco/seoToolkit/schema/entries/{id}';
-};
-
-export type DeleteUmbracoSeoToolkitSchemaEntriesByIdResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type GetUmbracoSeoToolkitSchemaEntriesByIdData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/umbraco/seoToolkit/schema/entries/{id}';
-};
-
-export type GetUmbracoSeoToolkitSchemaEntriesByIdResponses = {
-    /**
-     * OK
-     */
-    200: SchemaEntryViewModel;
-};
-
-export type GetUmbracoSeoToolkitSchemaEntriesByIdResponse = GetUmbracoSeoToolkitSchemaEntriesByIdResponses[keyof GetUmbracoSeoToolkitSchemaEntriesByIdResponses];
-
-export type PutUmbracoSeoToolkitSchemaEntriesByIdData = {
-    body?: SchemaEntryPostModel;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/umbraco/seoToolkit/schema/entries/{id}';
-};
-
-export type PutUmbracoSeoToolkitSchemaEntriesByIdResponses = {
-    /**
-     * OK
-     */
-    200: SchemaEntryViewModel;
-};
-
-export type PutUmbracoSeoToolkitSchemaEntriesByIdResponse = PutUmbracoSeoToolkitSchemaEntriesByIdResponses[keyof PutUmbracoSeoToolkitSchemaEntriesByIdResponses];
-
-export type GetUmbracoSeoToolkitSchemaEntriesReusableData = {
-    body?: never;
-    path?: never;
-    query?: {
-        ownerType?: string;
-        ownerKey?: string;
-    };
-    url: '/umbraco/seoToolkit/schema/entries/reusable';
-};
-
-export type GetUmbracoSeoToolkitSchemaEntriesReusableResponses = {
-    /**
-     * OK
-     */
-    200: Array<SchemaEntryViewModel>;
-};
-
-export type GetUmbracoSeoToolkitSchemaEntriesReusableResponse = GetUmbracoSeoToolkitSchemaEntriesReusableResponses[keyof GetUmbracoSeoToolkitSchemaEntriesReusableResponses];
-
-export type GetUmbracoSeoToolkitSchemaTypesData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/umbraco/seoToolkit/schema/types';
-};
-
-export type GetUmbracoSeoToolkitSchemaTypesResponses = {
-    /**
-     * OK
-     */
-    200: Array<SchemaTypeViewModel>;
-};
-
-export type GetUmbracoSeoToolkitSchemaTypesResponse = GetUmbracoSeoToolkitSchemaTypesResponses[keyof GetUmbracoSeoToolkitSchemaTypesResponses];
+export type PostUmbracoSeoToolkitAiGenerateResponse = PostUmbracoSeoToolkitAiGenerateResponses[keyof PostUmbracoSeoToolkitAiGenerateResponses];
 
 export type GetUmbracoSeoToolkitMetaFieldsImagePreviewData = {
     body?: never;
@@ -1456,6 +1364,22 @@ export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses = {
 };
 
 export type GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponse = GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses[keyof GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses];
+
+export type GetUmbracoSeoToolkitSettingsIsAiAvailableData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitSettings/isAIAvailable';
+};
+
+export type GetUmbracoSeoToolkitSettingsIsAiAvailableResponses = {
+    /**
+     * OK
+     */
+    200: boolean;
+};
+
+export type GetUmbracoSeoToolkitSettingsIsAiAvailableResponse = GetUmbracoSeoToolkitSettingsIsAiAvailableResponses[keyof GetUmbracoSeoToolkitSettingsIsAiAvailableResponses];
 
 export type GetUmbracoSeoToolkitSettingsSeoSettingsData = {
     body?: never;

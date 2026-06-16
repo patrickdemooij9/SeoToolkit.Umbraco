@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Product>SeoToolkit AI Integration</Product>
+    <PackageId>SeoToolkit.Umbraco.AI.Integration</PackageId>
+    <Title>SeoToolkit AI Integration</Title>
+    <Description>Integrates SeoToolkit with Umbraco.AI to automatically generate meta field suggestions using AI.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>umbraco plugin package ai seo</PackageTags>
+    <RootNamespace>SeoToolkit.Umbraco.AI.Integration</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Umbraco.AI" Version="[1.0.0,2.0.0)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco.AI.Core\SeoToolkit.Umbraco.AI.Core.csproj" />
+  </ItemGroup>
+
+</Project>

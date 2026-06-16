@@ -85,7 +85,7 @@ export default class SiteAuditDetailMain
             }
             if (result?.isError || result?.isWarning) {
               const existingCheckResult = this._checkResults.find(
-                (check) => check.id === result.checkId
+                (check) => check.id === result.checkId,
               );
               if (!existingCheckResult) {
                 this._checkResults.push({
@@ -119,12 +119,12 @@ export default class SiteAuditDetailMain
           errors:
             page.results?.reduce(
               (prev, cur) => prev + (cur.isError ? 1 : 0),
-              0
+              0,
             ) ?? 0,
           warnings:
             page.results?.reduce(
               (prev, cur) => prev + (cur.isWarning ? 1 : 0),
-              0
+              0,
             ) ?? 0,
         })) ?? []
     );
@@ -198,7 +198,7 @@ export default class SiteAuditDetailMain
                   >
                     Stop audit
                   </uui-button>
-                `
+                `,
               )}
             </div>
           </umb-dropdown>
@@ -225,7 +225,7 @@ export default class SiteAuditDetailMain
                 <span>${this._model?.pagesCrawled?.length ?? 0}</span>
                 ${when(
                   this._model?.progress !== 100,
-                  () => `/${this._model?.totalPagesFound}`
+                  () => `/${this._model?.totalPagesFound}`,
                 )}
               </div>
             </div>
@@ -240,7 +240,7 @@ export default class SiteAuditDetailMain
               <p ng-if="vm.audit.status === 'Scheduled'">
                 Your site audit will begin within a minute
               </p>
-            `
+            `,
           )}
 
           <hr />
@@ -250,19 +250,29 @@ export default class SiteAuditDetailMain
               this._checkResults,
               (result) => result.id,
               (result) => html`
-                <i
-                  class="icon-delete color-red"
-                  ng-if="checkResultValue.isError"
-                ></i>
-                <i
-                  class="icon-info color-orange"
-                  ng-if="checkResultValue.isWarning"
-                ></i>
-                <a ng-click="vm.filterResultsOnCheck(checkResultKey)"
-                  >${this.getCheckById(result.id)?.errorMessage}
-                  (${result.count} times)</a
-                >
-              `
+                <div class="flex align-center gap">
+                  ${when(
+                    result.isError,
+                    () =>
+                      html`<uui-icon
+                        name="icon-delete"
+                        style="color: var(--uui-color-danger);"
+                      ></uui-icon>`,
+                  )}
+                  ${when(
+                    result.isWarning,
+                    () =>
+                      html`<uui-icon
+                        name="icon-info"
+                        style="color: var(--uui-color-warning);"
+                      ></uui-icon>`,
+                  )}
+                  <a ng-click="vm.filterResultsOnCheck(checkResultKey)"
+                    >${this.getCheckById(result.id)?.errorMessage}
+                    (${result.count} times)</a
+                  >
+                </div>
+              `,
             )}
           </div>
         </uui-box>
@@ -299,27 +309,27 @@ export default class SiteAuditDetailMain
                       ${when(
                         item.errors > 0,
                         () => html`
-                          <div class="flex align-center">
+                          <div class="flex align-center gap">
                             <uui-icon
                               name="icon-delete"
                               style="color: var(--uui-color-danger);"
                             ></uui-icon>
                             ${item.errors}
                           </div>
-                        `
+                        `,
                       )}
                         
                         ${when(
                           item.warnings > 0,
                           () => html`
-                            <div class="flex align-center">
+                            <div class="flex align-center gap">
                               <uui-icon
                                 name="icon-info"
                                 style="color: var(--uui-color-warning);"
                               ></uui-icon>
                               ${item.warnings}
                             </div>
-                          `
+                          `,
                         )}
                       </div>
                       ${when(
@@ -339,7 +349,7 @@ export default class SiteAuditDetailMain
                           >
                             Open
                           </a>
-                        `
+                        `,
                       )}
                     </div>
                     ${when(
@@ -349,18 +359,18 @@ export default class SiteAuditDetailMain
                           ${repeat(
                             item.data.results ?? [],
                             (result) => result.checkId,
-                            (result) => html` <div>${result.message}</div> `
+                            (result) => html` <div>${result.message}</div> `,
                           )}
                           ${when(
                             item.data.results?.length == 0,
-                            () => html` <div>No results for this page!</div> `
+                            () => html` <div>No results for this page!</div> `,
                           )}
                         </div>
-                      `
+                      `,
                     )}
                     
                   </div>
-              `
+              `,
                 )}
               </div>
               ${when(
@@ -374,10 +384,10 @@ export default class SiteAuditDetailMain
                     >
                     </uui-pagination>
                   </div>
-                `
+                `,
               )}
             </uui-box>
-          `
+          `,
         )}
       </div>
     `;
@@ -430,6 +440,12 @@ export default class SiteAuditDetailMain
         }
       }
 
+      .siteaudit-results {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
       .pages-container {
         margin-bottom: 100px; //Without this, the page isn't really scrollable and I have no clue why...
       }
@@ -442,6 +458,7 @@ export default class SiteAuditDetailMain
 
       .page-health {
         display: flex;
+        gap: 8px;
       }
 
       .pagination {

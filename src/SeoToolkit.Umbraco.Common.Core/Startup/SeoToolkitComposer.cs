@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using SeoToolkit.Umbraco.Common.Core.Collections;
+using SeoToolkit.Umbraco.Common.Core.DeliveryApi;
 using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.Common.Core.Models.Config;
 using SeoToolkit.Umbraco.Common.Core.Repositories.Domains;
@@ -12,6 +14,7 @@ using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Common.Core.Startup;
 using SeoToolkit.Umbraco.Common.Core.Swagger;
 using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DeliveryApi;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
 
@@ -24,6 +27,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
             var section = builder.Config.GetSection("SeoToolkit:Global");
             builder.Services.Configure<GlobalAppSettingsModel>(section);
             builder.Services.AddSingleton(typeof(ISettingsService<GlobalConfig>), typeof(GlobalConfigService));
+
+            var settings = section?.Get<GlobalAppSettingsModel>();
 
             builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 
@@ -38,6 +43,11 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
             builder.Services.AddUnique<ISeoDomainsRepository, SeoDomainsRepository>();
             builder.Services.AddUnique<ISeoDomainsService, SeoDomainsService>();
             builder.Services.AddUnique<ISeoDomainResolver, SeoDomainResolver>();
+
+            if (settings?.EnableDeliveryApiSupport is true)
+            {
+                builder.Services.AddSingleton<IApiContentResponseBuilder, SeoToolkitResponseBuilder>();
+            }
 
             builder.WithCollectionBuilder<SeoTreeSectionCollectionBuilder>()
                 .Add<SeoToolkitInfoSection>();

@@ -97,6 +97,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
         [HttpPost("metaFieldsSettings")]
         public IActionResult Save(DocumentTypeSettingsPostViewModel postModel)
         {
+            if (postModel is null) return Ok();
+
             _documentTypeSettingsService.Set(_umbracoMapper.Map<DocumentTypeSettingsPostViewModel, DocumentTypeSettingsDto>(postModel));
             return Ok();
         }

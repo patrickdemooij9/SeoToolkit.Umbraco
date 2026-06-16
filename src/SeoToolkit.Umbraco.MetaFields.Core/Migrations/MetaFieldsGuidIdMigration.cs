@@ -43,8 +43,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
                 return;
             }
 
-            Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings ADD NodeKey UNIQUEIDENTIFIER NULL");
-            Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings ADD InheritanceKey UNIQUEIDENTIFIER NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitMetaFieldsSettings ADD NodeKey {MigrationHelper.GetUniqueIdentifierDataType(Database)} NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitMetaFieldsSettings ADD InheritanceKey {MigrationHelper.GetUniqueIdentifierDataType(Database)} NULL");
             foreach (var entry in Database.Fetch<MetaFieldsSettingsEntity_5>(Sql().SelectAll().From<MetaFieldsSettingsEntity_5>()))
             {
                 var content = _contentTypeService.Get(entry.NodeId);
@@ -72,7 +72,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
                 return;
             }
 
-            Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings ALTER COLUMN NodeKey UNIQUEIDENTIFIER NOT NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitMetaFieldsSettings ALTER COLUMN NodeKey {MigrationHelper.GetUniqueIdentifierDataType(Database)} NOT NULL");
 
             Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings DROP CONSTRAINT pk_SeoToolkitMetaFieldsSettings");
             Database.Execute("ALTER TABLE SeoToolkitMetaFieldsSettings ADD CONSTRAINT pk_SeoToolkitMetaFieldsSettings PRIMARY KEY (NodeKey)");
@@ -85,7 +85,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
                 return;
             }
 
-            Database.Execute("ALTER TABLE SeoToolkitMetaFieldsValue ADD NodeKey UNIQUEIDENTIFIER NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitMetaFieldsValue ADD NodeKey {MigrationHelper.GetUniqueIdentifierDataType(Database)} NULL");
             foreach (var entry in Database.Fetch<MetaFieldsValueEntity_5>(Sql().SelectAll().From<MetaFieldsValueEntity_5>()))
             {
                 var content = _contentService.GetById(entry.NodeId);
@@ -105,7 +105,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
                 return;
             }
 
-            Database.Execute("ALTER TABLE SeoToolkitMetaFieldsValue ALTER COLUMN NodeKey UNIQUEIDENTIFIER NOT NULL");
+            Database.Execute($"ALTER TABLE SeoToolkitMetaFieldsValue ALTER COLUMN NodeKey {MigrationHelper.GetUniqueIdentifierDataType(Database)} NOT NULL");
 
             Database.Execute("ALTER TABLE SeoToolkitMetaFieldsValue DROP CONSTRAINT pk_SeoToolkitMetaFieldsValue");
             Database.Execute("ALTER TABLE SeoToolkitMetaFieldsValue ADD CONSTRAINT pk_SeoToolkitMetaFieldsValue PRIMARY KEY (NodeKey,Alias,Culture)");

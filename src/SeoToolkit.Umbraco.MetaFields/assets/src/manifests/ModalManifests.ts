@@ -1,4 +1,5 @@
 import { ManifestModal } from '@umbraco-cms/backoffice/modal';
+import { ST_AI_SUGGESTIONS_MODAL } from '../popups/MetaFieldsAISuggestionsModal.element';
 
 const ItemGroupModalManifest : ManifestModal = {
     type: 'modal',
@@ -28,4 +29,4 @@ const SchemaSourceModalManifest : ManifestModal = {
     js: () => import('../popups/SchemaSourceModal.element'),
 }
 
-export const ModalManifests = [ ItemGroupModalManifest, SchemaPickerModalManifest, SchemaPropertyModalManifest, SchemaSourceModalManifest] ;
+export const ModalManifests = [ ItemGroupModalManifest, AIGenerateSuggestionsModalManifest, SchemaPickerModalManifest, SchemaPropertyModalManifest, SchemaSourceModalManifest ];
