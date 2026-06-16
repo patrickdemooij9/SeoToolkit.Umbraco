@@ -1,5 +1,6 @@
 using Schema.NET;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.Business;
@@ -73,10 +74,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
             return schemas.ToArray();
         }
 
-        private string ResolveValue(Dictionary<string, SchemaPropertyValue> properties, Common.SchemaResolvers.SchemaProperty propertyDef, IPublishedContent currentContent)
+        private object ResolveValue(Dictionary<string, SchemaPropertyValue> properties, Common.SchemaResolvers.SchemaProperty propertyDef, IPublishedContent currentContent)
         {
             if (properties is null || properties.TryGetValue(propertyDef.Alias, out var property) == false || property is null)
-                return string.Empty;
+                return null;
 
             if (property.IsReference)
                 return ResolveReference(property.ReferenceKey, currentContent);
@@ -86,10 +87,14 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                 var obj = propertyDef.ValueConverter.ConvertDatabaseToObject(property.Value);
                 if (obj is IPublishedContent content)
                     return content.Url(mode: UrlMode.Absolute);
-                return obj?.ToString() ?? string.Empty;
+                if (propertyDef.ValueConverter is SchemaEditorValueConverter)
+                {
+                    return Convert(obj, currentContent, propertyDef.Alias);
+                }
+                return obj;
             }
 
-            return property.Value?.ToString() ?? string.Empty;
+            return property.Value;
         }
 
         private static string ResolveReference(string referenceKey, IPublishedContent currentContent)

@@ -3,6 +3,7 @@ import {
   customElement,
   property,
   state,
+  when,
 } from "@umbraco-cms/backoffice/external/lit";
 import { css, html, LitElement } from "lit";
 import {
@@ -11,12 +12,22 @@ import {
   UmbPropertyValueChangeEvent,
 } from "@umbraco-cms/backoffice/property-editor";
 import { UMB_MODAL_MANAGER_CONTEXT } from "@umbraco-cms/backoffice/modal";
-import { SchemaEntryViewModel, SchemaPropertyValue, SchemaTypeViewModel } from "../api";
+import {
+  SchemaEntryViewModel,
+  SchemaPropertyValue,
+  SchemaTypeViewModel,
+} from "../api";
 import { MetaFieldsSchemaSource } from "../dataAccess/MetaFieldsSchemaSource";
 import { SchemaEntrySource } from "../dataAccess/SchemaEntrySource";
 import { SchemaPickerItem } from "../popups/SchemaPickerModal.element";
-import type { SchemaSourceModalData, SchemaSourceModalResult } from "../popups/SchemaSourceModal.element";
-import type { EditableSchema, PropertyValue } from "../popups/SchemaPropertyModal.element";
+import type {
+  SchemaSourceModalData,
+  SchemaSourceModalResult,
+} from "../popups/SchemaSourceModal.element";
+import type {
+  EditableSchema,
+  PropertyValue,
+} from "../popups/SchemaPropertyModal.element";
 
 interface SchemaEditorValue {
   schemas: string[];
@@ -75,16 +86,21 @@ export default class SchemaEditorPropertyEditor
   }
 
   async #loadEntryDetails() {
-    const guids = this._value.schemas.filter((id) => !this._loadedEntries.has(id));
+    const guids = this._value.schemas.filter(
+      (id) => !this._loadedEntries.has(id),
+    );
     if (guids.length === 0) return;
 
     await Promise.all(
       guids.map(async (id) => {
         const result = await this.#entrySource!.getEntry(id);
         if (result.data) {
-          this._loadedEntries = new Map(this._loadedEntries).set(id, result.data);
+          this._loadedEntries = new Map(this._loadedEntries).set(
+            id,
+            result.data,
+          );
         }
-      })
+      }),
     );
     this.requestUpdate();
   }
@@ -95,7 +111,10 @@ export default class SchemaEditorPropertyEditor
       this._docTypeEntries = [];
       return;
     }
-    const result = await this.#entrySource!.getEntries("documentType", docTypeKey);
+    const result = await this.#entrySource!.getEntries(
+      "documentType",
+      docTypeKey,
+    );
     this._docTypeEntries = result.data ?? [];
   }
 
@@ -126,7 +145,9 @@ export default class SchemaEditorPropertyEditor
   #getAvailableSchemas(): SchemaTypeViewModel[] {
     const allowed = this.#getAllowedSchemaAliases();
     if (!allowed) return this._schemaTypes;
-    return this._schemaTypes.filter((s) => s.alias != null && allowed.includes(s.alias));
+    return this._schemaTypes.filter(
+      (s) => s.alias != null && allowed.includes(s.alias),
+    );
   }
 
   #getSchemaName(alias: string): string {
@@ -147,20 +168,21 @@ export default class SchemaEditorPropertyEditor
       const availableSchemas = this.#getAvailableSchemas();
 
       // Step 1: Pick schema type
-      const availableSchemaItems: SchemaPickerItem[] = availableSchemas.map((s) => ({
-        alias: s.alias ?? "",
-        name: s.name ?? s.alias ?? "",
-      }));
-
-      const pickerModal = modalManager.open<{ availableSchemas: SchemaPickerItem[] }, string>(
-        this,
-        "seoToolkit.modal.schemaPicker",
-        {
-          modal: { type: "sidebar", size: "small" },
-          data: { availableSchemas: availableSchemaItems },
-          value: "",
-        }
+      const availableSchemaItems: SchemaPickerItem[] = availableSchemas.map(
+        (s) => ({
+          alias: s.alias ?? "",
+          name: s.name ?? s.alias ?? "",
+        }),
       );
+
+      const pickerModal = modalManager.open<
+        { availableSchemas: SchemaPickerItem[] },
+        string
+      >(this, "seoToolkit.modal.schemaPicker", {
+        modal: { type: "sidebar", size: "small" },
+        data: { availableSchemas: availableSchemaItems },
+        value: "",
+      });
 
       const selectedAlias = await pickerModal.onSubmit().catch(() => null);
       if (!selectedAlias) return;
@@ -174,28 +196,31 @@ export default class SchemaEditorPropertyEditor
         documentTypeKey: this.#getDocumentTypeKey(),
       };
 
-      const sourceModal = modalManager.open<SchemaSourceModalData, SchemaSourceModalResult>(
-        this,
-        "seoToolkit.modal.schemaSource",
-        {
-          modal: { type: "sidebar", size: "small" },
-          data: sourceData,
-          value: { mode: "new" },
-        }
-      );
+      const sourceModal = modalManager.open<
+        SchemaSourceModalData,
+        SchemaSourceModalResult
+      >(this, "seoToolkit.modal.schemaSource", {
+        modal: { type: "sidebar", size: "small" },
+        data: sourceData,
+        value: { mode: "new" },
+      });
 
       const sourceResult = await sourceModal.onSubmit().catch(() => null);
       if (!sourceResult) return;
 
       if (sourceResult.mode === "existing") {
         // Add existing entry ID directly
-        this._value = { schemas: [...this._value.schemas, sourceResult.entryId] };
+        this._value = {
+          schemas: [...this._value.schemas, sourceResult.entryId],
+        };
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
         return;
       }
 
       // Step 3: Configure new schema properties
-      const schemaType = availableSchemas.find((s) => s.alias === selectedAlias);
+      const schemaType = availableSchemas.find(
+        (s) => s.alias === selectedAlias,
+      );
       if (!schemaType) return;
 
       // Pre-generate the entry ID so nested schema editors (e.g. address in organization)
@@ -203,7 +228,11 @@ export default class SchemaEditorPropertyEditor
       const preGeneratedId = crypto.randomUUID();
 
       const propertyModal = modalManager.open<
-        { availableSchemas: SchemaTypeViewModel[]; editSchema?: EditableSchema; entryId?: string },
+        {
+          availableSchemas: SchemaTypeViewModel[];
+          editSchema?: EditableSchema;
+          entryId?: string;
+        },
         EditableSchema
       >(this, "seoToolkit.modal.schemaProperty", {
         modal: { type: "sidebar", size: "medium" },
@@ -229,7 +258,10 @@ export default class SchemaEditorPropertyEditor
       });
 
       if (result.data) {
-        this._loadedEntries = new Map(this._loadedEntries).set(result.data.id, result.data);
+        this._loadedEntries = new Map(this._loadedEntries).set(
+          result.data.id,
+          result.data,
+        );
         this._value = { schemas: [...this._value.schemas, result.data.id] };
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
       }
@@ -237,7 +269,10 @@ export default class SchemaEditorPropertyEditor
   }
 
   #toPropertyValues(
-    apiProps: { [key: string]: SchemaPropertyValue | null | undefined } | null | undefined
+    apiProps:
+      | { [key: string]: SchemaPropertyValue | null | undefined }
+      | null
+      | undefined,
   ): { [key: string]: PropertyValue } {
     if (!apiProps) return {};
     const result: { [key: string]: PropertyValue } = {};
@@ -256,7 +291,10 @@ export default class SchemaEditorPropertyEditor
     if (!entry) {
       const result = await this.#entrySource!.getEntry(entryId);
       if (result.data) {
-        this._loadedEntries = new Map(this._loadedEntries).set(entryId, result.data);
+        this._loadedEntries = new Map(this._loadedEntries).set(
+          entryId,
+          result.data,
+        );
         entry = result.data;
       }
       if (!entry) return;
@@ -268,7 +306,11 @@ export default class SchemaEditorPropertyEditor
       const editableProps = this.#toPropertyValues(entry.properties);
 
       const modal = modalManager.open<
-        { availableSchemas: SchemaTypeViewModel[]; editSchema?: EditableSchema; entryId?: string },
+        {
+          availableSchemas: SchemaTypeViewModel[];
+          editSchema?: EditableSchema;
+          entryId?: string;
+        },
         EditableSchema
       >(this, "seoToolkit.modal.schemaProperty", {
         modal: { type: "sidebar", size: "medium" },
@@ -296,11 +338,14 @@ export default class SchemaEditorPropertyEditor
         schemaAlias: schemaData.schemaAlias!,
         displayName: schemaData.displayName || undefined,
         properties: schemaData.properties!,
-        ownerKey: this.#getNodeGuid()
+        ownerKey: this.#getNodeGuid(),
       });
 
       if (result.data) {
-        this._loadedEntries = new Map(this._loadedEntries).set(entryId, result.data);
+        this._loadedEntries = new Map(this._loadedEntries).set(
+          entryId,
+          result.data,
+        );
         this.requestUpdate();
       }
     });
@@ -318,40 +363,52 @@ export default class SchemaEditorPropertyEditor
     const hasOwn = this._value.schemas.length > 0;
 
     return html`
-      <div class="schema-list">
-        ${hasInherited
-          ? html`
-              <span class="schema-info">Number of inherited schemas: ${this._docTypeEntries.length}</span>
-            `
-          : ""}
-
-        ${hasOwn
-          ? html`
-              ${hasInherited
-                ? html`<div class="schema-section-header">This item</div>`
-                : ""}
-              ${this._value.schemas.map(
-                (id) => html`
-                  <div class="schema-item" @click="${() => this.#openEditSchemaModal(id)}">
-                    <div class="schema-item-info">
-                      <span class="schema-name">${this.#getEntryDisplayName(id)}</span>
-                    </div>
-                    <div class="schema-item-actions">
-                      <uui-button
-                        color="danger"
-                        @click="${(e: Event) => this.#removeSchema(id, e)}"
-                      >
-                        Remove
-                      </uui-button>
-                    </div>
-                  </div>
+      ${when(
+        hasInherited || hasOwn,
+        () => html`
+          <div class="schema-list">
+            ${hasInherited
+              ? html`
+                  <span class="schema-info"
+                    >Number of inherited schemas:
+                    ${this._docTypeEntries.length}</span
+                  >
                 `
-              )}
-            `
-          : !hasInherited
-          ? html`<p class="no-schemas">No schemas added yet. Click "Add Schema" to get started.</p>`
-          : ""}
-      </div>
+              : ""}
+            ${hasOwn
+              ? html`
+                  ${hasInherited
+                    ? html`<div class="schema-section-header">This item</div>`
+                    : ""}
+                  ${this._value.schemas.map(
+                    (id) => html`
+                      <div
+                        class="schema-item"
+                        @click="${() => this.#openEditSchemaModal(id)}"
+                      >
+                        <div class="schema-item-info">
+                          <span class="schema-name"
+                            >${this.#getEntryDisplayName(id)}</span
+                          >
+                        </div>
+                        <div class="schema-item-actions">
+                          <uui-button
+                            color="danger"
+                            @click="${(e: Event) => this.#removeSchema(id, e)}"
+                          >
+                            Remove
+                          </uui-button>
+                        </div>
+                      </div>
+                    `,
+                  )}
+                `
+              : !hasInherited
+                ? ""
+                : ""}
+          </div>
+        `,
+      )}
       <div class="add-button">
         <uui-button look="primary" @click="${() => this.#openAddSchemaFlow()}">
           Add Schema
@@ -361,22 +418,11 @@ export default class SchemaEditorPropertyEditor
   }
 
   override render() {
-    return html` <div class="schema-editor-container">${this.#renderSchemaList()}</div> `;
+    return this.#renderSchemaList();
   }
 
   static styles = [
     css`
-      .schema-editor-container {
-        min-height: 200px;
-      }
-
-      .no-schemas {
-        color: var(--uui-palette-grey-3);
-        font-style: italic;
-        padding: 16px;
-        text-align: center;
-      }
-
       .schema-section-header {
         font-size: 0.8em;
         font-weight: 600;

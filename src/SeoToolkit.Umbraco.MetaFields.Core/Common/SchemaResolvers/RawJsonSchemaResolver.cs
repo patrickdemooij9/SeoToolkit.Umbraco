@@ -14,9 +14,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
                 new("json", "JSON", "Umb.PropertyEditorUi.TextArea", allowReference: false)
             ];
 
-        public IThing ToSchema(Dictionary<string, string> values)
+        public IThing ToSchema(Dictionary<string, object> values)
         {
-            var json = values.GetValueOrDefault("json") ?? string.Empty;
+            var json = values.GetValueOrDefault("json")?.ToString() ?? string.Empty;
 
             // Validate that the value is a JSON object or array before rendering
             json = json.Trim();

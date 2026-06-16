@@ -91,6 +91,7 @@ export default class SchemaPickerModal extends UmbModalBaseElement<
         border-radius: 8px;
         margin-bottom: 8px;
         border: 1px solid var(--uui-palette-gravel);
+        background-color: white;
       }
 
       .select-item.selected,

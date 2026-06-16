@@ -2,6 +2,7 @@
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
 {
@@ -33,20 +34,22 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
                 })
             ];
 
-        public IThing ToSchema(Dictionary<string, string> values)
+        public IThing ToSchema(Dictionary<string, object> values)
         {
-            Uri.TryCreate(values.GetValueOrDefault("url"), UriKind.Absolute, out var url);
-            Uri.TryCreate(values.GetValueOrDefault("logo"), UriKind.Absolute, out var logo);
+            Uri.TryCreate(values.GetValueOrDefault("url")?.ToString(), UriKind.Absolute, out var url);
+            Uri.TryCreate(values.GetValueOrDefault("logo")?.ToString(), UriKind.Absolute, out var logo);
 
+            var addresses = values.GetValueOrDefault("address") as IThing[];
             return new Organization
             {
                 Url = url,
                 Logo = logo,
-                Name = values.GetValueOrDefault("name"),
-                Description = values.GetValueOrDefault("description"),
-                Email = values.GetValueOrDefault("email"),
-                Telephone = values.GetValueOrDefault("telephone"),
-                VatID = values.GetValueOrDefault("vatID"),
+                Name = values.GetValueOrDefault("name")?.ToString(),
+                Description = values.GetValueOrDefault("description")?.ToString(),
+                Email = values.GetValueOrDefault("email")?.ToString(),
+                Telephone = values.GetValueOrDefault("telephone")?.ToString(),
+                VatID = values.GetValueOrDefault("vatID")?.ToString(),
+                Address = addresses?.OfType<IPostalAddress>().ToArray() ?? []
             };
         }
     }

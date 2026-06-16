@@ -61,25 +61,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
                     jsonElement.TryGetProperty("schemas", out var schemasEl) &&
                     schemasEl.ValueKind == JsonValueKind.Array)
                     return ParseGuidsFromJsonArray(schemasEl);
-
-                return [];
-            }
-
-            var str = value.ToString();
-            if (string.IsNullOrWhiteSpace(str))
-                return [];
-
-            try
-            {
-                var token = JToken.Parse(str);
-                if (token is JArray arr)
-                    return ParseGuidsFromJArray(arr);
-                if (token is JObject obj && obj["schemas"] is JArray schemasArrFromStr)
-                    return ParseGuidsFromJArray(schemasArrFromStr);
-            }
-            catch
-            {
-                // ignore
             }
 
             return [];

@@ -18,15 +18,15 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
             new SchemaProperty("postalCode", "Postal Code", "Umb.PropertyEditorUi.TextBox"),
         };
 
-        public IThing ToSchema(Dictionary<string, string> values)
+        public IThing ToSchema(Dictionary<string, object> values)
         {
             return new PostalAddress
             {
-                StreetAddress = values.GetValueOrDefault("streetAddress"),
-                AddressLocality = values.GetValueOrDefault("addressLocality"),
-                AddressCountry = values.GetValueOrDefault("addressCountry"),
-                AddressRegion = values.GetValueOrDefault("addressRegion"),
-                PostalCode = values.GetValueOrDefault("postalCode"),
+                StreetAddress = values.GetValueOrDefault("streetAddress")?.ToString(),
+                AddressLocality = values.GetValueOrDefault("addressLocality")?.ToString(),
+                AddressCountry = values.GetValueOrDefault("addressCountry")?.ToString(),
+                AddressRegion = values.GetValueOrDefault("addressRegion")?.ToString(),
+                PostalCode = values.GetValueOrDefault("postalCode")?.ToString(),
             };
         }
     }
