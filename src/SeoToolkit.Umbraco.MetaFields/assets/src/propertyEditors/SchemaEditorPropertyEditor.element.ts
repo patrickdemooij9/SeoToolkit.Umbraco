@@ -211,7 +211,9 @@ export default class SchemaEditorPropertyEditor
       if (sourceResult.mode === "existing") {
         // Add existing entry ID directly
         this._value = {
-          schemas: [...this._value.schemas, sourceResult.entryId],
+          schemas: Array.from(
+             new Set([...this._value.schemas, sourceResult.entryId]),
+           ),
         };
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
         return;

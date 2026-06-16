@@ -29,4 +29,11 @@ const SchemaSourceModalManifest : ManifestModal = {
     js: () => import('../popups/SchemaSourceModal.element'),
 }
 
+const AIGenerateSuggestionsModalManifest: ManifestModal = {
+    type: 'modal',
+    alias: ST_AI_SUGGESTIONS_MODAL,
+    name: 'SeoToolkit AI Suggestions',
+    js: () => import('../popups/MetaFieldsAISuggestionsModal.element'),
+};
+
 export const ModalManifests = [ ItemGroupModalManifest, AIGenerateSuggestionsModalManifest, SchemaPickerModalManifest, SchemaPropertyModalManifest, SchemaSourceModalManifest ];

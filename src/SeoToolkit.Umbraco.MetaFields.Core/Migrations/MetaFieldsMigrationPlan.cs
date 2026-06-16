@@ -17,7 +17,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
             To<MetaFieldsUmbraco14Migration>("state-3");
             To<MetaFieldsGuidIdMigration>("state-4");
             To<SchemaEntryTableMigration>("state-5");
-            To<SchemaEntryDisplayNameMigration>("state-6");
         }
     }
 }

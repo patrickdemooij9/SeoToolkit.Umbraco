@@ -28,6 +28,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
                 using var doc = JsonDocument.Parse(json);
                 if (doc.RootElement.ValueKind != JsonValueKind.Object && doc.RootElement.ValueKind != JsonValueKind.Array)
                     return null;
+
+                json = JsonSerializer.Serialize(doc.RootElement);
             }
             catch (JsonException)
             {
