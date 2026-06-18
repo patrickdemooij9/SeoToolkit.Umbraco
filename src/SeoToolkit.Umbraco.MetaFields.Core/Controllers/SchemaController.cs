@@ -102,6 +102,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 OwnerKey = model.OwnerKey,
                 SchemaAlias = model.SchemaAlias,
                 DisplayName = model.DisplayName,
+                RenderAutomatically = model.RenderAutomatically,
                 Properties = ConvertPropertiesFromEditor(model.Properties, model.SchemaAlias)
             };
 
@@ -119,6 +120,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
             existing.SchemaAlias = model.SchemaAlias;
             existing.DisplayName = model.DisplayName;
+            existing.RenderAutomatically = model.RenderAutomatically;
             existing.Properties = ConvertPropertiesFromEditor(model.Properties, model.SchemaAlias);
 
             var result = _schemaEntryService.Update(existing);
@@ -165,6 +167,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 OwnerKey = dto.OwnerKey,
                 SchemaAlias = dto.SchemaAlias,
                 DisplayName = dto.DisplayName,
+                RenderAutomatically = dto.RenderAutomatically,
                 Properties = properties
             };
         }

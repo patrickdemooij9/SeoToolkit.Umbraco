@@ -27,6 +27,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.Database
         [Length(500)]
         public string DisplayName { get; set; }
 
+        [Column("RenderAutomatically")]
+        public bool RenderAutomatically { get; set; } = true;
+
         [Column("PropertiesJson")]
         [NullSetting(NullSetting = NullSettings.Null)]
         [SpecialDbType(SpecialDbTypes.NVARCHARMAX)]

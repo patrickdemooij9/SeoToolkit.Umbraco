@@ -11,6 +11,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.ViewModels
         public Guid OwnerKey { get; set; }
         public string SchemaAlias { get; set; }
         public string DisplayName { get; set; }
+        public bool RenderAutomatically { get; set; } = true;
         public Dictionary<string, SchemaPropertyValue> Properties { get; set; }
     }
 }

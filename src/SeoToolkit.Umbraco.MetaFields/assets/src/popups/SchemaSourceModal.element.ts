@@ -3,6 +3,10 @@ import { UmbModalBaseElement } from "@umbraco-cms/backoffice/modal";
 import { css, html } from "lit";
 import { SchemaEntryViewModel } from "../api/types.gen";
 import { SchemaEntrySource } from "../dataAccess/SchemaEntrySource";
+import {
+  SCHEMA_OWNER_TYPE,
+  WEBSITE_OWNER_KEY,
+} from "../constants/schemaConstants";
 
 export interface SchemaSourceModalData {
   schemaAlias: string;
@@ -31,6 +35,9 @@ export default class SchemaSourceModal extends UmbModalBaseElement<
   private _reusableEntries: SchemaEntryViewModel[] = [];
 
   @state()
+  private _websiteEntries: SchemaEntryViewModel[] = [];
+
+  @state()
   private _loading = false;
 
   #source?: SchemaEntrySource;
@@ -47,24 +54,33 @@ export default class SchemaSourceModal extends UmbModalBaseElement<
     try {
       const { ownerType, ownerKey, documentTypeKey, schemaAlias } = this.data;
 
-      const [ownResult, reusableResult] = await Promise.all([
-        this.#source!.getEntries(ownerType, ownerKey),
+      const empty = Promise.resolve({ data: [] as SchemaEntryViewModel[] });
+      const [ownResult, reusableResult, websiteResult] = await Promise.all([
+        ownerType && ownerKey
+          ? this.#source!.getEntries(ownerType, ownerKey)
+          : empty,
         documentTypeKey
           ? this.#source!.getEntries("documentType", documentTypeKey)
-          : Promise.resolve({ data: [] as SchemaEntryViewModel[] }),
+          : empty,
+        this.#source!.getEntries(SCHEMA_OWNER_TYPE.website, WEBSITE_OWNER_KEY),
       ]);
 
-      const allOwn = (ownResult.data ?? []).filter(
-        (e) => e.schemaAlias === schemaAlias
-      );
-      const allReusable = (reusableResult.data ?? []).filter(
-        (e) => e.schemaAlias === schemaAlias
-      );
+      const matchesSchema = (e: SchemaEntryViewModel) =>
+        e.schemaAlias === schemaAlias;
+
+      const allOwn = (ownResult.data ?? []).filter(matchesSchema);
+      const allReusable = (reusableResult.data ?? []).filter(matchesSchema);
+      const allWebsite = (websiteResult.data ?? []).filter(matchesSchema);
 
       this._ownEntries = allOwn;
       this._reusableEntries = allReusable;
+      this._websiteEntries = allWebsite;
 
-      if (allOwn.length === 0 && allReusable.length === 0) {
+      if (
+        allOwn.length === 0 &&
+        allReusable.length === 0 &&
+        allWebsite.length === 0
+      ) {
         this._activeTab = "new";
       }
     } finally {
@@ -124,7 +140,7 @@ export default class SchemaSourceModal extends UmbModalBaseElement<
                   class=${classMap({ tab: true, active: this._activeTab === "existing" })}
                   @click="${() => (this._activeTab = "existing")}"
                 >
-                  Pick Existing (${this._ownEntries.length + this._reusableEntries.length})
+                  Pick Existing (${this._ownEntries.length + this._reusableEntries.length + this._websiteEntries.length})
                 </button>
               </div>
 
@@ -155,7 +171,13 @@ export default class SchemaSourceModal extends UmbModalBaseElement<
                             ${this.#renderExistingList(this._reusableEntries)}
                           `
                         : ""}
-                      ${this._ownEntries.length === 0 && this._reusableEntries.length === 0
+                      ${this._websiteEntries.length > 0
+                        ? html`
+                            <h4>From Website</h4>
+                            ${this.#renderExistingList(this._websiteEntries)}
+                          `
+                        : ""}
+                      ${this._ownEntries.length === 0 && this._reusableEntries.length === 0 && this._websiteEntries.length === 0
                         ? html`<p class="no-items">No existing entries found for this schema type.</p>`
                         : ""}
                     </div>

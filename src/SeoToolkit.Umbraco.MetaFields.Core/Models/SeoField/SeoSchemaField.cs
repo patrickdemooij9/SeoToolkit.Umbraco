@@ -23,6 +23,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public ISeoFieldEditor Editor => new SeoFieldPropertyEditor("SeoToolkit.SchemaEditor", new SchemaEditorValueConverter());
         public ISeoFieldEditEditor EditEditor => new SeoSchemaEditEditor();
 
+        // Schemas configured on the document type are merged in additively by the value
+        // converter, so the field must not fall back to the document type value.
+        public bool AllowDocumentTypeFallback => false;
+
         public HtmlString Render(object value)
         {
             if (value is not IThing[] schemas || schemas.Length == 0)

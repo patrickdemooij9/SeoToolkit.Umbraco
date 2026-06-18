@@ -95,6 +95,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SchemaEntryRepository
                 OwnerKey = entity.OwnerKey,
                 SchemaAlias = entity.SchemaAlias,
                 DisplayName = entity.DisplayName,
+                RenderAutomatically = entity.RenderAutomatically,
                 Properties = string.IsNullOrWhiteSpace(entity.PropertiesJson)
                     ? new Dictionary<string, SchemaPropertyValue>()
                     : JsonConvert.DeserializeObject<Dictionary<string, SchemaPropertyValue>>(entity.PropertiesJson)
@@ -111,6 +112,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SchemaEntryRepository
                 OwnerKey = dto.OwnerKey,
                 SchemaAlias = dto.SchemaAlias,
                 DisplayName = dto.DisplayName,
+                RenderAutomatically = dto.RenderAutomatically,
                 PropertiesJson = JsonConvert.SerializeObject(dto.Properties)
             };
         }

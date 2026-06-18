@@ -1,6 +1,7 @@
 using Schema.NET;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
+using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.Business;
@@ -29,24 +30,53 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
 
         public object Convert(object value, IPublishedContent currentContent, string fieldAlias)
         {
-            var guids = value is Guid[] arr ? arr : Array.Empty<Guid>();
+            // Resolve the entries referenced by the field value.
+            IEnumerable<SchemaEntryDto> allEntries = ResolveEntries(value);
 
-            // Load content-level entries
-            var contentEntries = guids.Length > 0
-                ? _schemaEntryService.GetByIds(guids)
-                : Enumerable.Empty<SchemaEntryDto>();
-
-            // Additively combine with document type schemas
-            IEnumerable<SchemaEntryDto> allEntries = contentEntries;
             if (currentContent?.ContentType?.Key is Guid docTypeKey)
             {
-                var docTypeEntries = _schemaEntryService.GetAll("documentType", docTypeKey);
-                allEntries = docTypeEntries.Concat(contentEntries);
+                // Only auto-render document type schemas that are enabled for rendering.
+                // Disabled ones remain available to be referenced explicitly on content level.
+                var docTypeEntries = _schemaEntryService.GetAll(SchemaOwnerTypeConstants.DocumentType, docTypeKey)
+                    .Where(entry => entry.RenderAutomatically);
+                allEntries = docTypeEntries.Concat(allEntries);
             }
 
+            // Website-wide schemas marked for rendering are added to every page.
+            var websiteEntries = _schemaEntryService
+                .GetAll(SchemaOwnerTypeConstants.Website, SchemaOwnerTypeConstants.WebsiteOwnerKey)
+                .Where(entry => entry.RenderAutomatically);
+            allEntries = websiteEntries.Concat(allEntries);
+
+            // An entry can be reached through more than one path (e.g. a website schema that is
+            // also explicitly referenced on the page); only render each distinct entry once.
+            allEntries = allEntries.DistinctBy(entry => entry.Id);
+
+            return ConvertEntries(allEntries, currentContent);
+        }
+
+        /// <summary>
+        /// Resolves a nested schema-editor property value. Unlike <see cref="Convert"/>, this
+        /// only resolves the explicitly referenced entries and never concatenates the
+        /// auto-rendering document type schemas.
+        /// </summary>
+        private IThing[] ConvertNested(object value, IPublishedContent currentContent)
+            => ConvertEntries(ResolveEntries(value), currentContent);
+
+        private IEnumerable<SchemaEntryDto> ResolveEntries(object value)
+        {
+            var guids = value is Guid[] arr ? arr : Array.Empty<Guid>();
+
+            return guids.Length > 0
+                ? _schemaEntryService.GetByIds(guids)
+                : Enumerable.Empty<SchemaEntryDto>();
+        }
+
+        private IThing[] ConvertEntries(IEnumerable<SchemaEntryDto> entries, IPublishedContent currentContent)
+        {
             var schemas = new List<IThing>();
 
-            foreach (var entry in allEntries)
+            foreach (var entry in entries)
             {
                 if (entry?.SchemaAlias is null)
                     continue;
@@ -89,7 +119,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                     return content.Url(mode: UrlMode.Absolute);
                 if (propertyDef.ValueConverter is SchemaEditorValueConverter)
                 {
-                    return Convert(obj, currentContent, propertyDef.Alias);
+                    return ConvertNested(obj, currentContent);
                 }
                 return obj;
             }

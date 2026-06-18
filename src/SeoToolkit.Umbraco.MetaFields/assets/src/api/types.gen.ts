@@ -188,6 +188,7 @@ export type SchemaEntryPostModel = {
     ownerKey: string;
     schemaAlias?: string | null;
     displayName?: string | null;
+    renderAutomatically?: boolean;
     properties?: {
         [key: string]: SchemaPropertyValue | null;
     } | null;
@@ -199,6 +200,7 @@ export type SchemaEntryViewModel = {
     ownerKey: string;
     schemaAlias?: string | null;
     displayName?: string | null;
+    renderAutomatically?: boolean;
     properties?: {
         [key: string]: SchemaPropertyValue | null;
     } | null;
@@ -326,6 +328,7 @@ export type SeoSettingsFieldViewModel = {
     groupAlias?: string | null;
     suggestions?: Array<SeoSuggestionViewModel> | null;
     value?: string | null;
+    allowFallback?: boolean;
     userValue?: unknown;
     editView?: string | null;
     editConfig?: {

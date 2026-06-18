@@ -115,6 +115,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                         GroupAlias = key.GroupAlias,
                         Suggestions = suggestions,
                         Value = humanReadableValue?.ToString(),
+                        AllowFallback = key.AllowDocumentTypeFallback,
                         UserValue = userValue,
                         EditView = key.EditEditor.View,
                         EditConfig = editConfig

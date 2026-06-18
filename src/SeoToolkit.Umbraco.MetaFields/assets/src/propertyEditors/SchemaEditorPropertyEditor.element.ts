@@ -28,6 +28,10 @@ import type {
   EditableSchema,
   PropertyValue,
 } from "../popups/SchemaPropertyModal.element";
+import {
+  SCHEMA_OWNER_TYPE,
+  WEBSITE_OWNER_KEY,
+} from "../constants/schemaConstants";
 
 interface SchemaEditorValue {
   schemas: string[];
@@ -40,7 +44,12 @@ export default class SchemaEditorPropertyEditor
 {
   @property({ type: Object })
   public set value(value: SchemaEditorValue | undefined) {
-    this._value = value ?? { schemas: [] };
+    // Be tolerant of unexpected values (e.g. a setting host that stores plain strings):
+    // only accept a well-formed schema list, otherwise start empty.
+    this._value =
+      value && typeof value === "object" && Array.isArray(value.schemas)
+        ? value
+        : { schemas: [] };
     this.requestUpdate();
   }
 
@@ -78,6 +87,7 @@ export default class SchemaEditorPropertyEditor
     }
     if (changedProperties.has("config")) {
       this.#loadDocTypeEntries();
+      this.#loadWebsiteEntries();
     }
   }
 
@@ -116,6 +126,35 @@ export default class SchemaEditorPropertyEditor
       docTypeKey,
     );
     this._docTypeEntries = result.data ?? [];
+  }
+
+  /**
+   * Website-level schemas are a single global collection. In this mode the editor is
+   * self-contained: it loads its entries straight from the API and persists them there,
+   * rather than round-tripping a value through the (string-based) settings host.
+   */
+  async #loadWebsiteEntries() {
+    if (!this.#isWebsite()) return;
+    const result = await this.#entrySource!.getEntries(
+      SCHEMA_OWNER_TYPE.website,
+      WEBSITE_OWNER_KEY,
+    );
+    const entries = result.data ?? [];
+    const loaded = new Map(this._loadedEntries);
+    entries.forEach((entry) => loaded.set(entry.id, entry));
+    this._loadedEntries = loaded;
+    this._value = { schemas: entries.map((entry) => entry.id) };
+    this.requestUpdate();
+  }
+
+  #isWebsite(): boolean {
+    return this.#getOwnerType() === SCHEMA_OWNER_TYPE.website;
+  }
+
+  /** Persist the value to the host, except in website mode where entries are saved via the API. */
+  #notifyChange() {
+    if (this.#isWebsite()) return;
+    this.dispatchEvent(new UmbPropertyValueChangeEvent());
   }
 
   #getNodeGuid(): string {
@@ -187,26 +226,31 @@ export default class SchemaEditorPropertyEditor
       const selectedAlias = await pickerModal.onSubmit().catch(() => null);
       if (!selectedAlias) return;
 
-      // Step 2: Pick source (new vs existing)
-      const sourceData: SchemaSourceModalData = {
-        schemaAlias: selectedAlias,
-        schemaTypeName: this.#getSchemaName(selectedAlias),
-        ownerType: this.#getOwnerType(),
-        ownerKey: this.#getNodeGuid(),
-        documentTypeKey: this.#getDocumentTypeKey(),
-      };
+      // Step 2: Pick source (new vs existing). The website level is itself the top source,
+      // so there is nothing to reuse from - skip straight to creating a new schema.
+      let sourceResult: SchemaSourceModalResult = { mode: "new" };
+      if (!this.#isWebsite()) {
+        const sourceData: SchemaSourceModalData = {
+          schemaAlias: selectedAlias,
+          schemaTypeName: this.#getSchemaName(selectedAlias),
+          ownerType: this.#getOwnerType(),
+          ownerKey: this.#getNodeGuid(),
+          documentTypeKey: this.#getDocumentTypeKey(),
+        };
 
-      const sourceModal = modalManager.open<
-        SchemaSourceModalData,
-        SchemaSourceModalResult
-      >(this, "seoToolkit.modal.schemaSource", {
-        modal: { type: "sidebar", size: "small" },
-        data: sourceData,
-        value: { mode: "new" },
-      });
+        const sourceModal = modalManager.open<
+          SchemaSourceModalData,
+          SchemaSourceModalResult
+        >(this, "seoToolkit.modal.schemaSource", {
+          modal: { type: "sidebar", size: "small" },
+          data: sourceData,
+          value: { mode: "new" },
+        });
 
-      const sourceResult = await sourceModal.onSubmit().catch(() => null);
-      if (!sourceResult) return;
+        const result = await sourceModal.onSubmit().catch(() => null);
+        if (!result) return;
+        sourceResult = result;
+      }
 
       if (sourceResult.mode === "existing") {
         // Add existing entry ID directly
@@ -215,7 +259,7 @@ export default class SchemaEditorPropertyEditor
              new Set([...this._value.schemas, sourceResult.entryId]),
            ),
         };
-        this.dispatchEvent(new UmbPropertyValueChangeEvent());
+        this.#notifyChange();
         return;
       }
 
@@ -234,6 +278,8 @@ export default class SchemaEditorPropertyEditor
           availableSchemas: SchemaTypeViewModel[];
           editSchema?: EditableSchema;
           entryId?: string;
+          showRenderToggle?: boolean;
+          documentTypeKey?: string;
         },
         EditableSchema
       >(this, "seoToolkit.modal.schemaProperty", {
@@ -242,6 +288,8 @@ export default class SchemaEditorPropertyEditor
           availableSchemas: this._schemaTypes,
           editSchema: { schemaAlias: selectedAlias, properties: {} },
           entryId: preGeneratedId,
+          showRenderToggle: this.#getOwnerType() !== "content",
+          documentTypeKey: this.#getDocumentTypeKey(),
         },
         value: { schemaAlias: selectedAlias, properties: {} },
       });
@@ -256,6 +304,7 @@ export default class SchemaEditorPropertyEditor
         ownerKey: this.#getNodeGuid(),
         schemaAlias: schemaData.schemaAlias,
         displayName: schemaData.displayName || undefined,
+        renderAutomatically: schemaData.renderAutomatically ?? true,
         properties: schemaData.properties,
       });
 
@@ -265,7 +314,8 @@ export default class SchemaEditorPropertyEditor
           result.data,
         );
         this._value = { schemas: [...this._value.schemas, result.data.id] };
-        this.dispatchEvent(new UmbPropertyValueChangeEvent());
+        this.#notifyChange();
+        this.requestUpdate();
       }
     });
   }
@@ -312,6 +362,8 @@ export default class SchemaEditorPropertyEditor
           availableSchemas: SchemaTypeViewModel[];
           editSchema?: EditableSchema;
           entryId?: string;
+          showRenderToggle?: boolean;
+          documentTypeKey?: string;
         },
         EditableSchema
       >(this, "seoToolkit.modal.schemaProperty", {
@@ -321,13 +373,17 @@ export default class SchemaEditorPropertyEditor
           editSchema: {
             schemaAlias: entry.schemaAlias!,
             displayName: entry.displayName ?? undefined,
+            renderAutomatically: entry.renderAutomatically ?? true,
             properties: editableProps,
           },
           entryId,
+          showRenderToggle: this.#getOwnerType() !== "content",
+          documentTypeKey: this.#getDocumentTypeKey(),
         },
         value: {
           schemaAlias: entry.schemaAlias!,
           displayName: entry.displayName ?? undefined,
+          renderAutomatically: entry.renderAutomatically ?? true,
           properties: editableProps,
         },
       });
@@ -339,6 +395,7 @@ export default class SchemaEditorPropertyEditor
       const result = await this.#entrySource!.updateEntry(entryId, {
         schemaAlias: schemaData.schemaAlias!,
         displayName: schemaData.displayName || undefined,
+        renderAutomatically: schemaData.renderAutomatically ?? true,
         properties: schemaData.properties!,
         ownerKey: this.#getNodeGuid(),
       });
@@ -355,9 +412,15 @@ export default class SchemaEditorPropertyEditor
 
   #removeSchema(id: string, e: Event) {
     e.stopPropagation();
+    // At website level the editor owns its entries, so removing one deletes it. Elsewhere we
+    // only drop the reference - the underlying entry may still be used by other items.
+    if (this.#isWebsite()) {
+      this.#entrySource!.deleteEntry(id);
+    }
     const schemas = this._value.schemas.filter((s) => s !== id);
     this._value = { schemas };
-    this.dispatchEvent(new UmbPropertyValueChangeEvent());
+    this.#notifyChange();
+    this.requestUpdate();
   }
 
   #renderSchemaList() {

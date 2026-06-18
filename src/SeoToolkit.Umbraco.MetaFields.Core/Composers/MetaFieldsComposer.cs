@@ -112,7 +112,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<PageNameFieldProvider>();
 
             builder.WithCollectionBuilder<SeoKeyValueSettingCollectionBuilder>()
-                .Add<PageTitleTemplateSetting>();
+                .Add<PageTitleTemplateSetting>()
+                .Add<WebsiteSchemaSetting>();
 
             builder.WithCollectionBuilder<SchemaResolverCollectionBuilder>()
                 .Add<OrganizationSchemaResolver>()

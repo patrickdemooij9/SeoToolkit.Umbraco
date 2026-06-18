@@ -8,6 +8,7 @@ import { UmbPropertyTypeAppearanceModel } from "@umbraco-cms/backoffice/content-
 export interface EditableSchema {
   schemaAlias: string;
   displayName?: string;
+  renderAutomatically?: boolean;
   properties: { [key: string]: PropertyValue };
 }
 
@@ -26,7 +27,13 @@ const REFERENCE_OPTIONS = [
 
 @customElement("st-schema-property-modal")
 export default class SchemaPropertyModal extends UmbModalBaseElement<
-  { availableSchemas: SchemaTypeViewModel[]; editSchema?: EditableSchema; entryId?: string },
+  {
+    availableSchemas: SchemaTypeViewModel[];
+    editSchema?: EditableSchema;
+    entryId?: string;
+    showRenderToggle?: boolean;
+    documentTypeKey?: string;
+  },
   EditableSchema
 > {
   @state()
@@ -34,6 +41,9 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
 
   @state()
   private _displayName: string = "";
+
+  @state()
+  private _renderAutomatically: boolean = true;
 
   @state()
   private _propertyValues: { [key: string]: PropertyValue } = {};
@@ -48,10 +58,12 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     if (this.data?.editSchema) {
       this._selectedSchemaAlias = this.data.editSchema.schemaAlias;
       this._displayName = this.data.editSchema.displayName ?? "";
+      this._renderAutomatically = this.data.editSchema.renderAutomatically ?? true;
       this._propertyValues = { ...this.data.editSchema.properties };
     } else {
       this._selectedSchemaAlias = this.value?.schemaAlias ?? "";
       this._displayName = this.value?.displayName ?? "";
+      this._renderAutomatically = this.value?.renderAutomatically ?? true;
       this._propertyValues = this.value?.properties
         ? { ...this.value.properties }
         : {};
@@ -96,6 +108,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     this.value = {
       schemaAlias: this._selectedSchemaAlias,
       displayName: this._displayName || undefined,
+      renderAutomatically: this._renderAutomatically,
       properties: this._propertyValues,
     };
     this.modalContext?.submit();
@@ -107,8 +120,15 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     const staticConfig = Object.entries(property.config ?? {}).map(([alias, value]) => ({ alias, value }));
 
     // For nested schema editors, inject the current entry's ID as ownerKey so they can save sub-entries
-    if (property.propertyEditor === "SeoToolkit.SchemaEditor" && entryId) {
-      staticConfig.push({ alias: "nodeGuid", value: entryId });
+    if (property.propertyEditor === "SeoToolkit.SchemaEditor") {
+      if (entryId) {
+        staticConfig.push({ alias: "nodeGuid", value: entryId });
+      }
+      // Pass the document type down so nested editors can offer document type entries for reuse.
+      const documentTypeKey = this.data?.documentTypeKey;
+      if (documentTypeKey) {
+        staticConfig.push({ alias: "documentTypeKey", value: documentTypeKey });
+      }
     }
 
     return staticConfig;
@@ -222,6 +242,27 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
           ></uui-input>
         </div>
 
+        ${this.data?.showRenderToggle
+          ? html`
+              <div class="render-toggle-row">
+                <uui-toggle
+                  .checked=${this._renderAutomatically}
+                  @change="${(e: Event) => {
+                    this._renderAutomatically = (
+                      e.target as HTMLInputElement
+                    ).checked;
+                  }}"
+                >
+                  Render on all pages of this document type
+                </uui-toggle>
+                <small class="render-toggle-hint">
+                  When disabled, this schema is not rendered automatically but
+                  can still be referenced from individual pages.
+                </small>
+              </div>
+            `
+          : ""}
+
         ${properties.length > 0
           ? html`
               <div class="schema-properties">
@@ -276,6 +317,16 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
 
       .display-name-row uui-input {
         width: 100%;
+      }
+
+      .render-toggle-row {
+        margin-bottom: 16px;
+      }
+
+      .render-toggle-hint {
+        display: block;
+        margin-top: 4px;
+        color: var(--uui-palette-grey-4);
       }
 
       .schema-properties {
