@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.Database;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database;
 using System;
@@ -37,6 +38,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
                 if (string.IsNullOrWhiteSpace(schemaValue.UserValue))
                     continue;
 
+                var userValue = JsonConvert.DeserializeObject<string>(schemaValue.UserValue);
+
                 try
                 {
                     var id = Guid.NewGuid();
@@ -46,9 +49,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
                         OwnerType = "content",
                         OwnerKey = schemaValue.NodeKey,
                         SchemaAlias = "rawJson",
-                        PropertiesJson = JsonConvert.SerializeObject(new Dictionary<string, object>()
+                        PropertiesJson = JsonConvert.SerializeObject(new Dictionary<string, SchemaPropertyValue>()
                         {
-                            { "json", schemaValue.UserValue }
+                            { "json", new SchemaPropertyValue { Value = userValue } }
                         })
                     });
 
