@@ -512,7 +512,7 @@ export default class SchemaEditorPropertyEditor
         border: 1px solid var(--uui-palette-gravel);
         border-radius: 4px;
         cursor: pointer;
-        background-color: var(--uui-palette-surface);
+        background-color: white;
       }
 
       .schema-item:hover {

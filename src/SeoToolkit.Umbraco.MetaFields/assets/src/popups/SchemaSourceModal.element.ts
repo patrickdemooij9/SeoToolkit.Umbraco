@@ -237,7 +237,7 @@ export default class SchemaSourceModal extends UmbModalBaseElement<
         border: 1px solid var(--uui-palette-gravel);
         border-radius: 4px;
         cursor: pointer;
-        background-color: var(--uui-palette-surface);
+        background-color: white;
       }
 
       .entry-item:hover {
