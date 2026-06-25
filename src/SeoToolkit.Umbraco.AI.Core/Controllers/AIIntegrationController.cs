@@ -16,18 +16,18 @@ namespace SeoToolkit.Umbraco.AI.Core.Controllers
         private readonly IMetaFieldsAIService _metaFieldsAIService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly IVariationContextAccessor _variationContextAccessor;
-        private readonly ILocalizationService _localizationService;
+        private readonly ILanguageService _languageService;
 
         public AIIntegrationController(
             IMetaFieldsAIService metaFieldsAIService,
             IUmbracoContextFactory umbracoContextFactory,
             IVariationContextAccessor variationContextAccessor,
-            ILocalizationService localizationService)
+            ILanguageService languageService)
         {
             _metaFieldsAIService = metaFieldsAIService;
             _umbracoContextFactory = umbracoContextFactory;
             _variationContextAccessor = variationContextAccessor;
-            _localizationService = localizationService;
+            _languageService = languageService;
         }
 
         [HttpPost("generate")]
@@ -36,7 +36,7 @@ namespace SeoToolkit.Umbraco.AI.Core.Controllers
             [FromBody] MetaFieldsAIGenerateRequestModel request,
             CancellationToken cancellationToken)
         {
-            EnsureLanguage(request.Culture);
+            await EnsureLanguage(request.Culture);
 
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             var content = ctx.UmbracoContext.Content?.GetById(true, request.NodeId);
@@ -44,19 +44,19 @@ namespace SeoToolkit.Umbraco.AI.Core.Controllers
                 return BadRequest($"Cannot find content with id: {request.NodeId}");
 
             var culture = string.IsNullOrWhiteSpace(request.Culture) || request.Culture == "invariant"
-                ? _localizationService.GetDefaultLanguageIsoCode()
+                ? await _languageService.GetDefaultIsoCodeAsync()
                 : request.Culture;
 
             var result = await _metaFieldsAIService.GenerateAsync(content, culture, cancellationToken);
             return Ok(result);
         }
 
-        private void EnsureLanguage(string? culture)
+        private async Task EnsureLanguage(string? culture)
         {
             if (!string.IsNullOrWhiteSpace(culture) && culture != "invariant")
                 _variationContextAccessor.VariationContext = new VariationContext(culture);
             else
-                _variationContextAccessor.VariationContext = new VariationContext(_localizationService.GetDefaultLanguageIsoCode());
+                _variationContextAccessor.VariationContext = new VariationContext(await _languageService.GetDefaultIsoCodeAsync());
         }
     }
 }

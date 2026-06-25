@@ -16,11 +16,6 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Umbraco.Cms.Web.Website" Version="[17.0.0,17.999)" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[17.0.0,17.999)" />
-  </ItemGroup>
-	
-	<ItemGroup>
 		<ProjectReference Include="..\SeoToolkit.Umbraco.SiteAudit.Core\SeoToolkit.Umbraco.SiteAudit.Core.csproj" />
 		<ProjectReference Include="..\SeoToolkit.Umbraco.Common\SeoToolkit.Umbraco.Common.csproj" />
 	</ItemGroup>

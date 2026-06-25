@@ -21,14 +21,14 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Business
         public string OldUrl { get; set; }
         public string NewUrl { get; set; }
         public IPublishedContent NewNode { get; set; }
-        public ILanguage NewNodeCulture { get; set; }
+        public int? NewNodeCultureId { get; set; }
         public DateTime LastUpdated { get; set; }
         public Guid? CreatedBy { get; set; }
         public int RedirectCode { get; set; }
 
-        public string GetNewUrl()
+        public string GetNewUrl(string isoCode)
         {
-            return NewUrl.IfNullOrWhiteSpace(NewNode?.Url(NewNodeCulture?.IsoCode?.ToLowerInvariant()));
+            return NewUrl.IfNullOrWhiteSpace(NewNode?.Url(isoCode?.ToLowerInvariant()));
         }
     }
 }

@@ -8,6 +8,7 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
 {
@@ -17,16 +18,19 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
         private readonly IRuntimeState _runtimeState;
         private readonly IRedirectsService _redirectsService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly ILanguageService _languageService;
 
         public RedirectMiddleware(RequestDelegate next,
             IRuntimeState runtimeState,
             IRedirectsService redirectsService,
-            IUmbracoContextFactory umbracoContextFactory)
+            IUmbracoContextFactory umbracoContextFactory,
+            ILanguageService languageService)
         {
             _next = next;
             _runtimeState = runtimeState;
             _redirectsService = redirectsService;
             _umbracoContextFactory = umbracoContextFactory;
+            _languageService = languageService;
         }
 
         public async Task Invoke(HttpContext context)
@@ -45,13 +49,13 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
                 return;
             }
 
-            if (!HandleRedirect(context))
+            if (!await HandleRedirect(context))
             {
                 await _next(context);
             }
         }
 
-        private bool HandleRedirect(HttpContext context)
+        private async Task<bool> HandleRedirect(HttpContext context)
         {
             var url = new Uri(context.Request.GetEncodedUrl());
             var stopwatch = new Stopwatch();
@@ -65,7 +69,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
 
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             var isPerm = matchedRedirectResult.Redirect.RedirectCode == (int)HttpStatusCode.MovedPermanently;
-            context.Response.Redirect(matchedRedirectResult.GetNewUrl(), isPerm);
+            var isoCode = matchedRedirectResult.Redirect.NewNodeCultureId.HasValue ? (await _languageService.GetAllAsync()).FirstOrDefault(l => l.Id == matchedRedirectResult.Redirect.NewNodeCultureId.Value)?.IsoCode : null;
+            context.Response.Redirect(matchedRedirectResult.GetNewUrl(isoCode), isPerm);
             return true;
         }
     }

@@ -23,10 +23,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Business
             Redirect = redirect;
         }
 
-        public string GetNewUrl()
+        public string GetNewUrl(string isoCode)
         {
             if (Uri is null || !Redirect.IsRegex || string.IsNullOrWhiteSpace(Redirect.NewUrl) || !Redirect.NewUrl.Contains($"$"))
-                return Redirect.NewUrl.IfNullOrWhiteSpace(Redirect.NewNode?.Url(Redirect.NewNodeCulture?.IsoCode?.ToLowerInvariant()));
+                return Redirect.NewUrl.IfNullOrWhiteSpace(Redirect.NewNode?.Url(isoCode?.ToLowerInvariant()));
 
             try
             {

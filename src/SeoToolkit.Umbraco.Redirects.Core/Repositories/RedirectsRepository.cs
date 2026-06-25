@@ -20,20 +20,19 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
     {
         private readonly IScopeProvider _scopeProvider;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
-        private readonly ILocalizationService _localizationService;
+        private readonly ILanguageService _languageService;
         private readonly AppCaches _appCaches;
         private readonly DistributedCache _distributedCache;
 
         public RedirectsRepository(IScopeProvider scopeProvider,
             IUmbracoContextFactory umbracoContextFactory,
-            ILocalizationService localizationService,
+            ILanguageService languageService,
             AppCaches appCaches,
-            DistributedCache distributedCache,
-            ILanguageService languageService)
+            DistributedCache distributedCache)
         {
             _scopeProvider = scopeProvider;
             _umbracoContextFactory = umbracoContextFactory;
-            _localizationService = localizationService;
+            _languageService = languageService;
             _appCaches = appCaches;
             _distributedCache = distributedCache;
         }
@@ -191,7 +190,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 NewNodeId = redirect.NewNode?.Id,
                 NewNodeKey = redirect.NewNode?.Key,
                 NewUrl = redirect.NewUrl,
-                NewNodeCultureId = redirect.NewNodeCulture?.Id,
+                NewNodeCultureId = redirect.NewNodeCultureId,
                 CreatedBy = redirect.CreatedBy,
                 LastUpdated = DateTime.Now,
                 RedirectCode = redirect.RedirectCode
@@ -215,7 +214,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 NewNode = entity.NewNodeKey is null
                     ? null
                     : entity.NewNodeCultureId is null ? ctx.UmbracoContext.Media.GetById(entity.NewNodeKey.Value) : ctx.UmbracoContext.Content.GetById(entity.NewNodeKey.Value),
-                NewNodeCulture = entity.NewNodeCultureId is null ? null : _localizationService.GetLanguageById(entity.NewNodeCultureId.Value),
+                NewNodeCultureId = entity.NewNodeCultureId,
                 NewUrl = entity.NewUrl,
                 LastUpdated = entity.LastUpdated,
                 CreatedBy = entity.CreatedBy,

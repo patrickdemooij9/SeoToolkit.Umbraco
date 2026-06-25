@@ -86,8 +86,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             if (!string.IsNullOrWhiteSpace(postModel.NewCultureId))
             {
                 var languages = await _languageService.GetAllAsync();
-                redirect.NewNodeCulture = languages.FirstOrDefault(it => it.IsoCode == postModel.NewCultureId);
-                if (redirect.NewNodeCulture is null)
+                redirect.NewNodeCultureId = languages.FirstOrDefault(it => it.IsoCode == postModel.NewCultureId)?.Id;
+                if (redirect.NewNodeCultureId is null)
                     return new BadRequestResult();
             }
 
@@ -114,36 +114,39 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 
         [HttpGet("redirects")]
         [ProducesResponseType(typeof(PagedViewModel<RedirectListViewModel>), 200)]
-        public IActionResult GetAll(int pageNumber, int pageSize, string orderBy = null, string orderDirection = null, string search = "")
+        public async Task<IActionResult> GetAll(int pageNumber, int pageSize, string orderBy = null, string orderDirection = null, string search = "")
         {
             var redirectsPaged = _redirectsService.GetAll(pageNumber, pageSize, orderBy, orderDirection, search);
-            var viewModels = redirectsPaged.Items.Select(it =>
+            var viewModels = await Task.WhenAll(redirectsPaged.Items.Select(async it =>
             {
                 var domain = it.Domain?.Name ?? it.CustomDomain;
-                if (domain?.StartsWith("/") is true)
+                if (domain?.StartsWith('/') is true)
                     domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{domain}";
+
+                var isoCode = it.NewNodeCultureId.HasValue ? (await _languageService.GetAllAsync()).FirstOrDefault(l => l.Id == it.NewNodeCultureId.Value)?.IsoCode : null;
                 return new RedirectListViewModel
                 {
                     Key = it.Key,
                     IsEnabled = it.IsEnabled,
                     OldUrl = it.OldUrl.IfNullOrWhiteSpace("/"),
-                    NewUrl = it.GetNewUrl(),
+                    NewUrl = it.GetNewUrl(isoCode),
                     Domain = domain,
                     StatusCode = it.RedirectCode,
                     LastUpdated = it.LastUpdated.ToShortDateString()
                 };
-            });
+            }));
             return Ok(new PagedViewModel<RedirectListViewModel>() { Total = redirectsPaged.TotalItems, Items = viewModels });
         }
 
         [HttpGet("redirect")]
         [ProducesResponseType(typeof(RedirectViewModel), 200)]
-        public IActionResult Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var redirect = _redirectsService.Get(id);
             if (redirect is null)
                 return NotFound();
-            return Ok(new RedirectViewModel(redirect));
+            var isoCode = redirect.NewNodeCultureId.HasValue ? (await _languageService.GetAllAsync()).FirstOrDefault(l => l.Id == redirect.NewNodeCultureId.Value)?.IsoCode : null;
+            return Ok(new RedirectViewModel(redirect, isoCode));
         }
 
         [HttpGet("domains")]
@@ -167,7 +170,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 
         [HttpGet("export")]
         [Produces("text/csv; charset=utf-8")]
-        public IActionResult Export()
+        public async Task<IActionResult> Export()
         {
             // Get all redirects (use a very large page size to ensure all records are returned)
             var redirectsPaged = _redirectsService.GetAll(1, int.MaxValue);
@@ -189,8 +192,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
                         return escaped;
                     }
 
+                    var isoCode = it.NewNodeCultureId.HasValue ? (await _languageService.GetAllAsync()).FirstOrDefault(l => l.Id == it.NewNodeCultureId.Value)?.IsoCode : null;
                     var from = EscapeCsv(it.OldUrl);
-                    var to = EscapeCsv(it.GetNewUrl());
+                    var to = EscapeCsv(it.GetNewUrl(isoCode));
                     var status = it.RedirectCode;
                     var enabled = it.IsEnabled ? "true" : "false";
 

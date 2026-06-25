@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Services;
@@ -16,12 +17,13 @@ namespace SeoToolkit.Umbraco.Redirects.Core.BackgroundTasks
         private readonly IRedirectsBloomFilter _redirectsBloomFilter;
         private readonly IRuntimeState _runtimeState;
 
-        public RebuildBloomFilterTask(IRuntimeState runtimeState, ILogger<RebuildBloomFilterTask> logger, IRedirectsBloomFilter redirectsBloomFilter) : base(logger, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(0))
+        public RebuildBloomFilterTask(IRuntimeState runtimeState, ILogger<RebuildBloomFilterTask> logger, IRedirectsBloomFilter redirectsBloomFilter, TimeProvider timeProvider) : base(logger, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(0), timeProvider)
         {
             _redirectsBloomFilter = redirectsBloomFilter;
             _runtimeState = runtimeState;
         }
-        public override Task PerformExecuteAsync(object state)
+
+        public override Task PerformExecuteAsync(CancellationToken cancellationToken)
         {
             if (_runtimeState.Level != RuntimeLevel.Run)
                 return Task.CompletedTask;

@@ -6,6 +6,7 @@ using SeoToolkit.Umbraco.AI.Core.Models;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.AI.Core.Services
 {
@@ -24,15 +25,18 @@ namespace SeoToolkit.Umbraco.AI.Core.Services
 
         private readonly IAIGenerationService _generationService;
         private readonly IMetaFieldsService _metaFieldsService;
+        private readonly IDocumentUrlService _documentUrlService;
         private readonly ILogger<MetaFieldsAIService> _logger;
 
         public MetaFieldsAIService(
             IAIGenerationService generationService,
             IMetaFieldsService metaFieldsService,
+            IDocumentUrlService documentUrlService,
             ILogger<MetaFieldsAIService> logger)
         {
             _generationService = generationService;
             _metaFieldsService = metaFieldsService;
+            _documentUrlService = documentUrlService;
             _logger = logger;
         }
 
@@ -45,7 +49,7 @@ namespace SeoToolkit.Umbraco.AI.Core.Services
 
             var contextBuilder = new StringBuilder();
             contextBuilder.AppendLine($"Page name: {content.Name}");
-            contextBuilder.AppendLine($"URL segment: {content.UrlSegment}");
+            contextBuilder.AppendLine($"URL segment: {_documentUrlService.GetUrlSegment(content.Key, culture, true)}");
             contextBuilder.AppendLine($"Content type: {content.ContentType.Alias}");
 
             var currentTitle = existingMeta?.Title;
