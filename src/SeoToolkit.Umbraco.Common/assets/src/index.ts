@@ -1,6 +1,7 @@
 import { UmbEntryPointOnInit } from '@umbraco-cms/backoffice/extension-api';
 import { seoToolkitSection } from './sections/seoToolkitSection';
 import { welcomeDashboardManifest } from './dashboards/welcome/welcomeDashboardManifest';
+import { seoDashboardManifest } from './dashboards/seo/seoDashboardManifest';
 import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
 import { seoToolkitSidebar } from './sidebar/seoToolkitSidebar';
 import { TreeManifests } from './trees/seoToolkitTree';
@@ -35,6 +36,7 @@ export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
 
     extensionRegistry.register(seoToolkitSection);
     extensionRegistry.register(welcomeDashboardManifest);
+    extensionRegistry.register(seoDashboardManifest);
     extensionRegistry.register(seoToolkitSidebar);
     extensionRegistry.register(manifest);
 
