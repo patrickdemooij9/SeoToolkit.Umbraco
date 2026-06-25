@@ -8,5 +8,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.MetaFieldsValue.ViewModels
         public SeoSettingsFieldViewModel[] Fields { get; set; }
         public SeoFieldGroupViewModel[] Groups { get; set; }
         public FieldPreviewerViewModel[] Previewers { get; set; }
+        public bool SeoEnabled { get; set; }
     }
 }

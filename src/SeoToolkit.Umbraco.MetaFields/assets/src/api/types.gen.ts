@@ -111,6 +111,7 @@ export type MetaFieldsSettingsViewModel = {
     fields?: Array<SeoSettingsFieldViewModel> | null;
     groups?: Array<SeoFieldGroupViewModel> | null;
     previewers?: Array<FieldPreviewerViewModel> | null;
+    seoEnabled: boolean;
 };
 
 export type PagedRedirectListModel = {

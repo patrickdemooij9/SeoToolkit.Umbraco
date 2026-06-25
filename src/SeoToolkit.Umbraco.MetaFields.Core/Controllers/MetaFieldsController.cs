@@ -79,7 +79,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
             var metaTags = content is null ? _seoService.GetEmpty() : _seoService.Get(content, false);
             if (metaTags is null)
-                return Ok(new MetaFieldsSettingsViewModel());
+                return Ok(new MetaFieldsSettingsViewModel() { SeoEnabled = false });
 
             var userValues = content is null ? new Dictionary<string, object>() : _seoValueService.GetUserValues(content.Key);
 
@@ -112,7 +112,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                         EditConfig = key.EditEditor.Config
                     };
                 }).ToArray(),
-                Previewers = new[] { new FieldPreviewerViewModel(new MetaFieldsPreviewer()), new FieldPreviewerViewModel(new SocialMediaPreviewer()) }
+                Previewers = new[] { new FieldPreviewerViewModel(new MetaFieldsPreviewer()), new FieldPreviewerViewModel(new SocialMediaPreviewer()) },
+                SeoEnabled = true
             });
         }
 

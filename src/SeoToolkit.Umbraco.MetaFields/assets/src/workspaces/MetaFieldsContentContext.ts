@@ -66,6 +66,7 @@ export default class MetaFieldsContentContext
             this.save(culture);
           }
 
+          console.log("Updating lastUpdated for culture:", culture, "from", currentDate, "to", variant.updateDate);
           this.#getVariant(culture).lastUpdated = variant.updateDate;
         });
       });
@@ -84,6 +85,9 @@ export default class MetaFieldsContentContext
       }
 
       this.#repository.get(node!, variant).then((resp) => {
+        const data = resp.data;
+        if (data.seoEnabled === false) return;
+
         this.#getVariant(variant).model.update(resp.data);
       });
     });
@@ -95,7 +99,9 @@ export default class MetaFieldsContentContext
     }
     this.#variants[variant] = {
       variant,
-      model: new UmbObjectState<MetaFieldsSettingsViewModel>({}),
+      model: new UmbObjectState<MetaFieldsSettingsViewModel>({
+        seoEnabled: false,
+      }),
     };
     return this.#variants[variant];
   }
@@ -106,6 +112,8 @@ export default class MetaFieldsContentContext
 
   save(culture: string) {
     const model = this.#variants[culture]!.model.getValue();
+    if (model.seoEnabled === false) return;
+
     const userValues: { [key: string]: unknown } = {};
     model.fields?.forEach((field) => {
       if (field.userValue) {
