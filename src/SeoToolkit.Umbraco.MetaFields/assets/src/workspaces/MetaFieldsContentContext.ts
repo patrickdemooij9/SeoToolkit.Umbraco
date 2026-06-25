@@ -53,7 +53,7 @@ export default class MetaFieldsContentContext
         this.#loadDataFromRepository(this.#nodeId);
       });
       this.observe(instance?.unique, (unique) => {
-        this.#cultures.forEach((culture) => {
+        Object.keys(this.#variants).forEach((culture) => {
           delete this.#variants[culture];
         });
         this.#loadDataFromRepository(unique?.toString());
@@ -66,7 +66,6 @@ export default class MetaFieldsContentContext
             this.save(culture);
           }
 
-          console.log("Updating lastUpdated for culture:", culture, "from", currentDate, "to", variant.updateDate);
           this.#getVariant(culture).lastUpdated = variant.updateDate;
         });
       });
