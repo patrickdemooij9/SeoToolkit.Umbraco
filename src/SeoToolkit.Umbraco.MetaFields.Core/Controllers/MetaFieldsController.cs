@@ -99,6 +99,14 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                     {
                         suggestions = seoFieldSuggestions.Suggestions.Select(it => it.ToViewModel()).ToArray();
                     }
+                    var editConfig = key.EditEditor.Config != null
+                        ? new Dictionary<string, object>(key.EditEditor.Config)
+                        : new Dictionary<string, object>();
+                    editConfig["nodeGuid"] = nodeGuid.ToString();
+                    editConfig["ownerType"] = "content";
+                    if (content?.ContentType?.Key is Guid docTypeKey)
+                        editConfig["documentTypeKey"] = docTypeKey.ToString();
+
                     return new SeoSettingsFieldViewModel
                     {
                         Alias = key.Alias,
@@ -107,9 +115,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                         GroupAlias = key.GroupAlias,
                         Suggestions = suggestions,
                         Value = humanReadableValue?.ToString(),
+                        AllowFallback = key.AllowDocumentTypeFallback,
                         UserValue = userValue,
                         EditView = key.EditEditor.View,
-                        EditConfig = key.EditEditor.Config
+                        EditConfig = editConfig
                     };
                 }).ToArray(),
                 Previewers = new[] { new FieldPreviewerViewModel(new MetaFieldsPreviewer()), new FieldPreviewerViewModel(new SocialMediaPreviewer()) },

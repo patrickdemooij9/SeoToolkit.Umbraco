@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
@@ -6,9 +6,11 @@ using SeoToolkit.Umbraco.Common.Core.Interfaces;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Api;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldGroups;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoSettings;
 using SeoToolkit.Umbraco.MetaFields.Core.Components;
@@ -22,9 +24,11 @@ using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Providers;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.DocumentTypeSettingsRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepository;
+using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SchemaEntryRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.MetaFieldsService;
+using SeoToolkit.Umbraco.MetaFields.Core.Services.SchemaEntryService;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService;
 using System;
 using System.Linq;
@@ -61,6 +65,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.Services.AddTransient(typeof(IMetaTagsProvider), typeof(DefaultMetaTagsProvider));
             builder.Services.AddTransient(typeof(IMetaFieldsValueService), typeof(MetaFieldsValueService));
             builder.Services.AddTransient(typeof(IMetaFieldsValueRepository), typeof(MetaFieldsDatabaseRepository));
+            builder.Services.AddTransient(typeof(ISchemaEntryRepository), typeof(SchemaEntryDatabaseRepository));
+            builder.Services.AddTransient(typeof(ISchemaEntryService), typeof(SchemaEntryService));
+            builder.Services.AddTransient<UmbracoMediaConverter>();
 
             if (!disabledModules.Contains(DisabledModuleConstant.Api))
             {
@@ -89,6 +96,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
 
             builder.WithCollectionBuilder<SeoConverterCollectionBuilder>()
                 .Add<TextSeoValueConverter>()
+                .Add<SchemaSeoValueConverter>()
                 .Add<PublishedContentSeoValueConverter>()
                 .Add<FieldSeoValueConverter>()
                 .Add<MultiplePublishedContentSeoValueConverter>()
@@ -104,7 +112,13 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<PageNameFieldProvider>();
 
             builder.WithCollectionBuilder<SeoKeyValueSettingCollectionBuilder>()
-                .Add<PageTitleTemplateSetting>();
+                .Add<PageTitleTemplateSetting>()
+                .Add<WebsiteSchemaSetting>();
+
+            builder.WithCollectionBuilder<SchemaResolverCollectionBuilder>()
+                .Add<OrganizationSchemaResolver>()
+                .Add<PostalAddressSchemaResolver>()
+                .Add<RawJsonSchemaResolver>();
         }
     }
 }
