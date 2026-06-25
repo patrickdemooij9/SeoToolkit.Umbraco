@@ -53,7 +53,7 @@ export default class MetaFieldsContentContext
         this.#loadDataFromRepository(this.#nodeId);
       });
       this.observe(instance?.unique, (unique) => {
-        this.#cultures.forEach((culture) => {
+        Object.keys(this.#variants).forEach((culture) => {
           delete this.#variants[culture];
         });
         this.#loadDataFromRepository(unique?.toString());
@@ -84,6 +84,9 @@ export default class MetaFieldsContentContext
       }
 
       this.#repository.get(node!, variant).then((resp) => {
+        const data = resp.data;
+        if (data.seoEnabled === false) return;
+
         this.#getVariant(variant).model.update(resp.data);
       });
     });
@@ -95,7 +98,9 @@ export default class MetaFieldsContentContext
     }
     this.#variants[variant] = {
       variant,
-      model: new UmbObjectState<MetaFieldsSettingsViewModel>({}),
+      model: new UmbObjectState<MetaFieldsSettingsViewModel>({
+        seoEnabled: false,
+      }),
     };
     return this.#variants[variant];
   }
@@ -106,6 +111,8 @@ export default class MetaFieldsContentContext
 
   save(culture: string) {
     const model = this.#variants[culture]!.model.getValue();
+    if (model.seoEnabled === false) return;
+
     const userValues: { [key: string]: unknown } = {};
     model.fields?.forEach((field) => {
       if (field.userValue) {
