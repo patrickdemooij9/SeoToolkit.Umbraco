@@ -59,6 +59,8 @@ export default class MetaFieldsContentContext
         this.#loadDataFromRepository(unique?.toString());
       });
       this.observe(instance?.data, (item) => {
+        if (item?.isTrashed) return;
+        
         item?.variants.forEach((variant) => {
           const culture = variant.culture ?? "invariant";
           const currentDate = this.#getVariant(culture).lastUpdated;

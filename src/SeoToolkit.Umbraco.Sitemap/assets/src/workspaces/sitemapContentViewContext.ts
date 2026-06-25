@@ -47,6 +47,8 @@ export default class SitemapContentViewContext
       });
 
       this.observe(instance.data, (item) => {
+        if (item?.isTrashed) return;
+
         let shouldSave = false;
         item?.variants.forEach((variant) => {
           const updateDate = variant.updateDate;
