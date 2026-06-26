@@ -14,6 +14,7 @@ import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import RedirectRepository from "../dataLayer/RedirectRepository";
 
 interface ImportFileType {
+  id: number;
   label: string;
   extensions: string[];
 }
@@ -44,10 +45,12 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
   @state()
   _fileTypes: Array<ImportFileType> = [
     {
+      id: 0,
       label: "CSV",
       extensions: ["csv"],
     },
     {
+      id: 1,
       label: "Excel",
       extensions: ["xls", "xlsx"],
     },
@@ -124,7 +127,7 @@ export default class ImportRedirectsModal extends UmbModalBaseElement {
   async #handleValidate() {
     const state = this.State.getValue();
     const result = await this.#redirectRepository.verifyImport(
-      state.fileType!.label,
+      state.fileType!.id,
       state.file!.temporaryFileId!,
       state.domain
     );

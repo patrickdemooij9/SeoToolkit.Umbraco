@@ -19,6 +19,7 @@ import {
   SEOTOOLKIT_SETTINGS_ENTITY,
 } from "../constants/seoToolkitConstants";
 import { SeoToolkitTreeItemModel } from "../trees/types";
+import { UmbOffsetPaginationRequestModel } from "@umbraco-cms/backoffice/utils";
 
 export class seoToolkitTreeSource extends UmbTreeServerDataSourceBase<
   SeoToolkitTreeItemApiModel,
@@ -35,24 +36,25 @@ export class seoToolkitTreeSource extends UmbTreeServerDataSourceBase<
 }
 
 const getRootItems = async (_args: UmbTreeRootItemsRequestArgs) => {
-  const data = await BackofficeSeoToolkit.getUmbracoSeoToolkitTreeInfoRoot();
-  return data;
+  const { data, ...rest } = await BackofficeSeoToolkit.getUmbracoSeoToolkitTreeInfoRoot();
+  return { data: { ...data, total: data.total as number, totalBefore: 0, totalAfter: 0 }, ...rest };
 };
 
 const getChildrenOf = async (args: UmbTreeChildrenOfRequestArgs) => {
   if (args.parent.unique === null) {
     return getRootItems(args);
   } else {
+    const { skip = 0, take = 100 } = (args.paging ?? {}) as UmbOffsetPaginationRequestModel;
     // eslint-disable-next-line local-rules/no-direct-api-import
-    const data =
+    const { data, ...rest } =
       await BackofficeSeoToolkit.getUmbracoSeoToolkitTreeInfoChildren({
         query: {
           parentUnique: args.parent.unique,
-          skip: args.skip,
-          take: args.take,
+          skip: skip,
+          take: take,
         },
       });
-    return data;
+    return { data: { ...data, total: data.total as number, totalBefore: skip, totalAfter: Math.max(data.total as number - skip - data.items.length, 0) }, ...rest };
   }
 };
 

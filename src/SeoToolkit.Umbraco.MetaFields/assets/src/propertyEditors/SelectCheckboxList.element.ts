@@ -7,9 +7,9 @@ import {
 import { html, LitElement } from "lit";
 import {
   UmbPropertyEditorConfigCollection,
-  UmbPropertyEditorUiElement,
-  UmbPropertyValueChangeEvent,
+  UmbPropertyEditorUiElement
 } from "@umbraco-cms/backoffice/property-editor";
+import { UmbChangeEvent } from "@umbraco-cms/backoffice/event";
 
 interface CheckboxItem {
   label: string;
@@ -81,7 +81,7 @@ export default class SelectCheckboxList
     }
 
     this.value = newValue;
-    this.dispatchEvent(new UmbPropertyValueChangeEvent());
+    this.dispatchEvent(new UmbChangeEvent());
   }
 
   override render() {

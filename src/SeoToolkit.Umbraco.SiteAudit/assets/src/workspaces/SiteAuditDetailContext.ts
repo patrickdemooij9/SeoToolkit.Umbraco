@@ -67,14 +67,14 @@ export default class SiteAuditDetailContext
   }
 
   deleteAudit() {
-    this.#repository.delete([this.#model.getValue().id]).then(() => {
+    this.#repository.delete([this.#model.getValue().id as number]).then(() => {
       location.href =
         "/umbraco/section/SeoToolkit/workspace/seoToolkit-siteAudit/overview";
     });
   }
 
   stopAudit() {
-    this.#repository.stopAudit(this.#model.getValue().id);
+    this.#repository.stopAudit(this.#model.getValue().id as number);
   }
 
   override destroy() {

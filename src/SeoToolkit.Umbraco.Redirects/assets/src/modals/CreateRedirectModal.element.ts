@@ -19,6 +19,7 @@ import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import {
   UUIInputEvent,
   UUISelectEvent,
+  UUISelectOption,
 } from "@umbraco-cms/backoffice/external/uui";
 import { RedirectLinkType } from "../types/RedirectLinkType";
 import { RedirectSelectLinkData } from "../models/RedirectSelectLinkData";
@@ -35,7 +36,7 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
   #umbMediaUrlRepository = new UmbMediaUrlRepository(this);
   #documentUrlRepository = new UmbDocumentUrlRepository(this);
   #redirectRepository = new RedirectRepository(this);
-  #options: Array<Option> = [];
+  #options: Array<UUISelectOption> = [];
   #oldUrl?: string;
 
   @state()

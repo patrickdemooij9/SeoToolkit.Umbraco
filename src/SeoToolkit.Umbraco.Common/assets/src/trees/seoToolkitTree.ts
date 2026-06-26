@@ -1,7 +1,6 @@
 import { seoToolkitTreeRepository } from "../repositories/seoToolkitTreeRepository";
-import { seoToolkitTreeStore } from "../stores/seoToolkitTreeStore";
 import { SEOTOOLKIT_MODULE_ENTITY, SEOTOOLKIT_TREE_ROOT } from "../constants/seoToolkitConstants";
-import { ManifestRepository, ManifestTreeStore } from "@umbraco-cms/backoffice/extension-registry";
+import { ManifestRepository } from "@umbraco-cms/backoffice/extension-registry";
 import { ManifestMenu } from "@umbraco-cms/backoffice/menu";
 import { ManifestMenuItemTreeKind, ManifestTree, ManifestTreeItem } from "@umbraco-cms/backoffice/tree";
 import { ManifestWorkspace, ManifestWorkspaceContext, ManifestWorkspaceView } from "@umbraco-cms/backoffice/workspace";
@@ -12,13 +11,6 @@ export const treeRepository: ManifestRepository = {
     name: 'SeoToolkit Tree repository',
     api: seoToolkitTreeRepository
 }
-
-export const treeStore: ManifestTreeStore = {
-    type: 'treeStore',
-    alias: "SeoToolkitTreeStore",
-    name: 'SeoToolkit tree Store',
-    api: seoToolkitTreeStore
-};
 
 export const tree: ManifestTree = {
     type: 'tree',
@@ -105,4 +97,4 @@ export const infoWorkspaceView: ManifestWorkspaceView =
     ],
 };
 
-export const TreeManifests = [treeRepository, treeStore, tree, treeItem, menu, menuItem, workspaceManifest, workspaceContext, infoWorkspaceView];
+export const TreeManifests = [treeRepository, tree, treeItem, menu, menuItem, workspaceManifest, workspaceContext, infoWorkspaceView];

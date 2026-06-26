@@ -16,8 +16,8 @@ import { createExtensionElement } from "@umbraco-cms/backoffice/extension-api";
 import {
   ManifestPropertyEditorUi,
   UmbPropertyEditorConfigCollection,
-  UmbPropertyValueChangeEvent,
 } from "@umbraco-cms/backoffice/property-editor";
+import { UmbChangeEvent } from "@umbraco-cms/backoffice/event";
 
 @customElement("st-metafield-contentfield")
 export class MetaFieldsContentField extends UmbElementMixin(LitElement) {
@@ -75,7 +75,7 @@ export class MetaFieldsContentField extends UmbElementMixin(LitElement) {
           ...this._field!,
           userValue: this._element!.value,
         };
-        this.dispatchEvent(new UmbPropertyValueChangeEvent());
+        this.dispatchEvent(new UmbChangeEvent());
       });
 
       this._element.value = this.field?.userValue;

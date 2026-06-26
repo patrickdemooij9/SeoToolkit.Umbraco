@@ -63,7 +63,7 @@ export default class SiteAuditContentViewElement extends UmbElementMixin(
             <div class="content-check">
               <div class="content" style="align-items: center;gap: 12px">
                 ${when(this.#hasRan, () =>
-                  (this.getItemCheck(item.id)?.hasError ?? false)
+                  (this.getItemCheck(item.id as number)?.hasError ?? false)
                     ? html`<uui-icon
                         name="icon-delete"
                         style="color: var(--uui-color-danger);"
@@ -79,10 +79,10 @@ export default class SiteAuditContentViewElement extends UmbElementMixin(
                 </div>
               </div>
               ${when(
-                this.#hasRan && this.getItemCheck(item.id)?.errorMessage,
+                this.#hasRan && this.getItemCheck(item.id as number)?.errorMessage,
                 () => html`
                   <div class="error-message">
-                    ${this.getItemCheck(item.id)?.errorMessage}
+                    ${this.getItemCheck(item.id as number)?.errorMessage}
                   </div>
                 `,
               )}

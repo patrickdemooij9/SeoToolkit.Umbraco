@@ -78,7 +78,7 @@ export class RedirectSource {
   }
 
   async verifyImport(
-    fileExtension: string,
+    fileExtension: number,
     tempFileId: string,
     domain?: number
   ) {
@@ -86,7 +86,7 @@ export class RedirectSource {
       this.#host,
       BackofficeSeoToolkitRedirects.postUmbracoSeoToolkitRedirectsValidate({
         query: {
-          fileExtension: fileExtension! as ImportRedirectsFileExtension,
+          fileExtension: fileExtension as ImportRedirectsFileExtension,
           domain: domain!,
           tempFileId: tempFileId!,
         },

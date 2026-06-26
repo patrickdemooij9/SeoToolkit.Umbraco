@@ -14,9 +14,9 @@ import { ItemGroupPickerConfig } from "../popups/ItemGroupPicker.element";
 import { UmbSorterController } from "@umbraco-cms/backoffice/sorter";
 import {
   UmbPropertyEditorConfigCollection,
-  UmbPropertyEditorUiElement,
-  UmbPropertyValueChangeEvent,
+  UmbPropertyEditorUiElement
 } from "@umbraco-cms/backoffice/property-editor";
+import { UmbChangeEvent } from "@umbraco-cms/backoffice/event";
 
 interface FieldData {
   name: string;
@@ -80,7 +80,7 @@ export default class FieldsEditorPropertyEditor
         this.value = model.model.map(
           (value) => fields.find((field) => field.value === value)!,
         );
-        this.dispatchEvent(new UmbPropertyValueChangeEvent());
+        this.dispatchEvent(new UmbChangeEvent());
       },
     });
 
@@ -188,7 +188,7 @@ export default class FieldsEditorPropertyEditor
         .map((value) => fields.find((field) => field.value === value)!)
         .filter((value) => value !== undefined);
       this.#sorter.setModel(this.value.map((item) => item.value));
-      this.dispatchEvent(new UmbPropertyValueChangeEvent());
+      this.dispatchEvent(new UmbChangeEvent());
     });
   }
 
