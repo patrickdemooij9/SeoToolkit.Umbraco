@@ -5,37 +5,19 @@
     var homePage = Model.AncestorOrSelf<ContentModels.Home>();
 }
 
+<!-- Footer-->
 <footer>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-                @if (homePage.SocialLinks != null && homePage.SocialLinks.Any())
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                @if (homePage.SocialIconLinks != null && homePage.SocialIconLinks.Any())
                 {
                     <ul class="list-inline text-center">
-                        @foreach (var item in homePage.SocialLinks)
-                        {
-                            string iconClass = "";
-                            if(!string.IsNullOrWhiteSpace(item.Icon))
-                            {
-                                var iconValues = item.Icon.ToLower().Split('-');
-                                iconClass = iconValues[1].Trim().Replace("brands", "fab")
-                                    .Replace("solid", "fas")
-                                    .Replace("regular", "far") + " fa-" + iconValues[0].Trim().Replace(" ", "-");
-                            }
-
-                            <li class="list-inline-item">
-                                <a href="@item.Link.Url" target="@item.Link.Target" title="@item.Link.Name">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="@iconClass fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                        }
+                        @Html.GetBlockListHtml(homePage.SocialIconLinks)
                     </ul>
                 }
-                <p class="copyright text-muted">@Umbraco.GetDictionaryValue("Footer.CopyrightTitle") &copy; @DateTime.Now.Year @Umbraco.GetDictionaryValue("Footer.CopyrightStatement")</p>
-                <p class="copyright text-muted">Theme by <a href="https://startbootstrap.com/" target="_blank">Start Bootstrap</a>, implemented in Umbraco by Paul Seal from <a href="https://codeshare.co.uk" target="_blank">codeshare.co.uk</a></p>
+                <p class="small text-center text-muted fst-italic">@Umbraco.GetDictionaryValue("Footer.CopyrightTitle") &copy; @DateTime.Now.Year @Umbraco.GetDictionaryValue("Footer.CopyrightStatement")</p>
+                <p class="small text-center text-muted fst-italic">Theme by <a href="https://startbootstrap.com/" target="_blank" rel="noopener">Start Bootstrap</a>, implemented in Umbraco by Paul Seal from <a href="https://codeshare.co.uk" target="_blank" rel="noopener">codeshare.co.uk</a></p>
             </div>
         </div>
     </div>
