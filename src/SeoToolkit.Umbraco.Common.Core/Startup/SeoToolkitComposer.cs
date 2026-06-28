@@ -12,7 +12,7 @@ using SeoToolkit.Umbraco.Common.Core.Services.SeoKeyValueService;
 using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Common.Core.Startup;
-using SeoToolkit.Umbraco.Common.Core.Swagger;
+using Umbraco.Cms.Api.Common.OpenApi;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DeliveryApi;
 using Umbraco.Cms.Core.DependencyInjection;
@@ -30,7 +30,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
 
             var settings = section?.Get<GlobalAppSettingsModel>();
 
-            builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
+            builder.AddBackOfficeOpenApiDocument("seoToolkit", document => document.WithTitle("SeoToolkit"));
 
             builder.Services.AddSingleton<ModuleCollection>();
 

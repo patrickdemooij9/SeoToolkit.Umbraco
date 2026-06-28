@@ -1,10 +1,12 @@
 ﻿using Umbraco.Cms.Core.Composing;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Enums;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Components
 {
-    internal class DisableModuleComponent : IComponent
+    internal class DisableModuleComponent : IAsyncComponent
     {
         private readonly ModuleCollection _collection;
 
@@ -13,13 +15,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Components
             _collection = collection;
         }
 
-        public void Initialize()
+        public Task InitializeAsync(bool isRestarting, CancellationToken cancellationToken)
         {
             _collection.SetStatus("sitemap", SeoToolkitModuleStatus.Disabled);
+            return Task.CompletedTask;
         }
-
-        public void Terminate()
+        public Task TerminateAsync(bool isRestarting, CancellationToken cancellationToken)
         {
+            return Task.CompletedTask;
         }
     }
 }

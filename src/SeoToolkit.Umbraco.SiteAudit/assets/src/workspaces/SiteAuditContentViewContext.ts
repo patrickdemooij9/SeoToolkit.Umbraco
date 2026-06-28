@@ -67,7 +67,7 @@ export default class SiteAuditContentViewContext
 
     this.#contentCheckResults.setValue(
       pageCrawled.results?.map<SiteAuditContentCheckResult>((check) => ({
-        checkId: check.checkId,
+        checkId: check.checkId as number,
         hasError: true,
         errorMessage: check.message ?? "",
       })) ?? [],

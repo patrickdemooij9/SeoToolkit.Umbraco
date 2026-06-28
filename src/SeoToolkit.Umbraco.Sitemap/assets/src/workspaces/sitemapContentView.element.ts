@@ -65,7 +65,7 @@ export default class SitemapContentViewElement extends UmbElementMixin(
         if (!item) return;
 
         this._inheritedChangeFrequency = item.inheritedChangeFrequency;
-        this._inheritedPriority = item.inheritedPriority;
+        this._inheritedPriority = item.inheritedPriority as number | null;
 
         const changeFrequence =
           item.changeFrequency == null

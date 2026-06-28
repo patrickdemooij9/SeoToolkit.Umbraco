@@ -1,9 +1,8 @@
 import { defaultPlugins, defineConfig } from '@hey-api/openapi-ts';
 
 export default defineConfig({
-	input: 'http://localhost:57441/umbraco/swagger/seoToolkit/swagger.json',
+	input: 'http://localhost:57441/umbraco/openapi/seoToolkit.json',
 	output: {
-		format: 'prettier',
 		path: 'src/api',
 	},
 	plugins: [
@@ -16,11 +15,12 @@ export default defineConfig({
 		{
 			name: '@hey-api/typescript',
 			enums: 'typescript',
-			readOnlyWriteOnlyBehavior: 'off',
 		},
 		{
 			name: '@hey-api/sdk',
-			asClass: true,
+			operations: {
+				strategy: 'byTags'
+			}
 		},
 	],
 });

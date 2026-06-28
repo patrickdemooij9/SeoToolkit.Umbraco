@@ -31,7 +31,7 @@ export default class ScriptManagerModuleContext extends UmbDefaultCollectionCont
         if (!resp.data) return;
 
         const scripts: Array<ScriptSortItem> = [...resp.data]
-            .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+            .sort((a, b) => (a.sortOrder as number ?? 0) - (b.sortOrder as number ?? 0))
             .map(s => ({ id: s.id, name: s.name ?? '' }));
 
         this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (instance) => {

@@ -1,9 +1,11 @@
 ﻿using Umbraco.Cms.Core.Composing;
 using SeoToolkit.Umbraco.Common.Core.Collections;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Components
 {
-    internal class EnableModuleComponent : IComponent
+    internal class EnableModuleComponent : IAsyncComponent
     {
         private readonly ModuleCollection _collection;
 
@@ -12,13 +14,15 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Components
             _collection = collection;
         }
 
-        public void Initialize()
+        public Task InitializeAsync(bool isRestarting, CancellationToken cancellationToken)
         {
             _collection.EnableModule("redirects");
+            return Task.CompletedTask;
         }
 
-        public void Terminate()
+        public Task TerminateAsync(bool isRestarting, CancellationToken cancellationToken)
         {
+            return Task.CompletedTask;
         }
     }
 }

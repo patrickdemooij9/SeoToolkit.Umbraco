@@ -89,7 +89,7 @@ export default class SiteAuditDetailMain
               );
               if (!existingCheckResult) {
                 this._checkResults.push({
-                  id: result.checkId,
+                  id: result.checkId as number,
                   count: 1,
                   isError: result.isError,
                   isWarning: result.isWarning,
@@ -230,7 +230,7 @@ export default class SiteAuditDetailMain
               </div>
             </div>
           </div>
-          <uui-progress-bar .progress=${this._model?.progress ?? 0}>
+          <uui-progress-bar .progress=${this._model?.progress as number ?? 0}>
           </uui-progress-bar>
 
           <h4>Status: ${this._model?.status}</h4>

@@ -30,7 +30,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
 
         public string LastUpdated { get; set; }
 
-        public RedirectViewModel(Redirect redirect)
+        public RedirectViewModel(Redirect redirect, string isoCode)
         {
             Id = redirect.Id;
             Key = redirect.Key;
@@ -41,7 +41,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
             OldUrl = redirect.OldUrl.IfNullOrWhiteSpace("/");
             NewUrl = redirect.NewUrl;
             NewNodeId = redirect.NewNode?.Key;
-            NewCultureIso = redirect.NewNodeCulture?.IsoCode;
+            NewCultureIso = isoCode;
             RedirectCode = redirect.RedirectCode;
             LastUpdated = redirect.LastUpdated.ToString("G");
         }

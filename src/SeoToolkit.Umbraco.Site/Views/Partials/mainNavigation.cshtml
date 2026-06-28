@@ -17,7 +17,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="@homePage.Url()">@homePage.Name</a>
                 </li>
-                @foreach (var page in homePage.Children.Where(x => !x.Value<bool>("umbracoNaviHide")))
+                @foreach (var page in homePage.Children().Where(x => !x.Value<bool>("umbracoNaviHide")))
                 {
                     <li class="nav-item">
                         <a class="nav-link" href="@(page.Url())">@(page.Name)</a>

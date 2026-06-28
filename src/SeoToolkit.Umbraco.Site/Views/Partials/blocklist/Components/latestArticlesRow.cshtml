@@ -26,7 +26,7 @@
     <div class="col-md-12 column">
         @foreach (var article in pageOfArticles)
         {
-            var author = article.GetAuthor(Umbraco);
+            var author = article.Author;
             bool.TryParse(article.Value<string>("showFullArticleOnListPage", fallback: Fallback.ToAncestors), out var showFullArticleOnListPage);
 
             <div class="post-preview">
@@ -73,4 +73,3 @@
         }
     </div>
 </div>
-

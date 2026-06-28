@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
@@ -35,7 +36,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
         private readonly IMetaFieldsValueService _seoValueService;
         private readonly ILogger<MetaFieldsController> _logger;
         private readonly IVariationContextAccessor _variationContextAccessor;
-        private readonly ILocalizationService _localizationService;
+        private readonly ILanguageService _languageService;
         private readonly ISeoSettingsService _seoSettingsService;
         private readonly SeoGroupCollection _groupCollection;
         private readonly ISettingsService<MetaFieldsConfigModel> _settingsService;
@@ -48,7 +49,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             IMetaFieldsValueService seoValueService,
             ILogger<MetaFieldsController> logger,
             IVariationContextAccessor variationContextAccessor,
-            ILocalizationService localizationService,
+            ILanguageService languageService,
             ISeoSettingsService seoSettingsService,
             SeoGroupCollection groupCollection,
             ISettingsService<MetaFieldsConfigModel> settingsService,
@@ -61,7 +62,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             _seoValueService = seoValueService;
             _logger = logger;
             _variationContextAccessor = variationContextAccessor;
-            _localizationService = localizationService;
+            _languageService = languageService;
             _seoSettingsService = seoSettingsService;
             _groupCollection = groupCollection;
             _settingsService = settingsService;
@@ -70,9 +71,9 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
         [HttpGet("metaFields")]
         [ProducesResponseType(typeof(MetaFieldsSettingsViewModel), 200)]
-        public IActionResult Get(Guid nodeGuid, string culture)
+        public async Task<IActionResult> Get(Guid nodeGuid, string culture)
         {
-            EnsureLanguage(culture);
+            await EnsureLanguage(culture);
 
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             var content = ctx.UmbracoContext.Content.GetById(true, nodeGuid);
@@ -119,7 +120,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
         [HttpPost("metaFields")]
         [ProducesResponseType(typeof(MetaFieldsSettingsPostViewModel), 200)]
-        public IActionResult Save(MetaFieldsSettingsPostViewModel postModel)
+        public async Task<IActionResult> Save(MetaFieldsSettingsPostViewModel postModel)
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             var content = ctx.UmbracoContext.Content.GetById(true, postModel.NodeId);
@@ -132,7 +133,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             if (!_seoSettingsService.IsEnabled(contentType))
                 return BadRequest("SEO settings are turned off for this node!");
 
-            EnsureLanguage(postModel.Culture);
+            await EnsureLanguage(postModel.Culture);
             var isDirty = false;
             var values = new Dictionary<string, object>();
             foreach (var seoField in _fieldCollection)
@@ -153,7 +154,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 _seoValueService.AddValues(content.Key, values);
             }
 
-            return Get(postModel.NodeId, postModel.Culture);
+            return await Get(postModel.NodeId, postModel.Culture);
         }
 
         [HttpGet("imagePreview")]
@@ -170,12 +171,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             return Ok(converter.Convert(mediaItem));
         }
 
-        private void EnsureLanguage(string culture)
+        private async Task EnsureLanguage(string culture)
         {
             if (!string.IsNullOrWhiteSpace(culture) && culture != "invariant")
                 _variationContextAccessor.VariationContext = new VariationContext(culture);
             else
-                _variationContextAccessor.VariationContext = new VariationContext(_localizationService.GetDefaultLanguageIsoCode());
+                _variationContextAccessor.VariationContext = new VariationContext(await _languageService.GetDefaultIsoCodeAsync());
         }
     }
 }

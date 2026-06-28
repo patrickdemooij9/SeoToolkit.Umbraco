@@ -1,6 +1,6 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
-import { BackofficeSeoToolkitNotFoundService } from "../api";
+import { BackofficeSeoToolkitNotFound } from "../api";
 
 export default class NotFoundSource {
   #host: UmbControllerHost;
@@ -12,7 +12,7 @@ export default class NotFoundSource {
   async get(domainId?: string) {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitNotFoundService.getUmbracoSeoToolkitNotFoundNotFound({
+      BackofficeSeoToolkitNotFound.getUmbracoSeoToolkitNotFoundNotFound({
         query: { domainId }
       })
     );
@@ -21,7 +21,7 @@ export default class NotFoundSource {
   async save(data?: string, domainId?: string) {
     return await tryExecute(
       this.#host,
-      BackofficeSeoToolkitNotFoundService.postUmbracoSeoToolkitNotFoundNotFound({
+      BackofficeSeoToolkitNotFound.postUmbracoSeoToolkitNotFoundNotFound({
         query: {
           data,
           domainId

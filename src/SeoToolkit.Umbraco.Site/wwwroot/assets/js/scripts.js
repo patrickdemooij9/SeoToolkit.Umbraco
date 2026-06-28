@@ -18,9 +18,24 @@ function initYouTubeVideos() {
             , n = document.createElement("div");
         n.setAttribute("data-id", i);
         var o = document.createElement("img");
-        o.src = "//i.ytimg.com/vi/ID/maxresdefault.jpg".replace("ID", i),
-            o.alt = "YouTube Video Thumbnail Image",
-            n.appendChild(o);
+        var thumbSizes = ["maxresdefault", "sddefault", "hqdefault", "mqdefault", "default"];
+        let thumbIndex = 0;
+        let videoId = i;
+        o.src = "//i.ytimg.com/vi/" + videoId + "/" + thumbSizes[0] + ".jpg";
+        o.alt = "YouTube Video Thumbnail Image";
+        o.onload = function () {
+            if (this.naturalWidth <= 120 && thumbIndex + 1 < thumbSizes.length) {
+                thumbIndex++;
+                this.src = "//i.ytimg.com/vi/" + videoId + "/" + thumbSizes[thumbIndex] + ".jpg";
+            }
+        };
+        o.onerror = function () {
+            if (thumbIndex + 1 < thumbSizes.length) {
+                thumbIndex++;
+                this.src = "//i.ytimg.com/vi/" + videoId + "/" + thumbSizes[thumbIndex] + ".jpg";
+            }
+        };
+        n.appendChild(o);
         var s = document.createElement("div");
         s.setAttribute("class", "play"),
             n.appendChild(s),

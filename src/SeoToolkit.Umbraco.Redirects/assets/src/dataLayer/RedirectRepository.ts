@@ -38,12 +38,13 @@ export default class RedirectRepository
     );
     const result: UmbRepositoryResponse<UmbPagedModel<RedirectOverviewItem>> = {
       data: {
-        total: data.data!.total,
+        total: data.data!.total as number,
         items: data.data!.items.map((item) => ({
           id: item.key,
           unique: item.key.toString(),
           entityType: "st-redirect",
           ...item,
+          statusCode: item.statusCode as number,
         })),
       },
     };
@@ -57,6 +58,9 @@ export default class RedirectRepository
       unique: data.id.toString(),
       entityType: "st-redirect",
       ...data,
+      id: data.id as number,
+      domain: data.domain as number | null,
+      redirectCode: data.redirectCode as number,
     };
   }
 
@@ -73,7 +77,7 @@ export default class RedirectRepository
   }
 
   async verifyImport(
-    fileExtension: string,
+    fileExtension: number,
     tempFileId: string,
     domain?: number
   ) {

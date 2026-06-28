@@ -80,7 +80,7 @@ export default class RobotsTxtModuleContext
     if (response?.data?.errors) {
       this.#validationErrors.setValue(
         response.data.errors.map<ValidationError>((err) => ({
-          lineNumber: err.lineNumber,
+          lineNumber: err.lineNumber as number,
           error: err.error!,
         }))
       );

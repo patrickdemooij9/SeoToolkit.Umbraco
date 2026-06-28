@@ -1,9 +1,11 @@
 ﻿﻿using SeoToolkit.Umbraco.Common.Core.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using Umbraco.Cms.Core.Composing;
 
 namespace SeoToolkit.Umbraco.NotFound.Core.Components;
 
-internal class EnableModuleComponent : IComponent
+internal class EnableModuleComponent : IAsyncComponent
 {
     private readonly ModuleCollection _collection;
 
@@ -12,11 +14,14 @@ internal class EnableModuleComponent : IComponent
         _collection = collection;
     }
 
-    public void Initialize()
+    public Task InitializeAsync(bool isRestarting, CancellationToken cancellationToken)
     {
         _collection.EnableModule(NotFoundConstants.NotFoundModuleAlias);
-
+        return Task.CompletedTask;
     }
 
-    public void Terminate() { }
+    public Task TerminateAsync(bool isRestarting, CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
 }

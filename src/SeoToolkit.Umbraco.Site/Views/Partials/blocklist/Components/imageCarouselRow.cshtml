@@ -13,14 +13,11 @@
     {
         spacingClasses = Clean.Core.Helpers.SpacingHelper.GetSpacingClasses(spacing.PaddingTop, spacing.PaddingBottom, spacing.PaddingLeft, spacing.PaddingRight, spacing.MarginTop, spacing.MarginBottom, spacing.MarginLeft, spacing.MarginRight);
     }
-
-    SmidgeHelper.RequiresCss("~/clean-assets/css/swiffy-slider.min.css");
-    SmidgeHelper.RequiresJs("~/clean-assets/js/swiffy-slider.min.js");
 }
 
 <div class="row clearfix @(spacingClasses)">
     <div class="col-md-12 column">
-        <div class="swiffy-slider slider-item-reveal slider-nav-round slider-item-ratio slider-item-ratio-21x9" id="slider-@(row.Key.ToString())">
+        <div class="swiffy-slider slider-item-reveal slider-nav-round slider-item-ratio slider-item-ratio-4x3" id="slider-@(row.Key.ToString())">
             <ul class="slider-container">
                 @foreach (var item in row.Images)
                 {
