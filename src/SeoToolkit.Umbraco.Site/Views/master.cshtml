@@ -7,7 +7,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    @await Html.PartialAsync("~/Views/Partials/metaData.cshtml")
     <!-- Font Awesome icons (free version)-->
     <script defer src="https://use.fontawesome.com/releases/v6.5.1/js/all.js" crossorigin="anonymous" integrity="sha384-3ve3u7etWcm2heCe4TswfZSAYSg2jR/EJxRHuKM5foOiKS8IJL/xRlvmjCaHELBz"></script>
     <!-- Fonts - Using jsDelivr CDN with Subresource Integrity for security -->
@@ -19,8 +18,12 @@
     <link href="/assets/css/vs2015.css" rel="stylesheet" asp-append-version="true" />
     <link href="/assets/css/highlightjs-copy.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="/assets/css/swiffy-slider.min.css" rel="stylesheet" asp-append-version="true" />
+
+    <meta-fields></meta-fields>
+    <render-script position="HeadBottom"></render-script>
 </head>
 <body>
+    <render-script position="BodyTop"></render-script>
     @await Html.CachedPartialAsync("~/Views/Partials/mainNavigation.cshtml", model: Model, cacheTimeout: TimeSpan.FromMinutes(60))
     @RenderBody()
     @await Html.CachedPartialAsync("~/Views/Partials/footer.cshtml", model: Model, cacheTimeout: TimeSpan.FromMinutes(60))
@@ -33,5 +36,6 @@
     <script src="/assets/js/highlightjs-copy.min.js" asp-append-version="true"></script>
     <script src="/assets/js/initHighlight.js" asp-append-version="true"></script>
     <script src="/assets/js/swiffy-slider.min.js" asp-append-version="true"></script>
+    <render-script position="BodyBottom"></render-script>
 </body>
 </html>
