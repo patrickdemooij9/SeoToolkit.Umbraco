@@ -17,6 +17,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Models.Database
 
         [Column("BaseUrl")]
         [NullSetting(NullSetting = NullSettings.Null)]
+        [Length(500)]
         public string? BaseUrl { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
         {
             if (TableExists("SeoToolkitDomainCollections") && !ColumnExists("SeoToolkitDomainCollections", "BaseUrl"))
             {
-                Alter.Table("SeoToolkitDomainCollections").AddColumn("BaseUrl").AsString().Nullable().Do();
+                Alter.Table("SeoToolkitDomainCollections").AddColumn("BaseUrl").AsString(500).Nullable().Do();
             }
             return Task.CompletedTask;
         }
