@@ -1,4 +1,5 @@
-﻿using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+﻿using SeoToolkit.Umbraco.Common.Core.Helpers;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Sitemap.Core.Collections;
 using SeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
@@ -32,6 +33,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
         private List<string> _validAlternateCultures;
         private Dictionary<Guid, SitemapPageSettings> _pageTypeSettings; //Used to cache the types for the generation
         private Dictionary<Guid, SitemapContentSettings> _contentSettings; //Used to cache the per-content overrides for the generation
+        private string? _baseUrl;
 
         private XNamespace _namespace => XNamespace.Get("http://www.sitemaps.org/schemas/sitemap/0.9");
         private XNamespace _xHtmlNamespace = XNamespace.Get("http://www.w3.org/1999/xhtml");
@@ -66,6 +68,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                 _contentSettings[contentSetting.NodeKey] = contentSetting;
             }
 
+            _baseUrl = options.BaseUrl;
             _validAlternateCultures = new List<string>();
             var rootNamespace = new XElement(_namespace + "urlset", _settings.ShowAlternatePages ? new XAttribute(XNamespace.Xmlns + "xhtml", _xHtmlNamespace) : null);
 
@@ -133,7 +136,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                 var hideFromSitemap = contentOverride?.ExcludeFromSitemap == true
                     || (docTypeSettings?.HideFromSitemap ?? false);
 
-                var item = new SitemapNodeItem(content.Url(culture, UrlMode.Absolute))
+                var item = new SitemapNodeItem(BaseUrlHelper.ApplyBaseUrl(content.Url(culture, UrlMode.Absolute), _baseUrl))
                 {
                     HideFromSitemap = hideFromSitemap,
                     Content = content
@@ -175,7 +178,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                         {
                             foreach (var additionalCulture in cultures)
                             {
-                                item.AlternatePages.Add(new SitemapNodeAlternatePage(content.Url(additionalCulture.Key, UrlMode.Absolute), additionalCulture.Key));
+                                item.AlternatePages.Add(new SitemapNodeAlternatePage(BaseUrlHelper.ApplyBaseUrl(content.Url(additionalCulture.Key, UrlMode.Absolute), _baseUrl), additionalCulture.Key));
                             }
                         }
                     }

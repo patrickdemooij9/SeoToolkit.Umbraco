@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
@@ -36,7 +37,8 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
 
         public async Task Invoke(HttpContext context,
             ISitemapGenerator sitemapGenerator,
-            ISitemapIndexGenerator sitemapIndexGenerator)
+            ISitemapIndexGenerator sitemapIndexGenerator,
+            ISeoDomainResolver seoDomainResolver)
         {
             if (context.Request.Path.Value?.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase) != true)
             {
@@ -45,6 +47,8 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
             }
 
             var settings = _sitemapConfigurationService.GetSettings();
+            var seoDomain = seoDomainResolver.ResolveDomain();
+            var baseUrl = seoDomain?.BaseUrl;
 
             XDocument doc = null;
             using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
@@ -53,7 +57,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                 var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
                 if (domains.Length == 0 || settings.StructureMode == StructureMode.OnlyRoot)
                 {
-                    doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture));
+                    doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture, baseUrl));
                 }
                 else
                 {
@@ -76,7 +80,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                             return;
                         }
 
-                        doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(rootNode, domain.Culture));
+                        doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(rootNode, domain.Culture, baseUrl));
                     }
                 }
             }
