@@ -126,6 +126,33 @@ namespace SeoToolkit.Tests.Deploy
         }
 
         [Test]
+        public async Task Process_Pass7_PruneMissing_EmptyArtifact_ClearsAllTargetValues()
+        {
+            var nodeKey = Guid.NewGuid();
+            SetUpContent(nodeKey);
+            _valueRepository.Setup(r => r.GetAllValues(nodeKey)).Returns(new Dictionary<string, Dictionary<string, object>>
+            {
+                [""] = new() { ["title"] = "Old", ["description"] = "Old" },
+                ["da-DK"] = new() { ["title"] = "Gammel" },
+            });
+
+            var connector = new SeoToolkitMetaFieldsValueServiceConnector(
+                _valueRepository.Object, _contentService.Object, DefaultSettings(pruneMissing: true));
+
+            var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, nodeKey);
+            // An artifact carrying no values is a "clear everything for this node" instruction.
+            var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.MetaFieldsValueArtifact(udi) { Name = "Some Page" };
+
+            var state = await connector.ProcessInitAsync(artifact, Mock.Of<IDeployContext>());
+            await connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 7);
+
+            _valueRepository.Verify(r => r.Delete(nodeKey, "title", ""), Times.Once);
+            _valueRepository.Verify(r => r.Delete(nodeKey, "description", ""), Times.Once);
+            _valueRepository.Verify(r => r.Delete(nodeKey, "title", "da-DK"), Times.Once);
+            _valueRepository.Verify(r => r.Add(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object>()), Times.Never);
+        }
+
+        [Test]
         public async Task Process_Pass7_OverwriteOnly_DoesNotDeleteTargetValues()
         {
             var nodeKey = Guid.NewGuid();

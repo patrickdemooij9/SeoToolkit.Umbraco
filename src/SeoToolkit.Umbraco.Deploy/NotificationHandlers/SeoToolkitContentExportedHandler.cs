@@ -10,8 +10,9 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
 {
     /// <summary>
     /// When a document artifact is about to be exported (transfer, restore source, queue for
-    /// transfer), appends the node's SeoToolkit per-node artifacts as Exist dependencies so they
-    /// are pulled into the same deployment automatically.
+    /// transfer), appends the node's SeoToolkit per-node artifacts as Match dependencies so they
+    /// are pulled into the same deployment automatically and re-transferred whenever the SEO data
+    /// changes.
     /// </summary>
     /// <remarks>
     /// Uses <see cref="ArtifactExportingNotification"/> (fires before the artifact is serialized) —
@@ -33,16 +34,21 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
 
             var extraDependencies = new List<ArtifactDependency>();
 
+            // Match (not Exist) mode so Deploy compares the per-node artifact's checksum and
+            // re-transfers it when the SEO data changes — Exist would only ensure a value row is
+            // present on the target and would leave stale values behind after the first transfer.
             if (valueRepository.HasAnyValues(documentUdi.Guid))
             {
                 extraDependencies.Add(new SeoToolkitArtifactDependency(
-                    new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, documentUdi.Guid)));
+                    new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, documentUdi.Guid),
+                    ArtifactDependencyMode.Match));
             }
 
             if (sitemapService.GetContentSettings(documentUdi.Guid) is not null)
             {
                 extraDependencies.Add(new SeoToolkitArtifactDependency(
-                    new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.SitemapContent, documentUdi.Guid)));
+                    new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.SitemapContent, documentUdi.Guid),
+                    ArtifactDependencyMode.Match));
             }
 
             if (extraDependencies.Count > 0)

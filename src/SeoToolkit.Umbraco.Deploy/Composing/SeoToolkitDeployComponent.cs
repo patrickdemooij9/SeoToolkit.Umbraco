@@ -34,15 +34,22 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
 
         private void InitializeDiskRefreshers()
         {
-            // Settings-like entity types are written to disk as .uda artifacts. Per-node types
-            // (MetaFieldsValue / SitemapContent) are content-like data and are deliberately NOT
-            // disk-registered — they ride along with content transfers instead.
+            // Settings-like entity types are written to disk as .uda artifacts and refreshed on
+            // save/delete (see the disk-refresher handlers).
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.SeoSetting);
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsSetting);
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.SitemapPageType);
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.Script);
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.DomainCollection);
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.KeyValues);
+
+            // Per-node types (MetaFieldsValue / SitemapContent) are content-like: they are NOT
+            // queue-for-transfer entities and have no save/delete disk refreshers of their own.
+            // They are still registered as disk entity types so their .uda travels with the node
+            // when the node is exported — the content export handler attaches them as (Match)
+            // dependencies, and Deploy writes/reads their artifact on a per-node basis.
+            diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue);
+            diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.SitemapContent);
         }
 
         private void InitializeIntegratedEntities()

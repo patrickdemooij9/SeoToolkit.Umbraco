@@ -6,6 +6,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
 using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.Deploy;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Deploy.Core.Events;
 using Umbraco.Deploy.Infrastructure.Artifacts.Content;
@@ -42,13 +43,18 @@ namespace SeoToolkit.Tests.Deploy
 
             await _handler.HandleAsync(Notify(artifact), CancellationToken.None);
 
-            var dependencyUdis = artifact.Dependencies.Select(d => d.Udi).ToArray();
+            var seoDependencies = artifact.Dependencies
+                .Where(d => d.Udi.EntityType.StartsWith("seotoolkit-"))
+                .ToArray();
             Assert.Multiple(() =>
             {
-                Assert.That(dependencyUdis,
+                Assert.That(seoDependencies.Select(d => d.Udi),
                     Does.Contain(new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, nodeKey)));
-                Assert.That(dependencyUdis,
+                Assert.That(seoDependencies.Select(d => d.Udi),
                     Does.Contain(new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.SitemapContent, nodeKey)));
+                // Match mode so changed SEO data is re-transferred, not just ensured-present.
+                Assert.That(seoDependencies.Select(d => d.Mode),
+                    Has.All.EqualTo(ArtifactDependencyMode.Match));
             });
         }
 

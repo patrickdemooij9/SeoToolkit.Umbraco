@@ -5,7 +5,7 @@ Umbraco Deploy connectors for [SeoToolkit](https://github.com/patrickdemooij9/Se
 ## What it does
 
 - **Settings** are written to `.uda` disk artifacts whenever you save them in the backoffice, and can be transferred/restored on demand like any other Deploy entity.
-- **Per-node SEO data** (MetaFields values and sitemap content overrides) automatically **rides along** with content transfers and restores — when you transfer a document, its SeoToolkit data comes with it. No separate action required.
+- **Per-node SEO data** (MetaFields values and sitemap content overrides) automatically **rides along** with content transfers and restores — when you transfer or export a document, its SeoToolkit data comes with it (written per-node as its own `.uda` and attached to the document as a dependency). No separate action required.
 
 ## Entity types
 
@@ -57,6 +57,8 @@ By default a restore is **overwrite-only**: it adds and updates the data in the 
 - **Missing target entities are skipped, not failed.** If a document type, node, or script definition referenced by an artifact doesn't exist in the target environment, that artifact is logged and skipped — a deploy never fails wholesale because of a missing SeoToolkit dependency.
 - **Domain names, not ids.** Domain collections store Umbraco domain **names** in the artifact (portable), and resolve them back to local domain ids on import. Names that don't exist in the target are silently dropped, since environment hostnames are expected to differ.
 - **Key/values deploy by overwrite.** Transferred keys overwrite the matching keys in the target; keys that exist only in the target are never deleted — unless `PruneMissing` is enabled (see Configuration), which makes restores convergent across key/values, meta field values, and meta field settings.
+- **Per-node SEO data updates travel.** The per-node MetaFields values and sitemap overrides are attached to the document as `Match` dependencies, so Deploy compares their checksum and re-transfers them whenever the values change — not just on the first transfer.
+- **Clearing per-node MetaFields values.** Removing *some* of a node's values converges on the target when `PruneMissing` is enabled (the removed values are deleted on restore). Removing *all* of a node's values is a boundary case: with no values left there is nothing to attach to the document export, so the target keeps the last-transferred values until the node is transferred again while it still carries at least one value, or they are cleared manually. (Sitemap overrides are a single record and are always replaced wholesale, so they have no such boundary.)
 - **appsettings-based SeoToolkit config** (e.g. `SeoToolkit:Global`) is intentionally out of scope — deploy that through your normal configuration transformation pipeline.
 
 ## Known follow-ups
