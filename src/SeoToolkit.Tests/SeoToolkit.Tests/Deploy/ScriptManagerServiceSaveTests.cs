@@ -7,6 +7,7 @@ using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 using SeoToolkit.Umbraco.ScriptManager.Core.Services;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Sync;
 
 namespace SeoToolkit.Tests.Deploy
@@ -22,7 +23,7 @@ namespace SeoToolkit.Tests.Deploy
             var distributedCache = new DistributedCache(Mock.Of<IServerMessenger>(), cacheRefreshers);
             var settings = new Mock<ISettingsService<ScriptManagerConfigModel>>();
 
-            return new ScriptManagerService(repository.Object, AppCaches.NoCache, distributedCache, settings.Object);
+            return new ScriptManagerService(repository.Object, AppCaches.NoCache, distributedCache, settings.Object, Mock.Of<IEventAggregator>());
         }
 
         [Test]

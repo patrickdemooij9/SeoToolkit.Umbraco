@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Events;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces;
 using SeoToolkit.Umbraco.ScriptManager.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.ScriptManager.Core.Models.Business;
 using SeoToolkit.Umbraco.ScriptManager.Core.Caching;
 using SeoToolkit.Umbraco.ScriptManager.Core.Constants;
+using SeoToolkit.Umbraco.ScriptManager.Core.Notifications;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.ScriptManager.Core.Config.Models;
 using System;
@@ -19,16 +21,19 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
         private readonly DistributedCache _distributedCache;
         private readonly ISettingsService<ScriptManagerConfigModel> _settings;
         private readonly AppCaches _cache;
+        private readonly IEventAggregator _eventAggregator;
 
         public ScriptManagerService(IScriptRepository scriptRepository,
             AppCaches appCaches,
             DistributedCache distributedCache,
-            ISettingsService<ScriptManagerConfigModel> settings)
+            ISettingsService<ScriptManagerConfigModel> settings,
+            IEventAggregator eventAggregator)
         {
             _scriptRepository = scriptRepository;
             _distributedCache = distributedCache;
             _settings = settings;
             _cache = appCaches;
+            _eventAggregator = eventAggregator;
         }
 
         public Script Save(Script script)
@@ -55,6 +60,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
             }
 
             ClearCache();
+            _eventAggregator.Publish(new ScriptSavedNotification(script));
             return script;
         }
 
@@ -66,6 +72,10 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
                 if (script is null) continue;
 
                 _scriptRepository.Delete(script);
+                if (script.Key is not null)
+                {
+                    _eventAggregator.Publish(new ScriptDeletedNotification(script.Key.Value));
+                }
             }
 
             ClearCache();
@@ -79,6 +89,10 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
                 if (script is null) continue;
 
                 _scriptRepository.Delete(script);
+                if (script.Key is not null)
+                {
+                    _eventAggregator.Publish(new ScriptDeletedNotification(script.Key.Value));
+                }
             }
 
             ClearCache();

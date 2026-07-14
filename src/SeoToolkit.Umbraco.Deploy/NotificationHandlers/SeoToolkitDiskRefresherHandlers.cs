@@ -1,0 +1,118 @@
+using SeoToolkit.Umbraco.Common.Core.Notifications;
+using SeoToolkit.Umbraco.MetaFields.Core.Notifications;
+using SeoToolkit.Umbraco.ScriptManager.Core.Notifications;
+using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
+using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.Deploy;
+using Umbraco.Cms.Core.Events;
+using Umbraco.Deploy.Core.Connectors.ServiceConnectors;
+using Umbraco.Deploy.Infrastructure.Artifacts;
+using Umbraco.Deploy.Infrastructure.Disk;
+
+namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
+{
+    /// <summary>
+    /// Shared logic for the disk (.uda) refresher handlers: resolve the matching service
+    /// connector, build the artifact and write it to (or delete it from) disk.
+    /// </summary>
+    public abstract class SeoToolkitDiskRefresherHandlerBase(
+        IDiskEntityService diskEntityService,
+        IServiceConnectorFactory serviceConnectorFactory)
+    {
+        protected async Task WriteArtifactAsync(string entityType, Guid id, CancellationToken cancellationToken)
+        {
+            var udi = new GuidUdi(entityType, id);
+            IServiceConnector connector = serviceConnectorFactory.GetConnector(udi.EntityType);
+            IArtifact? artifact = await connector.GetArtifactAsync(udi, PassThroughCache.Instance, cancellationToken)
+                .ConfigureAwait(false);
+            if (artifact is not null)
+            {
+                await diskEntityService.WriteArtifactsAsync([artifact], cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        protected void DeleteArtifact(string entityType, Guid id)
+        {
+            var udi = new GuidUdi(entityType, id);
+            diskEntityService.DeleteArtifacts([new DeletionArtifact(udi)]);
+        }
+
+        /// <summary>Minimal artifact used only to carry a UDI to <see cref="IDiskEntityService.DeleteArtifacts"/>.</summary>
+        private sealed class DeletionArtifact(GuidUdi udi) : DeployArtifactBase<GuidUdi>(udi);
+    }
+
+    public class SeoSettingDiskRefresherHandler(
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+          INotificationAsyncHandler<SeoSettingSavedNotification>
+    {
+        public Task HandleAsync(SeoSettingSavedNotification notification, CancellationToken cancellationToken)
+            => WriteArtifactAsync(SeoToolkitDeployConstants.UdiEntityType.SeoSetting, notification.ContentTypeGuid, cancellationToken);
+    }
+
+    public class MetaFieldsSettingDiskRefresherHandler(
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+          INotificationAsyncHandler<MetaFieldSettingsSavedNotification>
+    {
+        public Task HandleAsync(MetaFieldSettingsSavedNotification notification, CancellationToken cancellationToken)
+            => WriteArtifactAsync(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsSetting, notification.Model.Content.Key, cancellationToken);
+    }
+
+    public class SitemapPageTypeDiskRefresherHandler(
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+          INotificationAsyncHandler<SitemapPageSettingsSavedNotification>
+    {
+        public Task HandleAsync(SitemapPageSettingsSavedNotification notification, CancellationToken cancellationToken)
+            => WriteArtifactAsync(SeoToolkitDeployConstants.UdiEntityType.SitemapPageType, notification.Model.ContentTypeGuid, cancellationToken);
+    }
+
+    public class ScriptDiskRefresherHandler(
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+          INotificationAsyncHandler<ScriptSavedNotification>,
+          INotificationAsyncHandler<ScriptDeletedNotification>
+    {
+        public Task HandleAsync(ScriptSavedNotification notification, CancellationToken cancellationToken)
+            => notification.Script.Key is null
+                ? Task.CompletedTask
+                : WriteArtifactAsync(SeoToolkitDeployConstants.UdiEntityType.Script, notification.Script.Key.Value, cancellationToken);
+
+        public Task HandleAsync(ScriptDeletedNotification notification, CancellationToken cancellationToken)
+        {
+            DeleteArtifact(SeoToolkitDeployConstants.UdiEntityType.Script, notification.Key);
+            return Task.CompletedTask;
+        }
+    }
+
+    public class DomainCollectionDiskRefresherHandler(
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+          INotificationAsyncHandler<SeoDomainCollectionSavedNotification>,
+          INotificationAsyncHandler<SeoDomainCollectionDeletedNotification>
+    {
+        public Task HandleAsync(SeoDomainCollectionSavedNotification notification, CancellationToken cancellationToken)
+            => notification.Collection.Id is null
+                ? Task.CompletedTask
+                : WriteArtifactAsync(SeoToolkitDeployConstants.UdiEntityType.DomainCollection, notification.Collection.Id.Value, cancellationToken);
+
+        public Task HandleAsync(SeoDomainCollectionDeletedNotification notification, CancellationToken cancellationToken)
+        {
+            DeleteArtifact(SeoToolkitDeployConstants.UdiEntityType.DomainCollection, notification.Id);
+            return Task.CompletedTask;
+        }
+    }
+
+    public class KeyValuesDiskRefresherHandler(
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+          INotificationAsyncHandler<SeoKeyValueSavedNotification>
+    {
+        public Task HandleAsync(SeoKeyValueSavedNotification notification, CancellationToken cancellationToken)
+            => WriteArtifactAsync(
+                SeoToolkitDeployConstants.UdiEntityType.KeyValues,
+                notification.DomainCollectionId ?? SeoToolkitDeployConstants.RootKeyValuesGuid,
+                cancellationToken);
+    }
+}
