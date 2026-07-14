@@ -1,15 +1,19 @@
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Deploy.Infrastructure.Disk;
+using Umbraco.Deploy.Infrastructure.Transfer;
 
 namespace SeoToolkit.Umbraco.Deploy.Composing
 {
-    public class SeoToolkitDeployComponent(IDiskEntityService diskEntityService) : IAsyncComponent
+    public class SeoToolkitDeployComponent(
+        IDiskEntityService diskEntityService,
+        ITransferEntityService transferEntityService) : IAsyncComponent
     {
         public Task InitializeAsync(bool isRestarting, CancellationToken cancellationToken)
         {
             RegisterUdiTypes();
             InitializeDiskRefreshers();
+            InitializeIntegratedEntities();
             return Task.CompletedTask;
         }
 
@@ -39,6 +43,33 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.Script);
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.DomainCollection);
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.KeyValues);
+        }
+
+        private void InitializeIntegratedEntities()
+        {
+            // Register the settings-like entity types for queue-for-transfer, restore and
+            // import/export. Per-node types are pulled in as content dependencies instead.
+            foreach (var entityType in new[]
+            {
+                SeoToolkitDeployConstants.UdiEntityType.SeoSetting,
+                SeoToolkitDeployConstants.UdiEntityType.MetaFieldsSetting,
+                SeoToolkitDeployConstants.UdiEntityType.SitemapPageType,
+                SeoToolkitDeployConstants.UdiEntityType.Script,
+                SeoToolkitDeployConstants.UdiEntityType.DomainCollection,
+                SeoToolkitDeployConstants.UdiEntityType.KeyValues,
+            })
+            {
+                transferEntityService.RegisterTransferEntityType(
+                    entityType,
+                    new DeployRegisteredEntityTypeDetailOptions
+                    {
+                        SupportsQueueForTransfer = true,
+                        SupportsRestore = true,
+                        PermittedToRestore = true,
+                        SupportsPartialRestore = true,
+                        SupportsImportExport = true,
+                    });
+            }
         }
     }
 }
