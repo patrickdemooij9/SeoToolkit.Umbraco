@@ -108,12 +108,20 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
                 return Task.CompletedTask;
             }
 
-            var dto = state.Entity ?? new DocumentTypeSettingsDto { Content = contentType };
+            // Convergent restore rebuilds the DTO from the artifact so removed fields and
+            // inheritance are dropped; overwrite-only merges into the existing target DTO.
+            var dto = PruneMissing
+                ? new DocumentTypeSettingsDto { Content = contentType }
+                : state.Entity ?? new DocumentTypeSettingsDto { Content = contentType };
             dto.Content = contentType;
 
             if (state.Artifact.InheritanceUdi is not null)
             {
                 dto.Inheritance = contentTypeService.Get(state.Artifact.InheritanceUdi.Guid);
+            }
+            else if (PruneMissing)
+            {
+                dto.Inheritance = null;
             }
 
             foreach (var field in state.Artifact.Fields)

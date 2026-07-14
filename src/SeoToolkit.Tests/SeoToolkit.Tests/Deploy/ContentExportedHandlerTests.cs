@@ -23,8 +23,7 @@ namespace SeoToolkit.Tests.Deploy
         public void SetUp()
         {
             _valueRepository = new Mock<IMetaFieldsValueRepository>();
-            _valueRepository.Setup(r => r.GetAllValues(It.IsAny<Guid>()))
-                .Returns(new Dictionary<string, Dictionary<string, object>>());
+            _valueRepository.Setup(r => r.HasAnyValues(It.IsAny<Guid>())).Returns(false);
             _sitemapService = new Mock<ISitemapService>();
             _handler = new SeoToolkitContentExportedHandler(_valueRepository.Object, _sitemapService.Object);
         }
@@ -37,10 +36,7 @@ namespace SeoToolkit.Tests.Deploy
         {
             var nodeKey = Guid.NewGuid();
             var artifact = new DocumentArtifact(new GuidUdi(Constants.UdiEntityType.Document, nodeKey)) { Name = "Page" };
-            _valueRepository.Setup(r => r.GetAllValues(nodeKey)).Returns(new Dictionary<string, Dictionary<string, object>>
-            {
-                [""] = new() { ["title"] = "x" },
-            });
+            _valueRepository.Setup(r => r.HasAnyValues(nodeKey)).Returns(true);
             _sitemapService.Setup(s => s.GetContentSettings(nodeKey))
                 .Returns(new SitemapContentSettings { NodeKey = nodeKey, ExcludeFromSitemap = true });
 
@@ -61,7 +57,7 @@ namespace SeoToolkit.Tests.Deploy
         {
             var nodeKey = Guid.NewGuid();
             var artifact = new DocumentArtifact(new GuidUdi(Constants.UdiEntityType.Document, nodeKey)) { Name = "Page" };
-            _valueRepository.Setup(r => r.GetAllValues(nodeKey)).Returns([]);
+            _valueRepository.Setup(r => r.HasAnyValues(nodeKey)).Returns(false);
             _sitemapService.Setup(s => s.GetContentSettings(nodeKey)).Returns((SitemapContentSettings?)null);
 
             await _handler.HandleAsync(Notify(artifact), CancellationToken.None);

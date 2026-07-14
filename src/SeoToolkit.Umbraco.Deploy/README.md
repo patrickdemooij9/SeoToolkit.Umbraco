@@ -40,11 +40,23 @@ Disable individual entity types from all deploy operations via the `SeoToolkit:D
 
 A disabled connector produces no artifacts and skips processing.
 
+By default a restore is **overwrite-only**: it adds and updates the data in the artifact but never deletes target-only data. Set `PruneMissing` to `true` to make restores **convergent** — target key/values, per-node meta field values, and document-type field settings that are absent from the incoming artifact are then deleted so the target mirrors the source:
+
+```json
+{
+  "SeoToolkit": {
+    "Deploy": {
+      "PruneMissing": true
+    }
+  }
+}
+```
+
 ## Behaviour and caveats
 
 - **Missing target entities are skipped, not failed.** If a document type, node, or script definition referenced by an artifact doesn't exist in the target environment, that artifact is logged and skipped — a deploy never fails wholesale because of a missing SeoToolkit dependency.
 - **Domain names, not ids.** Domain collections store Umbraco domain **names** in the artifact (portable), and resolve them back to local domain ids on import. Names that don't exist in the target are silently dropped, since environment hostnames are expected to differ.
-- **Key/values deploy by overwrite.** Transferred keys overwrite the matching keys in the target; keys that exist only in the target are never deleted.
+- **Key/values deploy by overwrite.** Transferred keys overwrite the matching keys in the target; keys that exist only in the target are never deleted — unless `PruneMissing` is enabled (see Configuration), which makes restores convergent across key/values, meta field values, and meta field settings.
 - **appsettings-based SeoToolkit config** (e.g. `SeoToolkit:Global`) is intentionally out of scope — deploy that through your normal configuration transformation pipeline.
 
 ## Known follow-ups

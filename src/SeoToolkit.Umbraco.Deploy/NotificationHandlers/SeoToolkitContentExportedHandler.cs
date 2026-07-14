@@ -33,7 +33,7 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
 
             var extraDependencies = new List<ArtifactDependency>();
 
-            if (valueRepository.GetAllValues(documentUdi.Guid).Count > 0)
+            if (valueRepository.HasAnyValues(documentUdi.Guid))
             {
                 extraDependencies.Add(new SeoToolkitArtifactDependency(
                     new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, documentUdi.Guid)));

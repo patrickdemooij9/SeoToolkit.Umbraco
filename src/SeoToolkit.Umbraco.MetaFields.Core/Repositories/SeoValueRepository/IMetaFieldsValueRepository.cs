@@ -34,5 +34,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         /// Gets the distinct node keys that have any user values stored.
         /// </summary>
         IEnumerable<Guid> GetAllNodeKeys();
+
+        /// <summary>
+        /// Returns whether the node has any user values stored, without loading them.
+        /// </summary>
+        bool HasAnyValues(Guid nodeId);
     }
 }

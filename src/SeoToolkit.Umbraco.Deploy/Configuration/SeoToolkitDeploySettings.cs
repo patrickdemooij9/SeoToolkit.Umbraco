@@ -10,5 +10,13 @@ namespace SeoToolkit.Umbraco.Deploy.Configuration
         /// deploy operations. Disabled connectors return no artifacts and skip processing.
         /// </summary>
         public string[] DisabledEntityTypes { get; set; } = [];
+
+        /// <summary>
+        /// When <c>true</c>, restores are convergent: target data that is absent from the
+        /// incoming artifact (removed key/values, cleared meta field values, dropped settings)
+        /// is deleted so the target mirrors the source. When <c>false</c> (the default),
+        /// deploys are overwrite-only and never delete target-only data.
+        /// </summary>
+        public bool PruneMissing { get; set; }
     }
 }

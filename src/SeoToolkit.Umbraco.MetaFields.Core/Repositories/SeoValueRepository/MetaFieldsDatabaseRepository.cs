@@ -136,11 +136,20 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         public IEnumerable<Guid> GetAllNodeKeys()
         {
             using var scope = _scopeProvider.CreateScope();
-            return scope.Database
-                .Fetch<MetaFieldsValueEntity>(scope.SqlContext.Sql().SelectAll().From<MetaFieldsValueEntity>())
-                .Select(it => it.NodeKey)
-                .Distinct()
-                .ToArray();
+            var sql = scope.SqlContext.Sql()
+                .SelectDistinct<MetaFieldsValueEntity>(it => it.NodeKey)
+                .From<MetaFieldsValueEntity>();
+            return scope.Database.Fetch<Guid>(sql).ToArray();
+        }
+
+        public bool HasAnyValues(Guid nodeId)
+        {
+            using var scope = _scopeProvider.CreateScope();
+            var sql = scope.SqlContext.Sql()
+                .SelectCount()
+                .From<MetaFieldsValueEntity>()
+                .Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId);
+            return scope.Database.ExecuteScalar<int>(sql) > 0;
         }
 
         // These functions should be removed once all int nodeId usages are gone

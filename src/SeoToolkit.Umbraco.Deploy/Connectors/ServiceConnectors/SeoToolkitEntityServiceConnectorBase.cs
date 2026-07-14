@@ -21,6 +21,8 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
         protected bool IsDisabled
             => settings.CurrentValue.DisabledEntityTypes.Contains(UdiEntityType, StringComparer.OrdinalIgnoreCase);
 
+        protected bool PruneMissing => settings.CurrentValue.PruneMissing;
+
         public abstract string GetEntityName(TEntity entity);
 
         protected abstract GuidUdi GetEntityUdi(TEntity entity);

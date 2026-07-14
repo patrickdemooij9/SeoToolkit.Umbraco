@@ -19,10 +19,10 @@ namespace SeoToolkit.Tests.Deploy
         private Mock<IContentService> _contentService = null!;
         private SeoToolkitMetaFieldsValueServiceConnector _connector = null!;
 
-        private static IOptionsMonitor<SeoToolkitDeploySettings> DefaultSettings()
+        private static IOptionsMonitor<SeoToolkitDeploySettings> DefaultSettings(bool pruneMissing = false)
         {
             var monitor = new Mock<IOptionsMonitor<SeoToolkitDeploySettings>>();
-            monitor.Setup(m => m.CurrentValue).Returns(new SeoToolkitDeploySettings());
+            monitor.Setup(m => m.CurrentValue).Returns(new SeoToolkitDeploySettings { PruneMissing = pruneMissing });
             return monitor.Object;
         }
 
@@ -96,6 +96,56 @@ namespace SeoToolkit.Tests.Deploy
 
             _valueRepository.Verify(r => r.Add(nodeKey, "title", "", "Hello"), Times.Once);
             _valueRepository.Verify(r => r.Update(nodeKey, "title", "da-DK", "Hej"), Times.Once);
+        }
+
+        [Test]
+        public async Task Process_Pass7_PruneMissing_DeletesTargetValuesAbsentFromArtifact()
+        {
+            var nodeKey = Guid.NewGuid();
+            SetUpContent(nodeKey);
+            _valueRepository.Setup(r => r.GetAllValues(nodeKey)).Returns(new Dictionary<string, Dictionary<string, object>>
+            {
+                [""] = new() { ["title"] = "Old title", ["description"] = "Stale" },
+            });
+
+            var connector = new SeoToolkitMetaFieldsValueServiceConnector(
+                _valueRepository.Object, _contentService.Object, DefaultSettings(pruneMissing: true));
+
+            var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, nodeKey);
+            var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.MetaFieldsValueArtifact(udi)
+            {
+                Name = "Some Page",
+                Values = new Dictionary<string, Dictionary<string, string?>> { [""] = new() { ["title"] = "\"New\"" } },
+            };
+
+            var state = await connector.ProcessInitAsync(artifact, Mock.Of<IDeployContext>());
+            await connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 7);
+
+            _valueRepository.Verify(r => r.Delete(nodeKey, "description", ""), Times.Once);
+            _valueRepository.Verify(r => r.Delete(nodeKey, "title", ""), Times.Never);
+        }
+
+        [Test]
+        public async Task Process_Pass7_OverwriteOnly_DoesNotDeleteTargetValues()
+        {
+            var nodeKey = Guid.NewGuid();
+            SetUpContent(nodeKey);
+            _valueRepository.Setup(r => r.GetAllValues(nodeKey)).Returns(new Dictionary<string, Dictionary<string, object>>
+            {
+                [""] = new() { ["title"] = "Old", ["description"] = "Stale" },
+            });
+
+            var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, nodeKey);
+            var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.MetaFieldsValueArtifact(udi)
+            {
+                Name = "Some Page",
+                Values = new Dictionary<string, Dictionary<string, string?>> { [""] = new() { ["title"] = "\"New\"" } },
+            };
+
+            var state = await _connector.ProcessInitAsync(artifact, Mock.Of<IDeployContext>());
+            await _connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 7);
+
+            _valueRepository.Verify(r => r.Delete(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [Test]

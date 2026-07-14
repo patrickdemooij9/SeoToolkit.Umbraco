@@ -19,10 +19,10 @@ namespace SeoToolkit.Tests.Deploy
     [TestFixture]
     public class MetaFieldsSettingConnectorTests
     {
-        private static IOptionsMonitor<SeoToolkitDeploySettings> DefaultSettings()
+        private static IOptionsMonitor<SeoToolkitDeploySettings> DefaultSettings(bool pruneMissing = false)
         {
             var monitor = new Mock<IOptionsMonitor<SeoToolkitDeploySettings>>();
-            monitor.Setup(m => m.CurrentValue).Returns(new SeoToolkitDeploySettings());
+            monitor.Setup(m => m.CurrentValue).Returns(new SeoToolkitDeploySettings { PruneMissing = pruneMissing });
             return monitor.Object;
         }
 
@@ -132,6 +132,68 @@ namespace SeoToolkit.Tests.Deploy
                 Assert.That(saved!.Content.Key, Is.EqualTo(contentTypeKey));
                 Assert.That(saved.Fields, Has.Count.EqualTo(1));
                 Assert.That(saved.Fields.Single().Value.Value, Is.EqualTo("Hello"));
+            });
+        }
+
+        [Test]
+        public async Task Process_Pass2_PruneMissing_DropsTargetOnlyFieldsAndInheritance()
+        {
+            var contentTypeKey = Guid.NewGuid();
+            var contentType = new Mock<IContentType>();
+            contentType.SetupGet(c => c.Key).Returns(contentTypeKey);
+            contentType.SetupGet(c => c.Alias).Returns("article");
+
+            var titleField = MakeField("title");
+            var staleField = MakeField("description");
+
+            // Target already has a "description" field and an inheritance that the artifact omits.
+            var existing = new DocumentTypeSettingsDto
+            {
+                Content = contentType.Object,
+                Inheritance = Mock.Of<IContentType>(),
+                Fields = new Dictionary<ISeoField, DocumentTypeValueDto>
+                {
+                    [staleField.Object] = new DocumentTypeValueDto { Value = "stale" },
+                },
+            };
+
+            var settingsService = new Mock<IMetaFieldsSettingsService>();
+            settingsService.Setup(s => s.Get(contentTypeKey)).Returns(existing);
+            var contentTypeService = new Mock<IContentTypeService>();
+            contentTypeService.Setup(s => s.Get(contentTypeKey)).Returns(contentType.Object);
+            var fieldCollection = new SeoFieldCollection(() => new[] { titleField.Object, staleField.Object });
+
+            var connector = new SeoToolkitMetaFieldsSettingServiceConnector(
+                settingsService.Object, contentTypeService.Object, fieldCollection, DefaultSettings(pruneMissing: true));
+
+            var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsSetting, contentTypeKey);
+            var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.MetaFieldsSettingArtifact(udi)
+            {
+                Name = "Article",
+                Fields =
+                [
+                    new SeoToolkit.Umbraco.Deploy.Artifacts.MetaFieldsSettingField
+                    {
+                        Alias = "title",
+                        UseInheritedValue = false,
+                        Value = "\"Hello\"",
+                    },
+                ],
+            };
+
+            DocumentTypeSettingsDto? saved = null;
+            settingsService.Setup(s => s.Set(It.IsAny<DocumentTypeSettingsDto>()))
+                .Callback<DocumentTypeSettingsDto>(d => saved = d);
+
+            var state = await connector.ProcessInitAsync(artifact, Mock.Of<IDeployContext>());
+            await connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 2);
+
+            Assert.That(saved, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(saved!.Fields, Has.Count.EqualTo(1));
+                Assert.That(saved.Fields.Single().Key.Alias, Is.EqualTo("title"));
+                Assert.That(saved.Inheritance, Is.Null);
             });
         }
     }

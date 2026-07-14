@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
+using SeoToolkit.Umbraco.Common.Core.Models.Business;
+using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 using SeoToolkit.Umbraco.Deploy;
 using SeoToolkit.Umbraco.Deploy.Configuration;
 using SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors;
@@ -44,7 +46,11 @@ namespace SeoToolkit.Tests.Deploy
 
             var definitions = CreateDefinitionCollection(definition.Object);
 
-            var connector = new SeoToolkitScriptServiceConnector(scriptService.Object, definitions, DefaultSettings());
+            var domainsService = new Mock<ISeoDomainsService>();
+            domainsService.Setup(s => s.GetAll()).Returns([]);
+
+            var connector = new SeoToolkitScriptServiceConnector(
+                scriptService.Object, definitions, domainsService.Object, DefaultSettings());
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.Script, scriptKey);
             var artifact = await connector.GetArtifactAsync(udi, Mock.Of<IContextCache>());
@@ -73,6 +79,44 @@ namespace SeoToolkit.Tests.Deploy
                 Assert.That(saved.Definition.Alias, Is.EqualTo("googleAnalytics"));
                 Assert.That(saved.DomainId, Is.EqualTo(domainCollectionId));
             });
+        }
+
+        [Test]
+        public async Task ExpandRange_IncludesDomainScopedScripts()
+        {
+            var globalKey = Guid.NewGuid();
+            var domainScriptKey = Guid.NewGuid();
+            var domainId = Guid.NewGuid();
+            var definition = new Mock<IScriptDefinition>();
+            definition.SetupGet(d => d.Alias).Returns("googleAnalytics");
+
+            var scriptService = new Mock<IScriptManagerService>();
+            scriptService.Setup(s => s.GetAll(null))
+                .Returns([new Script { Key = globalKey, Name = "Global", Definition = definition.Object }]);
+            scriptService.Setup(s => s.GetAll(domainId))
+                .Returns([new Script { Key = domainScriptKey, Name = "Domain", Definition = definition.Object, DomainId = domainId }]);
+
+            var domainsService = new Mock<ISeoDomainsService>();
+            domainsService.Setup(s => s.GetAll())
+                .Returns([new SeoDomainCollection { Id = domainId, Name = "Domain collection" }]);
+
+            var connector = new SeoToolkitScriptServiceConnector(
+                scriptService.Object, CreateDefinitionCollection(definition.Object), domainsService.Object, DefaultSettings());
+
+            var rootUdi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.Script, Guid.Empty);
+            var range = new UdiRange(rootUdi, "this-and-descendants");
+
+            var udis = new List<Guid>();
+            await foreach (var udi in connector.ExpandRangeAsync(range))
+            {
+                if (udi is not null)
+                {
+                    udis.Add(udi.Guid);
+                }
+            }
+
+            Assert.That(udis, Does.Contain(globalKey));
+            Assert.That(udis, Does.Contain(domainScriptKey));
         }
 
         private static ScriptDefinitionCollection CreateDefinitionCollection(params IScriptDefinition[] items)

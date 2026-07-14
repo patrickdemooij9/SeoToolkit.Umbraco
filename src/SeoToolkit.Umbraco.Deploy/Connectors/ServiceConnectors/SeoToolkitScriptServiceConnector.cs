@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 using SeoToolkit.Umbraco.Deploy.Artifacts;
 using SeoToolkit.Umbraco.Deploy.Configuration;
 using SeoToolkit.Umbraco.ScriptManager.Core.Collections;
@@ -13,6 +14,7 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
     public class SeoToolkitScriptServiceConnector(
         IScriptManagerService scriptManagerService,
         ScriptDefinitionCollection scriptDefinitions,
+        ISeoDomainsService seoDomainsService,
         IOptionsMonitor<SeoToolkitDeploySettings> settings)
         : SeoToolkitEntityServiceConnectorBase<ScriptArtifact, Script>(settings)
     {
@@ -34,10 +36,34 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
-            // GetAll is per-domain; enumerate the no-domain scripts plus every known script by key.
+
+            // GetAll filters by domain, so the global (no-domain) call misses domain-scoped
+            // scripts. Enumerate the global scripts plus each domain collection's scripts,
+            // deduping by key in case the same script surfaces more than once.
+            var seen = new HashSet<Guid>();
+
             foreach (var script in scriptManagerService.GetAll(null))
             {
-                yield return script;
+                if (script.Key is { } key && seen.Add(key))
+                {
+                    yield return script;
+                }
+            }
+
+            foreach (var collection in seoDomainsService.GetAll())
+            {
+                if (collection.Id is not { } domainId)
+                {
+                    continue;
+                }
+
+                foreach (var script in scriptManagerService.GetAll(domainId))
+                {
+                    if (script.Key is { } key && seen.Add(key))
+                    {
+                        yield return script;
+                    }
+                }
             }
         }
 

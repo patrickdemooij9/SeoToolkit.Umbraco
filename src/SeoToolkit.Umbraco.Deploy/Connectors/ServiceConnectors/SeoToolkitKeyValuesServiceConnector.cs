@@ -110,6 +110,20 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             }
 
             Guid? domainId = state.Artifact.DomainCollectionUdi?.Guid;
+
+            if (PruneMissing)
+            {
+                // Convergent restore: drop target keys that are no longer in the source.
+                var targetKeys = keyValueRepository.Get(domainId).Keys.ToArray();
+                foreach (var targetKey in targetKeys)
+                {
+                    if (!state.Artifact.Values.ContainsKey(targetKey))
+                    {
+                        keyValueRepository.Delete(targetKey, domainId);
+                    }
+                }
+            }
+
             foreach (var (key, value) in state.Artifact.Values)
             {
                 keyValueRepository.Set(key, value, domainId);
