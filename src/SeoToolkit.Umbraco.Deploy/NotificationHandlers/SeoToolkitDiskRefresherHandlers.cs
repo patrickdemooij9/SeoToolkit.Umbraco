@@ -1,5 +1,6 @@
 using SeoToolkit.Umbraco.Common.Core.Notifications;
 using SeoToolkit.Umbraco.MetaFields.Core.Notifications;
+using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.ScriptManager.Core.Notifications;
 using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using Umbraco.Cms.Core;
@@ -114,5 +115,30 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
                 SeoToolkitDeployConstants.UdiEntityType.KeyValues,
                 notification.DomainCollectionId ?? SeoToolkitDeployConstants.RootKeyValuesGuid,
                 cancellationToken);
+    }
+
+    /// <summary>
+    /// Keeps the per-node MetaFields values .uda in sync with the database: (re)writes it while
+    /// the node still has values, and deletes it once the node has none left — so removing all of
+    /// a node's SEO values propagates as a delete on restore instead of leaving stale target data.
+    /// </summary>
+    public class MetaFieldsValueDiskRefresherHandler(
+        IDiskEntityService diskEntityService,
+        IServiceConnectorFactory serviceConnectorFactory,
+        IMetaFieldsValueRepository valueRepository)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+          INotificationAsyncHandler<MetaFieldsValueChangedNotification>
+    {
+        public Task HandleAsync(MetaFieldsValueChangedNotification notification, CancellationToken cancellationToken)
+        {
+            if (valueRepository.HasAnyValues(notification.NodeKey))
+            {
+                return WriteArtifactAsync(
+                    SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, notification.NodeKey, cancellationToken);
+            }
+
+            DeleteArtifact(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, notification.NodeKey);
+            return Task.CompletedTask;
+        }
     }
 }
