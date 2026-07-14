@@ -122,6 +122,27 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
                 .ToDictionary(it => it.Alias, it => JsonConvert.DeserializeObject(it.UserValue));
         }
 
+        public Dictionary<string, Dictionary<string, object>> GetAllValues(Guid nodeId)
+        {
+            using var scope = _scopeProvider.CreateScope();
+            return scope.Database
+                .Fetch<MetaFieldsValueEntity>(scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId))
+                .GroupBy(it => it.Culture ?? string.Empty)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.ToDictionary(it => it.Alias, it => JsonConvert.DeserializeObject(it.UserValue)));
+        }
+
+        public IEnumerable<Guid> GetAllNodeKeys()
+        {
+            using var scope = _scopeProvider.CreateScope();
+            return scope.Database
+                .Fetch<MetaFieldsValueEntity>(scope.SqlContext.Sql().SelectAll().From<MetaFieldsValueEntity>())
+                .Select(it => it.NodeKey)
+                .Distinct()
+                .ToArray();
+        }
+
         // These functions should be removed once all int nodeId usages are gone
         private Guid GetNodeKey(int nodeId)
         {
