@@ -41,7 +41,7 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Helpers
             var httpContext = _httpContextAccessor.GetRequiredHttpContext();
 
             // isMainPage is set to true here to ensure ViewStart(s) found in the view hierarchy are rendered
-            var viewResult = _viewEngine.GetView(null, viewName, isMainPage: true);
+            var viewResult = _viewEngine.GetView(null, viewName, isMainPage: false);
 
             if (viewResult.Success == false)
             {
