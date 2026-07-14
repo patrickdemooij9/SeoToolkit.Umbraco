@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0</TargetFrameworks>
+    <Product>SeoToolkit Deploy</Product>
+    <PackageId>SeoToolkit.Umbraco.Deploy</PackageId>
+    <Title>SeoToolkit Deploy</Title>
+    <Description>Connectors to transfer SeoToolkit settings and content data with Umbraco Deploy</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <RootNamespace>SeoToolkit.Umbraco.Deploy</RootNamespace>
+    <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Deploy.Infrastructure" Version="[18.0.0,18.999)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco\SeoToolkit.Umbraco.csproj" />
+  </ItemGroup>
+
+</Project>
