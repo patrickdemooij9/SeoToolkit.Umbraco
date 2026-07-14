@@ -43,6 +43,12 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Services
                 script.Key = Guid.NewGuid();
                 script = _scriptRepository.Add(script);
             }
+            else if (_scriptRepository.Get(script.Key.Value) is null)
+            {
+                // A script can arrive with a caller-supplied Key that doesn't exist yet in this
+                // environment (e.g. transferred via Deploy or uSync). Insert it, preserving the Key.
+                script = _scriptRepository.Add(script);
+            }
             else
             {
                 script = _scriptRepository.Update(script);
