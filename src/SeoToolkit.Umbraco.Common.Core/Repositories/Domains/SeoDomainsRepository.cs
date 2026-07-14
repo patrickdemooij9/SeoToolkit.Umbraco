@@ -83,7 +83,9 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
 
             collectionEntity ??= new SeoDomainCollectionEntity
             {
-                Id = Guid.NewGuid()
+                // Preserve a caller-supplied Id when it doesn't exist yet in this environment
+                // (e.g. a collection transferred via Deploy) so the identifier round-trips.
+                Id = collection.Id ?? Guid.NewGuid()
             };
 
             collectionEntity.Name = collection.Name;
