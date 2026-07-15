@@ -3,6 +3,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Notifications;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.ScriptManager.Core.Notifications;
 using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
+using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Deploy;
 using Umbraco.Cms.Core.Events;
@@ -138,6 +139,32 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
             }
 
             DeleteArtifact(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, notification.NodeKey);
+            return Task.CompletedTask;
+        }
+    }
+
+    /// <summary>
+    /// Keeps the per-node sitemap content .uda in sync with the database: (re)writes it while the
+    /// node still has non-default settings, and deletes it once the settings are reset to default
+    /// (the service deletes the row) — so a reset propagates as a delete on restore instead of
+    /// leaving stale target data.
+    /// </summary>
+    public class SitemapContentDiskRefresherHandler(
+        IDiskEntityService diskEntityService,
+        IServiceConnectorFactory serviceConnectorFactory,
+        ISitemapService sitemapService)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+          INotificationAsyncHandler<SitemapContentChangedNotification>
+    {
+        public Task HandleAsync(SitemapContentChangedNotification notification, CancellationToken cancellationToken)
+        {
+            if (sitemapService.GetContentSettings(notification.NodeKey) is not null)
+            {
+                return WriteArtifactAsync(
+                    SeoToolkitDeployConstants.UdiEntityType.SitemapContent, notification.NodeKey, cancellationToken);
+            }
+
+            DeleteArtifact(SeoToolkitDeployConstants.UdiEntityType.SitemapContent, notification.NodeKey);
             return Task.CompletedTask;
         }
     }

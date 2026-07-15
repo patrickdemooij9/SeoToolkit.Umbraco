@@ -14,11 +14,11 @@ using Umbraco.Deploy.Infrastructure.Artifacts.Content;
 namespace SeoToolkit.Tests.Deploy
 {
     [TestFixture]
-    public class ContentExportedHandlerTests
+    public class ContentExportingHandlerTests
     {
         private Mock<IMetaFieldsValueRepository> _valueRepository = null!;
         private Mock<ISitemapService> _sitemapService = null!;
-        private SeoToolkitContentExportedHandler _handler = null!;
+        private SeoToolkitContentExportingHandler _handler = null!;
 
         [SetUp]
         public void SetUp()
@@ -26,7 +26,7 @@ namespace SeoToolkit.Tests.Deploy
             _valueRepository = new Mock<IMetaFieldsValueRepository>();
             _valueRepository.Setup(r => r.HasAnyValues(It.IsAny<Guid>())).Returns(false);
             _sitemapService = new Mock<ISitemapService>();
-            _handler = new SeoToolkitContentExportedHandler(_valueRepository.Object, _sitemapService.Object);
+            _handler = new SeoToolkitContentExportingHandler(_valueRepository.Object, _sitemapService.Object);
         }
 
         private static ArtifactExportingNotification Notify(DocumentArtifact artifact)

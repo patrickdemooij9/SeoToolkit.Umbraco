@@ -49,17 +49,21 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             }
 
             var allDomains = (await domainService.GetAllAsync(true).ConfigureAwait(false)).ToArray();
+            // Order names/settings (ordinal) for a stable serialization/checksum.
             var domainNames = entity.DomainIds
                 .Select(id => allDomains.FirstOrDefault(d => d.Id == id)?.DomainName)
                 .Where(name => name is not null)
                 .Select(name => name!)
+                .OrderBy(name => name, StringComparer.Ordinal)
                 .ToList();
 
             return new DomainCollectionArtifact(udi, new ArtifactDependencyCollection())
             {
                 Name = entity.Name,
                 DomainNames = domainNames,
-                Settings = entity.Settings,
+                Settings = entity.Settings
+                    .OrderBy(kvp => kvp.Key, StringComparer.Ordinal)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
             };
         }
 

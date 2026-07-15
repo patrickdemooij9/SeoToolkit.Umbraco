@@ -57,10 +57,12 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
             if (isDefault)
             {
                 _sitemapContentRepository.Delete(settings.NodeKey);
+                _eventAggregator.Publish(new SitemapContentChangedNotification(settings.NodeKey));
                 return;
             }
 
             _sitemapContentRepository.Set(settings);
+            _eventAggregator.Publish(new SitemapContentChangedNotification(settings.NodeKey));
         }
 
         public SitemapContentSettings? GetContentSettings(Guid nodeKey)

@@ -29,7 +29,10 @@ namespace SeoToolkit.Tests.Deploy
         private static Mock<ISeoField> MakeField(string alias)
         {
             var converter = new Mock<IEditorValueConverter>();
+            // Pass-through converter (like the text converter): object/editor/database forms coincide.
             converter.Setup(c => c.ConvertDatabaseToObject(It.IsAny<object>())).Returns((object o) => o);
+            converter.Setup(c => c.ConvertObjectToEditorValue(It.IsAny<object>())).Returns((object o) => o);
+            converter.Setup(c => c.ConvertEditorToDatabaseValue(It.IsAny<object>())).Returns((object o) => o);
             var editor = new Mock<ISeoFieldEditor>();
             editor.SetupGet(e => e.ValueConverter).Returns(converter.Object);
 

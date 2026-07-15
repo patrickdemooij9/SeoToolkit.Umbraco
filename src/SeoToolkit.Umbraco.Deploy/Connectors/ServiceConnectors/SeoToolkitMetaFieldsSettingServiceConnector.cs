@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using SeoToolkit.Umbraco.Deploy.Artifacts;
 using SeoToolkit.Umbraco.Deploy.Configuration;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 using Umbraco.Cms.Core;
@@ -65,12 +66,32 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             }
 
             var fields = new List<MetaFieldsSettingField>();
-            foreach (var (seoField, valueDto) in entity.Fields)
+            // Order by alias so the serialized artifact (and therefore its checksum) is stable
+            // regardless of the order the fields come back from storage.
+            foreach (var (seoField, valueDto) in entity.Fields.OrderBy(f => f.Key.Alias, StringComparer.Ordinal))
             {
-                var json = valueDto.Value is null ? null : JsonConvert.SerializeObject(valueDto.Value);
+                var converter = seoField.Editor.ValueConverter;
+
+                // Round-trip through the portable editor wire format rather than serializing the
+                // object form directly: the object form of a media field is an IPublishedContent,
+                // which either throws (self-referencing loop) or emits an environment-specific blob.
+                var editorValue = valueDto.Value is null ? null : converter.ConvertObjectToEditorValue(valueDto.Value);
+                var json = editorValue is null ? null : JsonConvert.SerializeObject(editorValue);
+
+                // UDIs embedded in the value JSON (e.g. RTE-like content).
                 foreach (var referencedUdi in UdiJsonHelper.FindUdis(json))
                 {
                     dependencies.Add(new SeoToolkitArtifactDependency(referencedUdi));
+                }
+
+                // GUID-based media references (a bare media key, not a umb://media/... string).
+                if (valueDto.Value is not null && converter is IMediaReferenceConverter mediaConverter)
+                {
+                    foreach (var mediaKey in mediaConverter.GetReferencedMediaKeys(valueDto.Value))
+                    {
+                        dependencies.Add(new SeoToolkitArtifactDependency(
+                            new GuidUdi(Constants.UdiEntityType.Media, mediaKey)));
+                    }
                 }
 
                 fields.Add(new MetaFieldsSettingField
@@ -135,7 +156,9 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
                 var valueDto = new DocumentTypeValueDto { UseInheritedValue = field.UseInheritedValue };
                 if (!string.IsNullOrWhiteSpace(field.Value))
                 {
-                    valueDto.Value = seoField.Editor.ValueConverter.ConvertDatabaseToObject(
+                    // The artifact holds the editor wire format; convert it to the database form
+                    // the same way an editor save does, so Set persists a portable value.
+                    valueDto.Value = seoField.Editor.ValueConverter.ConvertEditorToDatabaseValue(
                         JsonConvert.DeserializeObject(field.Value));
                 }
 

@@ -54,11 +54,13 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
         public void Delete(int nodeId, string fieldAlias, string culture = null)
         {
             _repository.Delete(nodeId, fieldAlias, culture.IfNullOrWhiteSpace(GetCulture()));
+            ClearCache(nodeId);
         }
 
         public void Delete(Guid nodeId, string fieldAlias, string culture = null)
         {
             _repository.Delete(nodeId, fieldAlias, culture.IfNullOrWhiteSpace(GetCulture()));
+            ClearCache(nodeId);
             _eventAggregator.Publish(new MetaFieldsValueChangedNotification(nodeId));
         }
 
@@ -84,6 +86,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
             _eventAggregator.Publish(new MetaFieldsValueChangedNotification(nodeId));
         }
 
+
+        public void NotifyChanged(Guid nodeId)
+        {
+            ClearCache(nodeId);
+            _eventAggregator.Publish(new MetaFieldsValueChangedNotification(nodeId));
+        }
 
         private string GetCulture()
         {

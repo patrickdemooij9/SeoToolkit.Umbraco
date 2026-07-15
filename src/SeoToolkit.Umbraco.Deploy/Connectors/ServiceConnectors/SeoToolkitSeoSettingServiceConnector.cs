@@ -42,12 +42,16 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
         public override async IAsyncEnumerable<SeoSettingModel> GetEntitiesAsync(
             [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            foreach (var (key, _) in seoSettingsService.GetAll())
+            await Task.CompletedTask;
+
+            // Enumerate the (cached) settings dictionary once rather than calling GetEntityAsync
+            // per key, which would re-fetch GetAll() for every entry.
+            foreach (var (key, enabled) in seoSettingsService.GetAll())
             {
-                var entity = await GetEntityAsync(key, cancellationToken).ConfigureAwait(false);
-                if (entity is not null)
+                var contentType = contentTypeService.Get(key);
+                if (contentType is not null)
                 {
-                    yield return entity;
+                    yield return new SeoSettingModel(key, enabled, contentType.Name ?? contentType.Alias);
                 }
             }
         }

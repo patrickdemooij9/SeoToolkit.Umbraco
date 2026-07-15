@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
+using SeoToolkit.Umbraco.Common.Core.Notifications;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 using SeoToolkit.Umbraco.Deploy;
@@ -8,6 +9,7 @@ using SeoToolkit.Umbraco.Deploy.Configuration;
 using SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Deploy;
+using Umbraco.Cms.Core.Events;
 
 namespace SeoToolkit.Tests.Deploy
 {
@@ -29,9 +31,10 @@ namespace SeoToolkit.Tests.Deploy
                 .Returns(new Dictionary<string, string> { ["siteName"] = "My Site" });
             var domainsService = new Mock<ISeoDomainsService>();
             domainsService.Setup(s => s.GetAll()).Returns([]);
+            var eventAggregator = new Mock<IEventAggregator>();
 
             var connector = new SeoToolkitKeyValuesServiceConnector(
-                repository.Object, domainsService.Object, DefaultSettings());
+                repository.Object, domainsService.Object, eventAggregator.Object, DefaultSettings());
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.KeyValues, SeoToolkitDeployConstants.RootKeyValuesGuid);
             var artifact = await connector.GetArtifactAsync(udi, Mock.Of<IContextCache>());
@@ -44,6 +47,10 @@ namespace SeoToolkit.Tests.Deploy
             await connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 2);
 
             repository.Verify(r => r.Set("siteName", "My Site", null), Times.Once);
+            // The repository write bypasses the controller's notification, so the connector must
+            // publish it to keep the target's key/values .uda in sync.
+            eventAggregator.Verify(e => e.Publish(
+                It.Is<SeoKeyValueSavedNotification>(n => n.DomainCollectionId == null)), Times.Once);
         }
 
         [Test]
@@ -56,7 +63,7 @@ namespace SeoToolkit.Tests.Deploy
             domainsService.Setup(s => s.GetAll()).Returns([]);
 
             var connector = new SeoToolkitKeyValuesServiceConnector(
-                repository.Object, domainsService.Object, DefaultSettings(pruneMissing: true));
+                repository.Object, domainsService.Object, Mock.Of<IEventAggregator>(), DefaultSettings(pruneMissing: true));
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.KeyValues, SeoToolkitDeployConstants.RootKeyValuesGuid);
             var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.KeyValuesArtifact(udi)
@@ -83,7 +90,7 @@ namespace SeoToolkit.Tests.Deploy
             domainsService.Setup(s => s.GetAll()).Returns([]);
 
             var connector = new SeoToolkitKeyValuesServiceConnector(
-                repository.Object, domainsService.Object, DefaultSettings());
+                repository.Object, domainsService.Object, Mock.Of<IEventAggregator>(), DefaultSettings());
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.KeyValues, SeoToolkitDeployConstants.RootKeyValuesGuid);
             var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.KeyValuesArtifact(udi)

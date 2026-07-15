@@ -19,7 +19,7 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
     /// <see cref="ArtifactExportedNotification"/> fires after serialization, so dependencies added
     /// there would never reach the exported artifact.
     /// </remarks>
-    public class SeoToolkitContentExportedHandler(
+    public class SeoToolkitContentExportingHandler(
         IMetaFieldsValueRepository valueRepository,
         ISitemapService sitemapService)
         : INotificationAsyncHandler<ArtifactExportingNotification>

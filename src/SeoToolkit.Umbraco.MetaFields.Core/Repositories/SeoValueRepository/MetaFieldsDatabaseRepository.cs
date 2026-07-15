@@ -5,6 +5,8 @@ using Umbraco.Extensions;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoSettings.Database;
 using Umbraco.Cms.Infrastructure.Scoping;
 using System;
+using Umbraco.Cms.Core.Models;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
@@ -13,11 +15,13 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
     {
         private readonly IScopeProvider _scopeProvider;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly IIdKeyMap _idKeyMap;
 
-        public MetaFieldsDatabaseRepository(IScopeProvider scopeProvider, IUmbracoContextFactory umbracoContextFactory)
+        public MetaFieldsDatabaseRepository(IScopeProvider scopeProvider, IUmbracoContextFactory umbracoContextFactory, IIdKeyMap idKeyMap)
         {
             _scopeProvider = scopeProvider;
             _umbracoContextFactory = umbracoContextFactory;
+            _idKeyMap = idKeyMap;
         }
 
         public void Add(int nodeId, string fieldAlias, string culture, object value)
@@ -102,8 +106,14 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         public void Delete(Guid nodeId, string fieldAlias, string culture)
         {
             using var scope = _scopeProvider.CreateScope();
-            scope.Database.Delete(scope.SqlContext.Sql()
-                .Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId && it.Alias == fieldAlias && it.Culture == culture));
+            // GetAllValues maps a NULL culture to "", so treat an empty culture as "empty or NULL"
+            // here — otherwise the prune path (which passes "") could never delete NULL-culture rows.
+            var sql = string.IsNullOrEmpty(culture)
+                ? scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(
+                    it => it.NodeKey == nodeId && it.Alias == fieldAlias && (it.Culture == null || it.Culture == ""))
+                : scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(
+                    it => it.NodeKey == nodeId && it.Alias == fieldAlias && it.Culture == culture);
+            scope.Database.Delete(sql);
             scope.Complete();
         }
 
@@ -162,9 +172,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
 
         private int GetNodeId(Guid nodeKey)
         {
-            using var umbContextRef = _umbracoContextFactory.EnsureUmbracoContext();
-            var content = umbContextRef.UmbracoContext.Content.GetById(nodeKey);
-            return content?.Id ?? 0;
+            // Resolve via IIdKeyMap rather than the published content cache: during a deploy the
+            // content may exist but be unpublished, which the published cache would resolve to 0.
+            var attempt = _idKeyMap.GetIdForKey(nodeKey, UmbracoObjectTypes.Document);
+            return attempt.Success ? attempt.Result : 0;
         }
     }
 }

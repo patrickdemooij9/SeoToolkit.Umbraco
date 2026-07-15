@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using SeoToolkit.Umbraco.Common.Core.Notifications;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 using SeoToolkit.Umbraco.Deploy.Artifacts;
@@ -6,6 +7,7 @@ using SeoToolkit.Umbraco.Deploy.Configuration;
 using SeoToolkit.Umbraco.Deploy.Models;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Deploy;
+using Umbraco.Cms.Core.Events;
 
 namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
 {
@@ -13,6 +15,7 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
     public class SeoToolkitKeyValuesServiceConnector(
         ISeoKeyValueRepository keyValueRepository,
         ISeoDomainsService seoDomainsService,
+        IEventAggregator eventAggregator,
         IOptionsMonitor<SeoToolkitDeploySettings> settings)
         : SeoToolkitEntityServiceConnectorBase<KeyValuesArtifact, KeyValuesModel>(settings)
     {
@@ -92,7 +95,10 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             {
                 Name = entity.Name,
                 DomainCollectionUdi = domainCollectionUdi,
-                Values = entity.Values,
+                // Order by key (ordinal) for a stable serialization/checksum.
+                Values = entity.Values
+                    .OrderBy(kvp => kvp.Key, StringComparer.Ordinal)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
             });
         }
 
@@ -128,6 +134,10 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             {
                 keyValueRepository.Set(key, value, domainId);
             }
+
+            // The repository write skips the controller's notification, so publish it here — that
+            // keeps the target's own key/values .uda in sync via KeyValuesDiskRefresherHandler.
+            eventAggregator.Publish(new SeoKeyValueSavedNotification(domainId));
 
             return Task.CompletedTask;
         }

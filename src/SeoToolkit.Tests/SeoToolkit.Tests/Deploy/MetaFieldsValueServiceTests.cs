@@ -56,5 +56,19 @@ namespace SeoToolkit.Tests.Deploy
             eventAggregator.Verify(e => e.Publish(
                 It.Is<MetaFieldsValueChangedNotification>(n => n.NodeKey == nodeKey)), Times.Once);
         }
+
+        [Test]
+        public void NotifyChanged_PublishesChangedNotification()
+        {
+            var nodeKey = Guid.NewGuid();
+            var repository = new Mock<IMetaFieldsValueRepository>();
+            var eventAggregator = new Mock<IEventAggregator>();
+
+            var service = CreateService(repository, eventAggregator);
+            service.NotifyChanged(nodeKey);
+
+            eventAggregator.Verify(e => e.Publish(
+                It.Is<MetaFieldsValueChangedNotification>(n => n.NodeKey == nodeKey)), Times.Once);
+        }
     }
 }

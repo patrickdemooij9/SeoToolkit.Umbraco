@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Deploy.Infrastructure" Version="[18.0.0,18.999)" />
+    <PackageReference Include="Umbraco.Deploy.Infrastructure" Version="[18.0.0,19.0.0)" />
   </ItemGroup>
 
   <ItemGroup>

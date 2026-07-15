@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 using SeoToolkit.Umbraco.Deploy.Artifacts;
 using SeoToolkit.Umbraco.Deploy.Configuration;
 using SeoToolkit.Umbraco.Deploy.Models;
+using SeoToolkit.Umbraco.MetaFields.Core.Collections;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Deploy;
@@ -14,6 +17,8 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
     public class SeoToolkitMetaFieldsValueServiceConnector(
         IMetaFieldsValueRepository valueRepository,
         IContentService contentService,
+        SeoFieldCollection seoFieldCollection,
+        IMetaFieldsValueService metaFieldsValueService,
         IOptionsMonitor<SeoToolkitDeploySettings> settings)
         : SeoToolkitEntityServiceConnectorBase<MetaFieldsValueArtifact, MetaFieldsNodeValuesModel>(settings)
     {
@@ -67,16 +72,33 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
                 new SeoToolkitArtifactDependency(new GuidUdi(Constants.UdiEntityType.Document, entity.NodeKey)),
             };
 
+            // Order cultures and aliases (ordinal) so identical data always serializes the same
+            // way — the artifact is attached to its document as a Match dependency, so an order
+            // flip would otherwise make the document look out of date and re-transfer for nothing.
             var values = new Dictionary<string, Dictionary<string, string?>>();
-            foreach (var (culture, fields) in entity.Values)
+            foreach (var (culture, fields) in entity.Values.OrderBy(c => c.Key, StringComparer.Ordinal))
             {
                 var cultureValues = new Dictionary<string, string?>();
-                foreach (var (alias, value) in fields)
+                foreach (var (alias, value) in fields.OrderBy(f => f.Key, StringComparer.Ordinal))
                 {
                     var json = value is null ? null : JsonConvert.SerializeObject(value);
+
+                    // UDIs embedded in the value JSON (e.g. RTE-like content).
                     foreach (var referencedUdi in UdiJsonHelper.FindUdis(json))
                     {
                         dependencies.Add(new SeoToolkitArtifactDependency(referencedUdi));
+                    }
+
+                    // GUID-based media references: the value is a bare media key (database form),
+                    // so ask the field's converter which media it points at.
+                    if (value is not null
+                        && seoFieldCollection.Get(alias)?.Editor.ValueConverter is IMediaReferenceConverter mediaConverter)
+                    {
+                        foreach (var mediaKey in mediaConverter.GetReferencedMediaKeys(value))
+                        {
+                            dependencies.Add(new SeoToolkitArtifactDependency(
+                                new GuidUdi(Constants.UdiEntityType.Media, mediaKey)));
+                        }
                     }
 
                     cultureValues[alias] = json;
@@ -155,6 +177,12 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
                     }
                 }
             }
+
+            // We wrote straight to the repository (rather than through the service's culture-aware
+            // AddValues), so ask the service to invalidate the per-node runtime cache across the
+            // load-balanced environment and publish the change notification — which also refreshes
+            // the target's own per-node .uda via MetaFieldsValueDiskRefresherHandler.
+            metaFieldsValueService.NotifyChanged(nodeKey);
 
             return Task.CompletedTask;
         }

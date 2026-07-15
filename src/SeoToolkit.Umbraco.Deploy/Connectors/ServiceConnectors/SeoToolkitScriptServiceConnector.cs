@@ -87,7 +87,10 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             {
                 Name = entity.Name,
                 DefinitionAlias = entity.Definition.Alias,
-                Config = entity.Config ?? [],
+                // Order by key (ordinal) for a stable serialization/checksum.
+                Config = (entity.Config ?? [])
+                    .OrderBy(kvp => kvp.Key, StringComparer.Ordinal)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
                 DomainCollectionUdi = domainCollectionUdi,
                 SortOrder = entity.SortOrder,
             });

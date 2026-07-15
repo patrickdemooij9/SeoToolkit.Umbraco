@@ -42,5 +42,14 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services
         /// <param name="culture"></param>
         void AddValues(Guid nodeId, Dictionary<string, object> values, string culture = null);
         void Delete(Guid nodeId, string fieldAlias, string culture = null);
+
+        /// <summary>
+        /// Invalidates the cached values for a node across the (load-balanced) environment and
+        /// publishes a change notification. Call this after writing values through a path that
+        /// bypasses <see cref="AddValues(Guid, Dictionary{string, object}, string)"/> /
+        /// <see cref="Delete(Guid, string, string)"/> — e.g. a Deploy restore that writes straight
+        /// to the repository — so cache invalidation and the disk-refresh can't drift out of sync.
+        /// </summary>
+        void NotifyChanged(Guid nodeId);
     }
 }

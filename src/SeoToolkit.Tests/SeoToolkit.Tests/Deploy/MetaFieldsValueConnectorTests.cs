@@ -4,6 +4,10 @@ using NUnit.Framework;
 using SeoToolkit.Umbraco.Deploy;
 using SeoToolkit.Umbraco.Deploy.Configuration;
 using SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors;
+using SeoToolkit.Umbraco.MetaFields.Core.Collections;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Deploy;
@@ -17,6 +21,8 @@ namespace SeoToolkit.Tests.Deploy
     {
         private Mock<IMetaFieldsValueRepository> _valueRepository = null!;
         private Mock<IContentService> _contentService = null!;
+        private Mock<IMetaFieldsValueService> _valueService = null!;
+        private SeoFieldCollection _fieldCollection = null!;
         private SeoToolkitMetaFieldsValueServiceConnector _connector = null!;
 
         private static IOptionsMonitor<SeoToolkitDeploySettings> DefaultSettings(bool pruneMissing = false)
@@ -33,8 +39,10 @@ namespace SeoToolkit.Tests.Deploy
             _valueRepository.Setup(r => r.GetAllValues(It.IsAny<Guid>()))
                 .Returns(new Dictionary<string, Dictionary<string, object>>());
             _contentService = new Mock<IContentService>();
+            _valueService = new Mock<IMetaFieldsValueService>();
+            _fieldCollection = new SeoFieldCollection(() => Array.Empty<ISeoField>());
             _connector = new SeoToolkitMetaFieldsValueServiceConnector(
-                _valueRepository.Object, _contentService.Object, DefaultSettings());
+                _valueRepository.Object, _contentService.Object, _fieldCollection, _valueService.Object, DefaultSettings());
         }
 
         private IContent SetUpContent(Guid nodeKey, string name = "Some Page")
@@ -73,6 +81,36 @@ namespace SeoToolkit.Tests.Deploy
         }
 
         [Test]
+        public async Task GetArtifact_MediaField_EmitsMediaDependencyFromBareGuid()
+        {
+            var nodeKey = Guid.NewGuid();
+            var mediaKey = Guid.NewGuid();
+            SetUpContent(nodeKey);
+            // The image field stores a bare media GUID (database form), not a umb://media/... string.
+            _valueRepository.Setup(r => r.GetAllValues(nodeKey)).Returns(new Dictionary<string, Dictionary<string, object>>
+            {
+                [""] = new() { ["ogImage"] = mediaKey.ToString() },
+            });
+
+            var converter = new FakeMediaConverter();
+            var editor = new Mock<ISeoFieldEditor>();
+            editor.SetupGet(e => e.ValueConverter).Returns(converter);
+            var field = new Mock<ISeoField>();
+            field.SetupGet(f => f.Alias).Returns("ogImage");
+            field.SetupGet(f => f.Editor).Returns(editor.Object);
+
+            var connector = new SeoToolkitMetaFieldsValueServiceConnector(
+                _valueRepository.Object, _contentService.Object,
+                new SeoFieldCollection(() => new[] { field.Object }), _valueService.Object, DefaultSettings());
+
+            var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, nodeKey);
+            var artifact = await connector.GetArtifactAsync(udi, Mock.Of<IContextCache>());
+
+            Assert.That(artifact!.Dependencies.Select(d => d.Udi),
+                Does.Contain(new GuidUdi(Constants.UdiEntityType.Media, mediaKey)));
+        }
+
+        [Test]
         public async Task Process_Pass7_WritesValuesPerCultureViaAddOrUpdate()
         {
             var nodeKey = Guid.NewGuid();
@@ -96,6 +134,8 @@ namespace SeoToolkit.Tests.Deploy
 
             _valueRepository.Verify(r => r.Add(nodeKey, "title", "", "Hello"), Times.Once);
             _valueRepository.Verify(r => r.Update(nodeKey, "title", "da-DK", "Hej"), Times.Once);
+            // Cache invalidation + change notification must fire after a repository-level write.
+            _valueService.Verify(s => s.NotifyChanged(nodeKey), Times.Once);
         }
 
         [Test]
@@ -109,7 +149,8 @@ namespace SeoToolkit.Tests.Deploy
             });
 
             var connector = new SeoToolkitMetaFieldsValueServiceConnector(
-                _valueRepository.Object, _contentService.Object, DefaultSettings(pruneMissing: true));
+                _valueRepository.Object, _contentService.Object, _fieldCollection, _valueService.Object,
+                DefaultSettings(pruneMissing: true));
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, nodeKey);
             var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.MetaFieldsValueArtifact(udi)
@@ -137,7 +178,8 @@ namespace SeoToolkit.Tests.Deploy
             });
 
             var connector = new SeoToolkitMetaFieldsValueServiceConnector(
-                _valueRepository.Object, _contentService.Object, DefaultSettings(pruneMissing: true));
+                _valueRepository.Object, _contentService.Object, _fieldCollection, _valueService.Object,
+                DefaultSettings(pruneMissing: true));
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, nodeKey);
             // An artifact carrying no values is a "clear everything for this node" instruction.
@@ -191,6 +233,24 @@ namespace SeoToolkit.Tests.Deploy
             var state = await _connector.ProcessInitAsync(artifact, Mock.Of<IDeployContext>());
             Assert.DoesNotThrowAsync(() => _connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 7));
             _valueRepository.Verify(r => r.Add(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object>()), Times.Never);
+            _valueService.Verify(s => s.NotifyChanged(It.IsAny<Guid>()), Times.Never);
+        }
+
+        /// <summary>Minimal media-style converter: its database value is a bare media GUID.</summary>
+        private sealed class FakeMediaConverter : IEditorValueConverter, IMediaReferenceConverter
+        {
+            public object ConvertEditorToDatabaseValue(object value) => value;
+            public object ConvertObjectToEditorValue(object value) => value;
+            public object ConvertDatabaseToObject(object value) => value;
+            public bool IsEmpty(object value) => value is null;
+
+            public IEnumerable<Guid> GetReferencedMediaKeys(object value)
+            {
+                if (Guid.TryParse(value?.ToString(), out var id))
+                {
+                    yield return id;
+                }
+            }
         }
     }
 }

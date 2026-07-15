@@ -18,7 +18,7 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
             builder.Services.AddOptions<SeoToolkitDeploySettings>()
                 .Bind(builder.Config.GetSection("SeoToolkit:Deploy"));
 
-            builder.AddNotificationAsyncHandler<ArtifactExportingNotification, SeoToolkitContentExportedHandler>();
+            builder.AddNotificationAsyncHandler<ArtifactExportingNotification, SeoToolkitContentExportingHandler>();
 
             // Disk (.uda) refreshers: rewrite the settings artifact whenever it is saved/deleted.
             builder.AddNotificationAsyncHandler<SeoSettingSavedNotification, SeoSettingDiskRefresherHandler>();
@@ -32,6 +32,9 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
 
             // Per-node MetaFields values: refresh (or delete) the node's .uda when its values change.
             builder.AddNotificationAsyncHandler<MetaFieldsValueChangedNotification, MetaFieldsValueDiskRefresherHandler>();
+
+            // Per-node sitemap content: refresh (or delete) the node's .uda when its settings change.
+            builder.AddNotificationAsyncHandler<SitemapContentChangedNotification, SitemapContentDiskRefresherHandler>();
 
             builder.Components().Append<SeoToolkitDeployComponent>();
         }
