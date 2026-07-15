@@ -52,19 +52,21 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Repositories
         public Script Get(int id)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
-            return ToModel(scope.Database.FirstOrDefault<ScriptEntity>(scope.SqlContext.Sql()
+            var entity = scope.Database.FirstOrDefault<ScriptEntity>(scope.SqlContext.Sql()
                 .SelectAll()
                 .From<ScriptEntity>()
-                .Where<ScriptEntity>(it => it.Id == id)));
+                .Where<ScriptEntity>(it => it.Id == id));
+            return entity is null ? null : ToModel(entity);
         }
 
         public Script Get(Guid id)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
-            return ToModel(scope.Database.FirstOrDefault<ScriptEntity>(scope.SqlContext.Sql()
+            var entity = scope.Database.FirstOrDefault<ScriptEntity>(scope.SqlContext.Sql()
                 .SelectAll()
                 .From<ScriptEntity>()
-                .Where<ScriptEntity>(it => it.Key == id)));
+                .Where<ScriptEntity>(it => it.Key == id));
+            return entity is null ? null : ToModel(entity);
         }
 
         public IEnumerable<Script> GetAll(Guid? domainId)

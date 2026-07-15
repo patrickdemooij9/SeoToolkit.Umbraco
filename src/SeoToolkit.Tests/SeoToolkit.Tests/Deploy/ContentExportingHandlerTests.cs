@@ -1,6 +1,8 @@
+using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using SeoToolkit.Umbraco.Deploy;
+using SeoToolkit.Umbraco.Deploy.Configuration;
 using SeoToolkit.Umbraco.Deploy.NotificationHandlers;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
@@ -18,6 +20,7 @@ namespace SeoToolkit.Tests.Deploy
     {
         private Mock<IMetaFieldsValueRepository> _valueRepository = null!;
         private Mock<ISitemapService> _sitemapService = null!;
+        private SeoToolkitDeploySettings _settings = null!;
         private SeoToolkitContentExportingHandler _handler = null!;
 
         [SetUp]
@@ -26,7 +29,11 @@ namespace SeoToolkit.Tests.Deploy
             _valueRepository = new Mock<IMetaFieldsValueRepository>();
             _valueRepository.Setup(r => r.HasAnyValues(It.IsAny<Guid>())).Returns(false);
             _sitemapService = new Mock<ISitemapService>();
-            _handler = new SeoToolkitContentExportingHandler(_valueRepository.Object, _sitemapService.Object);
+            _settings = new SeoToolkitDeploySettings();
+            var settingsMonitor = new Mock<IOptionsMonitor<SeoToolkitDeploySettings>>();
+            settingsMonitor.Setup(m => m.CurrentValue).Returns(() => _settings);
+            _handler = new SeoToolkitContentExportingHandler(
+                _valueRepository.Object, _sitemapService.Object, settingsMonitor.Object);
         }
 
         private static ArtifactExportingNotification Notify(DocumentArtifact artifact)
@@ -55,6 +62,31 @@ namespace SeoToolkit.Tests.Deploy
                 // Match mode so changed SEO data is re-transferred, not just ensured-present.
                 Assert.That(seoDependencies.Select(d => d.Mode),
                     Has.All.EqualTo(ArtifactDependencyMode.Match));
+            });
+        }
+
+        [Test]
+        public async Task DisabledEntityType_DependencyIsNotAppended()
+        {
+            var nodeKey = Guid.NewGuid();
+            var artifact = new DocumentArtifact(new GuidUdi(Constants.UdiEntityType.Document, nodeKey)) { Name = "Page" };
+            _valueRepository.Setup(r => r.HasAnyValues(nodeKey)).Returns(true);
+            _sitemapService.Setup(s => s.GetContentSettings(nodeKey))
+                .Returns(new SitemapContentSettings { NodeKey = nodeKey, ExcludeFromSitemap = true });
+            // MetaFieldsValue connector disabled: it returns no artifact, so a Match dependency on
+            // it can never be satisfied and must not be appended.
+            _settings.DisabledEntityTypes = [SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue];
+
+            await _handler.HandleAsync(Notify(artifact), CancellationToken.None);
+
+            var seoDependencies = artifact.Dependencies.Select(d => d.Udi).ToArray();
+            Assert.Multiple(() =>
+            {
+                Assert.That(seoDependencies,
+                    Does.Not.Contain(new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, nodeKey)));
+                // Sitemap connector is still enabled, so its dependency is still appended.
+                Assert.That(seoDependencies,
+                    Does.Contain(new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.SitemapContent, nodeKey)));
             });
         }
 

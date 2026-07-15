@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+using SeoToolkit.Umbraco.Deploy.Configuration;
 using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
 using Umbraco.Cms.Core;
@@ -21,9 +23,13 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
     /// </remarks>
     public class SeoToolkitContentExportingHandler(
         IMetaFieldsValueRepository valueRepository,
-        ISitemapService sitemapService)
+        ISitemapService sitemapService,
+        IOptionsMonitor<SeoToolkitDeploySettings> settings)
         : INotificationAsyncHandler<ArtifactExportingNotification>
     {
+        private bool IsDisabled(string entityType)
+            => settings.CurrentValue.DisabledEntityTypes.Contains(entityType, StringComparer.OrdinalIgnoreCase);
+
         public Task HandleAsync(ArtifactExportingNotification notification, CancellationToken cancellationToken)
         {
             if (notification.Artifact is not DocumentArtifact documentArtifact
@@ -37,14 +43,18 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
             // Match (not Exist) mode so Deploy compares the per-node artifact's checksum and
             // re-transfers it when the SEO data changes — Exist would only ensure a value row is
             // present on the target and would leave stale values behind after the first transfer.
-            if (valueRepository.HasAnyValues(documentUdi.Guid))
+            // Skip the dependency when the connector is disabled: it returns no artifact, so a
+            // Match dependency on it could never be satisfied and would fail the document transfer.
+            if (!IsDisabled(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue)
+                && valueRepository.HasAnyValues(documentUdi.Guid))
             {
                 extraDependencies.Add(new SeoToolkitArtifactDependency(
                     new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, documentUdi.Guid),
                     ArtifactDependencyMode.Match));
             }
 
-            if (sitemapService.GetContentSettings(documentUdi.Guid) is not null)
+            if (!IsDisabled(SeoToolkitDeployConstants.UdiEntityType.SitemapContent)
+                && sitemapService.GetContentSettings(documentUdi.Guid) is not null)
             {
                 extraDependencies.Add(new SeoToolkitArtifactDependency(
                     new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.SitemapContent, documentUdi.Guid),

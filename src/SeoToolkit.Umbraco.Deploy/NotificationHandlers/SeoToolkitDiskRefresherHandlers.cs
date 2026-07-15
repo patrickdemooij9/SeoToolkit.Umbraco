@@ -102,6 +102,10 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
         public Task HandleAsync(SeoDomainCollectionDeletedNotification notification, CancellationToken cancellationToken)
         {
             DeleteArtifact(SeoToolkitDeployConstants.UdiEntityType.DomainCollection, notification.Id);
+            // The collection's key/values .uda is keyed by the collection id and declares an Exist
+            // dependency on the collection; delete it too so it isn't left orphaned on disk (which
+            // would break a later disk deployment or resurrect the deleted collection's key/values).
+            DeleteArtifact(SeoToolkitDeployConstants.UdiEntityType.KeyValues, notification.Id);
             return Task.CompletedTask;
         }
     }

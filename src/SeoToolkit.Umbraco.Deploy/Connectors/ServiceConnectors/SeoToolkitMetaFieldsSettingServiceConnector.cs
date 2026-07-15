@@ -33,7 +33,12 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             => new(UdiEntityType, entity.Content.Key);
 
         public override Task<DocumentTypeSettingsDto?> GetEntityAsync(Guid id, CancellationToken cancellationToken = default)
-            => Task.FromResult(metaFieldsSettingsService.Get(id));
+        {
+            var entity = metaFieldsSettingsService.Get(id);
+            // A settings row whose content type was deleted maps to a null Content; skip it rather
+            // than let GetEntityName/GetEntityUdi dereference null and fail the whole export.
+            return Task.FromResult(entity?.Content is null ? null : entity);
+        }
 
         public override async IAsyncEnumerable<DocumentTypeSettingsDto> GetEntitiesAsync(
             [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -41,6 +46,11 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             await Task.CompletedTask;
             foreach (var entity in metaFieldsSettingsService.GetAll())
             {
+                // Skip orphaned rows (content type deleted) — their Content is null.
+                if (entity?.Content is null)
+                {
+                    continue;
+                }
                 yield return entity;
             }
         }
@@ -124,17 +134,39 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             }
 
             var contentType = contentTypeService.Get(state.Artifact.Udi.Guid);
-            if (contentType is null)
+            if (contentType is null || contentType.IsElement)
             {
+                // Target has no such content type, or it's an element type — MetaFields settings
+                // can't be stored on elements and Set would throw ArgumentException, aborting the
+                // whole deploy. Skip this entity instead.
                 return Task.CompletedTask;
             }
 
-            // Convergent restore rebuilds the DTO from the artifact so removed fields and
-            // inheritance are dropped; overwrite-only merges into the existing target DTO.
-            var dto = PruneMissing
-                ? new DocumentTypeSettingsDto { Content = contentType }
-                : state.Entity ?? new DocumentTypeSettingsDto { Content = contentType };
-            dto.Content = contentType;
+            // Build a fresh DTO rather than mutating state.Entity: that instance is the service's
+            // 30-minute cached DocumentTypeSettingsDto, so mutating it in place would corrupt the
+            // runtime cache for every other reader.
+            var dto = new DocumentTypeSettingsDto { Content = contentType };
+
+            // Overwrite-only (non-prune) merges into the target's existing settings, so carry the
+            // current fields over first. The service returns them in object form (a media field is
+            // an IPublishedContent), but the write path serializes the value as-is — so round-trip
+            // each through the portable editor wire format back to the database form, otherwise a
+            // preserved media field would serialize as a self-referencing/environment-specific blob.
+            if (!PruneMissing && state.Entity is not null)
+            {
+                dto.Inheritance = state.Entity.Inheritance;
+                foreach (var (seoField, existing) in state.Entity.Fields)
+                {
+                    var converter = seoField.Editor.ValueConverter;
+                    dto.Fields[seoField] = new DocumentTypeValueDto
+                    {
+                        UseInheritedValue = existing.UseInheritedValue,
+                        Value = existing.Value is null
+                            ? null
+                            : converter.ConvertEditorToDatabaseValue(converter.ConvertObjectToEditorValue(existing.Value)),
+                    };
+                }
+            }
 
             if (state.Artifact.InheritanceUdi is not null)
             {
@@ -162,10 +194,7 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
                         JsonConvert.DeserializeObject(field.Value));
                 }
 
-                if (!dto.Fields.TryAdd(seoField, valueDto))
-                {
-                    dto.Fields[seoField] = valueDto;
-                }
+                dto.Fields[seoField] = valueDto;
             }
 
             metaFieldsSettingsService.Set(dto);

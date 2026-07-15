@@ -120,15 +120,24 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         public bool Exists(Guid nodeId, string fieldAlias, string culture)
         {
             using var scope = _scopeProvider.CreateScope();
-            return scope.Database.FirstOrDefault<MetaFieldsValueEntity>(scope.SqlContext.Sql().SelectAll()
-                .From<MetaFieldsValueEntity>().Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId && it.Alias == fieldAlias && it.Culture == culture)) != null;
+            // Treat an empty culture as "empty or NULL" so a legacy NULL-culture row is matched —
+            // otherwise the import path would miss it and insert a duplicate (NodeKey, alias) row.
+            var sql = scope.SqlContext.Sql().SelectAll().From<MetaFieldsValueEntity>();
+            sql = string.IsNullOrEmpty(culture)
+                ? sql.Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId && it.Alias == fieldAlias && (it.Culture == null || it.Culture == ""))
+                : sql.Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId && it.Alias == fieldAlias && it.Culture == culture);
+            return scope.Database.FirstOrDefault<MetaFieldsValueEntity>(sql) != null;
         }
 
         public Dictionary<string, object> GetAllValues(Guid nodeId, string culture)
         {
             using var scope = _scopeProvider.CreateScope();
+            // Match the NULL-or-empty culture handling used by Exists/Delete for consistency.
+            var sql = string.IsNullOrEmpty(culture)
+                ? scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId && (it.Culture == null || it.Culture == ""))
+                : scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId && it.Culture == culture);
             return scope.Database
-                .Fetch<MetaFieldsValueEntity>(scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId && it.Culture == culture))
+                .Fetch<MetaFieldsValueEntity>(sql)
                 .ToDictionary(it => it.Alias, it => JsonConvert.DeserializeObject(it.UserValue));
         }
 
