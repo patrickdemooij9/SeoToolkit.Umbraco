@@ -21,8 +21,6 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
         protected bool IsDisabled
             => settings.CurrentValue.DisabledEntityTypes.Contains(UdiEntityType, StringComparer.OrdinalIgnoreCase);
 
-        protected bool PruneMissing => settings.CurrentValue.PruneMissing;
-
         public abstract string GetEntityName(TEntity entity);
 
         protected abstract GuidUdi GetEntityUdi(TEntity entity);
@@ -50,7 +48,11 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
                 return null;
             }
 
-            TEntity? entity = await GetEntityAsync(udi.Guid, cancellationToken).ConfigureAwait(false);
+            // Cache the resolved entity in the operation-scoped IContextCache so repeated requests
+            // for the same UDI within a deploy reuse the first lookup instead of re-hitting the DB.
+            TEntity? entity = await contextCache
+                .GetOrCreateAsync(udi!.ToString(), () => GetEntityAsync(udi.Guid, cancellationToken))
+                .ConfigureAwait(false);
             return entity == null ? null : await GetArtifactAsync(udi, entity, cancellationToken).ConfigureAwait(false);
         }
 

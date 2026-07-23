@@ -133,21 +133,18 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
                 return Task.CompletedTask; // node not (yet) in target; skip rather than fail
             }
 
-            if (PruneMissing)
+            // The artifact is the node's complete value set: delete target values absent from the
+            // source (an absent or null value is a clear) so it converges.
+            foreach (var (culture, fields) in valueRepository.GetAllValues(nodeKey))
             {
-                // Convergent restore: delete target values the source no longer has (a value that
-                // is absent, or present but null, in the artifact is treated as a clear).
-                foreach (var (culture, fields) in valueRepository.GetAllValues(nodeKey))
+                foreach (var alias in fields.Keys)
                 {
-                    foreach (var alias in fields.Keys)
+                    var inArtifact = state.Artifact.Values.TryGetValue(culture, out var artifactFields)
+                        && artifactFields.TryGetValue(alias, out var artifactJson)
+                        && artifactJson is not null;
+                    if (!inArtifact)
                     {
-                        var inArtifact = state.Artifact.Values.TryGetValue(culture, out var artifactFields)
-                            && artifactFields.TryGetValue(alias, out var artifactJson)
-                            && artifactJson is not null;
-                        if (!inArtifact)
-                        {
-                            valueRepository.Delete(nodeKey, alias, culture);
-                        }
+                        valueRepository.Delete(nodeKey, alias, culture);
                     }
                 }
             }

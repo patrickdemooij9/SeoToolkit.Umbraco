@@ -43,13 +43,6 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.DomainCollection);
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.KeyValues);
 
-            // Per-node types (MetaFieldsValue / SitemapContent) are content-like: they are NOT
-            // queue-for-transfer entities and have no save/delete disk refreshers of their own.
-            // They are still registered as disk entity types so their .uda travels with the node
-            // when the node is exported — the content export handler attaches them as (Match)
-            // dependencies, and Deploy writes/reads their artifact on a per-node basis.
-            diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue);
-            diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.SitemapContent);
         }
 
         private void InitializeIntegratedEntities()

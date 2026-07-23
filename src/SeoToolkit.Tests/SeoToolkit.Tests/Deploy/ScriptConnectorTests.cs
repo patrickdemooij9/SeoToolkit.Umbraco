@@ -53,7 +53,7 @@ namespace SeoToolkit.Tests.Deploy
                 scriptService.Object, definitions, domainsService.Object, DefaultSettings());
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.Script, scriptKey);
-            var artifact = await connector.GetArtifactAsync(udi, Mock.Of<IContextCache>());
+            var artifact = await connector.GetArtifactAsync(udi, PassThroughCache.Instance);
 
             Assert.That(artifact, Is.Not.Null);
             Assert.Multiple(() =>

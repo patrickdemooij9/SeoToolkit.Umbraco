@@ -56,7 +56,7 @@ namespace SeoToolkit.Tests.Deploy
                 domainsService.Object, domainService.Object, DefaultSettings());
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.DomainCollection, collectionId);
-            var artifact = await connector.GetArtifactAsync(udi, Mock.Of<IContextCache>());
+            var artifact = await connector.GetArtifactAsync(udi, PassThroughCache.Instance);
 
             Assert.That(artifact, Is.Not.Null);
             Assert.That(artifact!.DomainNames, Is.EquivalentTo(new[] { "example.com", "example.co.uk" }));

@@ -30,11 +30,6 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
             builder.AddNotificationAsyncHandler<SeoDomainCollectionDeletedNotification, DomainCollectionDiskRefresherHandler>();
             builder.AddNotificationAsyncHandler<SeoKeyValueSavedNotification, KeyValuesDiskRefresherHandler>();
 
-            // Per-node MetaFields values: refresh (or delete) the node's .uda when its values change.
-            builder.AddNotificationAsyncHandler<MetaFieldsValueChangedNotification, MetaFieldsValueDiskRefresherHandler>();
-
-            // Per-node sitemap content: refresh (or delete) the node's .uda when its settings change.
-            builder.AddNotificationAsyncHandler<SitemapContentChangedNotification, SitemapContentDiskRefresherHandler>();
 
             builder.Components().Append<SeoToolkitDeployComponent>();
         }

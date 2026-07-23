@@ -46,7 +46,7 @@ namespace SeoToolkit.Tests.Deploy
                 sitemapService.Object, contentService.Object, DefaultSettings());
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.SitemapContent, nodeKey);
-            var artifact = await connector.GetArtifactAsync(udi, Mock.Of<IContextCache>());
+            var artifact = await connector.GetArtifactAsync(udi, PassThroughCache.Instance);
 
             Assert.That(artifact, Is.Not.Null);
             Assert.That(artifact!.Dependencies.Select(d => d.Udi),

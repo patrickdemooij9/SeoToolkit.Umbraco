@@ -26,7 +26,15 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
 
         public object ConvertDatabaseToObject(object value)
         {
-            return JsonConvert.DeserializeObject<string[]>(value?.ToString() ?? "[]");
+            // Always return a non-null array so null and empty-string both export as "[]" and
+            // converge on deploy (a null result would export as an omitted, never-matching field).
+            var raw = value?.ToString();
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                return Array.Empty<string>();
+            }
+
+            return JsonConvert.DeserializeObject<string[]>(raw) ?? [];
         }
 
         public bool IsEmpty(object value)

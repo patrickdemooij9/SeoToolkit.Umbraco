@@ -117,16 +117,13 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
 
             Guid? domainId = state.Artifact.DomainCollectionUdi?.Guid;
 
-            if (PruneMissing)
+            // The artifact is authoritative: drop target keys absent from the source so it converges.
+            var targetKeys = keyValueRepository.Get(domainId).Keys.ToArray();
+            foreach (var targetKey in targetKeys)
             {
-                // Convergent restore: drop target keys that are no longer in the source.
-                var targetKeys = keyValueRepository.Get(domainId).Keys.ToArray();
-                foreach (var targetKey in targetKeys)
+                if (!state.Artifact.Values.ContainsKey(targetKey))
                 {
-                    if (!state.Artifact.Values.ContainsKey(targetKey))
-                    {
-                        keyValueRepository.Delete(targetKey, domainId);
-                    }
+                    keyValueRepository.Delete(targetKey, domainId);
                 }
             }
 

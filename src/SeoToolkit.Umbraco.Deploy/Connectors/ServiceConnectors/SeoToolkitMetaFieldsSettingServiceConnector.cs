@@ -144,37 +144,13 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
 
             // Build a fresh DTO rather than mutating state.Entity: that instance is the service's
             // 30-minute cached DocumentTypeSettingsDto, so mutating it in place would corrupt the
-            // runtime cache for every other reader.
+            // runtime cache for every other reader. The artifact is authoritative: a fresh DTO
+            // replaces the target exactly, dropping target-only fields/inheritance so it converges.
             var dto = new DocumentTypeSettingsDto { Content = contentType };
-
-            // Overwrite-only (non-prune) merges into the target's existing settings, so carry the
-            // current fields over first. The service returns them in object form (a media field is
-            // an IPublishedContent), but the write path serializes the value as-is — so round-trip
-            // each through the portable editor wire format back to the database form, otherwise a
-            // preserved media field would serialize as a self-referencing/environment-specific blob.
-            if (!PruneMissing && state.Entity is not null)
-            {
-                dto.Inheritance = state.Entity.Inheritance;
-                foreach (var (seoField, existing) in state.Entity.Fields)
-                {
-                    var converter = seoField.Editor.ValueConverter;
-                    dto.Fields[seoField] = new DocumentTypeValueDto
-                    {
-                        UseInheritedValue = existing.UseInheritedValue,
-                        Value = existing.Value is null
-                            ? null
-                            : converter.ConvertEditorToDatabaseValue(converter.ConvertObjectToEditorValue(existing.Value)),
-                    };
-                }
-            }
 
             if (state.Artifact.InheritanceUdi is not null)
             {
                 dto.Inheritance = contentTypeService.Get(state.Artifact.InheritanceUdi.Guid);
-            }
-            else if (PruneMissing)
-            {
-                dto.Inheritance = null;
             }
 
             foreach (var field in state.Artifact.Fields)

@@ -62,14 +62,14 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
 
         public bool Exists(int nodeId, string fieldAlias, string culture)
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             return scope.Database.FirstOrDefault<MetaFieldsValueEntity>(scope.SqlContext.Sql().SelectAll()
                 .From<MetaFieldsValueEntity>().Where<MetaFieldsValueEntity>(it => it.NodeId == nodeId && it.Alias == fieldAlias && it.Culture == culture)) != null;
         }
 
         public Dictionary<string, object> GetAllValues(int nodeId, string culture)
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             return scope.Database
                 .Fetch<MetaFieldsValueEntity>(scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(it => it.NodeId == nodeId && it.Culture == culture))
                 .ToDictionary(it => it.Alias, it => JsonConvert.DeserializeObject(it.UserValue));
@@ -119,7 +119,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
 
         public bool Exists(Guid nodeId, string fieldAlias, string culture)
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             // Treat an empty culture as "empty or NULL" so a legacy NULL-culture row is matched —
             // otherwise the import path would miss it and insert a duplicate (NodeKey, alias) row.
             var sql = scope.SqlContext.Sql().SelectAll().From<MetaFieldsValueEntity>();
@@ -131,7 +131,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
 
         public Dictionary<string, object> GetAllValues(Guid nodeId, string culture)
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             // Match the NULL-or-empty culture handling used by Exists/Delete for consistency.
             var sql = string.IsNullOrEmpty(culture)
                 ? scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId && (it.Culture == null || it.Culture == ""))
@@ -143,7 +143,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
 
         public Dictionary<string, Dictionary<string, object>> GetAllValues(Guid nodeId)
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             return scope.Database
                 .Fetch<MetaFieldsValueEntity>(scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId))
                 .GroupBy(it => it.Culture ?? string.Empty)
@@ -154,7 +154,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
 
         public IEnumerable<Guid> GetAllNodeKeys()
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             var sql = scope.SqlContext.Sql()
                 .SelectDistinct<MetaFieldsValueEntity>(it => it.NodeKey)
                 .From<MetaFieldsValueEntity>();
@@ -163,7 +163,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
 
         public bool HasAnyValues(Guid nodeId)
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             var sql = scope.SqlContext.Sql()
                 .SelectCount()
                 .From<MetaFieldsValueEntity>()

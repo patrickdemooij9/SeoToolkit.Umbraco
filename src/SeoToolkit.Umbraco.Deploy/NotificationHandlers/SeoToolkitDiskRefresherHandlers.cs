@@ -1,12 +1,11 @@
 using SeoToolkit.Umbraco.Common.Core.Notifications;
 using SeoToolkit.Umbraco.MetaFields.Core.Notifications;
-using SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository;
 using SeoToolkit.Umbraco.ScriptManager.Core.Notifications;
 using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
-using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Deploy;
 using Umbraco.Cms.Core.Events;
+using Umbraco.Deploy.Core;
 using Umbraco.Deploy.Core.Connectors.ServiceConnectors;
 using Umbraco.Deploy.Infrastructure.Artifacts;
 using Umbraco.Deploy.Infrastructure.Disk;
@@ -15,11 +14,13 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
 {
     /// <summary>
     /// Shared logic for the disk (.uda) refresher handlers: resolve the matching service
-    /// connector, build the artifact and write it to (or delete it from) disk.
+    /// connector, build the artifact and write it to (or delete it from) disk, refreshing the
+    /// signature cache in step so a saved entity isn't left reading as "changed" on the next deploy.
     /// </summary>
     public abstract class SeoToolkitDiskRefresherHandlerBase(
         IDiskEntityService diskEntityService,
-        IServiceConnectorFactory serviceConnectorFactory)
+        IServiceConnectorFactory serviceConnectorFactory,
+        ISignatureService signatureService)
     {
         protected async Task WriteArtifactAsync(string entityType, Guid id, CancellationToken cancellationToken)
         {
@@ -30,6 +31,7 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
             if (artifact is not null)
             {
                 await diskEntityService.WriteArtifactsAsync([artifact], cancellationToken).ConfigureAwait(false);
+                signatureService.SetSignature(artifact);
             }
         }
 
@@ -37,6 +39,7 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
         {
             var udi = new GuidUdi(entityType, id);
             diskEntityService.DeleteArtifacts([new DeletionArtifact(udi)]);
+            signatureService.ClearSignature(udi);
         }
 
         /// <summary>Minimal artifact used only to carry a UDI to <see cref="IDiskEntityService.DeleteArtifacts"/>.</summary>
@@ -44,8 +47,8 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
     }
 
     public class SeoSettingDiskRefresherHandler(
-        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
-        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory, ISignatureService signatureService)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory, signatureService),
           INotificationAsyncHandler<SeoSettingSavedNotification>
     {
         public Task HandleAsync(SeoSettingSavedNotification notification, CancellationToken cancellationToken)
@@ -53,8 +56,8 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
     }
 
     public class MetaFieldsSettingDiskRefresherHandler(
-        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
-        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory, ISignatureService signatureService)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory, signatureService),
           INotificationAsyncHandler<MetaFieldSettingsSavedNotification>
     {
         public Task HandleAsync(MetaFieldSettingsSavedNotification notification, CancellationToken cancellationToken)
@@ -62,8 +65,8 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
     }
 
     public class SitemapPageTypeDiskRefresherHandler(
-        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
-        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory, ISignatureService signatureService)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory, signatureService),
           INotificationAsyncHandler<SitemapPageSettingsSavedNotification>
     {
         public Task HandleAsync(SitemapPageSettingsSavedNotification notification, CancellationToken cancellationToken)
@@ -71,8 +74,8 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
     }
 
     public class ScriptDiskRefresherHandler(
-        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
-        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory, ISignatureService signatureService)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory, signatureService),
           INotificationAsyncHandler<ScriptSavedNotification>,
           INotificationAsyncHandler<ScriptDeletedNotification>
     {
@@ -89,8 +92,8 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
     }
 
     public class DomainCollectionDiskRefresherHandler(
-        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
-        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory, ISignatureService signatureService)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory, signatureService),
           INotificationAsyncHandler<SeoDomainCollectionSavedNotification>,
           INotificationAsyncHandler<SeoDomainCollectionDeletedNotification>
     {
@@ -111,8 +114,8 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
     }
 
     public class KeyValuesDiskRefresherHandler(
-        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory)
-        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
+        IDiskEntityService diskEntityService, IServiceConnectorFactory serviceConnectorFactory, ISignatureService signatureService)
+        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory, signatureService),
           INotificationAsyncHandler<SeoKeyValueSavedNotification>
     {
         public Task HandleAsync(SeoKeyValueSavedNotification notification, CancellationToken cancellationToken)
@@ -120,56 +123,5 @@ namespace SeoToolkit.Umbraco.Deploy.NotificationHandlers
                 SeoToolkitDeployConstants.UdiEntityType.KeyValues,
                 notification.DomainCollectionId ?? SeoToolkitDeployConstants.RootKeyValuesGuid,
                 cancellationToken);
-    }
-
-    /// <summary>
-    /// Keeps the per-node MetaFields values .uda in sync with the database: (re)writes it while
-    /// the node still has values, and deletes it once the node has none left — so removing all of
-    /// a node's SEO values propagates as a delete on restore instead of leaving stale target data.
-    /// </summary>
-    public class MetaFieldsValueDiskRefresherHandler(
-        IDiskEntityService diskEntityService,
-        IServiceConnectorFactory serviceConnectorFactory,
-        IMetaFieldsValueRepository valueRepository)
-        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
-          INotificationAsyncHandler<MetaFieldsValueChangedNotification>
-    {
-        public Task HandleAsync(MetaFieldsValueChangedNotification notification, CancellationToken cancellationToken)
-        {
-            if (valueRepository.HasAnyValues(notification.NodeKey))
-            {
-                return WriteArtifactAsync(
-                    SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, notification.NodeKey, cancellationToken);
-            }
-
-            DeleteArtifact(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, notification.NodeKey);
-            return Task.CompletedTask;
-        }
-    }
-
-    /// <summary>
-    /// Keeps the per-node sitemap content .uda in sync with the database: (re)writes it while the
-    /// node still has non-default settings, and deletes it once the settings are reset to default
-    /// (the service deletes the row) — so a reset propagates as a delete on restore instead of
-    /// leaving stale target data.
-    /// </summary>
-    public class SitemapContentDiskRefresherHandler(
-        IDiskEntityService diskEntityService,
-        IServiceConnectorFactory serviceConnectorFactory,
-        ISitemapService sitemapService)
-        : SeoToolkitDiskRefresherHandlerBase(diskEntityService, serviceConnectorFactory),
-          INotificationAsyncHandler<SitemapContentChangedNotification>
-    {
-        public Task HandleAsync(SitemapContentChangedNotification notification, CancellationToken cancellationToken)
-        {
-            if (sitemapService.GetContentSettings(notification.NodeKey) is not null)
-            {
-                return WriteArtifactAsync(
-                    SeoToolkitDeployConstants.UdiEntityType.SitemapContent, notification.NodeKey, cancellationToken);
-            }
-
-            DeleteArtifact(SeoToolkitDeployConstants.UdiEntityType.SitemapContent, notification.NodeKey);
-            return Task.CompletedTask;
-        }
     }
 }

@@ -47,7 +47,7 @@ namespace SeoToolkit.Tests.Deploy
             _seoSettingsService.Setup(s => s.GetAll()).Returns(new Dictionary<Guid, bool> { [contentTypeKey] = true });
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.SeoSetting, contentTypeKey);
-            var artifact = await _connector.GetArtifactAsync(udi, Mock.Of<IContextCache>());
+            var artifact = await _connector.GetArtifactAsync(udi, PassThroughCache.Instance);
 
             Assert.That(artifact, Is.Not.Null);
             Assert.Multiple(() =>

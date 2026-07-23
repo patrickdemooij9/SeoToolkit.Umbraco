@@ -54,7 +54,7 @@ namespace SeoToolkit.Tests.Deploy
             });
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.SitemapPageType, contentTypeKey);
-            var artifact = await _connector.GetArtifactAsync(udi, Mock.Of<IContextCache>());
+            var artifact = await _connector.GetArtifactAsync(udi, PassThroughCache.Instance);
             Assert.That(artifact, Is.Not.Null);
 
             SitemapPageSettings? saved = null;

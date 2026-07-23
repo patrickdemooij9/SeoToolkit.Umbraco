@@ -19,10 +19,10 @@ namespace SeoToolkit.Tests.Deploy
     [TestFixture]
     public class MetaFieldsSettingConnectorTests
     {
-        private static IOptionsMonitor<SeoToolkitDeploySettings> DefaultSettings(bool pruneMissing = false)
+        private static IOptionsMonitor<SeoToolkitDeploySettings> DefaultSettings()
         {
             var monitor = new Mock<IOptionsMonitor<SeoToolkitDeploySettings>>();
-            monitor.Setup(m => m.CurrentValue).Returns(new SeoToolkitDeploySettings { PruneMissing = pruneMissing });
+            monitor.Setup(m => m.CurrentValue).Returns(new SeoToolkitDeploySettings());
             return monitor.Object;
         }
 
@@ -75,7 +75,7 @@ namespace SeoToolkit.Tests.Deploy
                 settingsService.Object, contentTypeService.Object, fieldCollection, DefaultSettings());
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsSetting, contentTypeKey);
-            var artifact = await connector.GetArtifactAsync(udi, Mock.Of<IContextCache>());
+            var artifact = await connector.GetArtifactAsync(udi, PassThroughCache.Instance);
 
             Assert.That(artifact, Is.Not.Null);
             Assert.Multiple(() =>
@@ -139,7 +139,7 @@ namespace SeoToolkit.Tests.Deploy
         }
 
         [Test]
-        public async Task Process_Pass2_PruneMissing_DropsTargetOnlyFieldsAndInheritance()
+        public async Task Process_Pass2_ReconcilesTargetToSource_DropsTargetOnlyFieldsAndInheritance()
         {
             var contentTypeKey = Guid.NewGuid();
             var contentType = new Mock<IContentType>();
@@ -167,7 +167,7 @@ namespace SeoToolkit.Tests.Deploy
             var fieldCollection = new SeoFieldCollection(() => new[] { titleField.Object, staleField.Object });
 
             var connector = new SeoToolkitMetaFieldsSettingServiceConnector(
-                settingsService.Object, contentTypeService.Object, fieldCollection, DefaultSettings(pruneMissing: true));
+                settingsService.Object, contentTypeService.Object, fieldCollection, DefaultSettings());
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsSetting, contentTypeKey);
             var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.MetaFieldsSettingArtifact(udi)
