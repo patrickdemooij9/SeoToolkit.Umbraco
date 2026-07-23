@@ -26,15 +26,18 @@ export class SeoDeployClient {
     return (body?.items ?? []) as SeoDeployItem[];
   }
 
-  async getTargetUrl(): Promise<string | undefined> {
+  // The upstream target's Deploy API endpoint (deployUrl), NOT its backoffice umbracoUrl. Instant
+  // deploy opens a Deploy session against this URL; passing umbracoUrl makes the remote session
+  // request 404 ("The remote API was not found") in Deploy's SourceDeployWorkItem.
+  async getTargetDeployUrl(): Promise<string | undefined> {
     const resp = await fetch(`${BASE}/configuration/client`, { headers: this.#headers() });
     if (!resp.ok) return undefined;
     const body = await resp.json();
-    return body?.clientConfiguration?.target?.umbracoUrl ?? undefined;
+    return body?.clientConfiguration?.target?.deployUrl ?? undefined;
   }
 
   async instantDeploy(items: SeoDeployItem[]): Promise<Response> {
-    const targetUrl = await this.getTargetUrl();
+    const targetUrl = await this.getTargetDeployUrl();
     if (!targetUrl) throw new Error("No upstream target environment configured.");
     return fetch(`${BASE}/deploy/instant`, {
       method: "POST",
@@ -48,32 +51,20 @@ export class SeoDeployClient {
     });
   }
 
-  // Partial-restore the given SEO UDIs from the upstream source. ignoreDependencies leaves the
-  // local document content untouched (Deploy returns 400 unless the environment allows it).
-  async restorePartial(udis: string[]): Promise<Response> {
-    const sourceUrl = await this.getTargetUrl();
-    if (!sourceUrl) throw new Error("No upstream source environment configured.");
+  // Partial-restore the given SEO UDIs from the chosen source environment. The SEO artifacts
+  // depend on the document in Exist mode only, so the document content is left untouched;
+  // ignoreDependencies stays false unless the environment allows it and the user opts in.
+  async restorePartial(udis: string[], sourceUrl: string, ignoreDependencies = false): Promise<Response> {
     return fetch(`${BASE}/restore/partial`, {
       method: "POST",
       headers: this.#headers(),
       body: JSON.stringify({
         sourceUrl,
         enableLogging: false,
-        ignoreDependencies: true,
+        ignoreDependencies,
         restoreNodes: udis.map((udi) => ({ udi, includeDescendants: false, selector: "this" })),
       }),
     });
   }
 
-  async queueAdd(items: SeoDeployItem[]): Promise<void> {
-    // Sequential: a failure throws immediately, so earlier items may already be queued.
-    for (const item of items) {
-      const resp = await fetch(`${BASE}/queue/add`, {
-        method: "POST",
-        headers: this.#headers(),
-        body: JSON.stringify({ id: item.id, entityType: item.entityType, culture: null }),
-      });
-      if (!resp.ok) throw new Error(`Queue add failed (${resp.status}).`);
-    }
-  }
 }
