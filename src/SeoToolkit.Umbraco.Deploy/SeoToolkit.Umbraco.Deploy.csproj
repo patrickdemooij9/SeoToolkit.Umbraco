@@ -1,7 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFrameworks>net10.0</TargetFrameworks>
+    <ContentTargetFolders>.</ContentTargetFolders>
     <Product>SeoToolkit Deploy</Product>
     <PackageId>SeoToolkit.Umbraco.Deploy</PackageId>
     <Title>SeoToolkit Deploy</Title>
@@ -12,6 +13,7 @@
     <PackageProjectUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</PackageProjectUrl>
     <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
+    <StaticWebAssetBasePath>App_Plugins/SeoToolkit</StaticWebAssetBasePath>
     <Version>1.0.0-beta1</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

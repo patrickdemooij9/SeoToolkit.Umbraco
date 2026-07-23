@@ -21,6 +21,12 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
         protected bool IsDisabled
             => settings.CurrentValue.DisabledEntityTypes.Contains(UdiEntityType, StringComparer.OrdinalIgnoreCase);
 
+        /// <summary>
+        /// When true, GetRangeAsync returns a range for a missing entity instead of throwing.
+        /// Per-node types set this so queue/transfer of a node with no data of this kind is a no-op.
+        /// </summary>
+        protected virtual bool AllowMissingEntity => false;
+
         public abstract string GetEntityName(TEntity entity);
 
         protected abstract GuidUdi GetEntityUdi(TEntity entity);
@@ -48,8 +54,8 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
                 return null;
             }
 
-            // Cache the resolved entity in the operation-scoped IContextCache so repeated requests
-            // for the same UDI within a deploy reuse the first lookup instead of re-hitting the DB.
+            // Resolve through the operation-scoped IContextCache so repeated requests for the same
+            // UDI within a deploy reuse the first lookup instead of re-hitting the database.
             TEntity? entity = await contextCache
                 .GetOrCreateAsync(udi!.ToString(), () => GetEntityAsync(udi.Guid, cancellationToken))
                 .ConfigureAwait(false);
@@ -72,6 +78,11 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             TEntity? entity = await GetEntityAsync(udi.Guid, cancellationToken).ConfigureAwait(false);
             if (entity == null)
             {
+                if (AllowMissingEntity)
+                {
+                    // No data of this kind for the node — return a range so queue/transfer no-ops.
+                    return new NamedUdiRange(udi, OpenUdiName, selector);
+                }
                 throw new ArgumentException("Could not find an entity with the specified identifier.", nameof(udi));
             }
 
@@ -98,13 +109,17 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             TEntity? entity = await GetEntityAsync(result, cancellationToken).ConfigureAwait(false);
             if (entity == null)
             {
+                if (AllowMissingEntity)
+                {
+                    return new NamedUdiRange(new GuidUdi(UdiEntityType, result), OpenUdiName, selector);
+                }
                 throw new ArgumentException("Could not find an entity with the specified identifier.", nameof(sid));
             }
 
             return new NamedUdiRange(GetEntityUdi(entity), GetEntityName(entity), selector);
         }
 
-        public override async IAsyncEnumerable<GuidUdi?> ExpandRangeAsync(
+        public override async IAsyncEnumerable<GuidUdi> ExpandRangeAsync(
             UdiRange range,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {

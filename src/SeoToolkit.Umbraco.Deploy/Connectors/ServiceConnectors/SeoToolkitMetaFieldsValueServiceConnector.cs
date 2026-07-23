@@ -26,6 +26,9 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
 
         protected override string OpenUdiName => "All SeoToolkit meta field values";
 
+        // Per-node type: a node with no meta field values is normal, so queue/transfer no-ops.
+        protected override bool AllowMissingEntity => true;
+
         protected override int[] ProcessPasses => [7];
 
         public override string GetEntityName(MetaFieldsNodeValuesModel entity) => entity.NodeName;

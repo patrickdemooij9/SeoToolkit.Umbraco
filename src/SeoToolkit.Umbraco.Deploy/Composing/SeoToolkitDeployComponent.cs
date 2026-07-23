@@ -43,12 +43,13 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.DomainCollection);
             diskEntityService.RegisterDiskEntityType(SeoToolkitDeployConstants.UdiEntityType.KeyValues);
 
+            // Per-node types (MetaFieldsValue / SitemapContent) are content data, not schema, so
+            // they are not registered as disk entity types.
         }
 
         private void InitializeIntegratedEntities()
         {
-            // Register the settings-like entity types for queue-for-transfer, restore and
-            // import/export. Per-node types are pulled in as content dependencies instead.
+            // Settings-like entity types: queue-for-transfer, restore and disk import/export.
             foreach (var entityType in new[]
             {
                 SeoToolkitDeployConstants.UdiEntityType.SeoSetting,
@@ -68,6 +69,26 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
                         PermittedToRestore = true,
                         SupportsPartialRestore = true,
                         SupportsImportExport = true,
+                    });
+            }
+
+            // Per-node types: transfer/restore entities, but SupportsImportExport is false so they
+            // are never written to disk as schema .uda (their signature is refreshed on change).
+            foreach (var entityType in new[]
+            {
+                SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue,
+                SeoToolkitDeployConstants.UdiEntityType.SitemapContent,
+            })
+            {
+                transferEntityService.RegisterTransferEntityType(
+                    entityType,
+                    new DeployRegisteredEntityTypeDetailOptions
+                    {
+                        SupportsQueueForTransfer = true,
+                        SupportsRestore = true,
+                        PermittedToRestore = true,
+                        SupportsPartialRestore = true,
+                        SupportsImportExport = false,
                     });
             }
         }

@@ -7,7 +7,6 @@ using SeoToolkit.Umbraco.ScriptManager.Core.Notifications;
 using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Deploy.Core.Events;
 
 namespace SeoToolkit.Umbraco.Deploy.Composing
 {
@@ -17,8 +16,6 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
         {
             builder.Services.AddOptions<SeoToolkitDeploySettings>()
                 .Bind(builder.Config.GetSection("SeoToolkit:Deploy"));
-
-            builder.AddNotificationAsyncHandler<ArtifactExportingNotification, SeoToolkitContentExportingHandler>();
 
             // Disk (.uda) refreshers: rewrite the settings artifact whenever it is saved/deleted.
             builder.AddNotificationAsyncHandler<SeoSettingSavedNotification, SeoSettingDiskRefresherHandler>();
@@ -30,6 +27,10 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
             builder.AddNotificationAsyncHandler<SeoDomainCollectionDeletedNotification, DomainCollectionDiskRefresherHandler>();
             builder.AddNotificationAsyncHandler<SeoKeyValueSavedNotification, KeyValuesDiskRefresherHandler>();
 
+            // Per-node types: refresh the Deploy signature on change so an edit is detected as a
+            // change to transfer (they write no disk .uda).
+            builder.AddNotificationAsyncHandler<MetaFieldsValueChangedNotification, MetaFieldsValueSignatureRefresherHandler>();
+            builder.AddNotificationAsyncHandler<SitemapContentChangedNotification, SitemapContentSignatureRefresherHandler>();
 
             builder.Components().Append<SeoToolkitDeployComponent>();
         }

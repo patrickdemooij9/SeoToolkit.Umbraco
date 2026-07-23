@@ -20,6 +20,9 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
 
         protected override string OpenUdiName => "All SeoToolkit sitemap content settings";
 
+        // Per-node type: a node with no sitemap content settings is normal, so queue/transfer no-ops.
+        protected override bool AllowMissingEntity => true;
+
         protected override int[] ProcessPasses => [7];
 
         public override string GetEntityName(SitemapContentSettings entity)

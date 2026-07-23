@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SeoToolkit.Umbraco.Common.Core.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
@@ -22,7 +23,11 @@ namespace SeoToolkit.Umbraco.Deploy
     {
         public Task<IEnumerable<PackageManifest>> ReadPackageManifestsAsync()
         {
-            // This package is server-side only (Deploy connectors) — no backoffice entry point.
+            var entrypoint = JsonNode.Parse(@"{""name"": ""seoToolkit.deploy.entrypoint"",
+            ""alias"": ""SeoToolkit.Deploy.EntryPoint"",
+            ""type"": ""backofficeEntryPoint"",
+            ""js"": ""/App_Plugins/SeoToolkit/entry/deploy/deploy.js""}");
+
             var manifestVersion = AssemblyVersionHelper.GetInformationalVersion(typeof(ManifestFilter).Assembly);
 
             List<PackageManifest> manifest = [
@@ -32,7 +37,7 @@ namespace SeoToolkit.Umbraco.Deploy
                 Name = "SeoToolkit Deploy",
                 AllowTelemetry = true,
                 Version = manifestVersion,
-                Extensions = [],
+                Extensions = [ entrypoint! ],
             }
             ];
 
