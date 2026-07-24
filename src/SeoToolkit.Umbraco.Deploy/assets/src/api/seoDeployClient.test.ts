@@ -5,7 +5,6 @@ import { SeoDeployItem, SEO_DEPLOY_ENTITY_TYPES } from "./seoDeployItems";
 const KEY = "11111111-1111-1111-1111-111111111111";
 
 const items: SeoDeployItem[] = [
-  { id: KEY, entityType: SEO_DEPLOY_ENTITY_TYPES.document },
   { id: KEY, entityType: SEO_DEPLOY_ENTITY_TYPES.metafieldsValue },
   { id: KEY, entityType: SEO_DEPLOY_ENTITY_TYPES.sitemapContent },
 ];
@@ -139,5 +138,46 @@ describe("SeoDeployClient.getSeoItems", () => {
     const client = new SeoDeployClient("token");
 
     await expect(client.getSeoItems(KEY)).rejects.toThrow();
+  });
+
+});
+
+describe("SeoDeployClient.queueSeo", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("POSTs the node to seoQueueAdd (no descendants, no release date) and returns the added count", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true, status: 200, json: async () => ({ added: 2 }),
+    } as Response);
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await new SeoDeployClient("token").queueSeo(KEY, false, null);
+
+    expect(result).toEqual({ added: 2 });
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe(`/umbraco/seoToolkitDeploy/seoQueueAdd?contentKey=${KEY}`);
+    expect((init as RequestInit).method).toBe("POST");
+  });
+
+  it("appends includeDescendants=true and the release date when provided", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true, status: 200, json: async () => ({ added: 5 }),
+    } as Response);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await new SeoDeployClient("token").queueSeo(KEY, true, "2026-08-01T00:00:00Z");
+
+    const url = fetchMock.mock.calls[0][0] as string;
+    expect(url).toContain("includeDescendants=true");
+    expect(url).toContain(`releaseDate=${encodeURIComponent("2026-08-01T00:00:00Z")}`);
+  });
+
+  it("rejects when the endpoint response is not ok", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: false, status: 500 } as Response);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(new SeoDeployClient("token").queueSeo(KEY, false, null)).rejects.toThrow();
   });
 });

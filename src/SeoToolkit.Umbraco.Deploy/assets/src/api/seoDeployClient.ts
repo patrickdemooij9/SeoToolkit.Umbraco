@@ -36,6 +36,24 @@ export class SeoDeployClient {
     return body?.clientConfiguration?.target?.deployUrl ?? undefined;
   }
 
+  // Queues the node's SEO (and every descendant's when includeDescendants is set) in one server
+  // call, and returns how many SEO entities were queued (0 when there is no SEO data).
+  async queueSeo(
+    contentKey: string,
+    includeDescendants: boolean,
+    releaseDate: string | null,
+  ): Promise<{ added: number }> {
+    const descendants = includeDescendants ? "&includeDescendants=true" : "";
+    const release = releaseDate ? `&releaseDate=${encodeURIComponent(releaseDate)}` : "";
+    const resp = await fetch(
+      `/umbraco/seoToolkitDeploy/seoQueueAdd?contentKey=${contentKey}${descendants}${release}`,
+      { method: "POST", headers: this.#headers() },
+    );
+    if (!resp.ok) throw new Error(`Could not add SEO to the transfer queue (${resp.status}).`);
+    const body = await resp.json();
+    return { added: (body?.added ?? 0) as number };
+  }
+
   async instantDeploy(items: SeoDeployItem[]): Promise<Response> {
     const targetUrl = await this.getTargetDeployUrl();
     if (!targetUrl) throw new Error("No upstream target environment configured.");

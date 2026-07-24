@@ -1,5 +1,4 @@
 export const SEO_DEPLOY_ENTITY_TYPES = {
-  document: "document",
   metafieldsValue: "seotoolkit-metafields-value",
   sitemapContent: "seotoolkit-sitemap-content",
 } as const;
@@ -9,13 +8,10 @@ export interface SeoDeployItem {
   entityType: string;
 }
 
-// The items to transfer/queue for a node: the document plus its existing SEO entities. Empty when
-// the node has no SEO entities, so callers move nothing rather than the bare document.
-export function buildTransferSet(contentKey: string, seoItems: SeoDeployItem[]): SeoDeployItem[] {
-  if (seoItems.length === 0) {
-    return [];
-  }
-  return [{ id: contentKey, entityType: SEO_DEPLOY_ENTITY_TYPES.document }, ...seoItems];
+// The SEO entities to transfer — never the content node itself (SEO artifacts depend on the
+// document in Exist mode only). Returned unchanged; empty input means transfer nothing.
+export function buildTransferSet(seoItems: SeoDeployItem[]): SeoDeployItem[] {
+  return seoItems;
 }
 
 // The UDIs of a node's two SEO entities. A GuidUdi renders the key as 32 dashless hex chars.

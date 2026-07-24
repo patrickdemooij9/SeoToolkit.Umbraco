@@ -15,4 +15,10 @@ namespace SeoToolkit.Umbraco.Deploy.Models
 
         public string EntityType { get; set; } = entityType;
     }
+
+    /// <summary>How many SEO entities were queued by an "add SEO to transfer queue" call.</summary>
+    public class SeoQueueAddResult
+    {
+        public int Added { get; set; }
+    }
 }

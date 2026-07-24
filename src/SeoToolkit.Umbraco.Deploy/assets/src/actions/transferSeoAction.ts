@@ -23,7 +23,7 @@ export default class TransferSeoAction extends UmbWorkspaceActionBase {
 
 		try {
 			const client = new SeoDeployClient(token);
-			const items = buildTransferSet(contentKey, await client.getSeoItems(contentKey));
+			const items = buildTransferSet(await client.getSeoItems(contentKey));
 			if (items.length === 0) {
 				notificationContext?.peek("warning", { data: { message: "No SEO data to transfer for this node." } });
 				return;

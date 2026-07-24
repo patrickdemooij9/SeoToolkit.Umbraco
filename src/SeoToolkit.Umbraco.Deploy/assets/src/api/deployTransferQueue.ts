@@ -14,6 +14,8 @@ export interface DeployAddToQueueModel {
 
 export interface DeployTransferQueueManager extends UmbContextMinimal {
   add(item: DeployAddToQueueModel): Promise<string | undefined>;
+  // Reloads queue state and refreshes tree signs once; called after server-side queuing.
+  refresh(): Promise<void>;
 }
 
 export const DEPLOY_TRANSFER_QUEUE_MANAGER = new UmbContextToken<DeployTransferQueueManager>(

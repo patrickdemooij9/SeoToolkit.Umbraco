@@ -2,15 +2,13 @@ import { UmbEntityActionBase, UmbEntityActionArgs } from "@umbraco-cms/backoffic
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UMB_AUTH_CONTEXT } from "@umbraco-cms/backoffice/auth";
 import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
+import { umbOpenModal } from "@umbraco-cms/backoffice/modal";
 import { SeoDeployClient } from "../api/seoDeployClient";
-import { buildTransferSet } from "../api/seoDeployItems";
 import { DEPLOY_TRANSFER_QUEUE_MANAGER } from "../api/deployTransferQueue";
+import { DEPLOY_QUEUE_MODAL } from "../api/deployQueueModal";
 
-// This action runs in a tree/entity context (no document workspace context), so it can't use the
-// `SeoToolkit.SeoEnabled` condition. Instead it asks the server which per-node SEO entities exist
-// for the node and only queues the document + those; when the node has no SEO data it queues
-// nothing and informs the editor. Items are added through Deploy's own transfer-queue manager so
-// the transfer queue widget refreshes, matching the native "Add to Transfer Queue" action.
+// Tree action: opens Deploy's queue dialog for the "include descendants" choice, then has the
+// server queue the node's (and optionally descendants') SEO entities — never the content node.
 export class QueueSeoEntityAction extends UmbEntityActionBase<never> {
 	constructor(host: UmbControllerHost, args: UmbEntityActionArgs<never>) {
 		super(host, args);
@@ -30,22 +28,24 @@ export class QueueSeoEntityAction extends UmbEntityActionBase<never> {
 			return;
 		}
 
+		// Only includeDescendants and releaseDate are used; the dialog's culture/publish options don't apply.
+		const options = await umbOpenModal(this, DEPLOY_QUEUE_MODAL, {
+			data: {
+				document: { unique: contentKey, entityType: "document", isRoot: false, hasChildren: true },
+				supportsTransferDescendants: true,
+			},
+		}).catch(() => undefined);
+		if (!options) return; // dialog cancelled
+
 		try {
 			const client = new SeoDeployClient(token);
-			const items = buildTransferSet(contentKey, await client.getSeoItems(contentKey));
-			if (items.length === 0) {
+			// One server call queues everything; then refresh the widget once.
+			const { added } = await client.queueSeo(contentKey, options.includeDescendants, options.releaseDate ?? null);
+			if (added === 0) {
 				notificationContext?.peek("warning", { data: { message: "No SEO data to transfer for this node." } });
 				return;
 			}
-			for (const item of items) {
-				await queueManager.add({
-					id: item.id,
-					entityType: item.entityType,
-					culture: "*",
-					includeDescendants: false,
-					releaseDate: null,
-				});
-			}
+			await queueManager.refresh();
 			notificationContext?.peek("positive", { data: { message: "SEO added to transfer queue." } });
 		} catch (e) {
 			notificationContext?.peek("danger", { data: { message: (e as Error).message } });
