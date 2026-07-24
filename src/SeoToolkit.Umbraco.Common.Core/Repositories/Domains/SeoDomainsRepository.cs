@@ -85,7 +85,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
             {
                 // Preserve a caller-supplied Id when it doesn't exist yet in this environment
                 // (e.g. a collection transferred via Deploy) so the identifier round-trips.
-                Id = collection.Id == null || collection.Id == Guid.Empty ? Guid.NewGuid() : collection.Id
+                Id = collection.Id == null || collection.Id.Value == Guid.Empty ? Guid.NewGuid() : collection.Id.Value
             };
 
             collectionEntity.Name = collection.Name;
