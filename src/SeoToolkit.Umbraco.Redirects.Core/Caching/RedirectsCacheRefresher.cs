@@ -15,7 +15,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Caching
         public override Guid RefresherUniqueId => CacheGuid;
         public override string Name => "Redirects Cache Refresher";
 
-        public RedirectsCacheRefresher(AppCaches appCaches, IEventAggregator eventAggregator, ICacheRefresherNotificationFactory factory, IRedirectsBloomFilter bloomFilter, IRedirectsRepository redirectsRepository) : base(appCaches, eventAggregator, factory)
+        public RedirectsCacheRefresher(AppCaches appCaches, IEventAggregator eventAggregator, ICacheRefresherNotificationFactory factory, IRedirectsBloomFilter bloomFilter = null, IRedirectsRepository redirectsRepository = null) : base(appCaches, eventAggregator, factory)
         {
             _bloomFilter = bloomFilter;
             _redirectsRepository = redirectsRepository;
@@ -24,16 +24,21 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Caching
         public override void Refresh(Guid key)
         {
             AppCaches.RuntimeCache.ClearByKey(CacheConstants.Redirects);
-            var redirect = _redirectsRepository.Get(key);
-            if (redirect is null)
+
+            // When the module is disabled these aren't registered, so there is nothing to keep in sync.
+            if (_redirectsRepository is not null && _bloomFilter is not null)
             {
-                _bloomFilter.Remove(string.Empty); // Forces rebuild
+                var redirect = _redirectsRepository.Get(key);
+                if (redirect is null)
+                {
+                    _bloomFilter.Remove(string.Empty); // Forces rebuild
+                }
+                else
+                {
+                    _bloomFilter.Add(redirect.OldUrl);
+                }
             }
-            else
-            {
-                _bloomFilter.Add(redirect.OldUrl);
-            }
-            
+
             base.Refresh(key);
         }
     }
