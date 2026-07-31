@@ -38,13 +38,23 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
             ISitemapGenerator sitemapGenerator,
             ISitemapIndexGenerator sitemapIndexGenerator)
         {
-            if (context.Request.Path.Value?.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase) != true)
+            if (context.Request.Path.Value?.EndsWith(".xml", StringComparison.OrdinalIgnoreCase) != true)
             {
                 await _next.Invoke(context);
                 return;
             }
 
             var settings = _sitemapConfigurationService.GetSettings();
+
+            var isSitemapRequest = context.Request.Path.Value.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase);
+            var isConfiguredIndexRequest = !string.IsNullOrWhiteSpace(settings.SitemapIndexPath)
+                && IsSitemapIndexRequest(context.Request.Path, settings.SitemapIndexPath);
+
+            if (!isSitemapRequest && !isConfiguredIndexRequest)
+            {
+                await _next.Invoke(context);
+                return;
+            }
 
             XDocument doc = null;
             using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
@@ -54,6 +64,12 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                 if (domains.Length == 0 || settings.StructureMode == StructureMode.OnlyRoot)
                 {
                     doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture));
+                }
+                else if (isConfiguredIndexRequest)
+                {
+                    // A dedicated index path is configured and this request targets it. Serve the index here so the
+                    // root /sitemap.xml stays free to serve the default culture's sitemap (see SitemapIndexPath).
+                    doc = sitemapIndexGenerator.Generate();
                 }
                 else
                 {
@@ -89,6 +105,17 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                 await doc.SaveAsync(writer, SaveOptions.None, CancellationToken.None);
                 await context.Response.WriteAsync(writer.ToString());
             }
+        }
+
+        //Matches requests targeting the configured index path. A value ending in ".xml" is treated as a full filename
+        //("sitemap-index.xml" -> "/sitemap-index.xml"), otherwise as a folder segment ("sitemap-index" -> "/sitemap-index/sitemap.xml").
+        private static bool IsSitemapIndexRequest(PathString requestPath, string sitemapIndexPath)
+        {
+            var trimmed = sitemapIndexPath.Trim('/');
+            var expected = trimmed.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)
+                ? $"/{trimmed}"
+                : $"/{trimmed}/sitemap.xml";
+            return string.Equals(requestPath.Value?.TrimEnd('/'), expected, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
