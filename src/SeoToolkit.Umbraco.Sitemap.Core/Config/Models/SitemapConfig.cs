@@ -16,5 +16,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Config.Models
         public string[] DisabledModules { get; set; } = Array.Empty<string>();
 
         public StructureMode StructureMode { get; set; } = StructureMode.MultiRoot;
+
+        public string SitemapIndexPath { get; set; } = string.Empty;
     }
 }

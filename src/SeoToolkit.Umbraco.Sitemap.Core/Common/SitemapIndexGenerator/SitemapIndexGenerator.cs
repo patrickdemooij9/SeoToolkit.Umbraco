@@ -30,8 +30,11 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator
                     if (rootNode is null)
                         continue;
 
+                    if (!rootNode.IsPublished(domain.Culture))
+                        continue;
+
                     var sitemapElement = new XElement(_namespace + "sitemap");
-                    
+
                     sitemapElement.Add(new XElement(_namespace + "loc", new Uri(Path.Join(rootNode.Url(domain.Culture, UrlMode.Absolute), "sitemap.xml")).AbsoluteUri));
 
                     rootNamespace.Add(sitemapElement);
