@@ -33,6 +33,9 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator
                     var rootNode = ctx.UmbracoContext.Content.GetById(domain.ContentId);
                     if (rootNode is null)
                         continue;
+                        
+                    if (!rootNode.IsPublished(domain.Culture))
+                        continue;
 
                     var url = new Uri(Path.Join(rootNode.Url(domain.Culture, UrlMode.Absolute), "sitemap.xml")).AbsoluteUri;
 
