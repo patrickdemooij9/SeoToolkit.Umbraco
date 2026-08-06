@@ -7,6 +7,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Models.Business
     {
         public Guid? Id { get; set; }
         public required string Name { get; set; }
+        public string? BaseUrl { get; set; }
         public List<int> DomainIds { get; set; }
         public Dictionary<string, string> Settings { get; set; }
 

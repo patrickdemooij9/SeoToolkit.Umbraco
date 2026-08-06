@@ -9,6 +9,7 @@ import {
   repeat,
   state,
 } from "@umbraco-cms/backoffice/external/lit";
+import { UUIInputElement } from "@umbraco-cms/backoffice/external/uui";
 import { SeoDomainCollection, SeoDomainConfigViewModel } from "../api";
 
 interface CheckboxItem {
@@ -73,6 +74,11 @@ export class SeoToolkitDomainEditViewElement
     this.#context?.updateDomain({ domainIds: newValue });
   }
 
+  #onBaseUrlInput(event: Event) {
+    const value = (event.target as UUIInputElement).value as string;
+    this.#context?.updateDomain({ baseUrl: value === "" ? null : value });
+  }
+
   getModuleEnabled(module: string): boolean {
     return Object.keys(this.model?.settings ?? {}).includes(module);
   }
@@ -102,6 +108,20 @@ export class SeoToolkitDomainEditViewElement
                 @change=${this.#onDomainChange}
               ></umb-input-checkbox-list></div
           ></umb-property-layout>
+          <umb-property-layout
+            label="Base URL"
+            description="The frontend base URL to use when generating absolute URLs (e.g. sitemaps, canonicals). Useful for headless setups where the frontend runs on a different domain than Umbraco. Leave empty to use the request's URL."
+          >
+            <div slot="editor">
+              <uui-input
+                type="url"
+                placeholder="https://www.example.com"
+                .value=${this.model?.baseUrl ?? ""}
+                @change=${this.#onBaseUrlInput}
+                label="Base URL"
+              ></uui-input>
+            </div>
+          </umb-property-layout>
           <h3>Domain modules</h3>
           <p>
             Here you can configure modules for this domain. If disabled, it will
@@ -132,6 +152,10 @@ export class SeoToolkitDomainEditViewElement
     css`
       #domain-edit {
         padding: var(--uui-size-layout-1);
+      }
+
+      uui-input[type="url"] {
+        width: 100%;
       }
 
       .module-items {

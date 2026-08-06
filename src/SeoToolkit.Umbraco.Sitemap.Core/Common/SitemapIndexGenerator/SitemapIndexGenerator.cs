@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Xml.Linq;
+using SeoToolkit.Umbraco.Common.Core.Helpers;
+using SeoToolkit.Umbraco.Common.Core.Services.Domains;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
@@ -10,12 +12,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator
     public class SitemapIndexGenerator : ISitemapIndexGenerator
     {
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly ISeoDomainsService _seoDomainsService;
 
         private XNamespace _namespace => XNamespace.Get("http://www.sitemaps.org/schemas/sitemap/0.9");
 
-        public SitemapIndexGenerator(IUmbracoContextFactory umbracoContextFactory)
+        public SitemapIndexGenerator(IUmbracoContextFactory umbracoContextFactory, ISeoDomainsService seoDomainsService)
         {
             _umbracoContextFactory = umbracoContextFactory;
+            _seoDomainsService = seoDomainsService;
         }
 
         public XDocument Generate()
@@ -29,13 +33,17 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator
                     var rootNode = ctx.UmbracoContext.Content.GetById(domain.ContentId);
                     if (rootNode is null)
                         continue;
-
+                        
                     if (!rootNode.IsPublished(domain.Culture))
                         continue;
 
-                    var sitemapElement = new XElement(_namespace + "sitemap");
+                    var url = new Uri(Path.Join(rootNode.Url(domain.Culture, UrlMode.Absolute), "sitemap.xml")).AbsoluteUri;
 
-                    sitemapElement.Add(new XElement(_namespace + "loc", new Uri(Path.Join(rootNode.Url(domain.Culture, UrlMode.Absolute), "sitemap.xml")).AbsoluteUri));
+                    var seoDomain = _seoDomainsService.GetByDomain(domain.Id);
+                    url = BaseUrlHelper.ApplyBaseUrl(url, seoDomain?.BaseUrl);
+
+                    var sitemapElement = new XElement(_namespace + "sitemap");
+                    sitemapElement.Add(new XElement(_namespace + "loc", url));
 
                     rootNamespace.Add(sitemapElement);
                 }
