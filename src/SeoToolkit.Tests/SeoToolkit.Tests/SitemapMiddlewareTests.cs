@@ -311,7 +311,7 @@ namespace SeoToolkit.Tests
             SetupUmbracoContextWithDomains(2);
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert - the index is served here and no per-domain sitemap is generated.
             _mockSitemapIndexGenerator.Verify(g => g.Generate(), Times.Once);
@@ -336,7 +336,7 @@ namespace SeoToolkit.Tests
             SetupUmbracoContextWithDomains(2);
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             _mockSitemapIndexGenerator.Verify(g => g.Generate(), Times.Once);
@@ -351,7 +351,7 @@ namespace SeoToolkit.Tests
             _httpContext.Request.Path = "/sitemap-index";
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             _mockSettingsService.Verify(s => s.GetSettings(), Times.Never);
