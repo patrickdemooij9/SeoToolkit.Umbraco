@@ -46,7 +46,8 @@ namespace SeoToolkit.Umbraco.Core.Connectors
             var baseUri = new Uri(request.GetEncodedUrl());
             if (domains.Length == 0)
             {
-                yield return $"{baseUri.GetLeftPart(UriPartial.Authority).TrimEnd('/')}/sitemap.xml";
+                var url = $"{baseUri.GetLeftPart(UriPartial.Authority).TrimEnd('/')}/sitemap.xml";
+                yield return BaseUrlHelper.ApplyBaseUrl(url, seoDomain?.BaseUrl);
             }
             else
             {
@@ -57,7 +58,8 @@ namespace SeoToolkit.Umbraco.Core.Connectors
                     {
                         url = $"https://{url}";
                     }
-                    yield return $"{url.TrimEnd('/')}/sitemap.xml";
+                    url = $"{url.TrimEnd('/')}/sitemap.xml";
+                    yield return BaseUrlHelper.ApplyBaseUrl(url, seoDomain?.BaseUrl);
                 }
             }
         }

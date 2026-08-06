@@ -236,6 +236,7 @@ export type SeoDisplayViewModel = {
 export type SeoDomainCollection = {
     id?: null | string;
     name: string;
+    baseUrl?: null | string;
     domainIds: Array<number | string>;
     settings: {
         [key: string]: string;
