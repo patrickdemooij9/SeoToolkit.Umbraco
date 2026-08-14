@@ -517,7 +517,7 @@ export type PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponses = {
     /**
      * OK
      */
-    200: MetaFieldsSettingsPostViewModel;
+    200: MetaFieldsSettingsViewModel;
 };
 
 export type PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponse = PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponses[keyof PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponses];
