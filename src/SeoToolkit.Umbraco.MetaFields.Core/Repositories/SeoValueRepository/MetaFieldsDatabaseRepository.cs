@@ -59,16 +59,20 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         public bool Exists(int nodeId, string fieldAlias, string culture)
         {
             using var scope = _scopeProvider.CreateScope();
-            return scope.Database.FirstOrDefault<MetaFieldsValueEntity>(scope.SqlContext.Sql().SelectAll()
+            var exists = scope.Database.FirstOrDefault<MetaFieldsValueEntity>(scope.SqlContext.Sql().SelectAll()
                 .From<MetaFieldsValueEntity>().Where<MetaFieldsValueEntity>(it => it.NodeId == nodeId && it.Alias == fieldAlias && it.Culture == culture)) != null;
+            scope.Complete();
+            return exists;
         }
 
         public Dictionary<string, object> GetAllValues(int nodeId, string culture)
         {
             using var scope = _scopeProvider.CreateScope();
-            return scope.Database
+            var values = scope.Database
                 .Fetch<MetaFieldsValueEntity>(scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(it => it.NodeId == nodeId && it.Culture == culture))
                 .ToDictionary(it => it.Alias, it => JsonConvert.DeserializeObject(it.UserValue));
+            scope.Complete();
+            return values;
         }
         
         public void Add(Guid nodeId, string fieldAlias, string culture, object value)
@@ -110,16 +114,20 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         public bool Exists(Guid nodeId, string fieldAlias, string culture)
         {
             using var scope = _scopeProvider.CreateScope();
-            return scope.Database.FirstOrDefault<MetaFieldsValueEntity>(scope.SqlContext.Sql().SelectAll()
+            var exists = scope.Database.FirstOrDefault<MetaFieldsValueEntity>(scope.SqlContext.Sql().SelectAll()
                 .From<MetaFieldsValueEntity>().Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId && it.Alias == fieldAlias && it.Culture == culture)) != null;
+            scope.Complete();
+            return exists;
         }
 
         public Dictionary<string, object> GetAllValues(Guid nodeId, string culture)
         {
             using var scope = _scopeProvider.CreateScope();
-            return scope.Database
+            var values = scope.Database
                 .Fetch<MetaFieldsValueEntity>(scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId && it.Culture == culture))
                 .ToDictionary(it => it.Alias, it => JsonConvert.DeserializeObject(it.UserValue));
+            scope.Complete();
+            return values;
         }
 
         // These functions should be removed once all int nodeId usages are gone

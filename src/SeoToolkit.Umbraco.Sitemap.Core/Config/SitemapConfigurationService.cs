@@ -25,7 +25,8 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Config
                 ReturnContentType = settings.ReturnContentType,
                 LastModifiedFormat = settings.LastModifiedFormat,
                 DisabledModules = settings.DisabledModules,
-                StructureMode = settings.StructureMode
+                StructureMode = settings.StructureMode,
+                SitemapIndexPath = settings.SitemapIndexPath
             };
         }
     }
