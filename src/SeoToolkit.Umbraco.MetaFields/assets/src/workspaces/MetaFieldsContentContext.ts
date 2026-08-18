@@ -8,11 +8,15 @@ import type { MetaFieldsAIFieldSuggestion } from "../dataAccess/MetaFieldsAISour
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/document";
 import { UmbBooleanState, UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
+import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
 
 interface MetaFieldsSettingsVariant {
   variant: string;
   model: UmbObjectState<MetaFieldsSettingsViewModel>;
   isDirty: boolean;
+  // Bumped on every local edit so save() can tell whether the model changed
+  // while its request was in flight.
+  editVersion: number;
 }
 
 export default class MetaFieldsContentContext
@@ -113,6 +117,9 @@ export default class MetaFieldsContentContext
     Object.values(this.#variants).forEach((variant) => {
       variant.model.setValue({ seoEnabled: false });
       variant.isDirty = false;
+      // Invalidate any in-flight save so its response cannot be applied on top
+      // of the node we just switched to.
+      variant.editVersion++;
     });
   }
 
@@ -147,6 +154,7 @@ export default class MetaFieldsContentContext
         seoEnabled: false,
       }),
       isDirty: false,
+      editVersion: 0,
     };
     return this.#variants[variant];
   }
@@ -171,16 +179,38 @@ export default class MetaFieldsContentContext
       }
     });
 
+    const editVersionAtSave = variant.editVersion;
     const resp = await this.#repository.save({
       nodeId: this.#nodeId,
       culture: culture,
       userValues: userValues,
     });
 
+    // tryExecute never throws; a failed request comes back as an error without
+    // data. Leave the variant dirty so the next document save retries, and tell
+    // the editor — the document itself saved fine, so nothing else will.
+    if (!resp || resp.error || !resp.data) {
+      this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
+        instance?.peek("danger", {
+          data: {
+            headline: "SEO",
+            message:
+              "The SEO meta fields could not be saved. Your changes are still here — save the page again to retry.",
+          },
+        });
+      });
+      return;
+    }
+
+    // Edits made while the request was in flight are not in the response;
+    // applying it would wipe them. Keep the variant dirty so the next document
+    // save picks them up.
+    if (variant.editVersion !== editVersionAtSave) return;
+
     // Reconcile with what was actually persisted, otherwise this model keeps
     // serving the values it was first loaded with for the rest of the session.
-    const data = resp?.data;
-    if (data && data.seoEnabled !== false) {
+    const data = resp.data;
+    if (data.seoEnabled !== false) {
       variant.model.update(data);
     }
     variant.isDirty = false;
@@ -202,6 +232,7 @@ export default class MetaFieldsContentContext
       userValue: userValue,
     };
     entry.isDirty = true;
+    entry.editVersion++;
     entry.model.update({
       fields: updated,
     });
@@ -223,6 +254,7 @@ export default class MetaFieldsContentContext
       }
     }
     entry.isDirty = true;
+    entry.editVersion++;
     entry.model.update({ fields: updated });
   }
 
