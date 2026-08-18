@@ -17,6 +17,11 @@ interface MetaFieldsSettingsVariant {
   // Bumped on every local edit so save() can tell whether the model changed
   // while its request was in flight.
   editVersion: number;
+  // A document save can emit multiple updateDate changes in quick succession
+  // (e.g. save + publish). Concurrent POSTs race the server's exists/insert
+  // check, so while one is in flight further saves only queue a follow-up.
+  saving: boolean;
+  saveQueued: boolean;
 }
 
 export default class MetaFieldsContentContext
@@ -155,6 +160,8 @@ export default class MetaFieldsContentContext
       }),
       isDirty: false,
       editVersion: 0,
+      saving: false,
+      saveQueued: false,
     };
     return this.#variants[variant];
   }
@@ -166,6 +173,32 @@ export default class MetaFieldsContentContext
   async save(culture: string) {
     const variant = this.#variants[culture];
     if (!variant || !this.#nodeId) return;
+
+    if (variant.saving) {
+      variant.saveQueued = true;
+      return;
+    }
+
+    variant.saving = true;
+    try {
+      await this.#performSave(variant, culture);
+    } finally {
+      variant.saving = false;
+    }
+
+    if (variant.saveQueued) {
+      variant.saveQueued = false;
+      // Only worth another request when something is still unsaved — either
+      // edits that arrived mid-flight or a save attempt that failed.
+      if (variant.isDirty) {
+        await this.save(culture);
+      }
+    }
+  }
+
+  async #performSave(variant: MetaFieldsSettingsVariant, culture: string) {
+    const nodeId = this.#nodeId;
+    if (!nodeId) return;
 
     const model = variant.model.getValue();
     if (model.seoEnabled === false) return;
@@ -181,15 +214,18 @@ export default class MetaFieldsContentContext
 
     const editVersionAtSave = variant.editVersion;
     const resp = await this.#repository.save({
-      nodeId: this.#nodeId,
+      nodeId: nodeId,
       culture: culture,
       userValues: userValues,
     });
 
     // tryExecute never throws; a failed request comes back as an error without
     // data. Leave the variant dirty so the next document save retries, and tell
-    // the editor — the document itself saved fine, so nothing else will.
+    // the editor — the document itself saved fine, so nothing else will. When a
+    // follow-up save is already queued, let that attempt decide instead of
+    // showing an error for a state that may recover on its own.
     if (!resp || resp.error || !resp.data) {
+      if (variant.saveQueued) return;
       this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
         instance?.peek("danger", {
           data: {
