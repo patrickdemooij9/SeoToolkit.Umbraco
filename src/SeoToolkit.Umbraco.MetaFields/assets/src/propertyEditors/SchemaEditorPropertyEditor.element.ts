@@ -200,6 +200,12 @@ export default class SchemaEditorPropertyEditor
     return entry.displayName || this.#getSchemaName(entry.schemaAlias!);
   }
 
+  #isReused(id: string): boolean {
+    const entry = this._loadedEntries.get(id);
+    if (!entry) return false;
+    return entry.ownerKey !== this.#getNodeGuid();
+  }
+
   async #openAddSchemaFlow() {
     this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (modalManager) => {
       if (!modalManager) return;
@@ -272,6 +278,7 @@ export default class SchemaEditorPropertyEditor
       // Pre-generate the entry ID so nested schema editors (e.g. address in organization)
       // can use it as their ownerKey before the parent entry is persisted.
       const preGeneratedId = crypto.randomUUID();
+      const ownerType = this.#getOwnerType();
 
       const propertyModal = modalManager.open<
         {
@@ -280,18 +287,20 @@ export default class SchemaEditorPropertyEditor
           entryId?: string;
           showRenderToggle?: boolean;
           documentTypeKey?: string;
+          readonly: boolean;
         },
         EditableSchema
       >(this, "seoToolkit.modal.schemaProperty", {
         modal: { type: "sidebar", size: "medium" },
         data: {
           availableSchemas: this._schemaTypes,
-          editSchema: { schemaAlias: selectedAlias, properties: {} },
+          editSchema: { schemaAlias: selectedAlias, properties: {}, readonly: false },
           entryId: preGeneratedId,
-          showRenderToggle: this.#getOwnerType() !== "content",
+          showRenderToggle: ownerType !== "content" && ownerType !== "schemaEntry",
           documentTypeKey: this.#getDocumentTypeKey(),
+          readonly: false
         },
-        value: { schemaAlias: selectedAlias, properties: {} },
+        value: { schemaAlias: selectedAlias, properties: {}, readonly: false },
       });
 
       const schemaData = await propertyModal.onSubmit().catch(() => null);
@@ -356,6 +365,7 @@ export default class SchemaEditorPropertyEditor
       if (!modalManager) return;
 
       const editableProps = this.#toPropertyValues(entry.properties);
+      const isReused = this.#isReused(entryId);
 
       const modal = modalManager.open<
         {
@@ -364,6 +374,7 @@ export default class SchemaEditorPropertyEditor
           entryId?: string;
           showRenderToggle?: boolean;
           documentTypeKey?: string;
+          readonly: boolean;
         },
         EditableSchema
       >(this, "seoToolkit.modal.schemaProperty", {
@@ -375,16 +386,19 @@ export default class SchemaEditorPropertyEditor
             displayName: entry.displayName ?? undefined,
             renderAutomatically: entry.renderAutomatically ?? true,
             properties: editableProps,
+            readonly: isReused
           },
           entryId,
           showRenderToggle: this.#getOwnerType() !== "content",
           documentTypeKey: this.#getDocumentTypeKey(),
+          readonly: isReused
         },
         value: {
           schemaAlias: entry.schemaAlias!,
           displayName: entry.displayName ?? undefined,
           renderAutomatically: entry.renderAutomatically ?? true,
           properties: editableProps,
+          readonly: isReused
         },
       });
 
@@ -452,9 +466,8 @@ export default class SchemaEditorPropertyEditor
                         @click="${() => this.#openEditSchemaModal(id)}"
                       >
                         <div class="schema-item-info">
-                          <span class="schema-name"
-                            >${this.#getEntryDisplayName(id)}</span
-                          >
+                          <span class="schema-name">${this.#getEntryDisplayName(id)}</span>
+                          ${when(this.#isReused(id), () => html`<span class="schema-reused">Reference</span>`)}
                         </div>
                         <div class="schema-item-actions">
                           <uui-button
@@ -551,6 +564,16 @@ export default class SchemaEditorPropertyEditor
 
       .add-button {
         margin-top: 8px;
+      }
+
+      .schema-reused{
+        width: fit-content;
+        font-size: 0.75em;
+        padding: 2px 4px;
+        border-radius: 10px;
+        background-color: var(--uui-palette-gravel-light);
+        color: var(--uui-palette-grey-4);
+        border: 1px solid var(--uui-palette-gravel);
       }
     `,
   ];

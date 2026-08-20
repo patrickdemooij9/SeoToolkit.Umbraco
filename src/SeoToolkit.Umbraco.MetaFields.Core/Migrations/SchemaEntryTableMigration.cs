@@ -38,10 +38,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Migrations
                 if (string.IsNullOrWhiteSpace(schemaValue.UserValue))
                     continue;
 
-                var userValue = JsonConvert.DeserializeObject<string>(schemaValue.UserValue);
-
                 try
                 {
+                    var userValue = JsonConvert.DeserializeObject<string>(schemaValue.UserValue);
+
                     var id = Guid.NewGuid();
                     await Database.InsertAsync(new SchemaEntryEntity
                     {

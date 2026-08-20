@@ -45,20 +45,15 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SchemaEntryRepository
         {
             var idList = ids.ToList();
             if (idList.Count == 0)
-                return Enumerable.Empty<SchemaEntryDto>();
+                return [];
 
             using var scope = _scopeProvider.CreateScope();
-            var result = new List<SchemaEntryDto>();
-            foreach (var id in idList)
-            {
-                var entity = scope.Database.FirstOrDefault<SchemaEntryEntity>(scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<SchemaEntryEntity>()
-                    .Where<SchemaEntryEntity>(it => it.Id == id));
-                if (entity != null)
-                    result.Add(MapToDto(entity));
-            }
-            return result;
+            var entities = scope.Database.Fetch<SchemaEntryEntity>(scope.SqlContext.Sql()
+                .SelectAll()
+                .From<SchemaEntryEntity>()
+                .Where<SchemaEntryEntity>(it => idList.Contains(it.Id)));
+
+            return entities.Select(MapToDto).ToArray();
         }
 
         public SchemaEntryDto Add(SchemaEntryDto model)

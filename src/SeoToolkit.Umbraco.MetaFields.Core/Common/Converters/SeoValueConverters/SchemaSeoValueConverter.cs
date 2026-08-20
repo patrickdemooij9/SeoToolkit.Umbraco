@@ -1,6 +1,8 @@
+using Microsoft.Extensions.Logging;
 using Schema.NET;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor;
@@ -18,11 +20,13 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
     {
         private readonly SchemaResolverCollection _schemaResolvers;
         private readonly ISchemaEntryService _schemaEntryService;
+        private readonly ILogger<SchemaSeoValueConverter> _logger;
 
-        public SchemaSeoValueConverter(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService)
+        public SchemaSeoValueConverter(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService, ILogger<SchemaSeoValueConverter> logger)
         {
             _schemaResolvers = schemaResolvers;
             _schemaEntryService = schemaEntryService;
+            _logger = logger;
         }
 
         public Type FromValue => typeof(Guid[]);
@@ -52,7 +56,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
             // also explicitly referenced on the page); only render each distinct entry once.
             allEntries = allEntries.DistinctBy(entry => entry.Id);
 
-            return ConvertEntries(allEntries, currentContent);
+            return ConvertEntries(allEntries, currentContent, 0);
         }
 
         /// <summary>
@@ -60,8 +64,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
         /// only resolves the explicitly referenced entries and never concatenates the
         /// auto-rendering document type schemas.
         /// </summary>
-        private IThing[] ConvertNested(object value, IPublishedContent currentContent)
-            => ConvertEntries(ResolveEntries(value), currentContent);
+        private IThing[] ConvertNested(object value, IPublishedContent currentContent, int level)
+            => ConvertEntries(ResolveEntries(value), currentContent, level);
 
         private IEnumerable<SchemaEntryDto> ResolveEntries(object value)
         {
@@ -72,7 +76,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                 : Enumerable.Empty<SchemaEntryDto>();
         }
 
-        private IThing[] ConvertEntries(IEnumerable<SchemaEntryDto> entries, IPublishedContent currentContent)
+        private IThing[] ConvertEntries(IEnumerable<SchemaEntryDto> entries, IPublishedContent currentContent, int level)
         {
             var schemas = new List<IThing>();
 
@@ -87,7 +91,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
 
                 var values = resolver.Properties.ToDictionary(
                     keySelector: property => property.Alias,
-                    elementSelector: property => ResolveValue(entry.Properties, property, currentContent));
+                    elementSelector: property => ResolveValue(entry.Properties, property, currentContent, level + 1));
 
                 try
                 {
@@ -95,17 +99,19 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                     if (resolvedSchema != null)
                         schemas.Add(resolvedSchema);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // ignore invalid schema data, continue resolving other schemas
+                    _logger.LogError(ex, "Something went wrong while converting schema {alias}", entry.SchemaAlias);
                 }
             }
 
             return schemas.ToArray();
         }
 
-        private object ResolveValue(Dictionary<string, SchemaPropertyValue> properties, Common.SchemaResolvers.SchemaProperty propertyDef, IPublishedContent currentContent)
+        private object ResolveValue(Dictionary<string, SchemaPropertyValue> properties, SchemaProperty propertyDef, IPublishedContent currentContent, int level)
         {
+            if (level > 10) return null; //Most likely an infinite loop somewhere
+
             if (properties is null || properties.TryGetValue(propertyDef.Alias, out var property) == false || property is null)
                 return null;
 
@@ -119,7 +125,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                     return content.Url(mode: UrlMode.Absolute);
                 if (propertyDef.ValueConverter is SchemaEditorValueConverter)
                 {
-                    return ConvertNested(obj, currentContent);
+                    return ConvertNested(obj, currentContent, level);
                 }
                 return obj;
             }

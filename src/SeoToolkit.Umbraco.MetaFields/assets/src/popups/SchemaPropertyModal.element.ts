@@ -1,4 +1,8 @@
-import { customElement, state } from "@umbraco-cms/backoffice/external/lit";
+import {
+  customElement,
+  state,
+  when,
+} from "@umbraco-cms/backoffice/external/lit";
 import { UmbModalBaseElement } from "@umbraco-cms/backoffice/modal";
 import { css, html } from "lit";
 import { SchemaPropertyViewModel, SchemaTypeViewModel } from "../api";
@@ -10,6 +14,7 @@ export interface EditableSchema {
   displayName?: string;
   renderAutomatically?: boolean;
   properties: { [key: string]: PropertyValue };
+  readonly: boolean;
 }
 
 export interface PropertyValue {
@@ -33,6 +38,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     entryId?: string;
     showRenderToggle?: boolean;
     documentTypeKey?: string;
+    readonly: boolean;
   },
   EditableSchema
 > {
@@ -44,6 +50,9 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
 
   @state()
   private _renderAutomatically: boolean = true;
+
+  @state()
+  private _readonly: boolean = false;
 
   @state()
   private _propertyValues: { [key: string]: PropertyValue } = {};
@@ -58,8 +67,10 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     if (this.data?.editSchema) {
       this._selectedSchemaAlias = this.data.editSchema.schemaAlias;
       this._displayName = this.data.editSchema.displayName ?? "";
-      this._renderAutomatically = this.data.editSchema.renderAutomatically ?? true;
+      this._renderAutomatically =
+        this.data.editSchema.renderAutomatically ?? true;
       this._propertyValues = { ...this.data.editSchema.properties };
+      this._readonly = this.data.editSchema?.readonly ?? false;
     } else {
       this._selectedSchemaAlias = this.value?.schemaAlias ?? "";
       this._displayName = this.value?.displayName ?? "";
@@ -67,10 +78,13 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
       this._propertyValues = this.value?.properties
         ? { ...this.value.properties }
         : {};
+      this._readonly = this.value?.readonly ?? false;
     }
   }
 
   #onPropertyValueChange(propertyAlias: string, propertyValue: PropertyValue) {
+    if (this._readonly) return;
+
     this._propertyValues = {
       ...this._propertyValues,
       [propertyAlias]: propertyValue,
@@ -82,11 +96,15 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
     propertyValue: PropertyValue,
     event: Event,
   ) {
+    if (this._readonly) return;
+
     const target = event.target as UmbPropertyDatasetElement;
     if (!target) {
       return;
     }
-    const value = target.value.find((item) => item.alias === propertyAlias)?.value;
+    const value = target.value.find(
+      (item) => item.alias === propertyAlias,
+    )?.value;
     this._propertyValues = {
       ...this._propertyValues,
       [propertyAlias]: {
@@ -110,14 +128,19 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
       displayName: this._displayName || undefined,
       renderAutomatically: this._renderAutomatically,
       properties: this._propertyValues,
+      readonly: this._readonly,
     };
     this.modalContext?.submit();
   }
 
-  #buildPropertyConfig(property: SchemaPropertyViewModel): Array<{ alias: string; value: unknown }> {
+  #buildPropertyConfig(
+    property: SchemaPropertyViewModel,
+  ): Array<{ alias: string; value: unknown }> {
     const entryId = this.data?.entryId;
     // Convert static config from the property definition into the Umbraco config array format
-    const staticConfig = Object.entries(property.config ?? {}).map(([alias, value]) => ({ alias, value }));
+    const staticConfig = Object.entries(property.config ?? {}).map(
+      ([alias, value]) => ({ alias, value }),
+    );
 
     // For nested schema editors, inject the current entry's ID as ownerKey so they can save sub-entries
     if (property.propertyEditor === "SeoToolkit.SchemaEditor") {
@@ -161,6 +184,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
               <div class="property-toggle">
                 <uui-toggle
                   .checked=${value.isReference}
+                  .readonly=${this._readonly}
                   @change="${(e: Event) => {
                     const checked = (e.target as HTMLInputElement).checked;
                     this.#onPropertyValueChange(alias, {
@@ -182,6 +206,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
                 <select
                   class="native-select"
                   .value=${value.referenceKey}
+                  .readonly=${this._readonly}
                   @change="${(e: Event) => {
                     const referenceKey = (e.target as HTMLSelectElement).value;
                     this.#onPropertyValueChange(alias, {
@@ -207,13 +232,16 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
               <div class="property-input">
                 <umb-property-dataset
                   .value=${[{ alias, value: value.value }]}
-                  @change=${(e: Event) => {this.#handlePropertyInputChange(alias, value, e)}}
+                  @change=${(e: Event) => {
+                    this.#handlePropertyInputChange(alias, value, e);
+                  }}
                 >
                   <umb-property
                     .alias=${alias}
                     property-editor-ui-alias=${propEditor}
                     .appearance=${this.propertyAppearance}
                     .config=${config}
+                    .readonly=${this._readonly}
                   ></umb-property>
                 </umb-property-dataset>
               </div>
@@ -236,6 +264,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
           <uui-input
             placeholder="Leave empty to use the schema type name"
             .value=${this._displayName}
+            .readonly=${this._readonly}
             @input="${(e: Event) => {
               this._displayName = (e.target as HTMLInputElement).value;
             }}"
@@ -247,13 +276,14 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
               <div class="render-toggle-row">
                 <uui-toggle
                   .checked=${this._renderAutomatically}
+                  .readonly=${this._readonly}
                   @change="${(e: Event) => {
                     this._renderAutomatically = (
                       e.target as HTMLInputElement
                     ).checked;
                   }}"
                 >
-                  Render on all pages of this document type
+                  Automatically render this schema on the website
                 </uui-toggle>
                 <small class="render-toggle-hint">
                   When disabled, this schema is not rendered automatically but
@@ -262,7 +292,6 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
               </div>
             `
           : ""}
-
         ${properties.length > 0
           ? html`
               <div class="schema-properties">
@@ -286,17 +315,22 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
             color="danger"
             slot="actions"
             @click="${this.#handleClose}"
-            >Cancel</uui-button
+            >${this._readonly ? "Close" : "Cancel"}</uui-button
           >
-          <uui-button
-            id="save"
-            label="Save"
-            look="primary"
-            color="positive"
-            slot="actions"
-            @click="${this.#handleSubmit}"
-            >Save</uui-button
-          >
+          ${when(
+            !this._readonly,
+            () => html`
+              <uui-button
+                id="save"
+                label="Save"
+                look="primary"
+                color="positive"
+                slot="actions"
+                @click="${this.#handleSubmit}"
+                >Save</uui-button
+              >
+            `,
+          )}
         </umb-footer-layout>
       </umb-body-layout>
     `;
