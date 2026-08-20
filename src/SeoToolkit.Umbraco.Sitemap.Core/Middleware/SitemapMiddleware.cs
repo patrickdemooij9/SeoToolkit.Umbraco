@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
@@ -36,15 +37,28 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
 
         public async Task Invoke(HttpContext context,
             ISitemapGenerator sitemapGenerator,
-            ISitemapIndexGenerator sitemapIndexGenerator)
+            ISitemapIndexGenerator sitemapIndexGenerator,
+            ISeoDomainResolver seoDomainResolver)
         {
-            if (context.Request.Path.Value?.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase) != true)
+            if (context.Request.Path.Value?.EndsWith(".xml", StringComparison.OrdinalIgnoreCase) != true)
             {
                 await _next.Invoke(context);
                 return;
             }
 
             var settings = _sitemapConfigurationService.GetSettings();
+            var seoDomain = seoDomainResolver.ResolveDomain();
+            var baseUrl = seoDomain?.BaseUrl;
+
+            var isSitemapRequest = context.Request.Path.Value.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase);
+            var isConfiguredIndexRequest = !string.IsNullOrWhiteSpace(settings.SitemapIndexPath)
+                && IsSitemapIndexRequest(context.Request.Path, settings.SitemapIndexPath);
+
+            if (!isSitemapRequest && !isConfiguredIndexRequest)
+            {
+                await _next.Invoke(context);
+                return;
+            }
 
             XDocument doc = null;
             using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
@@ -53,7 +67,13 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                 var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
                 if (domains.Length == 0 || settings.StructureMode == StructureMode.OnlyRoot)
                 {
-                    doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture));
+                    doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture, baseUrl));
+                }
+                else if (isConfiguredIndexRequest)
+                {
+                    // A dedicated index path is configured and this request targets it. Serve the index here so the
+                    // root /sitemap.xml stays free to serve the default culture's sitemap (see SitemapIndexPath).
+                    doc = sitemapIndexGenerator.Generate();
                 }
                 else
                 {
@@ -76,7 +96,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                             return;
                         }
 
-                        doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(rootNode, domain.Culture));
+                        doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(rootNode, domain.Culture, baseUrl));
                     }
                 }
             }
@@ -89,6 +109,17 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                 await doc.SaveAsync(writer, SaveOptions.None, CancellationToken.None);
                 await context.Response.WriteAsync(writer.ToString());
             }
+        }
+
+        //Matches requests targeting the configured index path. A value ending in ".xml" is treated as a full filename
+        //("sitemap-index.xml" -> "/sitemap-index.xml"), otherwise as a folder segment ("sitemap-index" -> "/sitemap-index/sitemap.xml").
+        private static bool IsSitemapIndexRequest(PathString requestPath, string sitemapIndexPath)
+        {
+            var trimmed = sitemapIndexPath.Trim('/');
+            var expected = trimmed.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)
+                ? $"/{trimmed}"
+                : $"/{trimmed}/sitemap.xml";
+            return string.Equals(requestPath.Value?.TrimEnd('/'), expected, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

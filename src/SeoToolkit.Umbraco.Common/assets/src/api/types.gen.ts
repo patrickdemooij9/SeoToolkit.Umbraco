@@ -220,7 +220,8 @@ export type SeoDisplayViewModel = {
 export type SeoDomainCollection = {
     id?: string | null;
     name: string;
-    domainIds: Array<number>;
+    baseUrl?: null | string;
+    domainIds: Array<number | string>;
     settings: {
         [key: string]: string;
     };

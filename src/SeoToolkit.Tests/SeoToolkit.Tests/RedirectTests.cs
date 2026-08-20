@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Moq;
 using SeoToolkit.Umbraco.Redirects.Core.Caching;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
@@ -6,10 +7,12 @@ using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using SeoToolkit.Umbraco.Redirects.Core.Services;
 using System.Net;
 using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Routing;
+using Umbraco.Cms.Core.Sync;
 using Umbraco.Cms.Core.Web;
 
 namespace SeoToolkit.Tests
@@ -229,6 +232,34 @@ namespace SeoToolkit.Tests
             Assert.IsNotNull(result);
             Assert.AreEqual(existing.Id, result.Redirect.Id);
             Assert.AreEqual(existing.Key, result.Redirect.Key);
+        }
+
+        [Test]
+        public void RedirectsCacheRefresher_CanBeActivated_WhenModuleIsDisabled()
+        {
+            // Arrange - simulate a disabled Redirects module: only the core Umbraco services are
+            // registered, IRedirectsBloomFilter/IRedirectsRepository are not. Umbraco still auto-discovers
+            // and activates the refresher, registering it type-to-type (see CollectionBuilderBase).
+            var services = new ServiceCollection();
+            services.AddSingleton(AppCaches.Disabled);
+            services.AddSingleton(new Mock<IEventAggregator>().Object);
+
+            var notificationFactory = new Mock<ICacheRefresherNotificationFactory>();
+            notificationFactory
+                .Setup(it => it.Create<RedirectsCacheRefresherNotification>(It.IsAny<object>(), It.IsAny<MessageType>()))
+                .Returns((object msg, MessageType type) => new RedirectsCacheRefresherNotification(msg, type));
+            services.AddSingleton(notificationFactory.Object);
+
+            services.AddTransient<RedirectsCacheRefresher>();
+
+            using var provider = services.BuildServiceProvider();
+
+            // Act
+            var refresher = provider.GetRequiredService<RedirectsCacheRefresher>();
+
+            // Assert - activation succeeds and refreshing is a safe no-op without the module dependencies.
+            Assert.IsNotNull(refresher);
+            Assert.DoesNotThrow(() => refresher.Refresh(Guid.NewGuid()));
         }
 
         private IUmbracoContextFactory GetContextFactoryWithDomain()

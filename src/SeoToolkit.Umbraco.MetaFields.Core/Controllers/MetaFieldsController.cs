@@ -79,7 +79,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 
             var metaTags = content is null ? _seoService.GetEmpty() : _seoService.Get(content, false);
             if (metaTags is null)
-                return Ok(new MetaFieldsSettingsViewModel());
+                return Ok(new MetaFieldsSettingsViewModel() { SeoEnabled = false });
 
             var userValues = content is null ? new Dictionary<string, object>() : _seoValueService.GetUserValues(content.Key);
 
@@ -121,12 +121,13 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                         EditConfig = editConfig
                     };
                 }).ToArray(),
-                Previewers = new[] { new FieldPreviewerViewModel(new MetaFieldsPreviewer()), new FieldPreviewerViewModel(new SocialMediaPreviewer()) }
+                Previewers = new[] { new FieldPreviewerViewModel(new MetaFieldsPreviewer()), new FieldPreviewerViewModel(new SocialMediaPreviewer()) },
+                SeoEnabled = true
             });
         }
 
         [HttpPost("metaFields")]
-        [ProducesResponseType(typeof(MetaFieldsSettingsPostViewModel), 200)]
+        [ProducesResponseType(typeof(MetaFieldsSettingsViewModel), 200)]
         public IActionResult Save(MetaFieldsSettingsPostViewModel postModel)
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
@@ -141,7 +142,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 return BadRequest("SEO settings are turned off for this node!");
 
             EnsureLanguage(postModel.Culture);
-            var isDirty = false;
             var values = new Dictionary<string, object>();
             foreach (var seoField in _fieldCollection)
             {
@@ -154,12 +154,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 var userValue = postModel.UserValues[seoField.Alias];
 
                 values.Add(seoField.Alias, seoField.EditEditor.ValueConverter.ConvertEditorToDatabaseValue(userValue));
-                isDirty = true;
             }
-            if (isDirty)
-            {
-                _seoValueService.AddValues(content.Key, values);
-            }
+
+            // Always persist, including when every value came back empty. Skipping the
+            // write when nothing was filled in meant an editor could never clear a field.
+            _seoValueService.AddValues(content.Key, values);
 
             return Get(postModel.NodeId, postModel.Culture);
         }

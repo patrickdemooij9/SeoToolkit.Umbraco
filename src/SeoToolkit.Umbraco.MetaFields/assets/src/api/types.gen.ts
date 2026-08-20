@@ -111,6 +111,7 @@ export type MetaFieldsSettingsViewModel = {
     fields?: Array<SeoSettingsFieldViewModel> | null;
     groups?: Array<SeoFieldGroupViewModel> | null;
     previewers?: Array<FieldPreviewerViewModel> | null;
+    seoEnabled: boolean;
 };
 
 export type PagedRedirectListModel = {
@@ -685,7 +686,7 @@ export type PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponses = {
     /**
      * OK
      */
-    200: MetaFieldsSettingsPostViewModel;
+    200: MetaFieldsSettingsViewModel;
 };
 
 export type PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponse = PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponses[keyof PostUmbracoSeoToolkitMetaFieldsMetaFieldsResponses];

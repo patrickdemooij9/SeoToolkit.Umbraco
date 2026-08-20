@@ -15,6 +15,7 @@ export default class SitemapContentViewContext
 
   #repository: ContentSettingsRepository;
   #nodeId?: string;
+  #loadedNodeId?: string;
   #lastUpdateDate?: string;
   // Guards against posting before the current node's settings have loaded.
   // Without this, a save triggered right after navigation would persist the
@@ -35,35 +36,52 @@ export default class SitemapContentViewContext
     this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
       if (!instance) return;
 
-      this.observe(instance.unique, (unique) => {
-        if (!unique) return;
-        // The document workspace context is reused across navigation, so reset
-        // all per-node state before loading the new node's settings.
-        this.#nodeId = unique.toString();
-        this.#lastUpdateDate = undefined;
-        this.#loaded = false;
-        this.#model.setValue({ excludeFromSitemap: false });
-        this.#loadData();
-      });
+      this.observe(
+        instance.unique,
+        (unique) => {
+          const nodeId = unique?.toString();
+          if (!nodeId) return;
+          // The document workspace context is reused across navigation, so reset
+          // all per-node state before loading the new node's settings. Only do so
+          // when the node actually changed: re-subscribing to this observable
+          // replays the current value, and resetting on that would drop the
+          // update date bookkeeping save() relies on, along with unsaved edits.
+          if (nodeId === this.#loadedNodeId) return;
+          this.#loadedNodeId = nodeId;
 
-      this.observe(instance.data, (item) => {
-        let shouldSave = false;
-        item?.variants.forEach((variant) => {
-          const updateDate = variant.updateDate;
-          // The document was saved when a variant's update date changes.
-          // Track the latest value each time (not a monotonic max) so the
-          // detection keeps working after navigating between pages.
-          if (this.#lastUpdateDate && updateDate && this.#lastUpdateDate !== updateDate) {
-            shouldSave = true;
+          this.#nodeId = nodeId;
+          this.#lastUpdateDate = undefined;
+          this.#loaded = false;
+          this.#model.setValue({ excludeFromSitemap: false });
+          this.#loadData();
+        },
+        "stSitemapContentUnique"
+      );
+
+      this.observe(
+        instance.data,
+        (item) => {
+          if (item?.isTrashed) return;
+
+          let shouldSave = false;
+          item?.variants.forEach((variant) => {
+            const updateDate = variant.updateDate;
+            // The document was saved when a variant's update date changes.
+            // Track the latest value each time (not a monotonic max) so the
+            // detection keeps working after navigating between pages.
+            if (this.#lastUpdateDate && updateDate && this.#lastUpdateDate !== updateDate) {
+              shouldSave = true;
+            }
+            if (updateDate) {
+              this.#lastUpdateDate = updateDate;
+            }
+          });
+          if (shouldSave) {
+            this.save();
           }
-          if (updateDate) {
-            this.#lastUpdateDate = updateDate;
-          }
-        });
-        if (shouldSave) {
-          this.save();
-        }
-      });
+        },
+        "stSitemapContentData"
+      );
     });
   }
 

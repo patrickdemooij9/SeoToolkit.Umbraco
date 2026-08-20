@@ -22,8 +22,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.TagHelpers
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             output.TagName = null;
 
+            var publishedContent = ctx.UmbracoContext.PublishedRequest?.PublishedContent;
+            if (publishedContent is null)
+                return;
+
             var stringBuilder = new StringBuilder();
-            var metaTags = _seoService.Get(ctx.UmbracoContext.PublishedRequest.PublishedContent, true);
+            var metaTags = _seoService.Get(publishedContent, true);
             if (metaTags is null)
                 return;
             foreach (var (key, value) in metaTags.Fields)

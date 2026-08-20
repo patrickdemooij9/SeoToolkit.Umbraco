@@ -147,13 +147,72 @@ namespace SeoToolkit.Tests
                 { 
                     Name = "Test Domain",
                     DomainIds = new List<int> { 1, 3 } 
-                });            // Act
+                });
+
+            // Act
             var urls = provider.GetSitemapUrls(request).ToArray();
 
             // Assert
             Assert.That(urls.Length, Is.EqualTo(2));
             Assert.That(urls[0], Is.EqualTo("https://domain1.com/sitemap.xml"));
             Assert.That(urls[1], Is.EqualTo("https://domain3.com/sitemap.xml"));
+        }
+
+        [Test]
+        public void GetSitemapUrls_WithBaseUrl_UsesBaseUrlInSitemapUrls()
+        {
+            // Arrange
+            var (provider, mocks) = CreateProviderWithMocks();
+            var request = CreateHttpRequest("https://api.example.com");
+
+            var domains = new[]
+            {
+                new Domain(1, "https://api.example.com", 0, "en-US", true, -1)
+            };
+
+            mocks.DomainCache.Setup(it => it.GetAll(false))
+                .Returns(domains);
+
+            mocks.SeoDomainResolver.Setup(it => it.ResolveDomain())
+                .Returns(new SeoDomainCollection
+                {
+                    Name = "Test Domain",
+                    BaseUrl = "https://www.frontend.com",
+                    DomainIds = new List<int> { 1 }
+                });
+
+            // Act
+            var urls = provider.GetSitemapUrls(request).ToArray();
+
+            // Assert
+            Assert.That(urls.Length, Is.EqualTo(1));
+            Assert.That(urls[0], Is.EqualTo("https://www.frontend.com/sitemap.xml"));
+        }
+
+        [Test]
+        public void GetSitemapUrls_NoDomains_WithBaseUrl_UsesBaseUrl()
+        {
+            // Arrange
+            var (provider, mocks) = CreateProviderWithMocks();
+            var request = CreateHttpRequest("https://api.example.com");
+
+            mocks.DomainCache.Setup(it => it.GetAll(false))
+                .Returns(Array.Empty<Domain>());
+
+            mocks.SeoDomainResolver.Setup(it => it.ResolveDomain())
+                .Returns(new SeoDomainCollection
+                {
+                    Name = "Test Domain",
+                    BaseUrl = "https://www.frontend.com",
+                    DomainIds = new List<int>()
+                });
+
+            // Act
+            var urls = provider.GetSitemapUrls(request).ToArray();
+
+            // Assert
+            Assert.That(urls.Length, Is.EqualTo(1));
+            Assert.That(urls[0], Is.EqualTo("https://www.frontend.com/sitemap.xml"));
         }
 
         private (RobotsSitemapProvider Provider, (

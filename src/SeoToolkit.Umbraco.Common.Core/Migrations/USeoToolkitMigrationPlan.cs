@@ -20,6 +20,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Migrations
             To<SeoToolkitDomainMigration>("state-4");
             To<SeoKeyValueMigration>("state-5");
             To<CommonIdToGuidMigration>("state-6");
+            To<SeoToolkitDomainBaseUrlMigration>("state-7");
         }
     }
 }
