@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Moq;
 using Schema.NET;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
@@ -97,7 +98,7 @@ namespace SeoToolkit.Tests
             var content = new Mock<IPublishedContent>();
             content.Setup(x => x.ContentType).Returns(contentType.Object);
 
-            var converter = new SchemaSeoValueConverter(_resolvers, schemaEntryService.Object);
+            var converter = new SchemaSeoValueConverter(_resolvers, schemaEntryService.Object, Mock.Of<ILogger<SchemaSeoValueConverter>>());
 
             var result = (IThing[])converter.Convert(new[] { organizationId }, content.Object, "schema");
 
