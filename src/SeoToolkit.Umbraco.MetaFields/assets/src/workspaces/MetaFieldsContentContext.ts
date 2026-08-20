@@ -14,12 +14,7 @@ interface MetaFieldsSettingsVariant {
   variant: string;
   model: UmbObjectState<MetaFieldsSettingsViewModel>;
   isDirty: boolean;
-  // Bumped on every local edit so save() can tell whether the model changed
-  // while its request was in flight.
   editVersion: number;
-  // A document save can emit multiple updateDate changes in quick succession
-  // (e.g. save + publish). Concurrent POSTs race the server's exists/insert
-  // check, so while one is in flight further saves only queue a follow-up.
   saving: boolean;
   saveQueued: boolean;
 }
@@ -312,4 +307,3 @@ export default class MetaFieldsContentContext
 
 export const ST_METAFIELDS_CONTENT_TOKEN_CONTEXT =
   new UmbContextToken<MetaFieldsContentContext>("ST-MetaFieldsContent-Context");
-
