@@ -1,0 +1,21 @@
+{
+  "name": "seotoolkit-acceptance-tests",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Playwright acceptance tests for the SeoToolkit Umbraco package.",
+  "scripts": {
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "ui": "playwright test --ui",
+    "report": "playwright show-report",
+    "install:browsers": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "@types/node": "^20.19.0",
+    "@umbraco-cms/acceptance-test-helpers": "~17.3.0",
+    "dotenv": "^16.4.5",
+    "typescript": "^5.5.4"
+  }
+}
