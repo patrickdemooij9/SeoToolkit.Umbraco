@@ -119,7 +119,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
         }
 
         [HttpPost("metaFields")]
-        [ProducesResponseType(typeof(MetaFieldsSettingsPostViewModel), 200)]
+        [ProducesResponseType(typeof(MetaFieldsSettingsViewModel), 200)]
         public async Task<IActionResult> Save(MetaFieldsSettingsPostViewModel postModel)
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
@@ -134,7 +134,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 return BadRequest("SEO settings are turned off for this node!");
 
             await EnsureLanguage(postModel.Culture);
-            var isDirty = false;
             var values = new Dictionary<string, object>();
             foreach (var seoField in _fieldCollection)
             {
@@ -147,12 +146,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 var userValue = postModel.UserValues[seoField.Alias];
 
                 values.Add(seoField.Alias, seoField.EditEditor.ValueConverter.ConvertEditorToDatabaseValue(userValue));
-                isDirty = true;
             }
-            if (isDirty)
-            {
-                _seoValueService.AddValues(content.Key, values);
-            }
+            // Always persist, including when every value came back empty. Skipping the
+            // write when nothing was filled in meant an editor could never clear a field.
+            _seoValueService.AddValues(content.Key, values);
 
             return await Get(postModel.NodeId, postModel.Culture);
         }
