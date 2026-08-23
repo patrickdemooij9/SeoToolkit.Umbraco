@@ -8,11 +8,15 @@ import type { MetaFieldsAIFieldSuggestion } from "../dataAccess/MetaFieldsAISour
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/document";
 import { UmbBooleanState, UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
+import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
 
 interface MetaFieldsSettingsVariant {
   variant: string;
   model: UmbObjectState<MetaFieldsSettingsViewModel>;
-  lastUpdated?: string | null;
+  isDirty: boolean;
+  editVersion: number;
+  saving: boolean;
+  saveQueued: boolean;
 }
 
 export default class MetaFieldsContentContext
@@ -66,11 +70,24 @@ export default class MetaFieldsContentContext
           const currentDate = this.#getVariant(culture).lastUpdated;
           if (currentDate && currentDate !== variant.updateDate) {
             this.save(culture);
-          }
+          });
+        },
+        "stMetaFieldsData"
+      );
+    });
+  }
 
-          this.#getVariant(culture).lastUpdated = variant.updateDate;
-        });
-      });
+  #resetVariants() {
+    this.#lastUpdated = {};
+
+    // Reset in place. MetaFieldsContentView observes the state object handed out by
+    // getModel(), so replacing it would leave the view bound to a dead observable.
+    Object.values(this.#variants).forEach((variant) => {
+      variant.model.setValue({ seoEnabled: false });
+      variant.isDirty = false;
+      // Invalidate any in-flight save so its response cannot be applied on top
+      // of the node we just switched to.
+      variant.editVersion++;
     });
   }
 
@@ -103,6 +120,10 @@ export default class MetaFieldsContentContext
       model: new UmbObjectState<MetaFieldsSettingsViewModel>({
         seoEnabled: false,
       }),
+      isDirty: false,
+      editVersion: 0,
+      saving: false,
+      saveQueued: false,
     };
     return this.#variants[variant];
   }
@@ -111,8 +132,37 @@ export default class MetaFieldsContentContext
     return this.#getVariant(variant).model.asObservable();
   }
 
-  save(culture: string) {
-    const model = this.#variants[culture]!.model.getValue();
+  async save(culture: string) {
+    const variant = this.#variants[culture];
+    if (!variant || !this.#nodeId) return;
+
+    if (variant.saving) {
+      variant.saveQueued = true;
+      return;
+    }
+
+    variant.saving = true;
+    try {
+      await this.#performSave(variant, culture);
+    } finally {
+      variant.saving = false;
+    }
+
+    if (variant.saveQueued) {
+      variant.saveQueued = false;
+      // Only worth another request when something is still unsaved — either
+      // edits that arrived mid-flight or a save attempt that failed.
+      if (variant.isDirty) {
+        await this.save(culture);
+      }
+    }
+  }
+
+  async #performSave(variant: MetaFieldsSettingsVariant, culture: string) {
+    const nodeId = this.#nodeId;
+    if (!nodeId) return;
+
+    const model = variant.model.getValue();
     if (model.seoEnabled === false) return;
 
     const userValues: { [key: string]: unknown } = {};
@@ -122,11 +172,44 @@ export default class MetaFieldsContentContext
       }
     });
 
-    this.#repository.save({
-      nodeId: this.#nodeId!,
+    const editVersionAtSave = variant.editVersion;
+    const resp = await this.#repository.save({
+      nodeId: nodeId,
       culture: culture,
       userValues: userValues,
     });
+
+    // tryExecute never throws; a failed request comes back as an error without
+    // data. Leave the variant dirty so the next document save retries, and tell
+    // the editor — the document itself saved fine, so nothing else will. When a
+    // follow-up save is already queued, let that attempt decide instead of
+    // showing an error for a state that may recover on its own.
+    if (!resp || resp.error || !resp.data) {
+      if (variant.saveQueued) return;
+      this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
+        instance?.peek("danger", {
+          data: {
+            headline: "SEO",
+            message:
+              "The SEO meta fields could not be saved. Your changes are still here — save the page again to retry.",
+          },
+        });
+      });
+      return;
+    }
+
+    // Edits made while the request was in flight are not in the response;
+    // applying it would wipe them. Keep the variant dirty so the next document
+    // save picks them up.
+    if (variant.editVersion !== editVersionAtSave) return;
+
+    // Reconcile with what was actually persisted, otherwise this model keeps
+    // serving the values it was first loaded with for the rest of the session.
+    const data = resp.data;
+    if (data.seoEnabled !== false) {
+      variant.model.update(data);
+    }
+    variant.isDirty = false;
   }
 
   updateField(variant: string, alias: string, userValue: any) {
@@ -141,8 +224,10 @@ export default class MetaFieldsContentContext
       ...foundField,
       userValue: userValue,
     };
-    model.update({
-      fields: fields,
+    entry.isDirty = true;
+    entry.editVersion++;
+    entry.model.update({
+      fields: updated,
     });
   }
 
@@ -160,7 +245,9 @@ export default class MetaFieldsContentContext
         };
       }
     }
-    model.update({ fields });
+    entry.isDirty = true;
+    entry.editVersion++;
+    entry.model.update({ fields: updated });
   }
 
   async #checkAIAvailability() {
@@ -181,4 +268,3 @@ export default class MetaFieldsContentContext
 
 export const ST_METAFIELDS_CONTENT_TOKEN_CONTEXT =
   new UmbContextToken<MetaFieldsContentContext>("ST-MetaFieldsContent-Context");
-
