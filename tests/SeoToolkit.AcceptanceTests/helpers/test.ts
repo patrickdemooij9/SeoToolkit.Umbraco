@@ -44,7 +44,11 @@ export const test = umbracoTest.extend<SeoToolkitFixtures>({
       }
     });
     page.on('pageerror', (error) => {
-      errors.push(`[pageerror] ${error.message}`);
+      // Include the stack. These come from minified bundles, so the message alone
+      // ("s is not iterable") says nothing about where it happened. Each vite build
+      // emits .map files next to its chunks, so a frame here can be mapped back.
+      const stack = error.stack ? `\n${error.stack}` : '';
+      errors.push(`[pageerror] ${error.message}${stack}`);
     });
 
     await use(errors);

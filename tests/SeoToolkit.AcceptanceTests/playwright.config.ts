@@ -53,5 +53,17 @@ export default defineConfig({
         storageState,
       },
     },
+    {
+      // Public output the package renders for visitors: sitemap.xml, robots.txt.
+      // These still need the authenticated session, because the fixtures are set up
+      // through the management API even though the assertions are plain HTTP.
+      name: 'frontend',
+      testDir: './tests/frontend',
+      dependencies: ['setup'],
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState,
+      },
+    },
   ],
 });

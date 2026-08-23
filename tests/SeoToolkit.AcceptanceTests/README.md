@@ -2,11 +2,17 @@
 
 Playwright browser tests that run against a **real, running Umbraco site** with SeoToolkit
 installed. They cover the backoffice UI — the eight Lit/TypeScript bundles under
-`src/SeoToolkit.Umbraco.<Feature>/assets/` — which unit tests cannot reach.
+`src/SeoToolkit.Umbraco.<Feature>/assets/` — which unit tests cannot reach, plus the public
+output the package renders for visitors.
 
-Current scope is a **smoke suite** (18 tests, ~1 minute): the section loads, every tree node
-opens its workspace, the SEO tabs render on content and document types, the overridden
-document-type Save still persists, and nothing throws in the browser console.
+26 tests, roughly two minutes, in two projects:
+
+- **`smoke`** — the section loads, every tree node opens its workspace, the SEO tabs render
+  on content and document types, the overridden document-type Save still persists, and
+  nothing throws in the browser console.
+- **`frontend`** — `sitemap.xml` picks up newly published content and ignores drafts;
+  `robots.txt` serves saved content, round-trips through the management API, and refuses
+  content that would de-index the whole site.
 
 ## Running locally
 
@@ -33,6 +39,18 @@ cd tests/SeoToolkit.AcceptanceTests && npm ci && npx playwright install chromium
 
 Use `npx playwright test --ui` while writing or debugging selectors — far faster than
 re-running headless. `npx playwright show-report` opens the last HTML report.
+
+## A note on the local database
+
+Umbraco advises SQL Server or LocalDB for acceptance tests, because "the tests execute
+too fast for SQLite to handle" - and that is not theoretical. Running this suite against
+a SQLite instance produces bursts of `SQLite Error 6: database table is locked`, after
+which every subsequent test times out with `Error refreshing access token`. It looks
+like an auth failure; it is really lock contention.
+
+If you see that, it is the database, not the tests. Point `umbracoDbDSN` at SQL Server
+or LocalDB (which is what CI does) rather than chasing it. Deleting the SQLite file and
+starting over clears it temporarily, but it returns as the suite grows.
 
 ## In CI
 
@@ -112,8 +130,13 @@ helpers/
   test.ts                  Umbraco's test fixture + a console-error guard.
 tests/
   auth.setup.ts            Logs in once; caches the session for every spec.
-  smoke/                   The suite.
+  smoke/                   Backoffice UI.
+  frontend/                Public output: sitemap.xml, robots.txt.
 ```
+
+The `frontend` specs still depend on the `setup` project: their assertions are plain HTTP,
+but the fixtures (content, robots.txt content) are created through the management API, and
+`robots.txt` is global state that each spec captures and restores.
 
 The console-error guard in `helpers/test.ts` is what gives these tests teeth: a Lit bundle that
 fails to import, a missing custom element, or a broken API call all surface as console errors
