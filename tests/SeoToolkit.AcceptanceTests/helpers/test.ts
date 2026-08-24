@@ -24,6 +24,16 @@ function isRelevant(message: string): boolean {
 type SeoToolkitFixtures = {
   /** Every console error and uncaught page error seen during the test. */
   consoleErrors: string[];
+  /**
+   * Discards the console errors recorded so far. Call this after navigating INTO a
+   * screen (walking the Content/Settings trees, opening a workspace) but before
+   * exercising any SeoToolkit UI. Umbraco core emits transient errors while its trees
+   * and router settle — "Tree context is not set", "Could not request children,
+   * repository is missing", "provideAt is not a function" — none of which are
+   * SeoToolkit defects. Dropping them keeps the guard focused on the interaction under
+   * test instead of failing on core noise from getting there.
+   */
+  discardConsoleErrors: () => void;
   /** Auto-fixture: fails the test if any unignored console error was recorded. */
   failOnConsoleErrors: void;
 };
@@ -52,6 +62,12 @@ export const test = umbracoTest.extend<SeoToolkitFixtures>({
     });
 
     await use(errors);
+  },
+
+  discardConsoleErrors: async ({ consoleErrors }, use) => {
+    await use(() => {
+      consoleErrors.length = 0;
+    });
   },
 
   failOnConsoleErrors: [

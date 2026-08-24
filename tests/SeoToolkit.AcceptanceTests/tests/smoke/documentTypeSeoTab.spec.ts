@@ -31,11 +31,14 @@ test.afterEach(async ({ umbracoApi }) => {
 });
 
 test.describe('SEO tab on document types', () => {
-  test.beforeEach(async ({ umbracoUi }) => {
+  test.beforeEach(async ({ umbracoUi, discardConsoleErrors }) => {
     // goToDocumentType walks the Settings tree, so that section must be open first.
     await umbracoUi.goToBackOffice();
     await umbracoUi.documentType.goToSection(ConstantHelper.sections.settings, false);
     await umbracoUi.documentType.goToDocumentType(documentTypeName);
+    // Walking the Settings tree emits transient Umbraco core console errors; drop them
+    // so the guard only judges the SEO-tab interaction the tests below perform.
+    discardConsoleErrors();
   });
 
   test('the SEO tab renders its module sub-views @smoke', async ({ page }) => {
