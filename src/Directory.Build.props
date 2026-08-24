@@ -1,5 +1,15 @@
 <Project>
   <PropertyGroup>
+      <!--
+      The per-feature assets/ folders hold TypeScript sources, not shippable content.
+      The Razor SDK would otherwise pick up every assets/package.json and
+      assets/tsconfig.json as a Content item; because the feature projects set
+      ContentTargetFolders to ".", all eight collide on the same relative path and
+      "dotnet publish" of a site referencing them fails with NETSDK1152.
+      These files are not part of the NuGet packages, so excluding them changes
+      nothing about what ships.
+    -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);assets/**</DefaultItemExcludes>
     <SeoToolkitVersionCommon>7.0.0</SeoToolkitVersionCommon>
     <SeoToolkitVersionMetaFields>7.0.0</SeoToolkitVersionMetaFields>
     <SeoToolkitVersionNotFound>7.0.0</SeoToolkitVersionNotFound>

@@ -1,0 +1,229 @@
+name: Acceptance Tests
+
+on:
+  push:
+    branches: [ dev/main ]
+  pull_request:
+    branches: [ dev/main ]
+  workflow_dispatch:
+
+env:
+  # CI-only credentials for a throwaway database and Umbraco install.
+  MSSQL_SA_PASSWORD: 'Acceptance1234!'
+  UMBRACO_USER_LOGIN: 'acceptance@seotoolkit.local'
+  UMBRACO_USER_PASSWORD: 'SeoToolkitAcceptance1234!'
+  SITE_URL: 'https://localhost:5001'
+  # Kestrel needs a cert to serve HTTPS; Playwright ignores validation errors, so a
+  # throwaway dev cert is enough. See the "Umbraco backoffice auth requires HTTPS" note
+  # on the Start step.
+  DEV_CERT_PASSWORD: 'AcceptanceCert1234!'
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: 'Y'
+          MSSQL_SA_PASSWORD: 'Acceptance1234!'
+        ports:
+          - 1433:1433
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: tests/SeoToolkit.AcceptanceTests/.nvmrc
+          cache: npm
+          cache-dependency-path: |
+            src/package-lock.json
+            tests/SeoToolkit.AcceptanceTests/package-lock.json
+
+      - name: Wait for SQL Server
+        run: |
+          # Probe the mapped port from the runner rather than docker exec-ing sqlcmd:
+          # the sqlcmd path inside the image differs between builds (mssql-tools vs
+          # mssql-tools18) and `docker ps --filter ancestor` is brittle. Bash /dev/tcp
+          # needs neither. SQL Server opens the port a moment before it accepts logins,
+          # hence the grace period.
+          for i in $(seq 1 60); do
+            if (exec 3<>/dev/tcp/localhost/1433) 2>/dev/null; then
+              echo "SQL Server is accepting connections."
+              sleep 15
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::SQL Server did not start within 300s."
+          docker ps -a
+          exit 1
+
+      # Must run BEFORE any dotnet build: the backoffice bundles are emitted into each
+      # feature project's wwwroot/entry, and .NET snapshots static web assets at build
+      # time. Build .NET first and the site boots with no SeoToolkit UI at all.
+      - name: Install frontend dependencies
+        working-directory: ./src
+        run: npm ci
+
+      - name: Build backoffice bundles
+        working-directory: ./src
+        run: npm run build:all
+
+      - name: Publish the test site
+        run: dotnet publish ./src/SeoToolkit.Umbraco.Site -c Release -o ./publish
+
+      - name: Verify backoffice bundles were published
+        run: |
+          # Exactly the paths the ManifestLoader.cs files register as backofficeEntryPoint.
+          missing=0
+          for entry in common metaFields notFound redirects robotstxt scriptManager siteAudit sitemap; do
+            file="./publish/wwwroot/App_Plugins/SeoToolkit/entry/$entry/$entry.js"
+            if [ ! -s "$file" ]; then
+              echo "::error::Missing backoffice bundle $file - did 'npm run build:all' run before 'dotnet publish'?"
+              missing=1
+            fi
+          done
+          exit $missing
+
+      - name: Create a development HTTPS certificate
+        run: dotnet dev-certs https -ep ${{ github.workspace }}/devcert.pfx -p "$DEV_CERT_PASSWORD"
+
+      - name: Start the site
+        # MUST run from inside the publish folder. ASP.NET Core resolves ContentRoot from
+        # the current working directory, NOT from the dll location, so starting this from
+        # the repo root gives a process that boots happily and answers /umbraco, but
+        # resolves wwwroot/, Views/ and umbraco/ against the repo root - every
+        # /App_Plugins/SeoToolkit/... request 404s and the readiness check never passes.
+        working-directory: ./publish
+        run: |
+          nohup dotnet ./SeoToolkit.Umbraco.Site.dll > "$GITHUB_WORKSPACE/site.log" 2>&1 &
+          echo $! > "$GITHUB_WORKSPACE/site.pid"
+          echo "Started site, pid $(cat "$GITHUB_WORKSPACE/site.pid")"
+        env:
+          # Umbraco backoffice auth REQUIRES HTTPS. The login flow relies on the
+          # __Host-umbPkceCode cookie, and the __Host- prefix plus the Secure flag mean
+          # the browser never returns it over plain HTTP - the helper package then fails
+          # in extractPKCECookie with "Cannot read properties of undefined".
+          ASPNETCORE_URLS: ${{ env.SITE_URL }}
+          # Unprefixed on purpose: Program.cs uses Host.CreateDefaultBuilder, whose app
+          # configuration binds plain environment variables. Whether ASPNETCORE_-prefixed
+          # names also reach the Kestrel section depends on host-config chaining, so do
+          # not rely on it.
+          Kestrel__Certificates__Default__Path: ${{ github.workspace }}/devcert.pfx
+          Kestrel__Certificates__Default__Password: ${{ env.DEV_CERT_PASSWORD }}
+          ConnectionStrings__umbracoDbDSN: "Server=localhost,1433;Database=SeoToolkitAcceptance;User Id=sa;Password=${{ env.MSSQL_SA_PASSWORD }};TrustServerCertificate=true;"
+          ConnectionStrings__umbracoDbDSN_ProviderName: 'Microsoft.Data.SqlClient'
+          Umbraco__CMS__Unattended__InstallUnattended: 'true'
+          Umbraco__CMS__Unattended__UnattendedUserName: 'Acceptance Tests'
+          Umbraco__CMS__Unattended__UnattendedUserEmail: ${{ env.UMBRACO_USER_LOGIN }}
+          Umbraco__CMS__Unattended__UnattendedUserPassword: ${{ env.UMBRACO_USER_PASSWORD }}
+          Umbraco__CMS__Unattended__PackageMigrationsUnattended: 'true'
+          # Umbraco only auto-creates the database for SQLite and LocalDB. Against a
+          # real SQL Server this must be explicit or boot fails on a connection error.
+          Umbraco__CMS__Global__InstallMissingDatabase: 'true'
+
+      - name: Wait for the site
+        run: |
+          # Umbraco writes its boot log to its own Serilog FILE sink. site.log (stdout)
+          # only ever carries unhandled exceptions, so it is empty for a slow or stuck
+          # boot - always look at the Umbraco logs first when this step fails.
+          umbraco_logs() {
+            echo "--- site.log (stdout/stderr) ---"
+            cat site.log 2>/dev/null || echo "(no site.log)"
+            echo "--- Umbraco trace logs ---"
+            if ls ./publish/umbraco/Logs/*.json >/dev/null 2>&1; then
+              tail -n 40 ./publish/umbraco/Logs/*.json
+            else
+              echo "(no Umbraco log files - the host never got far enough to create them)"
+            fi
+            echo "--- listening sockets ---"
+            ss -lntp 2>/dev/null || netstat -lntp 2>/dev/null || true
+          }
+
+          # First boot creates the database, runs every Umbraco migration and then the
+          # Clean starter kit package migration. That is far slower on a 2-core runner
+          # against a SQL Server container than it is locally.
+          deadline=$((SECONDS + 600))
+          last_report=0
+          while [ $SECONDS -lt $deadline ]; do
+            # Fail fast if the host died (bad connection string, port clash, migration
+            # crash) instead of burning the whole budget on a process that is gone.
+            if ! kill -0 "$(cat site.pid)" 2>/dev/null; then
+              echo "::error::The site process exited during startup."
+              umbraco_logs
+              exit 1
+            fi
+
+            backoffice_ok=$(curl -skf -o /dev/null "$SITE_URL/umbraco" && echo yes || echo no)
+            assets_ok=$(curl -skf -o /dev/null "$SITE_URL/App_Plugins/SeoToolkit/entry/common/common.js" && echo yes || echo no)
+            if [ "$backoffice_ok" = yes ] && [ "$assets_ok" = yes ]; then
+              echo "Backoffice is up and serving SeoToolkit assets after ${SECONDS}s."
+              exit 0
+            fi
+
+            # Report progress so a slow boot is visibly different from a stuck one.
+            if [ $((SECONDS - last_report)) -ge 30 ]; then
+              last_report=$SECONDS
+              echo "[${SECONDS}s] backoffice=$backoffice_ok assets=$assets_ok"
+              if ls ./publish/umbraco/Logs/*.json >/dev/null 2>&1; then
+                tail -n 2 ./publish/umbraco/Logs/*.json | tail -n 4
+              else
+                echo "  (Umbraco has not written a log file yet)"
+              fi
+            fi
+            sleep 5
+          done
+
+          echo "::error::Site did not become ready within 600s."
+          umbraco_logs
+          exit 1
+
+      - name: Install acceptance test dependencies
+        working-directory: ./tests/SeoToolkit.AcceptanceTests
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: ./tests/SeoToolkit.AcceptanceTests
+        run: npx playwright install --with-deps chromium
+
+      - name: Run acceptance tests
+        working-directory: ./tests/SeoToolkit.AcceptanceTests
+        run: npx playwright test
+        env:
+          URL: ${{ env.SITE_URL }}
+          STORAGE_STATE_PATH: 'playwright/.auth/user.json'
+          CONSOLE_ERRORS_PATH: 'console-errors.json'
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            tests/SeoToolkit.AcceptanceTests/playwright-report/
+            tests/SeoToolkit.AcceptanceTests/test-results/
+            tests/SeoToolkit.AcceptanceTests/console-errors.json
+          retention-days: 7
+
+      - name: Upload site and Umbraco logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-logs
+          # site.log is stdout only. The Umbraco trace logs are the useful ones for a
+          # boot failure - see the note in the "Wait for the site" step.
+          path: |
+            site.log
+            publish/umbraco/Logs/
+          if-no-files-found: warn
+          retention-days: 7
