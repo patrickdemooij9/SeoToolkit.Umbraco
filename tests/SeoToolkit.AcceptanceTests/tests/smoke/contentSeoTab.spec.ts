@@ -34,11 +34,14 @@ test.afterEach(async ({ umbracoApi }) => {
 });
 
 test.describe('SEO tab on content', () => {
-  test.beforeEach(async ({ umbracoUi, page }) => {
+  test.beforeEach(async ({ umbracoUi, page, discardConsoleErrors }) => {
     // goToContentWithName walks the Content tree, so that section must be open first.
     await umbracoUi.goToBackOffice();
     await umbracoUi.content.goToSection(ConstantHelper.sections.content, false);
     await umbracoUi.content.goToContentWithName(documentName);
+    // Drop the transient Umbraco core console errors from walking the Content tree
+    // before touching any SeoToolkit UI - the SEO tab render below stays guarded.
+    discardConsoleErrors();
     await page.locator(SeoTab.seo).click();
     await expect(page.locator(SeoTabElement.contentView)).toBeVisible();
   });

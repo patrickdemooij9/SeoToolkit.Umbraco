@@ -2,9 +2,9 @@ name: Acceptance Tests
 
 on:
   push:
-    branches: [ dev/main, dev/Umbraco17 ]
+    branches: [ dev/main ]
   pull_request:
-    branches: [ dev/main, dev/Umbraco17 ]
+    branches: [ dev/main ]
   workflow_dispatch:
 
 env:
