@@ -28,6 +28,7 @@ namespace SeoToolkit.Tests
         private Mock<ILogger<SitemapMiddleware>> _mockLogger = null!;
         private Mock<ISitemapGenerator> _mockSitemapGenerator = null!;
         private Mock<ISitemapIndexGenerator> _mockSitemapIndexGenerator = null!;
+        private Mock<SeoToolkit.Umbraco.Common.Core.Helpers.ISeoDomainResolver> _mockSeoDomainResolver = null!;
         private SitemapMiddleware _middleware = null!;
         private DefaultHttpContext _httpContext = null!;
 
@@ -40,6 +41,7 @@ namespace SeoToolkit.Tests
             _mockLogger = new Mock<ILogger<SitemapMiddleware>>();
             _mockSitemapGenerator = new Mock<ISitemapGenerator>();
             _mockSitemapIndexGenerator = new Mock<ISitemapIndexGenerator>();
+            _mockSeoDomainResolver = new Mock<SeoToolkit.Umbraco.Common.Core.Helpers.ISeoDomainResolver>();
 
             _middleware = new SitemapMiddleware(
                 _mockNext.Object,
@@ -57,7 +59,7 @@ namespace SeoToolkit.Tests
             _httpContext.Request.Path = "/some-page";
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             _mockNext.Verify(n => n.Invoke(_httpContext), Times.Once);
@@ -76,7 +78,7 @@ namespace SeoToolkit.Tests
             SetupBasicUmbracoContext();
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             Assert.That(_httpContext.Response.StatusCode, Is.EqualTo(200));
@@ -98,7 +100,7 @@ namespace SeoToolkit.Tests
             SetupBasicUmbracoContext();
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             _mockSitemapGenerator.Verify(
@@ -119,7 +121,7 @@ namespace SeoToolkit.Tests
             SetupBasicUmbracoContext();
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             _mockSitemapGenerator.Verify(
@@ -140,7 +142,7 @@ namespace SeoToolkit.Tests
             SetupBasicUmbracoContext();
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             Assert.That(_httpContext.Response.StatusCode, Is.EqualTo(200));
@@ -160,7 +162,7 @@ namespace SeoToolkit.Tests
             SetupBasicUmbracoContext();
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             Assert.That(_httpContext.Response.ContentType, Is.EqualTo(customContentType));
@@ -184,7 +186,7 @@ namespace SeoToolkit.Tests
             SetupBasicUmbracoContext();
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             _httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
@@ -209,7 +211,7 @@ namespace SeoToolkit.Tests
             SetupBasicUmbracoContext();
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             Assert.That(_httpContext.Response.StatusCode, Is.EqualTo(200));
@@ -232,7 +234,7 @@ namespace SeoToolkit.Tests
             SetupBasicUmbracoContext();
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             _httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
@@ -253,7 +255,7 @@ namespace SeoToolkit.Tests
             SetupBasicUmbracoContext();
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             _mockSettingsService.Verify(s => s.GetSettings(), Times.Once);
@@ -266,7 +268,7 @@ namespace SeoToolkit.Tests
             _httpContext.Request.Path = "/page";
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             _mockSettingsService.Verify(s => s.GetSettings(), Times.Never);
@@ -285,11 +287,97 @@ namespace SeoToolkit.Tests
             SetupBasicUmbracoContext();
 
             // Act
-            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object);
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
 
             // Assert
             Assert.That(_httpContext.Response.StatusCode, Is.EqualTo(200));
             _mockSitemapGenerator.Verify(g => g.Generate(It.IsAny<SitemapGeneratorOptions>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Invoke_WithConfiguredIndexPath_AndMatchingRequest_GeneratesSitemapIndex()
+        {
+            // Arrange - a dedicated index path is configured and the request targets it, while multiple domains exist.
+            _httpContext.Request.Path = "/sitemap-index/sitemap.xml";
+            var settings = new SitemapConfig
+            {
+                ReturnContentType = "application/xml",
+                StructureMode = StructureMode.MultiRoot,
+                SitemapIndexPath = "sitemap-index"
+            };
+
+            _mockSettingsService.Setup(s => s.GetSettings()).Returns(settings);
+            _mockSitemapIndexGenerator.Setup(g => g.Generate()).Returns(new XDocument(new XElement("sitemapindex")));
+            SetupUmbracoContextWithDomains(2);
+
+            // Act
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
+
+            // Assert - the index is served here and no per-domain sitemap is generated.
+            _mockSitemapIndexGenerator.Verify(g => g.Generate(), Times.Once);
+            _mockSitemapGenerator.Verify(g => g.Generate(It.IsAny<SitemapGeneratorOptions>()), Times.Never);
+            Assert.That(_httpContext.Response.StatusCode, Is.EqualTo(200));
+        }
+
+        [Test]
+        public async Task Invoke_WithConfiguredIndexFilename_AndMatchingRequest_GeneratesSitemapIndex()
+        {
+            // Arrange - the index path is configured as a full ".xml" filename, served directly off the root.
+            _httpContext.Request.Path = "/sitemap-index.xml";
+            var settings = new SitemapConfig
+            {
+                ReturnContentType = "application/xml",
+                StructureMode = StructureMode.MultiRoot,
+                SitemapIndexPath = "sitemap-index.xml"
+            };
+
+            _mockSettingsService.Setup(s => s.GetSettings()).Returns(settings);
+            _mockSitemapIndexGenerator.Setup(g => g.Generate()).Returns(new XDocument(new XElement("sitemapindex")));
+            SetupUmbracoContextWithDomains(2);
+
+            // Act
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
+
+            // Assert
+            _mockSitemapIndexGenerator.Verify(g => g.Generate(), Times.Once);
+            _mockSitemapGenerator.Verify(g => g.Generate(It.IsAny<SitemapGeneratorOptions>()), Times.Never);
+            Assert.That(_httpContext.Response.StatusCode, Is.EqualTo(200));
+        }
+
+        [Test]
+        public async Task Invoke_WithNonXmlPath_DoesNotCallSettingsService()
+        {
+            // Arrange - the cheap pre-guard should reject non-.xml requests before touching settings.
+            _httpContext.Request.Path = "/sitemap-index";
+
+            // Act
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
+
+            // Assert
+            _mockSettingsService.Verify(s => s.GetSettings(), Times.Never);
+            _mockNext.Verify(n => n.Invoke(_httpContext), Times.Once);
+        }
+
+        private void SetupUmbracoContextWithDomains(int domainCount)
+        {
+            var mockUmbracoContext = new Mock<IUmbracoContext>();
+            var mockAccessor = new Mock<global::Umbraco.Cms.Core.Web.IUmbracoContextAccessor>();
+
+            var domains = Enumerable.Range(1, domainCount)
+                .Select(i => new Domain(i, $"/lang{i}", contentId: i, culture: $"lang{i}", isWildcard: false, sortOrder: i))
+                .ToArray();
+
+            var mockDomainCache = new Mock<IDomainCache>();
+            mockDomainCache.Setup(d => d.GetAll(It.IsAny<bool>())).Returns(domains);
+            mockDomainCache.Setup(d => d.DefaultCulture).Returns("en");
+            mockUmbracoContext.Setup(c => c.Domains).Returns(mockDomainCache.Object);
+
+            var mockContentCache = new Mock<IPublishedContentCache>();
+            mockUmbracoContext.Setup(c => c.Content).Returns(mockContentCache.Object);
+
+            var ctxRef = new UmbracoContextReference(mockUmbracoContext.Object, true, mockAccessor.Object);
+            _mockUmbracoContextFactory.Setup(f => f.EnsureUmbracoContext())
+                .Returns(ctxRef);
         }
 
         private void SetupBasicUmbracoContext()

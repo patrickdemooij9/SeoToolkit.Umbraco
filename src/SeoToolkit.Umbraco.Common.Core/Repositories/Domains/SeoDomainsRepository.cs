@@ -37,6 +37,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
             return new SeoDomainCollection
             {
                 Name = collection.Name,
+                BaseUrl = collection.BaseUrl,
                 Id = collection.Id,
                 DomainIds = domains,
                 Settings = settings
@@ -51,7 +52,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
                 .From<SeoDomainCollectionEntity>()).Select(it => new SeoDomainCollection
                 {
                     Id = it.Id,
-                    Name = it.Name
+                    Name = it.Name,
+                    BaseUrl = it.BaseUrl
                 }).ToArray();
 
             var domains = scope.Database.Fetch<SeoDomainEntity>(scope.SqlContext.Sql()
@@ -89,6 +91,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
             };
 
             collectionEntity.Name = collection.Name;
+            collectionEntity.BaseUrl = collection.BaseUrl;
             scope.Database.Save(collectionEntity);
 
             var existingDomains = scope.Database.Fetch<SeoDomainEntity>(scope.SqlContext.Sql()

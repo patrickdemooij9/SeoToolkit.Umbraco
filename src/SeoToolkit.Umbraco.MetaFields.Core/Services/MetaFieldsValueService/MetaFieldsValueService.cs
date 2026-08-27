@@ -39,16 +39,26 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
         public void AddValues(int nodeId, Dictionary<string, object> values, string culture = null)
         {
             var foundCulture = culture.IfNullOrWhiteSpace(GetCulture());
-            foreach (var (key, value) in values)
+            try
             {
-                if (_repository.Exists(nodeId, key, foundCulture))
-                    _repository.Update(nodeId, key, foundCulture, value);
-                else
+                foreach (var (key, value) in values)
                 {
-                    _repository.Add(nodeId, key, foundCulture, value);
+                    if (_repository.Exists(nodeId, key, foundCulture))
+                        _repository.Update(nodeId, key, foundCulture, value);
+                    else
+                    {
+                        _repository.Add(nodeId, key, foundCulture, value);
+                    }
                 }
             }
-            ClearCache(nodeId);
+            finally
+            {
+                // Every repository call commits its own scope, so rows written
+                // before an exception are already persisted. Always clear the
+                // cache, otherwise reads keep serving the pre-save values until
+                // the cache expires.
+                ClearCache(nodeId);
+            }
         }
         
         public void Delete(int nodeId, string fieldAlias, string culture = null)
@@ -73,17 +83,27 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
         public void AddValues(Guid nodeId, Dictionary<string, object> values, string culture = null)
         {
             var foundCulture = culture.IfNullOrWhiteSpace(GetCulture());
-            foreach (var (key, value) in values)
+            try
             {
-                if (_repository.Exists(nodeId, key, foundCulture))
-                    _repository.Update(nodeId, key, foundCulture, value);
-                else
+                foreach (var (key, value) in values)
                 {
-                    _repository.Add(nodeId, key, foundCulture, value);
+                    if (_repository.Exists(nodeId, key, foundCulture))
+                        _repository.Update(nodeId, key, foundCulture, value);
+                    else
+                    {
+                        _repository.Add(nodeId, key, foundCulture, value);
+                    }
                 }
+                NotifyChanged(nodeId);
             }
-            ClearCache(nodeId);
-            _eventAggregator.Publish(new MetaFieldsValueChangedNotification(nodeId));
+            finally
+            {
+                // Every repository call commits its own scope, so rows written
+                // before an exception are already persisted. Always clear the
+                // cache, otherwise reads keep serving the pre-save values until
+                // the cache expires.
+                ClearCache(nodeId);
+            }
         }
 
 
