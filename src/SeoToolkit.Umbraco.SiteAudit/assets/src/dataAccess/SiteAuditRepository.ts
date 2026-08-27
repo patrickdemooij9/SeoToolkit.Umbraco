@@ -9,7 +9,7 @@ import {
   UmbRepositoryResponse,
 } from "@umbraco-cms/backoffice/repository";
 import { SiteAuditSource } from "./SiteAuditSource";
-import { CreateAuditPostModel } from "../api";
+import { CreateSiteAuditRequest, ResourceQuery } from "./SiteAuditApi";
 
 export default class SiteAuditRepository
   extends UmbRepositoryBase
@@ -26,25 +26,46 @@ export default class SiteAuditRepository
   async requestCollection(
     _filter?: UmbCollectionFilterModel | undefined
   ): Promise<UmbRepositoryResponse<UmbPagedModel<any>>> {
-    const resp = (await this.#source.getSiteAudits())!;
+    const resp = await this.#source.getSiteAudits();
 
-    const result: UmbRepositoryResponse<UmbPagedModel<any>> = {
+    // The overview is paged on the server now, so the total comes back with the page rather
+    // than being inferred from the length of a complete list.
+    return {
       data: {
-        total: resp.data.length,
-        items: resp.data.map((item) => ({
+        total: resp?.data?.total ?? 0,
+        items: (resp?.data?.items ?? []).map((item) => ({
           entityType: "st-siteAudit",
           ...item,
         })),
       },
     };
-    return result;
   }
 
-  async get(id: number){
+  async get(id: number) {
     return this.#source.get(id);
   }
 
-  async save(model: CreateAuditPostModel){
+  async getStatus(id: number) {
+    return this.#source.getStatus(id);
+  }
+
+  async getSummary(runId: number) {
+    return this.#source.getSummary(runId);
+  }
+
+  async getResources(runId: number, query: ResourceQuery = {}) {
+    return this.#source.getResources(runId, query);
+  }
+
+  async getResource(runId: number, resourceId: number) {
+    return this.#source.getResource(runId, resourceId);
+  }
+
+  async getIssues(runId: number, skip = 0, take = 50, checkAlias?: string, severity?: string) {
+    return this.#source.getIssues(runId, skip, take, checkAlias, severity);
+  }
+
+  async save(model: CreateSiteAuditRequest) {
     return this.#source.save(model);
   }
 
@@ -52,11 +73,15 @@ export default class SiteAuditRepository
     return this.#source.delete(ids);
   }
 
-  async stopAudit(id: number){
+  async stopAudit(id: number) {
     return this.#source.stopAudit(id);
   }
 
   async getConfiguration() {
     return this.#source.getConfiguration();
+  }
+
+  async getStartNode(nodeId: string) {
+    return this.#source.getStartNode(nodeId);
   }
 }

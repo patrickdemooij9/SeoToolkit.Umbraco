@@ -3,22 +3,22 @@ using Microsoft.Extensions.DependencyInjection;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
-using SeoToolkit.Umbraco.SiteAudit.Core.Checks;
+using SeoToolkit.Umbraco.SiteAudit.Core.Checks.Seo;
+using SeoToolkit.Umbraco.SiteAudit.Core.Checks.Abstractions;
+using SeoToolkit.Umbraco.SiteAudit.Core.Extensions;
 using SeoToolkit.Umbraco.SiteAudit.Core.Collections;
-using SeoToolkit.Umbraco.SiteAudit.Core.Common.Scheduler;
+using SeoToolkit.Umbraco.SiteAudit.Core.Crawling;
+using SeoToolkit.Umbraco.SiteAudit.Core.BackgroundTasks;
 using SeoToolkit.Umbraco.SiteAudit.Core.Components;
 using SeoToolkit.Umbraco.SiteAudit.Core.Config;
 using SeoToolkit.Umbraco.SiteAudit.Core.Config.Models;
-using SeoToolkit.Umbraco.SiteAudit.Core.Factories.SiteCrawler;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.Config;
-using SeoToolkit.Umbraco.SiteAudit.Core.Notifications;
 using SeoToolkit.Umbraco.SiteAudit.Core.Repositories;
 using SeoToolkit.Umbraco.SiteAudit.Core.Services;
 using SeoToolkit.Umbraco.SiteAudit.Core.Startup;
 using System;
 using System.Linq;
-using System.Net.Http;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 
@@ -39,13 +39,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
                 return;
             }
 
-            builder.Services.AddSingleton(typeof(ISiteAuditRepository), typeof(SiteAuditDatabaseRepository));
-            builder.Services.AddSingleton(typeof(ISiteCrawlerFactory), typeof(DefaultSiteCrawlerFactory));
-            builder.Services.AddSingleton(typeof(SiteAuditService), typeof(SiteAuditService));
-            builder.Services.AddSingleton(typeof(ISiteCheckService), typeof(SiteCheckService));
             builder.Services.AddSingleton(typeof(ISettingsService<SiteAuditConfigModel>), typeof(SiteAuditConfigurationService));
-            builder.Services.AddSingleton(typeof(ISiteCheckRepository), typeof(SiteCheckDatabaseRepository));
-            builder.Services.AddSingleton(typeof(ISiteAuditScheduler), typeof(SiteAuditScheduler));
 
             if (!disabledModules.Contains(DisabledModuleConstant.SectionTree))
             {
@@ -53,41 +47,110 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
                 .Add<SiteAuditTreeSection>();
             }
 
-            builder.WithCollectionBuilder<SiteAuditCheckCollectionBuilder>()
-                .Append<BrokenLinkCheck>()
-                .Append<MissingTitleCheck>()
-                .Append<MissingDescriptionCheck>()
-                .Append<MissingH1Check>()
-                .Append<MissingCanonicalCheck>()
+            // The check api add-on packages compose against.
+            builder.Services.AddSingleton<ISeoCheckMessageFormatter, DefaultSeoCheckMessageFormatter>();
+            builder.SeoChecks();
+
+            // The crawl pipeline. Its client never follows redirects automatically, because the
+            // chain is something checks need to be able to see.
+            builder.Services.AddSingleton<ICrawlEngineFactory, CrawlEngineFactory>();
+
+            // Transient rather than singleton: it reads whatever scope is ambient at the moment
+            // it is called, and holds no state of its own between calls.
+            builder.Services.AddTransient<ISiteAuditRunRepository, SiteAuditRunRepository>();
+            builder.Services.AddTransient<SiteAuditRunService>();
+            builder.Services.AddSingleton<ISeoCheckCatalogue, SeoCheckCatalogue>();
+            builder.Services.AddSingleton<SiteAuditViewModelMapper>();
+            builder.Services.AddSingleton<IAuditStartingPointResolver, AuditStartingPointResolver>();
+
+            // Runs queued audits. This is what makes an audit outlive the request that asked for
+            // it - the previous scheduler was never registered, so nothing ever picked one up.
+            builder.Services.AddHostedService<SiteAuditJobRunner>();
+            builder.Services.AddHttpClient(CrawlEngineFactory.HttpClientName)
+                .ConfigurePrimaryHttpMessageHandler(x =>
+                {
+                    var settings = x.GetRequiredService<ISettingsService<SiteAuditConfigModel>>().GetSettings();
+
+                    return HttpResourceFetcher.CreateHandler(new CrawlOptions
+                    {
+                        AllowInvalidCertificates = settings.AllowInvalidCerts
+                    });
+                });
+
+            builder.SeoChecks()
+                // Indexability - whether the page can be found at all.
+                .Append<NoindexCheck>()
+                .Append<CanonicalMissingCheck>()
+                .Append<CanonicalNonSelfReferencingCheck>()
+                .Append<MultipleCanonicalsCheck>()
+                .Append<MetaRefreshCheck>()
+                .Append<OrphanPageCheck>()
+
+                // Technical - transport, status codes and redirects.
+                .Append<ClientErrorCheck>()
+                .Append<ServerErrorCheck>()
+                .Append<UnreachableCheck>()
+                .Append<RedirectChainCheck>()
+                .Append<RedirectLoopCheck>()
+                .Append<TemporaryRedirectCheck>()
+                .Append<NonHttpsCheck>()
+                .Append<MixedContentCheck>()
+                .Append<UrlLengthCheck>()
+
+                // Performance.
+                .Append<SlowResponseCheck>()
+                .Append<LargePageCheck>()
+
+                // On-page markup.
+                .Append<TitleMissingCheck>()
+                .Append<TitleLengthCheck>()
+                .Append<MultipleTitlesCheck>()
+                .Append<DescriptionMissingCheck>()
+                .Append<DescriptionLengthCheck>()
+                .Append<H1MissingCheck>()
+                .Append<MultipleH1Check>()
+                .Append<HeadingOrderCheck>()
+                .Append<H1DuplicatesTitleCheck>()
+                .Append<MissingLangCheck>()
+                .Append<MissingViewportCheck>()
+                .Append<DuplicateTitleCheck>()
+                .Append<DuplicateDescriptionCheck>()
+                .Append<DuplicateH1Check>()
+
+                // Content.
                 .Append<ThinContentCheck>()
-                .Append<PagePerformanceCheck>()
+                .Append<TextToHtmlRatioCheck>()
+                .Append<PlaceholderContentCheck>()
+                .Append<DuplicateContentCheck>()
+
+                // Links.
+                .Append<BrokenInternalLinkCheck>()
+                .Append<BrokenExternalLinkCheck>()
+                .Append<EmptyAnchorTextCheck>()
+                .Append<GenericAnchorTextCheck>()
+                .Append<TooManyLinksCheck>()
+                .Append<DeepPageCheck>()
+
+                // Images.
                 .Append<BrokenImageCheck>()
-                .Append<MissingImageAltCheck>();
+                .Append<ImageAltCheck>()
+                .Append<ImageDimensionsCheck>()
+                .Append<ImageFormatCheck>()
+                .Append<FaviconCheck>()
 
-            builder.WithCollectionBuilder<SeoDisplayCollectionBuilder>()
-                .Add<SiteAuditDisplayProvider>();
+                // Structured data and social.
+                .Append<InvalidJsonLdCheck>()
+                .Append<OpenGraphCheck>()
+                .Append<TwitterCardCheck>()
 
-            builder.Services.AddHttpClient<BrokenImageCheck>()
-                .ConfigurePrimaryHttpMessageHandler(x =>
-                {
-                    var allowInvalidCerts = x.GetRequiredService<ISettingsService<SiteAuditConfigModel>>().GetSettings().AllowInvalidCerts;
+                // International.
+                .Append<HreflangCodeCheck>()
+                .Append<HreflangXDefaultCheck>();
 
-                    return new HttpClientHandler()
-                    {
-                        ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => allowInvalidCerts
-                    };
-                });
-
-            builder.Services.AddHttpClient<BrokenLinkCheck>()
-                .ConfigurePrimaryHttpMessageHandler(x =>
-                {
-                    var allowInvalidCerts = x.GetRequiredService<ISettingsService<SiteAuditConfigModel>>().GetSettings().AllowInvalidCerts;
-
-                    return new HttpClientHandler()
-                    {
-                        ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => allowInvalidCerts
-                    };
-                });
+            // The old ISiteCheck collection stays registered so an add-on that still contributes
+            // to it keeps working - LegacySiteCheckAdapter wraps whatever is in it. The checks
+            // this package used to put there have all been ported above.
+            builder.WithCollectionBuilder<SiteAuditCheckCollectionBuilder>();
 
             builder.Components().Append<EnableModuleComponent>();
         }

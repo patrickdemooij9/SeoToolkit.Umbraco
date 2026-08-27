@@ -13,6 +13,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Migrations
         protected override void DefinePlan()
         {
             To<SiteAuditInitialMigration>("state-1");
+            To<SiteAuditResultsV2Migration>("state-2");
         }
     }
 }

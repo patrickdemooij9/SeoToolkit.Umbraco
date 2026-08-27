@@ -1,24 +1,20 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
-import { BackofficeSeoToolkitSiteAudit } from "../api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
+import { SiteAuditApi } from "./SiteAuditApi";
 
 export default class SiteAuditContentCheckSource {
+  #host: UmbControllerHost;
 
-    #host: UmbControllerHost;
+  constructor(host: UmbControllerHost) {
+    this.#host = host;
+  }
 
-    constructor(host: UmbControllerHost) {
-        this.#host = host;
-    }
+  /** Only the checks that make sense against a single page in isolation. */
+  async getPageChecks() {
+    return tryExecute(this.#host, SiteAuditApi.getPageChecks());
+  }
 
-    async getPageChecks(){
-        return tryExecute(this.#host, BackofficeSeoToolkitSiteAudit.getUmbracoSeoToolkitSiteAuditPageChecks());
-    }
-
-    async runPageChecks(nodeId: string){
-        return tryExecute(this.#host, BackofficeSeoToolkitSiteAudit.postUmbracoSeoToolkitSiteAuditRun({
-            body: {
-                contentId: nodeId
-            }
-        }))
-    }
+  async runPageChecks(nodeId: string) {
+    return tryExecute(this.#host, SiteAuditApi.runPageChecks(nodeId));
+  }
 }

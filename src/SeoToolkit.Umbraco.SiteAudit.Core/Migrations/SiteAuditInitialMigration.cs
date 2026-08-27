@@ -1,6 +1,7 @@
-﻿using Umbraco.Cms.Infrastructure.Migrations;
-using SeoToolkit.Umbraco.SiteAudit.Core.Models.Database;
+﻿using System;
 using System.Threading.Tasks;
+using Umbraco.Cms.Infrastructure.Migrations;
+using SeoToolkit.Umbraco.SiteAudit.Core.Models.Database;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Migrations
 {
@@ -12,51 +13,40 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Migrations
 
         protected override Task MigrateAsync()
         {
-            if (TableExists("uSeoToolkitSiteAudit"))
-            {
-                Database.Execute("exec sp_rename 'uSeoToolkitSiteAudit', 'SeoToolkitSiteAudit'");
-            }
-            else if (!TableExists("SeoToolkitSiteAudit"))
-            {
-                Create.Table<SiteAuditEntity>().Do();
-            }
+            EnsureTable<SiteAuditEntity>("uSeoToolkitSiteAudit", "SeoToolkitSiteAudit");
+            EnsureTable<SiteCheckEntity>("uSeoToolkitSiteCheck", "SeoToolkitSiteCheck");
+            EnsureTable<SiteAuditCheckEntity>("uSeoToolkitSiteAuditCheck", "SeoToolkitSiteAuditCheck");
+            EnsureTable<SiteAuditPageEntity>("uSeoToolkitSiteAuditPage", "SeoToolkitSiteAuditPage");
+            EnsureTable<SiteAuditCheckResultEntity>("uSeoToolkitSiteAuditCheckResult", "SeoToolkitSiteAuditCheckResult");
 
-            if (TableExists("uSeoToolkitSiteCheck"))
-            {
-                Database.Execute("exec sp_rename 'uSeoToolkitSiteCheck', 'SeoToolkitSiteCheck'");
-            }
-            else if (!TableExists("SeoToolkitSiteCheck"))
-            {
-                Create.Table<SiteCheckEntity>().Do();
-            }
-
-            if (TableExists("uSeoToolkitSiteAuditCheck"))
-            {
-                Database.Execute("exec sp_rename 'uSeoToolkitSiteAuditCheck', 'SeoToolkitSiteAuditCheck'");
-            }
-            else if (!TableExists("SeoToolkitSiteAuditCheck"))
-            {
-                Create.Table<SiteAuditCheckEntity>().Do();
-            }
-
-            if (TableExists("uSeoToolkitSiteAuditPage"))
-            {
-                Database.Execute("exec sp_rename 'uSeoToolkitSiteAuditPage', 'SeoToolkitSiteAuditPage'");
-            }
-            else if (!TableExists("SeoToolkitSiteAuditPage"))
-            {
-                Create.Table<SiteAuditPageEntity>().Do();
-            }
-
-            if (TableExists("uSeoToolkitSiteAuditCheckResult"))
-            {
-                Database.Execute("exec sp_rename 'uSeoToolkitSiteAuditCheckResult', 'SeoToolkitSiteAuditCheckResult'");
-            }
-            else if (!TableExists("SeoToolkitSiteAuditCheckResult"))
-            {
-                Create.Table<SiteAuditCheckResultEntity>().Do();
-            }
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Renames the pre-6.0 table if it is still present, otherwise creates the table from scratch.
+        /// </summary>
+        private void EnsureTable<TEntity>(string legacyTableName, string tableName)
+        {
+            if (TableExists(legacyTableName))
+            {
+                RenameTable(legacyTableName, tableName);
+            }
+            else if (!TableExists(tableName))
+            {
+                Create.Table<TEntity>().Do();
+            }
+        }
+
+        private void RenameTable(string from, string to)
+        {
+            //sp_rename is SQL Server only - SQLite (and the ANSI standard) use ALTER TABLE ... RENAME TO.
+            if (DatabaseType == NPoco.DatabaseType.SQLite)
+            {
+                Database.Execute($"ALTER TABLE \"{from}\" RENAME TO \"{to}\"");
+                return;
+            }
+
+            Database.Execute($"exec sp_rename '{from}', '{to}'");
         }
     }
 }

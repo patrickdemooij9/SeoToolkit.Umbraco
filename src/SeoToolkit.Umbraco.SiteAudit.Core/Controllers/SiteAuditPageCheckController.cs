@@ -1,60 +1,70 @@
+#nullable enable
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Umbraco.Cms.Web.Common.Routing;
 using SeoToolkit.Umbraco.Common.Core.Controllers;
-using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
-using SeoToolkit.Umbraco.SiteAudit.Core.Models.Business;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.PostModels;
 using SeoToolkit.Umbraco.SiteAudit.Core.Models.ViewModels;
 using SeoToolkit.Umbraco.SiteAudit.Core.Services;
-using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Web;
-using Umbraco.Cms.Web.Common.Routing;
-using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
 {
+    /// <summary>
+    /// Checking a single page from the content app, so an editor can get an answer about the
+    /// page they are working on without running a whole audit.
+    /// </summary>
     [ApiExplorerSettings(GroupName = "Backoffice SeoToolkit SiteAudit")]
     [BackOfficeRoute("seoToolkitSiteAudit")]
     public class SiteAuditPageCheckController : SeoToolkitAuthenticatedControllerBase
     {
-        private readonly SiteAuditService _siteAuditService;
-        private readonly ISiteCheckService _siteCheckService;
-        private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly SiteAuditRunService _runService;
+        private readonly SiteAuditViewModelMapper _mapper;
+        private readonly ISeoCheckCatalogue _catalogue;
+        private readonly IAuditStartingPointResolver _startingPoints;
 
-        public SiteAuditPageCheckController(SiteAuditService siteAuditService, ISiteCheckService siteCheckService, IUmbracoContextFactory umbracoContextFactory)
+        public SiteAuditPageCheckController(SiteAuditRunService runService,
+            SiteAuditViewModelMapper mapper,
+            ISeoCheckCatalogue catalogue,
+            IAuditStartingPointResolver startingPoints)
         {
-            _siteAuditService = siteAuditService;
-            _siteCheckService = siteCheckService;
-            _umbracoContextFactory = umbracoContextFactory;
+            _runService = runService;
+            _mapper = mapper;
+            _catalogue = catalogue;
+            _startingPoints = startingPoints;
         }
 
+        /// <summary>The checks that make sense against a single page in isolation.</summary>
         [HttpGet("pageChecks")]
-        [ProducesResponseType(typeof(SiteAuditCheckViewModel[]), 200)]
+        [ProducesResponseType(typeof(SiteAuditCheckCatalogueViewModel[]), 200)]
         public IActionResult GetPageChecks()
-        {
-            return Ok(_siteCheckService.GetAll().Where(it => it.AllowedAsPageCheck).Select(it => new SiteAuditCheckViewModel { Id = it.Id, Name = it.Check.Name, Description = it.Check.Description }).ToArray());
-        }
+            => Ok(_catalogue.GetAll()
+                .Where(it => it.SupportsSinglePage)
+                .Select(_mapper.MapCatalogueEntry)
+                .ToArray());
 
         [HttpPost("run")]
-        [ProducesResponseType(typeof(SiteAuditDetailViewModel), 200)]
-        public async Task<IActionResult> RunPageChecks(RunPageCheckPostModel postModel)
+        [ProducesResponseType(typeof(SiteAuditPageCheckResultViewModel), 200)]
+        public async Task<IActionResult> RunPageChecks([FromBody] RunPageCheckPostModel postModel)
         {
-            using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
-            var model = new SiteAuditDto
-            {
-                Name = string.Empty,
-                CreatedDate = DateTime.UtcNow,
-                StartingUrl = new Uri(ctx.UmbracoContext.Content.GetById(postModel.ContentId).Url(mode: UrlMode.Absolute)),
-                SiteChecks = _siteCheckService.GetAll().Where(it => it.AllowedAsPageCheck).ToList(),
-                MaxPagesToCrawl = 1,
-                DelayBetweenRequests = 1000,
-                Persistent = false
-            };
+            if (postModel is null) return BadRequest();
 
-            var result = await _siteAuditService.StartSiteAudit(model);
-            return Ok(new SiteAuditDetailViewModel(result));
+            // Resolved the same way an audit's starting point is, so a decoupled site checks the
+            // page its visitors see rather than the one Umbraco would serve.
+            var resolved = _startingPoints.ResolveFromNode(postModel.ContentId, postModel.Culture);
+            if (!resolved.IsSuccess)
+                return resolved.IsNotFound ? NotFound(resolved.Error) : BadRequest(resolved.Error);
+
+            var url = resolved.StartingPoint!.Url;
+
+            var issues = await _runService.RunSinglePageAsync(url, HttpContext.RequestAborted);
+
+            return Ok(new SiteAuditPageCheckResultViewModel
+            {
+                Url = url.ToString(),
+                Issues = issues.Select(_mapper.MapIssue).ToArray()
+            });
         }
     }
 }

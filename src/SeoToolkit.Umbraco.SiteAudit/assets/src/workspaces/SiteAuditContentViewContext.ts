@@ -1,18 +1,15 @@
 import { UmbContextBase } from "@umbraco-cms/backoffice/class-api";
 import { UmbWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
-import { SiteAuditCheckViewModel } from "../api";
 import { UmbArrayState } from "@umbraco-cms/backoffice/observable-api";
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UmbContextToken } from "@umbraco-cms/backoffice/context-api";
 import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/document";
-import SiteAuditContentCheckSource from "../dataAccess/SiteAuditContentCheckSource";
 import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
-
-export interface SiteAuditContentCheckResult {
-  checkId: number;
-  hasError: boolean;
-  errorMessage?: string;
-}
+import SiteAuditContentCheckSource from "../dataAccess/SiteAuditContentCheckSource";
+import {
+  SiteAuditCheckCatalogueEntry,
+  SiteAuditIssue,
+} from "../dataAccess/SiteAuditApi";
 
 export default class SiteAuditContentViewContext
   extends UmbContextBase
@@ -23,18 +20,15 @@ export default class SiteAuditContentViewContext
   #source: SiteAuditContentCheckSource;
   #nodeId?: string;
 
-  #contentChecks = new UmbArrayState<SiteAuditCheckViewModel>(
-    [],
-    (item) => item.id,
-  );
+  #contentChecks = new UmbArrayState<SiteAuditCheckCatalogueEntry>([], (item) => item.alias);
   public readonly contentChecks = this.#contentChecks.asObservable();
 
-  #contentCheckResults = new UmbArrayState<SiteAuditContentCheckResult>(
-    [],
-    (item) => item.checkId,
-  );
-  public readonly contentCheckResults =
-    this.#contentCheckResults.asObservable();
+  /**
+   * Only failures come back from the server. A check with no issue against it passed, which is
+   * what lets the tick be shown without the server reporting every non-finding.
+   */
+  #issues = new UmbArrayState<SiteAuditIssue>([], (item) => item.id);
+  public readonly issues = this.#issues.asObservable();
 
   constructor(host: UmbControllerHost) {
     super(host, ST_SITEAUDIT_CONTENT_TOKEN_CONTEXT.toString());
@@ -46,32 +40,26 @@ export default class SiteAuditContentViewContext
       });
     });
     this.#source.getPageChecks().then((response) => {
-      this.#contentChecks.setValue(response.data);
+      this.#contentChecks.setValue(response.data ?? []);
     });
   }
 
   async runChecks() {
     const result = await this.#source.runPageChecks(this.#nodeId!);
-    const pageCrawled = result.data.pagesCrawled![0];
-    if (!pageCrawled || pageCrawled.statusCode !== 200) {
+
+    if (!result?.data) {
       this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
         instance?.peek("danger", {
           data: {
             headline: "Error",
-            message: "Could not render the page to perform the checks!",
+            message: "Could not check this page.",
           },
         });
       });
       return;
     }
 
-    this.#contentCheckResults.setValue(
-      pageCrawled.results?.map<SiteAuditContentCheckResult>((check) => ({
-        checkId: check.checkId,
-        hasError: true,
-        errorMessage: check.message ?? "",
-      })) ?? [],
-    );
+    this.#issues.setValue(result.data.issues ?? []);
   }
 
   getEntityType(): string {

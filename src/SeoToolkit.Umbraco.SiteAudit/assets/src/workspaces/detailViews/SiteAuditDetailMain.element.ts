@@ -2,6 +2,7 @@ import {
   css,
   customElement,
   html,
+  nothing,
   repeat,
   state,
   when,
@@ -9,477 +10,671 @@ import {
 import { UUIPaginationEvent } from "@umbraco-cms/backoffice/external/uui";
 import { UmbLitElement } from "@umbraco-cms/backoffice/lit-element";
 import { UmbWorkspaceViewElement } from "@umbraco-cms/backoffice/workspace";
-import {
-  SiteAuditPageDetailViewModel,
-  SiteAuditDetailViewModel,
-} from "../../api";
-import SiteAuditCheckResult from "../../models/SiteAuditCheckResultModel";
 import SiteAuditDetailContext, {
+  RESOURCE_PAGE_SIZE,
   ST_SITEAUDIT_DETAIL_TOKEN_CONTEXT,
 } from "../SiteAuditDetailContext";
+import {
+  SiteAuditCategorySummary,
+  SiteAuditIssue,
+  SiteAuditResource,
+  SiteAuditResourceDetail,
+  SiteAuditRunDetail,
+} from "../../dataAccess/SiteAuditApi";
 
-enum SelectedPageType {
-  AllPages,
-  AllChecks,
-  FilteredCheck,
+enum SelectedView {
+  Summary,
+  Pages,
+  Issues,
 }
 
-interface PageItem {
-  data: SiteAuditPageDetailViewModel;
-  open: boolean;
-  errors: number;
-  warnings: number;
-}
-
-@customElement("seotoolkit-site-audit-detail-main")
+@customElement("st-siteaudit-detail-main")
 export default class SiteAuditDetailMain
   extends UmbLitElement
   implements UmbWorkspaceViewElement
 {
   #context?: SiteAuditDetailContext;
 
-  @state()
-  _model?: SiteAuditDetailViewModel;
-
-  @state()
-  _errors = 0;
-
-  @state()
-  _warnings = 0;
-
-  @state()
-  _pageType: SelectedPageType = SelectedPageType.AllPages;
-
-  @state()
-  _pageIndex = 0;
-
-  @state()
-  _openedPages: string[] = [];
-
-  @state()
-  _checkResults: SiteAuditCheckResult[] = [];
+  @state() private _model?: SiteAuditRunDetail;
+  @state() private _categories: SiteAuditCategorySummary[] = [];
+  @state() private _resources: SiteAuditResource[] = [];
+  @state() private _issues: SiteAuditIssue[] = [];
+  @state() private _resourceTotal = 0;
+  @state() private _view = SelectedView.Summary;
+  @state() private _pageIndex = 0;
+  @state() private _checkFilter?: string;
+  @state() private _selectedResource?: SiteAuditResourceDetail;
+  @state() private _loadingResource?: number;
 
   constructor() {
     super();
 
-    this.consumeContext(ST_SITEAUDIT_DETAIL_TOKEN_CONTEXT, (instance) => {
-      if (!instance) {
-        return;
-      }
-      this.#context = instance;
+    this.consumeContext(ST_SITEAUDIT_DETAIL_TOKEN_CONTEXT, (context) => {
+      this.#context = context;
+      if (!context) return;
 
-      this.observe(instance.model, (value) => {
-        this._model = value;
-
-        let errors = 0;
-        let warnings = 0;
-        this._checkResults = [];
-        this._model.pagesCrawled
-          ?.flatMap((item) => item.results)
-          .forEach((result) => {
-            if (result?.isError) {
-              errors++;
-            }
-            if (result?.isWarning) {
-              warnings++;
-            }
-            if (result?.isError || result?.isWarning) {
-              const existingCheckResult = this._checkResults.find(
-                (check) => check.id === result.checkId,
-              );
-              if (!existingCheckResult) {
-                this._checkResults.push({
-                  id: result.checkId,
-                  count: 1,
-                  isError: result.isError,
-                  isWarning: result.isWarning,
-                });
-              } else {
-                existingCheckResult.count++;
-              }
-            }
-          });
-        this._errors = errors;
-        this._warnings = warnings;
-      });
+      this.observe(context.model, (model) => (this._model = model));
+      this.observe(context.categories, (items) => (this._categories = items));
+      this.observe(context.resources, (items) => (this._resources = items));
+      this.observe(context.issues, (items) => (this._issues = items));
+      this.observe(context.resourceTotal, (total) => (this._resourceTotal = total));
+      this.observe(context.selectedResource, (item) => (this._selectedResource = item));
+      this.observe(context.loadingResource, (id) => (this._loadingResource = id));
     });
   }
 
-  getCheckById(id: number) {
-    return this._model?.checks?.find((item) => item.id == id);
+  #show(view: SelectedView) {
+    this._view = view;
+    if (view !== SelectedView.Issues) this._checkFilter = undefined;
   }
 
-  getPagesPaged(): PageItem[] {
-    return (
-      this._model?.pagesCrawled
-        ?.slice(this._pageIndex * 10, this._pageIndex * 10 + 10)
-        .map<PageItem>((page) => ({
-          data: page,
-          open: this.#pageIsOpen(page),
-          errors:
-            page.results?.reduce(
-              (prev, cur) => prev + (cur.isError ? 1 : 0),
-              0,
-            ) ?? 0,
-          warnings:
-            page.results?.reduce(
-              (prev, cur) => prev + (cur.isWarning ? 1 : 0),
-              0,
-            ) ?? 0,
-        })) ?? []
-    );
-  }
-
-  #back() {
-    location.href =
-      "/umbraco/section/SeoToolkit/workspace/seoToolkit-siteAudit/overview";
-  }
-
-  #openPage(page: SiteAuditPageDetailViewModel) {
-    this._openedPages.push(page.url!);
-    this.requestUpdate();
-  }
-
-  #closePage(page: SiteAuditPageDetailViewModel) {
-    this._openedPages.splice(this._openedPages.indexOf(page.url!), 1);
-    this.requestUpdate();
-  }
-
-  #pageIsOpen(page: SiteAuditPageDetailViewModel) {
-    return this._openedPages.includes(page.url!);
-  }
-
-  handlePageUpdate(event: UUIPaginationEvent) {
+  /** Server-side paging: the client asks for the slice it needs rather than filtering a full list. */
+  #onPageChange(event: UUIPaginationEvent) {
     this._pageIndex = event.target.current - 1;
+    this.#context?.loadResources({
+      skip: this._pageIndex * RESOURCE_PAGE_SIZE,
+      take: RESOURCE_PAGE_SIZE,
+    });
   }
 
-  handleDeleteAudit() {
-    this.#context?.deleteAudit();
+  /** Jumps to the issues for one check. Replaces the dead AngularJS click handler this had. */
+  #filterByCheck(alias: string) {
+    this._checkFilter = alias;
+    this._view = SelectedView.Issues;
+    this.#context?.loadIssues(alias);
   }
 
-  handleStopAudit() {
-    this.#context?.stopAudit();
+  #clearCheckFilter() {
+    this._checkFilter = undefined;
+    this.#context?.loadIssues();
   }
 
-  override render() {
+  render() {
+    if (!this._model) return html`<uui-loader></uui-loader>`;
+
     return html`
-      <div class="site-audit-detail">
-        <div class="button-bar">
+      <uui-box>
+        <div class="header">
           <div>
-            <uui-button
-              slot="actions"
-              id="back"
-              label="Back"
-              look="outline"
-              @click="${this.#back}"
-            >
-              Back
-            </uui-button>
+            <h3>${this._model.name}</h3>
+            <p class="muted">${this._model.startingUrl}</p>
           </div>
-          <umb-dropdown>
-            <span slot="label">Actions</span>
-            <div id="dropdown-layout">
-              <uui-button
-                label="Delete"
-                look="default"
-                compact
-                @click=${this.handleDeleteAudit}
-              >
-                Delete
-              </uui-button>
-              ${when(
-                this._model?.status == "Running",
-                () => html`
-                  <uui-button
-                    label="Stop audit"
-                    look="default"
-                    compact
-                    @click=${this.handleStopAudit}
-                  >
-                    Stop audit
-                  </uui-button>
-                `,
-              )}
-            </div>
-          </umb-dropdown>
+          ${this.#renderScore()}
         </div>
-        <uui-box headline="${this._model?.name!}">
-          <div slot="header" class="status-header">
-            <div class="flex gap">
-              <div class="flex gap align-center">
-                <uui-icon
-                  name="icon-delete"
-                  style="color: var(--uui-color-danger);"
-                ></uui-icon>
-                ${this._errors}
-              </div>
-              <div class="flex gap align-center">
-                <uui-icon
-                  name="icon-info"
-                  style="color: var(--uui-color-warning);"
-                ></uui-icon>
-                ${this._warnings}
-              </div>
-              <div class="flex gap align-center">
-                <uui-icon name="icon-document"></uui-icon>
-                <span>${this._model?.pagesCrawled?.length ?? 0}</span>
-                ${when(
-                  this._model?.progress !== 100,
-                  () => `/${this._model?.totalPagesFound}`,
-                )}
-              </div>
-            </div>
-          </div>
-          <uui-progress-bar .progress=${this._model?.progress ?? 0}>
-          </uui-progress-bar>
 
-          <h4>Status: ${this._model?.status}</h4>
-          ${when(
-            this._model?.status === "Scheduled",
-            () => html`
-              <p ng-if="vm.audit.status === 'Scheduled'">
-                Your site audit will begin within a minute
-              </p>
-            `,
-          )}
-
-          <hr />
-          <h4>Summary</h4>
-          <div class="siteaudit-results">
-            ${repeat(
-              this._checkResults,
-              (result) => result.id,
-              (result) => html`
-                <div class="flex align-center gap">
-                  ${when(
-                    result.isError,
-                    () =>
-                      html`<uui-icon
-                        name="icon-delete"
-                        style="color: var(--uui-color-danger);"
-                      ></uui-icon>`,
-                  )}
-                  ${when(
-                    result.isWarning,
-                    () =>
-                      html`<uui-icon
-                        name="icon-info"
-                        style="color: var(--uui-color-warning);"
-                      ></uui-icon>`,
-                  )}
-                  <a ng-click="vm.filterResultsOnCheck(checkResultKey)"
-                    >${this.getCheckById(result.id)?.errorMessage}
-                    (${result.count} times)</a
-                  >
-                </div>
-              `,
-            )}
-          </div>
-        </uui-box>
-
-        <!--Todo: Implement these-->
-        <!--<div class="navigation-buttons">
-          <uui-button label="All pages" look="primary"> All pages </uui-button>
-          <uui-button label="All check" look="primary"> All checks </uui-button>
-        </div>-->
+        <div class="stats">
+          ${this.#renderStat("Pages crawled", this.#renderCrawledCount())}
+          ${this.#renderStat("Errors", this._model.errorCount + this._model.criticalCount, "danger")}
+          ${this.#renderStat("Warnings", this._model.warningCount, "warning")}
+          ${this.#renderStat("Status", this._model.status)}
+          ${this.#renderStat("Page limit", this._model.maxPages ?? "None")}
+        </div>
 
         ${when(
-          this._pageType === SelectedPageType.AllPages,
-          () => html`
-            <uui-box headline="All pages" class="pages-container">
-              <div>
-                ${repeat(
-                  this.getPagesPaged(),
-                  (item) => item.data.url,
-                  (item) => html`
-                <div
-                      class="site-audit-page"
-                    >
-                      <div>${item.data.url}</div>
-                      <div>
-                        Status:
-                        <span
-                          ng-class="{'error-status': page.statusCode < 200 || page.statusCode > 299}"
-                          >${item.data.statusCode}</span
-                        >
-                      </div>
-                      <div
-                        class="page-health"
+          !this._model.isFinished,
+          () => html`<uui-progress-bar .progress=${this._model!.progress}></uui-progress-bar>`
+        )}
+        ${when(this.#hitPageLimit(), () =>
+          html`<p class="muted">
+            The crawl stopped at its limit of ${this._model!.maxPages} pages, so parts of the
+            site were not visited.
+          </p>`
+        )}
+        ${when(
+          this._model.status === "Scheduled",
+          () => html`<p class="muted">Waiting to start. This usually begins within a minute.</p>`
+        )}
+        ${when(
+          this._model.status === "Interrupted",
+          () => html`<p class="muted">
+            This audit stopped reporting and was not finished. Its partial results are kept.
+          </p>`
+        )}
+      </uui-box>
+
+      <div class="navigation-buttons">
+        <uui-button
+          label="Summary"
+          look=${this._view === SelectedView.Summary ? "primary" : "outline"}
+          @click=${() => this.#show(SelectedView.Summary)}
+        >
+          Summary
+        </uui-button>
+        <uui-button
+          label="All pages"
+          look=${this._view === SelectedView.Pages ? "primary" : "outline"}
+          @click=${() => this.#show(SelectedView.Pages)}
+        >
+          All pages (${this._resourceTotal})
+        </uui-button>
+        <uui-button
+          label="All issues"
+          look=${this._view === SelectedView.Issues ? "primary" : "outline"}
+          @click=${() => this.#show(SelectedView.Issues)}
+        >
+          All issues
+        </uui-button>
+        ${when(
+          this.#context?.exportUrl,
+          () => html`<a class="export" href=${this.#context!.exportUrl!} download>
+            <uui-button label="Export CSV" look="outline">Export CSV</uui-button>
+          </a>`
+        )}
+      </div>
+
+      ${when(this._view === SelectedView.Summary, () => this.#renderSummary())}
+      ${when(this._view === SelectedView.Pages, () => this.#renderPages())}
+      ${when(this._view === SelectedView.Issues, () => this.#renderIssues())}
+    `;
+  }
+
+  #renderCrawledCount() {
+    const model = this._model!;
+    return model.isFinished
+      ? `${model.totalCrawled}`
+      : `${model.totalCrawled} / ${model.totalDiscovered}`;
+  }
+
+  /** Whether the crawl was cut short rather than simply running out of pages to visit. */
+  #hitPageLimit() {
+    const model = this._model;
+    if (!model?.isFinished || !model.maxPages) return false;
+
+    return model.totalCrawled >= model.maxPages;
+  }
+
+  #renderScore() {
+    // The score is only meaningful once a run has finished, and is not calculated yet.
+    if (this._model?.score === null || this._model?.score === undefined) return null;
+
+    return html`<div class="score">
+      <span class="score-value">${this._model.score}</span>
+      <span class="muted">Health score</span>
+    </div>`;
+  }
+
+  #renderStat(label: string, value: unknown, tone?: string) {
+    return html`<div class="stat">
+      <span class="stat-value ${tone ?? ""}">${value}</span>
+      <span class="muted">${label}</span>
+    </div>`;
+  }
+
+  #renderSummary() {
+    if (this._categories.length === 0) {
+      return html`<uui-box><p class="muted">No results were recorded for this audit.</p></uui-box>`;
+    }
+
+    return html`
+      ${repeat(
+        this._categories,
+        (category) => category.category,
+        (category) => html`
+          <uui-box headline=${category.category}>
+            <div class="checks">
+              ${repeat(
+                category.checks,
+                (check) => check.alias,
+                (check) => html`
+                  <div class="check">
+                    <div class="check-info">
+                      <button
+                        class="link"
+                        ?disabled=${check.failedCount === 0}
+                        @click=${() => this.#filterByCheck(check.alias)}
                       >
+                        ${check.name}
+                      </button>
                       ${when(
-                        item.errors > 0,
-                        () => html`
-                          <div class="flex align-center gap">
-                            <uui-icon
-                              name="icon-delete"
-                              style="color: var(--uui-color-danger);"
-                            ></uui-icon>
-                            ${item.errors}
-                          </div>
-                        `,
-                      )}
-                        
-                        ${when(
-                          item.warnings > 0,
-                          () => html`
-                            <div class="flex align-center gap">
-                              <uui-icon
-                                name="icon-info"
-                                style="color: var(--uui-color-warning);"
-                              ></uui-icon>
-                              ${item.warnings}
-                            </div>
-                          `,
-                        )}
-                      </div>
-                      ${when(
-                        item.open,
-                        () => html`
-                          <a
-                            class="clickable"
-                            @click="${() => this.#closePage(item.data)}"
-                          >
-                            Close
-                          </a>
-                        `,
-                        () => html`
-                          <a
-                            class="clickable"
-                            @click="${() => this.#openPage(item.data)}"
-                          >
-                            Open
-                          </a>
-                        `,
+                        check.description,
+                        () => html`<p class="muted">${check.description}</p>`
                       )}
                     </div>
-                    ${when(
-                      item.open,
-                      () => html`
-                        <div class="result-container">
-                          ${repeat(
-                            item.data.results ?? [],
-                            (result) => result.checkId,
-                            (result) => html` <div>${result.message}</div> `,
-                          )}
-                          ${when(
-                            item.data.results?.length == 0,
-                            () => html` <div>No results for this page!</div> `,
-                          )}
-                        </div>
-                      `,
-                    )}
-                    
+                    <div class="check-result">
+                      ${when(
+                        !check.didRun,
+                        () => html`<span class="muted">Not run</span>`,
+                        () =>
+                          check.failedCount === 0
+                            ? html`<uui-icon
+                                name="icon-check"
+                                style="color: var(--uui-color-success);"
+                              ></uui-icon>`
+                            : html`<span class=${check.severity === "Warning" ? "warning" : "danger"}>
+                                ${check.failedCount} of ${check.applicableCount}
+                              </span>`
+                      )}
+                    </div>
                   </div>
-              `,
-                )}
-              </div>
-              ${when(
-                (this._model!.pagesCrawled?.length ?? 0) > 10,
-                () => html`
-                  <div class="pagination">
-                    <uui-pagination
-                      total=${this._model!.pagesCrawled!.length / 10 + 1}
-                      current=${this._pageIndex + 1}
-                      @change=${this.handlePageUpdate}
-                    >
-                    </uui-pagination>
-                  </div>
-                `,
+                `
               )}
-            </uui-box>
-          `,
+            </div>
+          </uui-box>
+        `
+      )}
+    `;
+  }
+
+  #renderPages() {
+    return html`
+      <uui-box headline="All pages">
+        <p class="muted table-hint">Select a page to see what was found on it.</p>
+        <div class="grid">
+          <div class="grid-row grid-head">
+            <div>Url</div>
+            <div>Status</div>
+            <div>Issues</div>
+            <div>Time</div>
+          </div>
+          ${repeat(
+            this._resources,
+            (resource) => resource.id,
+            (resource) => this.#renderPageRow(resource)
+          )}
+        </div>
+        ${when(
+          this._resourceTotal > RESOURCE_PAGE_SIZE,
+          () => html`<uui-pagination
+            .current=${this._pageIndex + 1}
+            .total=${Math.ceil(this._resourceTotal / RESOURCE_PAGE_SIZE)}
+            @change=${this.#onPageChange}
+          ></uui-pagination>`
+        )}
+      </uui-box>
+    `;
+  }
+
+  #renderPageRow(resource: SiteAuditResource) {
+    const isOpen = this._selectedResource?.id === resource.id;
+    const isLoading = this._loadingResource === resource.id;
+
+    return html`
+      <div
+        class="grid-row selectable ${isOpen ? "open" : ""}"
+        role="button"
+        tabindex="0"
+        aria-expanded=${isOpen ? "true" : "false"}
+        @click=${() => this.#context?.selectResource(resource.id)}
+        @keydown=${(event: KeyboardEvent) => this.#onRowKey(event, resource.id)}
+      >
+        <div class="url" title=${resource.url}>
+          <uui-icon
+            class="chevron"
+            name=${isOpen ? "icon-navigation-down" : "icon-navigation-right"}
+          ></uui-icon>
+          ${resource.path}
+          ${when(
+            !resource.isIndexable,
+            () => html`<span class="badge" title=${resource.indexabilityReasons.join(", ")}>
+              ${resource.indexabilityReasons[0] ?? "Not indexable"}
+            </span>`
+          )}
+        </div>
+        <div class=${this.#statusClass(resource.statusCode)}>
+          ${resource.statusCode === 0 ? (resource.failure ?? "Failed") : resource.statusCode}
+        </div>
+        <div>
+          ${when(
+            resource.errorCount > 0,
+            () => html`<span class="danger">${resource.errorCount}</span> `
+          )}
+          ${when(
+            resource.warningCount > 0,
+            () => html`<span class="warning">${resource.warningCount}</span>`
+          )}
+          ${when(resource.issueCount === 0, () => html`<span class="muted">-</span>`)}
+        </div>
+        <div class="muted">${resource.responseTimeMs} ms</div>
+      </div>
+      ${when(isLoading, () => html`<div class="page-detail"><uui-loader></uui-loader></div>`)}
+      ${when(isOpen, () => this.#renderPageDetail(this._selectedResource!))}
+    `;
+  }
+
+  /** Space and Enter open a row, since it behaves as a button rather than being one. */
+  #onRowKey(event: KeyboardEvent, resourceId: number) {
+    if (event.key !== "Enter" && event.key !== " ") return;
+
+    event.preventDefault();
+    this.#context?.selectResource(resourceId);
+  }
+
+  #renderPageDetail(resource: SiteAuditResourceDetail) {
+    return html`
+      <div class="page-detail">
+        <div class="facts">
+          ${this.#renderFact("Url", html`<a href=${resource.url} target="_blank" rel="noopener">
+            ${resource.url}
+          </a>`)}
+          ${when(
+            resource.finalUrl && resource.finalUrl !== resource.url,
+            () => this.#renderFact("Redirected to", resource.finalUrl)
+          )}
+          ${this.#renderFact("Status", resource.statusCode === 0
+            ? (resource.failure ?? "Failed")
+            : `${resource.statusCode}`)}
+          ${this.#renderFact("Indexable", resource.isIndexable
+            ? "Yes"
+            : resource.indexabilityReasons.join(", ") || "No")}
+          ${this.#renderFact("Title", resource.title || "-")}
+          ${this.#renderFact("Meta description", resource.metaDescription || "-")}
+          ${this.#renderFact("H1", resource.h1 || "-")}
+          ${this.#renderFact("Words", `${resource.wordCount}`)}
+          ${this.#renderFact("Depth", `${resource.depth}`)}
+          ${this.#renderFact("Response", `${resource.responseTimeMs} ms`)}
+          ${this.#renderFact("Size", `${Math.round(resource.sizeBytes / 1024)} kB`)}
+        </div>
+
+        ${when(
+          resource.issues.length === 0,
+          () => html`<p class="muted">Nothing was found on this page.</p>`,
+          () => html`<div class="issues">
+            ${repeat(
+              resource.issues,
+              (issue) => issue.id,
+              (issue) => this.#renderIssue(issue, false)
+            )}
+          </div>`
         )}
       </div>
     `;
   }
 
-  static override styles = [
-    css`
-      .site-audit-detail {
-        height: 100%;
-        overflow-y: scroll;
-        padding: 20px;
-      }
+  #renderFact(label: string, value: unknown) {
+    if (value === undefined || value === null) return nothing;
 
-      #dropdown-layout {
-        padding: 10px 6px;
-        display: flex;
-        flex-direction: column;
-        --uui-button-content-align: left;
-      }
+    return html`<div class="fact">
+      <span class="muted">${label}</span>
+      <span class="fact-value">${value}</span>
+    </div>`;
+  }
 
-      .button-bar {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-      }
+  #renderIssues() {
+    return html`
+      <uui-box headline="All issues">
+        ${when(
+          this._checkFilter,
+          () => html`<div class="filter">
+            Showing ${this._checkFilter}
+            <uui-button label="Clear" look="outline" compact @click=${this.#clearCheckFilter}>
+              Clear
+            </uui-button>
+          </div>`
+        )}
+        ${when(
+          this._issues.length === 0,
+          () => html`<p class="muted">Nothing to report.</p>`,
+          () => html`
+            <div class="issues">
+              ${repeat(
+                this._issues,
+                (issue) => issue.id,
+                (issue) => this.#renderIssue(issue, true)
+              )}
+            </div>
+          `
+        )}
+      </uui-box>
+    `;
+  }
 
-      .status-header {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-      }
+  /**
+   * One finding. The url is only worth repeating in the run-wide list - inside a page it is
+   * already known, and the check that raised it is the useful part.
+   */
+  #renderIssue(issue: SiteAuditIssue, withUrl: boolean) {
+    return html`
+      <div class="issue">
+        <uui-icon
+          name=${issue.isError ? "icon-delete" : "icon-alert"}
+          style="color: var(--uui-color-${issue.isError ? "danger" : "warning"});"
+        ></uui-icon>
+        <div>
+          <p class="issue-message">${issue.message}</p>
+          <p class="muted">
+            ${withUrl ? html`${issue.url ?? "Site-wide"} &middot; ` : nothing}${issue.checkName}
+          </p>
+          ${when(issue.evidence, () => html`<p class="evidence">${issue.evidence}</p>`)}
+        </div>
+      </div>
+    `;
+  }
 
-      .navigation-buttons {
-        width: 100%;
-        display: flex;
-        gap: 8px;
-        margin: 20px 0 20px 0;
+  #statusClass(statusCode: number) {
+    if (statusCode === 0) return "danger";
+    if (statusCode >= 400) return "danger";
+    if (statusCode >= 300) return "warning";
+    return "";
+  }
 
-        > * {
-          flex: 1;
-        }
-      }
+  static styles = css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      /* The workspace gives its views no padding of their own, so without this the boxes sit
+         flush against the edges of the window. */
+      padding: var(--uui-size-layout-1);
+      padding-bottom: 100px;
+    }
 
-      .site-audit-page {
-        display: flex;
-        justify-content: space-between;
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
 
-        > div {
-          flex: 1;
-        }
-      }
+    .header h3 {
+      margin: 0;
+    }
 
-      .siteaudit-results {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
+    .score {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-      .pages-container {
-        margin-bottom: 100px; //Without this, the page isn't really scrollable and I have no clue why...
-      }
+    .score-value {
+      font-size: 32px;
+      font-weight: bold;
+    }
 
-      .result-container {
-        display: flex;
-        flex-direction: column;
-        padding-bottom: 20px;
-      }
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      margin: 16px 0;
+    }
 
-      .page-health {
-        display: flex;
-        gap: 8px;
-      }
+    .stat {
+      display: flex;
+      flex-direction: column;
+    }
 
-      .pagination {
-        margin: 20px 0;
-      }
+    .stat-value {
+      font-size: 20px;
+      font-weight: bold;
+    }
 
-      .flex {
-        display: flex;
-      }
+    .muted {
+      color: var(--uui-color-text-alt);
+      margin: 0;
+      font-size: 12px;
+    }
 
-      .gap {
-        gap: 4px;
-      }
+    .danger {
+      color: var(--uui-color-danger);
+      font-weight: bold;
+    }
 
-      .align-center {
-        align-items: center;
-      }
+    .warning {
+      color: var(--uui-color-warning-emphasis, var(--uui-color-warning));
+      font-weight: bold;
+    }
 
-      .clickable {
-        cursor: pointer;
-      }
-    `,
-  ];
+    /* Pinned so the view can be switched without scrolling back to the top of a long report.
+       The negative margin lets the bar span the full width while the host keeps its padding;
+       without it the content would be visible scrolling through the gap at either side. */
+    .navigation-buttons {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin: 0 calc(var(--uui-size-layout-1) * -1);
+      padding: 8px var(--uui-size-layout-1);
+      background-color: var(--uui-color-surface);
+      border-bottom: 1px solid var(--uui-color-divider);
+    }
+
+    .export {
+      text-decoration: none;
+    }
+
+    .checks,
+    .issues {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .check {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--uui-color-divider);
+    }
+
+    .link {
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      color: var(--uui-color-interactive);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .link[disabled] {
+      color: inherit;
+      cursor: default;
+    }
+
+    .table-hint {
+      margin-bottom: 8px;
+    }
+
+    .grid {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .grid-row {
+      display: grid;
+      grid-template-columns: 1fr 100px 100px 100px;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--uui-color-divider);
+      align-items: center;
+    }
+
+    .grid-head {
+      font-weight: bold;
+    }
+
+    .selectable {
+      cursor: pointer;
+    }
+
+    .selectable:hover,
+    .selectable:focus-visible {
+      background-color: var(--uui-color-surface-alt);
+    }
+
+    .selectable.open {
+      background-color: var(--uui-color-surface-alt);
+      border-bottom: none;
+      font-weight: bold;
+    }
+
+    .chevron {
+      margin-right: 4px;
+      vertical-align: middle;
+      font-size: 12px;
+    }
+
+    .url {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+      background-color: var(--uui-color-surface-alt);
+      color: var(--uui-color-text-alt);
+    }
+
+    .page-detail {
+      padding: 12px 12px 16px 12px;
+      background-color: var(--uui-color-surface-alt);
+      border-bottom: 1px solid var(--uui-color-divider);
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 16px;
+      margin-bottom: 12px;
+    }
+
+    .fact {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .fact-value {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .issue {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--uui-color-divider);
+    }
+
+    .issue-message {
+      margin: 0;
+    }
+
+    .evidence {
+      margin: 4px 0 0 0;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background-color: var(--uui-color-surface);
+      font-family: monospace;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .filter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+  `;
 }

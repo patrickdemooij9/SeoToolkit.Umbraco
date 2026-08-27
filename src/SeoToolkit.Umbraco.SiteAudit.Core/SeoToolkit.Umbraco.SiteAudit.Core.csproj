@@ -15,6 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="1.7.2" />
     <PackageReference Include="Umbraco.Cms.Web.Website" Version="[17.0.0,17.999)" />
     <PackageReference Include="Umbraco.Cms.Api.Management" Version="[17.0.0,17.999)" />
   </ItemGroup>
