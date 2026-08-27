@@ -11,16 +11,16 @@
     -->
     <DefaultItemExcludes>$(DefaultItemExcludes);assets/**</DefaultItemExcludes>
 
-    <SeoToolkitVersionCommon>6.4.0</SeoToolkitVersionCommon>
-    <SeoToolkitVersionMetaFields>6.4.1</SeoToolkitVersionMetaFields>
-    <SeoToolkitVersionNotFound>6.4.0</SeoToolkitVersionNotFound>
-    <SeoToolkitVersionRedirects>6.4.0</SeoToolkitVersionRedirects>
-    <SeoToolkitVersionRobotsTxt>6.4.0</SeoToolkitVersionRobotsTxt>
-    <SeoToolkitVersionScriptManager>6.4.0</SeoToolkitVersionScriptManager>
-    <SeoToolkitVersionSiteAudit>6.4.0</SeoToolkitVersionSiteAudit>
-    <SeoToolkitVersionSitemap>6.4.0</SeoToolkitVersionSitemap>
-    <SeoToolkitVersionCore>6.4.1</SeoToolkitVersionCore>
-    <SeoToolkitVersionPackage>6.4.1</SeoToolkitVersionPackage>
+    <SeoToolkitVersionCommon>6.4.2</SeoToolkitVersionCommon>
+    <SeoToolkitVersionMetaFields>6.4.2</SeoToolkitVersionMetaFields>
+    <SeoToolkitVersionNotFound>6.4.2</SeoToolkitVersionNotFound>
+    <SeoToolkitVersionRedirects>6.4.2</SeoToolkitVersionRedirects>
+    <SeoToolkitVersionRobotsTxt>6.4.2</SeoToolkitVersionRobotsTxt>
+    <SeoToolkitVersionScriptManager>6.4.2</SeoToolkitVersionScriptManager>
+    <SeoToolkitVersionSiteAudit>6.4.2</SeoToolkitVersionSiteAudit>
+    <SeoToolkitVersionSitemap>6.4.2</SeoToolkitVersionSitemap>
+    <SeoToolkitVersionCore>6.4.2</SeoToolkitVersionCore>
+    <SeoToolkitVersionPackage>6.4.2</SeoToolkitVersionPackage>
 	<SeoToolkitVersionUsync>1.0.0-beta1</SeoToolkitVersionUsync>
 	<SeoToolkitVersionAICore>1.0.0</SeoToolkitVersionAICore>
 	<SeoToolkitVersionAIIntegration>1.0.0</SeoToolkitVersionAIIntegration>
