@@ -106,13 +106,15 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
         if (value.newUrl) {
           this.newUrlName = value.newUrl;
         } else {
-          if (value.newCultureIso) {
+          if (value.newNodeType !== "Media") {
             this.#documentUrlRepository
               .requestItems([value.newNodeId!])
               .then((resp) => {
-                const foundUrl = resp.data![0].urls.find(
-                  (u) => u.culture === value.newCultureIso,
-                )?.url;
+                const urls = resp.data![0].urls;
+                // Content that doesn't vary by culture has no culture on its urls
+                const foundUrl = value.newCultureIso
+                  ? urls.find((u) => u.culture === value.newCultureIso)?.url
+                  : urls[0]?.url;
                 this.newUrlName = foundUrl || "[No URL available for selected culture]";
               });
           } else {
@@ -171,9 +173,10 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
 
       let linkType = RedirectLinkType.Url;
       if (this.redirect?.value.newNodeId) {
-        linkType = this.redirect.value.newCultureIso
-          ? RedirectLinkType.Content
-          : RedirectLinkType.Media;
+        linkType =
+          this.redirect.value.newNodeType === "Media"
+            ? RedirectLinkType.Media
+            : RedirectLinkType.Content;
       }
       const modal = instance.open(this, "seoToolkit.modal.redirect.link", {
         modal: { type: "sidebar", size: "medium" },
@@ -205,6 +208,8 @@ export default class CreateRedirectModal extends UmbModalBaseElement<
         newUrl: value.linkType === RedirectLinkType.Url ? value.url : undefined,
         newCultureIso: value.culture,
         newNodeId: newNodeId,
+        newNodeType:
+          value.linkType === RedirectLinkType.Url ? undefined : value.linkType,
       });
     });
   }

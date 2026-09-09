@@ -1,6 +1,7 @@
 ﻿using NPoco;
 using SeoToolkit.Umbraco.Redirects.Core.Caching;
 using SeoToolkit.Umbraco.Redirects.Core.Constants;
+using SeoToolkit.Umbraco.Redirects.Core.Extensions;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Database;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Core.Services.Navigation;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Extensions;
@@ -23,19 +25,22 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
         private readonly ILocalizationService _localizationService;
         private readonly AppCaches _appCaches;
         private readonly DistributedCache _distributedCache;
+        private readonly IDocumentNavigationQueryService _documentNavigationQueryService;
 
         public RedirectsRepository(IScopeProvider scopeProvider,
             IUmbracoContextFactory umbracoContextFactory,
             ILocalizationService localizationService,
             AppCaches appCaches,
             DistributedCache distributedCache,
-            ILanguageService languageService)
+            ILanguageService languageService,
+            IDocumentNavigationQueryService documentNavigationQueryService)
         {
             _scopeProvider = scopeProvider;
             _umbracoContextFactory = umbracoContextFactory;
             _localizationService = localizationService;
             _appCaches = appCaches;
             _distributedCache = distributedCache;
+            _documentNavigationQueryService = documentNavigationQueryService;
         }
 
         public void Save(Redirect redirect)
@@ -214,7 +219,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 OldUrl = entity.OldUrl,
                 NewNode = entity.NewNodeKey is null
                     ? null
-                    : entity.NewNodeCultureId is null ? ctx.UmbracoContext.Media.GetById(entity.NewNodeKey.Value) : ctx.UmbracoContext.Content.GetById(entity.NewNodeKey.Value),
+                    : ctx.UmbracoContext.GetContentOrMediaByKey(entity.NewNodeKey.Value, _documentNavigationQueryService),
                 NewNodeCulture = entity.NewNodeCultureId is null ? null : _localizationService.GetLanguageById(entity.NewNodeCultureId.Value),
                 NewUrl = entity.NewUrl,
                 LastUpdated = entity.LastUpdated,
