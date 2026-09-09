@@ -48,11 +48,12 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
         }
 
         [HttpPost("contentSettings")]
+        [ProducesResponseType(200)]
         public IActionResult SetContentSettings(SitemapContentSettingsPostModel model)
         {
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
             var content = ctx.UmbracoContext.Content?.GetById(true, model.NodeKey);
-            if (content is null) return NotFound();
+            if (content is null) return Ok();
 
             _sitemapService.SetContentSettings(new SitemapContentSettings
             {
