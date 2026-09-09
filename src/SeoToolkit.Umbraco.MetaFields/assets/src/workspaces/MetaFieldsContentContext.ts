@@ -9,6 +9,19 @@ import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/document";
 import { UmbBooleanState, UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
+import {
+  UMB_ACTION_EVENT_CONTEXT,
+  UmbActionEventContext,
+} from "@umbraco-cms/backoffice/action";
+
+// Dispatched by SeoToolkitContentContext in SeoToolkit.Umbraco.Common when the document
+// has been saved on the server.
+const SEO_CONTENT_SAVED_EVENT_TYPE = "seo-content-saved";
+
+interface SeoContentSavedEventDetail {
+  unique: string;
+  cultures: string[];
+}
 
 interface MetaFieldsSettingsVariant {
   variant: string;
@@ -31,12 +44,9 @@ export default class MetaFieldsContentContext
   #nodeId?: string;
   #loadedNodeId?: string;
   #cultures: string[] = [];
+  #actionEventContext?: UmbActionEventContext;
 
   #variants: { [key: string]: MetaFieldsSettingsVariant } = {};
-
-  // Kept outside of #variants so a variant reset cannot lose it. Without it the
-  // next document save has nothing to compare against and silently skips saving.
-  #lastUpdated: { [key: string]: string | null | undefined } = {};
 
   #isAIAvailable = new UmbBooleanState(false);
   readonly isAIAvailable = this.#isAIAvailable.asObservable();
@@ -75,7 +85,7 @@ export default class MetaFieldsContentContext
         (unique) => {
           const nodeId = unique?.toString();
           // Only reset when we actually moved to another node. Re-emissions for the
-          // same node would otherwise drop the loaded model and the bookkeeping that
+          // same node would otherwise drop the loaded model and the dirty state that
           // save() depends on.
           if (!nodeId || nodeId === this.#loadedNodeId) return;
           this.#loadedNodeId = nodeId;
@@ -85,33 +95,32 @@ export default class MetaFieldsContentContext
         },
         "stMetaFieldsUnique"
       );
-      this.observe(
-        instance.data,
-        (item) => {
-          if (item?.isTrashed) return;
+    });
 
-          item?.variants.forEach((variant) => {
-            const culture = variant.culture ?? "invariant";
-            const previousDate = this.#lastUpdated[culture];
-            this.#lastUpdated[culture] = variant.updateDate;
+    this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
+      if (this.#actionEventContext || !instance) return;
 
-            // The document was saved. Only push our own values along if the editor
-            // actually changed something here.
-            if (previousDate === undefined) return;
-            if (previousDate === variant.updateDate) return;
-            if (!this.#getVariant(culture).isDirty) return;
-
-            this.save(culture);
-          });
-        },
-        "stMetaFieldsData"
+      this.#actionEventContext = instance;
+      instance.addEventListener(
+        SEO_CONTENT_SAVED_EVENT_TYPE,
+        this.#onContentSaved
       );
     });
   }
 
-  #resetVariants() {
-    this.#lastUpdated = {};
+  #onContentSaved = (event: Event) => {
+    const detail = (event as CustomEvent<SeoContentSavedEventDetail>).detail;
+    // The action event context is shared, so events for other documents reach us too.
+    if (!detail || detail.unique !== this.#nodeId) return;
 
+    detail.cultures.forEach((culture) => {
+      if (!this.#getVariant(culture).isDirty) return;
+
+      this.save(culture);
+    });
+  };
+
+  #resetVariants() {
     // Reset in place. MetaFieldsContentView observes the state object handed out by
     // getModel(), so replacing it would leave the view bound to a dead observable.
     Object.values(this.#variants).forEach((variant) => {
@@ -298,6 +307,14 @@ export default class MetaFieldsContentContext
     if (!this.#nodeId) return [];
     const { data } = await this.#aiSource.generate(this.#nodeId, culture);
     return data?.suggestions ?? [];
+  }
+
+  destroy(): void {
+    super.destroy();
+    this.#actionEventContext?.removeEventListener(
+      SEO_CONTENT_SAVED_EVENT_TYPE,
+      this.#onContentSaved
+    );
   }
 
   getEntityType(): string {
