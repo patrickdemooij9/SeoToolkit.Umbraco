@@ -58,16 +58,19 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
         private async Task<bool> HandleRedirect(HttpContext context)
         {
             var url = new Uri(context.Request.GetEncodedUrl());
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
             var matchedRedirectResult = _redirectsService.GetByUrl(url);
-            stopwatch.Stop();
             if (matchedRedirectResult is null)
             {
                 return false;
             }
 
             using var ctx = _umbracoContextFactory.EnsureUmbracoContext();
+            // Only redirect if there is no page found (Only works if middleware location is PostPipeline or PostRouting)
+            if (ctx.UmbracoContext.PublishedRequest?.PublishedContent != null && ctx.UmbracoContext.PublishedRequest.ResponseStatusCode != StatusCodes.Status404NotFound)
+            {
+                return false;
+            }
+
             var isPerm = matchedRedirectResult.Redirect.RedirectCode == (int)HttpStatusCode.MovedPermanently;
             var isoCode = matchedRedirectResult.Redirect.NewNodeCultureId.HasValue ? (await _languageService.GetAllAsync()).FirstOrDefault(l => l.Id == matchedRedirectResult.Redirect.NewNodeCultureId.Value)?.IsoCode : null;
             context.Response.Redirect(matchedRedirectResult.GetNewUrl(isoCode), isPerm);
