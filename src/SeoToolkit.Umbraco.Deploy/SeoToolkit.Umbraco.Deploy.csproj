@@ -14,7 +14,6 @@
     <RepositoryUrl>https://github.com/patrickdemooij9/SeoToolkit.Umbraco</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/patrickdemooij9/SeoToolkit.Umbraco/main/package/SeoToolkitIcon.png</PackageIconUrl>
     <StaticWebAssetBasePath>App_Plugins/SeoToolkit</StaticWebAssetBasePath>
-    <Version>1.0.0-beta1</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
