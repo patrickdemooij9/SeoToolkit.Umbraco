@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.AI" Version="[1.0.0,2.0.0)" />
+    <PackageReference Include="Umbraco.AI" Version="[17.0.0,17.999)" />
   </ItemGroup>
 
   <ItemGroup>
