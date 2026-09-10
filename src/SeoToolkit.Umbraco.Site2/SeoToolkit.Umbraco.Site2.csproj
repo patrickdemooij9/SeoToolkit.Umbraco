@@ -23,6 +23,7 @@
     <Content Include="App_Plugins/**" CopyToOutputDirectory="Always" />
     <Content Include="umbraco/**" CopyToOutputDirectory="Always" />
     <Compile Remove="umbraco\**" />
+    <Content Remove="App_Plugins\**" />
     <Content Remove="umbraco/Data/**" />
     <Content Remove="umbraco/Logs/**" />
     <Content Remove="umbraco/mediacache/**" />
@@ -30,17 +31,16 @@
     <Content Remove="umbraco\**" />
     <Compile Include="umbraco/models/**" Exclude="**/*.flag" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Plugins\" />
-  </ItemGroup>
 
   <ItemGroup>
     <!-- extends watching group to include *.js files -->
     <Watch Include="**\*.js" Exclude="node_modules\**\*;**\*.js.map;obj\**\*;bin\**\*" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="App_Plugins\**" />
     <EmbeddedResource Remove="umbraco\**" />
     <None Remove="umbraco\**" />
+    <Watch Remove="App_Plugins\**" />
     <Watch Remove="umbraco\**" />
   </ItemGroup>
   <ItemGroup>

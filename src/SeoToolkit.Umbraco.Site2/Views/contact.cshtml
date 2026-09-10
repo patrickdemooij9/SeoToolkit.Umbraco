@@ -1,0 +1,44 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Contact>
+
+@using Clean.Core.Models.ViewModels
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+
+@{
+    Layout = "master.cshtml";
+    var submitted = false;
+    if (bool.TryParse(TempData["Success"]?.ToString() ?? "", out var success))
+    {
+        submitted = true;
+    }
+}
+
+@await Html.PartialAsync("~/Views/Partials/pageHeader.cshtml", new PageHeaderViewModel(Model.Name, Model.Title, Model.Subtitle, Model.MainImage))
+
+<main class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                @if(submitted)
+                {
+
+                    @if (success)
+                    {
+                        @Model.SuccessMessage
+                    }
+                    else
+                    {
+                        @Model.ErrorMessage
+                    }
+                }
+                else
+                {
+                    @Model.InstructionMessage
+                    <div class="my-5">
+                        @await Component.InvokeAsync("Contact")
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+</main>

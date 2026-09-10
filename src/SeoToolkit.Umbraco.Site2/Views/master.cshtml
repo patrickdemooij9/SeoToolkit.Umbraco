@@ -1,0 +1,37 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    @await Html.PartialAsync("~/Views/Partials/metaData.cshtml")
+    <!-- Font Awesome icons (free version)-->
+    <script defer src="https://use.fontawesome.com/releases/v6.5.1/js/all.js" crossorigin="anonymous" integrity="sha384-3ve3u7etWcm2heCe4TswfZSAYSg2jR/EJxRHuKM5foOiKS8IJL/xRlvmjCaHELBz"></script>
+    <!-- Fonts - Using jsDelivr CDN with Subresource Integrity for security -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@fontsource/lora@@5.2.8/latin.css" integrity="sha384-f4M2zbjkXb09sOmEBQQr/7uaCoS42xKdzLA4btcuoodiBTSBt15fFwe57ZyRN5Zp" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@fontsource/open-sans@@5.2.7/latin.css" integrity="sha384-qFkObpNRoSvQPhjjWheuOk1v30/JtCyeIlEa7UVNnbwCQtBJ9PthP7atExwLvrHu" crossorigin="anonymous">
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="/assets/css/styles.css" rel="stylesheet" asp-append-version="true" />
+    <link href="/assets/css/vs2015.css" rel="stylesheet" asp-append-version="true" />
+    <link href="/assets/css/highlightjs-copy.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="/assets/css/swiffy-slider.min.css" rel="stylesheet" asp-append-version="true" />
+</head>
+<body>
+    @await Html.CachedPartialAsync("~/Views/Partials/mainNavigation.cshtml", model: Model, cacheTimeout: TimeSpan.FromMinutes(60))
+    @RenderBody()
+    @await Html.CachedPartialAsync("~/Views/Partials/footer.cshtml", model: Model, cacheTimeout: TimeSpan.FromMinutes(60))
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <!-- Core theme JS-->
+    <script src="/assets/js/scripts.js" asp-append-version="true"></script>
+    <script src="/assets/js/highlight.min.js" asp-append-version="true"></script>
+    <script src="/assets/js/highlightjs-copy.min.js" asp-append-version="true"></script>
+    <script src="/assets/js/initHighlight.js" asp-append-version="true"></script>
+    <script src="/assets/js/swiffy-slider.min.js" asp-append-version="true"></script>
+</body>
+</html>
