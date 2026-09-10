@@ -1,0 +1,19 @@
+{
+  "name": "seotoolkit-umbraco-deploy",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "deploy": "npm install && tsc && vite build",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@umbraco-cms/backoffice": "18.0.0",
+    "typescript": "^5.9.2",
+    "vite": "^5.4.20",
+    "vitest": "^2.1.9"
+  }
+}

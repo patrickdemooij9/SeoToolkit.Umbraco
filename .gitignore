@@ -488,3 +488,6 @@ $RECYCLE.BIN/
 
 **/SeoToolkit.Umbraco.Site/App_Plugins/
 **/entry/
+*.csproj.lscache
+
+!**/SeoToolkit.Umbraco.Deploy/Artifacts

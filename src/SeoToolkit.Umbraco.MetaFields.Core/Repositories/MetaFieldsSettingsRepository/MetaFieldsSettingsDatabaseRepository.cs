@@ -26,7 +26,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepo
 
         public IEnumerable<DocumentTypeSettingsDto> GetAll()
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             return scope.Database.Fetch<MetaFieldsSettingsEntity>(scope.SqlContext.Sql()
                 .SelectAll()
                 .From<MetaFieldsSettingsEntity>()).Select(it => _mapper.Value.Map<DocumentTypeSettingsDto>(it));
@@ -34,7 +34,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepo
 
         public DocumentTypeSettingsDto Get(int id)
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             return _mapper.Value.Map<DocumentTypeSettingsDto>(scope.Database.FirstOrDefault<MetaFieldsSettingsEntity>(scope.SqlContext.Sql()
                 .SelectAll()
                 .From<MetaFieldsSettingsEntity>()
@@ -43,7 +43,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepo
 
         public DocumentTypeSettingsDto Get(Guid key)
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             return _mapper.Value.Map<DocumentTypeSettingsDto>(scope.Database.FirstOrDefault<MetaFieldsSettingsEntity>(scope.SqlContext.Sql()
                 .SelectAll()
                 .From<MetaFieldsSettingsEntity>()
@@ -78,7 +78,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepo
             if (entity is null)
                 return;
 
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             scope.Database.Delete(entity);
         }
 
@@ -88,7 +88,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.MetaFieldsSettingsRepo
             if (entity is null)
                 return;
 
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             scope.Database.Delete(entity);
         }
     }

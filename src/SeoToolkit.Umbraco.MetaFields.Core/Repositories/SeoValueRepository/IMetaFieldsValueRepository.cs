@@ -23,5 +23,21 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         bool Exists(Guid nodeId, string fieldAlias, string culture);
 
         Dictionary<string, object> GetAllValues(Guid nodeId, string culture);
+
+        /// <summary>
+        /// Gets all user values for a node across all cultures. Outer key is the culture
+        /// (empty string for invariant), inner key is the field alias.
+        /// </summary>
+        Dictionary<string, Dictionary<string, object>> GetAllValues(Guid nodeId);
+
+        /// <summary>
+        /// Gets the distinct node keys that have any user values stored.
+        /// </summary>
+        IEnumerable<Guid> GetAllNodeKeys();
+
+        /// <summary>
+        /// Returns whether the node has any user values stored, without loading them.
+        /// </summary>
+        bool HasAnyValues(Guid nodeId);
     }
 }

@@ -21,6 +21,7 @@
     <SeoToolkitVersionCore>7.0.0</SeoToolkitVersionCore>
     <SeoToolkitVersionPackage>7.0.0</SeoToolkitVersionPackage>
 	<SeoToolkitVersionUsync>1.0.0-beta1</SeoToolkitVersionUsync>
+	<SeoToolkitVersionDeploy>1.0.0-beta1</SeoToolkitVersionDeploy>
 	<SeoToolkitVersionAICore>2.0.0</SeoToolkitVersionAICore>
 	<SeoToolkitVersionAIIntegration>2.0.0</SeoToolkitVersionAIIntegration>
 
@@ -33,6 +34,7 @@
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.SiteAudit'))">$(SeoToolkitVersionSiteAudit)</VersionPrefix>
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.Sitemap'))">$(SeoToolkitVersionSitemap)</VersionPrefix>
 	<VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.uSync'))">$(SeoToolkitVersionUsync)</VersionPrefix>
+	<VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').EndsWith('.Deploy'))">$(SeoToolkitVersionDeploy)</VersionPrefix>
 	<VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('SeoToolkit.Umbraco.AI.Core'))">$(SeoToolkitVersionAICore)</VersionPrefix>
 	<VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('SeoToolkit.Umbraco.AI.Integration'))">$(SeoToolkitVersionAIIntegration)</VersionPrefix>
     <VersionPrefix Condition="'$(MSBuildProjectName)' == 'SeoToolkit.Umbraco.Core'">$(SeoToolkitVersionCore)</VersionPrefix>

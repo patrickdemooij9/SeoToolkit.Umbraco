@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Models.ViewModels;
+using SeoToolkit.Umbraco.Common.Core.Notifications;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
@@ -15,11 +17,13 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
     {
         private readonly SeoKeyValueSettingCollection _seoKeyValueSettings;
         private readonly ISeoKeyValueRepository _seoKeyValueRepository;
+        private readonly IEventAggregator _eventAggregator;
 
-        public SeoKeyValueSettingsController(SeoKeyValueSettingCollection seoKeyValueSettings, ISeoKeyValueRepository seoKeyValueRepository)
+        public SeoKeyValueSettingsController(SeoKeyValueSettingCollection seoKeyValueSettings, ISeoKeyValueRepository seoKeyValueRepository, IEventAggregator eventAggregator)
         {
             _seoKeyValueSettings = seoKeyValueSettings;
             _seoKeyValueRepository = seoKeyValueRepository;
+            _eventAggregator = eventAggregator;
         }
 
         [HttpGet("value")]
@@ -68,6 +72,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
 
                 _seoKeyValueRepository.Set(value.Key, value.Value, domainId);
             }
+
+            _eventAggregator.Publish(new SeoKeyValueSavedNotification(domainId));
             return Ok();
         }
     }
