@@ -5,9 +5,14 @@ import {
 } from "@umbraco-cms/backoffice/external/lit";
 import { UmbModalBaseElement } from "@umbraco-cms/backoffice/modal";
 import { css, html } from "lit";
-import { SchemaPropertyViewModel, SchemaTypeViewModel } from "../api";
+import {
+  SchemaContentPropertyViewModel,
+  SchemaPropertyViewModel,
+  SchemaTypeViewModel,
+} from "../api";
 import { UmbPropertyDatasetElement } from "@umbraco-cms/backoffice/property";
 import { UmbPropertyTypeAppearanceModel } from "@umbraco-cms/backoffice/content-type";
+import { MetaFieldsSchemaSource } from "../dataAccess/MetaFieldsSchemaSource";
 
 export interface EditableSchema {
   schemaAlias: string;
@@ -29,6 +34,9 @@ const REFERENCE_OPTIONS = [
   { key: "[SiteName]", label: "Site Name" },
   { key: "[SiteUrl]", label: "Site URL" },
 ];
+
+const TOKEN_HINT =
+  "Tip: use {pageName}, {pageUrl}, {siteName}, {siteUrl} or {property:alias} anywhere in the text to insert values from the page.";
 
 @customElement("st-schema-property-modal")
 export default class SchemaPropertyModal extends UmbModalBaseElement<
@@ -57,12 +65,20 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
   @state()
   private _propertyValues: { [key: string]: PropertyValue } = {};
 
+  @state()
+  private _contentProperties: SchemaContentPropertyViewModel[] = [];
+
   propertyAppearance: UmbPropertyTypeAppearanceModel = {
     labelOnTop: true,
   };
 
+  #schemaSource?: MetaFieldsSchemaSource;
+
   override connectedCallback() {
     super.connectedCallback();
+
+    this.#schemaSource = new MetaFieldsSchemaSource(this);
+    this.#loadContentProperties();
 
     if (this.data?.editSchema) {
       this._selectedSchemaAlias = this.data.editSchema.schemaAlias;
@@ -80,6 +96,44 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
         : {};
       this._readonly = this.value?.readonly ?? false;
     }
+  }
+
+  async #loadContentProperties() {
+    const result = await this.#schemaSource!.getContentProperties(
+      this.data?.documentTypeKey || undefined,
+    );
+    this._contentProperties = result.data ?? [];
+  }
+
+  #getReferenceGroups(referenceKey: string) {
+    const contentOptions = this._contentProperties
+      .filter((property) => property.referenceKey)
+      .map((property) => ({
+        key: property.referenceKey!,
+        label: property.displayName || property.alias || property.referenceKey!,
+      }));
+
+    const groups = [
+      { label: "From context", options: REFERENCE_OPTIONS },
+      {
+        label: this.data?.documentTypeKey
+          ? "From this page"
+          : "From page content",
+        options: contentOptions,
+      },
+    ].filter((group) => group.options.length > 0);
+
+    const isKnown = groups.some((group) =>
+      group.options.some((option) => option.key === referenceKey),
+    );
+    if (referenceKey && !isKnown) {
+      groups.push({
+        label: "Unknown",
+        options: [{ key: referenceKey, label: referenceKey }],
+      });
+    }
+
+    return groups;
   }
 
   #onPropertyValueChange(propertyAlias: string, propertyValue: PropertyValue) {
@@ -195,7 +249,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
                     });
                   }}"
                 >
-                  Use reference from context
+                  Use a reference
                 </uui-toggle>
               </div>
             `
@@ -215,14 +269,20 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
                     });
                   }}"
                 >
-                  ${REFERENCE_OPTIONS.map(
-                    (opt) => html`
-                      <option
-                        .value=${opt.key}
-                        ?selected=${opt.key === value.referenceKey}
-                      >
-                        ${opt.label}
-                      </option>
+                  ${this.#getReferenceGroups(value.referenceKey).map(
+                    (group) => html`
+                      <optgroup label=${group.label}>
+                        ${group.options.map(
+                          (opt) => html`
+                            <option
+                              .value=${opt.key}
+                              ?selected=${opt.key === value.referenceKey}
+                            >
+                              ${opt.label}
+                            </option>
+                          `,
+                        )}
+                      </optgroup>
                     `,
                   )}
                 </select>
@@ -294,6 +354,7 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
           : ""}
         ${properties.length > 0
           ? html`
+              <small class="token-hint">${TOKEN_HINT}</small>
               <div class="schema-properties">
                 ${properties.map((prop) =>
                   this.#renderPropertyInput(
@@ -388,6 +449,12 @@ export default class SchemaPropertyModal extends UmbModalBaseElement<
         margin-top: 8px;
 
         --uui-size-layout-1: 0;
+      }
+
+      .token-hint {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--uui-palette-grey-4);
       }
 
       .native-select {

@@ -114,5 +114,48 @@ namespace SeoToolkit.Tests
             Assert.That(topLevelAddresses, Has.Count.EqualTo(1));
             Assert.That(topLevelAddresses[0].ToString(), Does.Contain("999 Auto-Render Avenue"));
         }
+
+        [Test]
+        public void Convert_ResolvesReferencesAndInlineTokensOnSchemaProperties()
+        {
+            var organizationId = Guid.NewGuid();
+            var organization = new SchemaEntryDto
+            {
+                Id = organizationId,
+                SchemaAlias = "organization",
+                OwnerType = "schemaEntry",
+                Properties = new()
+                {
+                    // A plain reference to the page it renders on.
+                    ["name"] = new SchemaPropertyValue { IsReference = true, ReferenceKey = "[PageName]" },
+                    // A reference to a text property on that page.
+                    ["email"] = new SchemaPropertyValue { IsReference = true, ReferenceKey = "[Property:contactEmail]" },
+                    // Authored text that mixes in both kinds of token.
+                    ["description"] = new SchemaPropertyValue { Value = "Welcome to {pageName}, {contactEmail}" }
+                }
+            };
+
+            var schemaEntryService = new Mock<ISchemaEntryService>();
+            schemaEntryService.Setup(x => x.GetByIds(It.IsAny<IEnumerable<Guid>>()))
+                .Returns(new[] { organization });
+
+            var content = new Mock<IPublishedContent>();
+            content.Setup(x => x.Name).Returns("Contact");
+            var emailProperty = new Mock<IPublishedProperty>();
+            emailProperty.Setup(x => x.GetValue(null, null)).Returns("info@example.com");
+            content.Setup(x => x.GetProperty("contactEmail")).Returns(emailProperty.Object);
+
+            var converter = new SchemaSeoValueConverter(_resolvers, schemaEntryService.Object, Mock.Of<ILogger<SchemaSeoValueConverter>>());
+
+            var result = (IThing[])converter.Convert(new[] { organizationId }, content.Object, "schema");
+
+            var organizationJson = result.OfType<Organization>().Single().ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(organizationJson, Does.Contain("\"name\":\"Contact\""));
+                Assert.That(organizationJson, Does.Contain("\"email\":\"info@example.com\""));
+                Assert.That(organizationJson, Does.Contain("\"description\":\"Welcome to Contact, info@example.com\""));
+            });
+        }
     }
 }

@@ -10,6 +10,8 @@ using SeoToolkit.Umbraco.MetaFields.Core.Services.SchemaEntryService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Umbraco.Cms.Core.Models;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.Routing;
 
@@ -19,15 +21,23 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
     [BackOfficeRoute("seoToolkit/schema")]
     public class SchemaController : SeoToolkitAuthenticatedControllerBase
     {
+        private static readonly string[] ReferencablePropertyEditors =
+        [
+            global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TextBox,
+            global::Umbraco.Cms.Core.Constants.PropertyEditors.Aliases.TextArea
+        ];
+
         private readonly SchemaResolverCollection _schemaResolvers;
         private readonly ISchemaEntryService _schemaEntryService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly IContentTypeService _contentTypeService;
 
-        public SchemaController(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService, IUmbracoContextFactory umbracoContextFactory)
+        public SchemaController(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService, IUmbracoContextFactory umbracoContextFactory, IContentTypeService contentTypeService)
         {
             _schemaResolvers = schemaResolvers;
             _schemaEntryService = schemaEntryService;
             _umbracoContextFactory = umbracoContextFactory;
+            _contentTypeService = contentTypeService;
         }
 
         [HttpGet("types")]
@@ -49,6 +59,37 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
             }).ToArray();
 
             return Ok(schemas);
+        }
+
+        [HttpGet("contentProperties")]
+        [ProducesResponseType(typeof(SchemaContentPropertyViewModel[]), 200)]
+        public IActionResult GetContentProperties(Guid? documentTypeKey = null)
+        {
+            IEnumerable<IContentType> contentTypes;
+            if (documentTypeKey.HasValue && documentTypeKey.Value != Guid.Empty)
+            {
+                var contentType = _contentTypeService.Get(documentTypeKey.Value);
+                contentTypes = contentType is null ? [] : [contentType];
+            }
+            else
+            {
+                contentTypes = _contentTypeService.GetAll();
+            }
+
+            var properties = contentTypes
+                .SelectMany(contentType => contentType.CompositionPropertyTypes)
+                .Where(propertyType => ReferencablePropertyEditors.Contains(propertyType.PropertyEditorAlias))
+                .GroupBy(propertyType => propertyType.Alias, StringComparer.OrdinalIgnoreCase)
+                .Select(group => new SchemaContentPropertyViewModel
+                {
+                    Alias = group.Key,
+                    DisplayName = group.Select(propertyType => propertyType.Name).FirstOrDefault(name => string.IsNullOrWhiteSpace(name) == false) ?? group.Key,
+                    ReferenceKey = SchemaReferenceResolver.CreateContentPropertyKey(group.Key)
+                })
+                .OrderBy(property => property.DisplayName, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            return Ok(properties);
         }
 
         [HttpGet("entries")]

@@ -183,6 +183,12 @@ export type SaveRedirectPostModel = {
     redirectCode: number;
 };
 
+export type SchemaContentPropertyViewModel = {
+    alias?: string | null;
+    displayName?: string | null;
+    referenceKey?: string | null;
+};
+
 export type SchemaEntryPostModel = {
     id?: string | null;
     ownerType?: string | null;
@@ -515,6 +521,24 @@ export type PostUmbracoSeoToolkitAiGenerateResponses = {
 };
 
 export type PostUmbracoSeoToolkitAiGenerateResponse = PostUmbracoSeoToolkitAiGenerateResponses[keyof PostUmbracoSeoToolkitAiGenerateResponses];
+
+export type GetUmbracoSeoToolkitSchemaContentPropertiesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        documentTypeKey?: string;
+    };
+    url: '/umbraco/seoToolkit/schema/contentProperties';
+};
+
+export type GetUmbracoSeoToolkitSchemaContentPropertiesResponses = {
+    /**
+     * OK
+     */
+    200: Array<SchemaContentPropertyViewModel>;
+};
+
+export type GetUmbracoSeoToolkitSchemaContentPropertiesResponse = GetUmbracoSeoToolkitSchemaContentPropertiesResponses[keyof GetUmbracoSeoToolkitSchemaContentPropertiesResponses];
 
 export type GetUmbracoSeoToolkitSchemaEntriesData = {
     body?: never;

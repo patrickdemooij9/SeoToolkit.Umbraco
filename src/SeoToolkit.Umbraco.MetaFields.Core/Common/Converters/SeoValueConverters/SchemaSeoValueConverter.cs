@@ -116,7 +116,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                 return null;
 
             if (property.IsReference)
-                return ResolveReference(property.ReferenceKey, currentContent);
+                return SchemaReferenceResolver.ResolveReference(property.ReferenceKey, currentContent);
 
             if (propertyDef.ValueConverter != null)
             {
@@ -127,25 +127,15 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                 {
                     return ConvertNested(obj, currentContent, level);
                 }
-                return obj;
+                return ResolveTokens(obj, propertyDef, currentContent);
             }
 
-            return property.Value;
+            return ResolveTokens(property.Value, propertyDef, currentContent);
         }
 
-        private static string ResolveReference(string referenceKey, IPublishedContent currentContent)
-        {
-            if (currentContent is null)
-                return string.Empty;
-
-            return referenceKey switch
-            {
-                "[PageName]" => currentContent.Name,
-                "[PageUrl]" => currentContent.Url(mode: UrlMode.Absolute),
-                "[SiteName]" => currentContent.Root()?.Name ?? string.Empty,
-                "[SiteUrl]" => currentContent.Root()?.Url(mode: UrlMode.Absolute) ?? string.Empty,
-                _ => string.Empty
-            };
-        }
+        private static object ResolveTokens(object value, SchemaProperty propertyDef, IPublishedContent currentContent)
+            => propertyDef.AllowReference && value is string text
+                ? SchemaReferenceResolver.ResolveTokens(text, currentContent)
+                : value;
     }
 }

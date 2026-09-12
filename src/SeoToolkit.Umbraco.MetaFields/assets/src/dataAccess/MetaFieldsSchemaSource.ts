@@ -12,4 +12,10 @@ export class MetaFieldsSchemaSource {
     getSchemas(){
         return tryExecute(this.#host, BackofficeSeoToolkitMetaFields.getUmbracoSeoToolkitSchemaTypes());
     }
+
+    getContentProperties(documentTypeKey?: string){
+        return tryExecute(this.#host, BackofficeSeoToolkitMetaFields.getUmbracoSeoToolkitSchemaContentProperties({
+            query: documentTypeKey ? { documentTypeKey } : {},
+        }));
+    }
 }
