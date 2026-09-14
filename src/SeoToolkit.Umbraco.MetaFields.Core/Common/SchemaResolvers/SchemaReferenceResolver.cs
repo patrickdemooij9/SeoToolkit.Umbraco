@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
@@ -17,6 +20,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
         public const string PageUrlKey = "[PageUrl]";
         public const string SiteNameKey = "[SiteName]";
         public const string SiteUrlKey = "[SiteUrl]";
+        public const string PageCreateDateKey = "[PageCreateDate]";
+        public const string PageUpdateDateKey = "[PageUpdateDate]";
 
         public const string ContentPropertyPrefix = "[Property:";
 
@@ -80,9 +85,16 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
                 return currentContent.Root()?.Name ?? string.Empty;
             if (Matches(referenceKey, SiteUrlKey))
                 return currentContent.Root()?.Url(mode: UrlMode.Absolute) ?? string.Empty;
+            if (Matches(referenceKey, PageCreateDateKey))
+                return FormatDate(currentContent.CreateDate);
+            if (Matches(referenceKey, PageUpdateDateKey))
+                return FormatDate(currentContent.UpdateDate);
 
             return null;
         }
+
+        private static string FormatDate(DateTime date)
+            => date == DateTime.MinValue ? string.Empty : date.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
 
         private static bool Matches(string referenceKey, string key)
             => string.Equals(referenceKey, key, StringComparison.OrdinalIgnoreCase);
@@ -96,7 +108,15 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers
             if (property is null)
                 return null;
 
-            return property.GetValue()?.ToString() ?? string.Empty;
+            return property.GetValue() switch
+            {
+                null => string.Empty,
+                // Media and content pickers resolve to the url of the (first) picked item.
+                IPublishedContent content => content.Url(mode: UrlMode.Absolute) ?? string.Empty,
+                IEnumerable<IPublishedContent> items => items.FirstOrDefault()?.Url(mode: UrlMode.Absolute) ?? string.Empty,
+                DateTime date => FormatDate(date),
+                var value => value.ToString() ?? string.Empty
+            };
         }
     }
 }

@@ -63,6 +63,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
             builder.Services.AddTransient(typeof(IMetaFieldsSettingsService), typeof(MetaFieldsSettingsService));
             builder.Services.AddTransient(typeof(IMetaFieldsService), typeof(MetaFieldsService));
             builder.Services.AddTransient(typeof(IMetaTagsProvider), typeof(DefaultMetaTagsProvider));
+            builder.Services.AddTransient(typeof(IBreadcrumbSchemaProvider), typeof(DefaultBreadcrumbSchemaProvider));
             builder.Services.AddTransient(typeof(IMetaFieldsValueService), typeof(MetaFieldsValueService));
             builder.Services.AddTransient(typeof(IMetaFieldsValueRepository), typeof(MetaFieldsDatabaseRepository));
             builder.Services.AddTransient(typeof(ISchemaEntryRepository), typeof(SchemaEntryDatabaseRepository));
@@ -116,8 +117,17 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<WebsiteSchemaSetting>();
 
             builder.WithCollectionBuilder<SchemaResolverCollectionBuilder>()
+                .Add<WebSiteSchemaResolver>()
+                .Add<WebPageSchemaResolver>()
                 .Add<OrganizationSchemaResolver>()
+                .Add<LocalBusinessSchemaResolver>()
+                .Add<OpeningHoursSpecificationSchemaResolver>()
                 .Add<PostalAddressSchemaResolver>()
+                .Add<PersonSchemaResolver>()
+                .Add<ArticleSchemaResolver>()
+                .Add<BlogPostingSchemaResolver>()
+                .Add<NewsArticleSchemaResolver>()
+                .Add<ImageObjectSchemaResolver>()
                 .Add<RawJsonSchemaResolver>();
         }
     }

@@ -4,6 +4,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers;
 using SeoToolkit.Umbraco.MetaFields.Core.Constants;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.Business;
@@ -20,12 +21,14 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
     {
         private readonly SchemaResolverCollection _schemaResolvers;
         private readonly ISchemaEntryService _schemaEntryService;
+        private readonly IBreadcrumbSchemaProvider _breadcrumbSchemaProvider;
         private readonly ILogger<SchemaSeoValueConverter> _logger;
 
-        public SchemaSeoValueConverter(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService, ILogger<SchemaSeoValueConverter> logger)
+        public SchemaSeoValueConverter(SchemaResolverCollection schemaResolvers, ISchemaEntryService schemaEntryService, IBreadcrumbSchemaProvider breadcrumbSchemaProvider, ILogger<SchemaSeoValueConverter> logger)
         {
             _schemaResolvers = schemaResolvers;
             _schemaEntryService = schemaEntryService;
+            _breadcrumbSchemaProvider = breadcrumbSchemaProvider;
             _logger = logger;
         }
 
@@ -56,7 +59,23 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
             // also explicitly referenced on the page); only render each distinct entry once.
             allEntries = allEntries.DistinctBy(entry => entry.Id);
 
-            return ConvertEntries(allEntries, currentContent, 0);
+            var schemas = ConvertEntries(allEntries, currentContent, 0);
+
+            var breadcrumb = GetBreadcrumb(currentContent);
+            return breadcrumb is null ? schemas : [.. schemas, breadcrumb];
+        }
+
+        private IThing GetBreadcrumb(IPublishedContent currentContent)
+        {
+            try
+            {
+                return _breadcrumbSchemaProvider.Get(currentContent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Something went wrong while generating the breadcrumb schema");
+                return null;
+            }
         }
 
         /// <summary>

@@ -101,7 +101,29 @@ namespace SeoToolkit.Tests
             Assert.That(SchemaReferenceResolver.ResolveTokens("Hello {pageName}", null), Is.EqualTo("Hello {pageName}"));
         }
 
-        private static IPublishedContent CreateContent(string name, params (string Alias, string? Value)[] properties)
+        [Test]
+        public void ResolveReference_ResolvesPageDatesAsIsoDates()
+        {
+            var content = Mock.Get(CreateContent("Home"));
+            content.Setup(x => x.CreateDate).Returns(new DateTime(2024, 3, 1, 9, 30, 0));
+            content.Setup(x => x.UpdateDate).Returns(new DateTime(2024, 4, 2, 17, 0, 5));
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(SchemaReferenceResolver.ResolveReference("[PageCreateDate]", content.Object), Is.EqualTo("2024-03-01T09:30:00"));
+                Assert.That(SchemaReferenceResolver.ResolveTokens("{pageUpdateDate}", content.Object), Is.EqualTo("2024-04-02T17:00:05"));
+            });
+        }
+
+        [Test]
+        public void ResolveReference_ResolvesADatePropertyAsAnIsoDate()
+        {
+            var content = CreateContent("Home", ("publishDate", new DateTime(2024, 3, 1, 9, 30, 0)));
+
+            Assert.That(SchemaReferenceResolver.ResolveReference("[Property:publishDate]", content), Is.EqualTo("2024-03-01T09:30:00"));
+        }
+
+        private static IPublishedContent CreateContent(string name, params (string Alias, object? Value)[] properties)
         {
             var content = new Mock<IPublishedContent>();
             content.Setup(x => x.Name).Returns(name);

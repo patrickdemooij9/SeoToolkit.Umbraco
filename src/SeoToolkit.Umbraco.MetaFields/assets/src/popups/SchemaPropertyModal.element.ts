@@ -33,10 +33,12 @@ const REFERENCE_OPTIONS = [
   { key: "[PageUrl]", label: "Page URL" },
   { key: "[SiteName]", label: "Site Name" },
   { key: "[SiteUrl]", label: "Site URL" },
+  { key: "[PageCreateDate]", label: "Page Create Date" },
+  { key: "[PageUpdateDate]", label: "Page Update Date" },
 ];
 
 const TOKEN_HINT =
-  "Tip: use {pageName}, {pageUrl}, {siteName}, {siteUrl} or {property:alias} anywhere in the text to insert values from the page.";
+  "Tip: use {pageName}, {pageUrl}, {siteName}, {siteUrl}, {pageCreateDate}, {pageUpdateDate} or {property:alias} anywhere in the text to insert values from the page.";
 
 @customElement("st-schema-property-modal")
 export default class SchemaPropertyModal extends UmbModalBaseElement<

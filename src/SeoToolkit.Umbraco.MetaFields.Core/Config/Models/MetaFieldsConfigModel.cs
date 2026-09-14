@@ -7,5 +7,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Config.Models
         public string[] SupportedMediaTypes { get; set; } = Array.Empty<string>();
         public string OpenGraphCropAlias { get; set; }
         public string[] DisabledModules { get; set; } = Array.Empty<string>();
+        public bool EnableBreadcrumbSchema { get; set; }
     }
 }

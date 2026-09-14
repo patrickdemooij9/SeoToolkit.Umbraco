@@ -20,7 +20,8 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Config
             {
                 SupportedMediaTypes = settings.SupportedMediaTypes,
                 OpenGraphCropAlias = settings.OpenGraphCropAlias,
-                DisabledModules = settings.DisabledModules
+                DisabledModules = settings.DisabledModules,
+                EnableBreadcrumbSchema = settings.EnableBreadcrumbSchema
             };
         }
     }

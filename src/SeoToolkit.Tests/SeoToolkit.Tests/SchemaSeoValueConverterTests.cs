@@ -5,6 +5,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Collections;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverters;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEditor;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SchemaEntry.Business;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.SchemaEntryService;
@@ -98,7 +99,7 @@ namespace SeoToolkit.Tests
             var content = new Mock<IPublishedContent>();
             content.Setup(x => x.ContentType).Returns(contentType.Object);
 
-            var converter = new SchemaSeoValueConverter(_resolvers, schemaEntryService.Object, Mock.Of<ILogger<SchemaSeoValueConverter>>());
+            var converter = new SchemaSeoValueConverter(_resolvers, schemaEntryService.Object, Mock.Of<IBreadcrumbSchemaProvider>(), Mock.Of<ILogger<SchemaSeoValueConverter>>());
 
             var result = (IThing[])converter.Convert(new[] { organizationId }, content.Object, "schema");
 
@@ -145,7 +146,7 @@ namespace SeoToolkit.Tests
             emailProperty.Setup(x => x.GetValue(null, null)).Returns("info@example.com");
             content.Setup(x => x.GetProperty("contactEmail")).Returns(emailProperty.Object);
 
-            var converter = new SchemaSeoValueConverter(_resolvers, schemaEntryService.Object, Mock.Of<ILogger<SchemaSeoValueConverter>>());
+            var converter = new SchemaSeoValueConverter(_resolvers, schemaEntryService.Object, Mock.Of<IBreadcrumbSchemaProvider>(), Mock.Of<ILogger<SchemaSeoValueConverter>>());
 
             var result = (IThing[])converter.Convert(new[] { organizationId }, content.Object, "schema");
 
@@ -156,6 +157,28 @@ namespace SeoToolkit.Tests
                 Assert.That(organizationJson, Does.Contain("\"email\":\"info@example.com\""));
                 Assert.That(organizationJson, Does.Contain("\"description\":\"Welcome to Contact, info@example.com\""));
             });
+        }
+
+        [Test]
+        public void Convert_AppendsTheBreadcrumbSchemaAfterTheConfiguredSchemas()
+        {
+            var organizationId = Guid.NewGuid();
+            var schemaEntryService = new Mock<ISchemaEntryService>();
+            schemaEntryService.Setup(x => x.GetByIds(It.IsAny<IEnumerable<Guid>>()))
+                .Returns(new[] { new SchemaEntryDto { Id = organizationId, SchemaAlias = "organization", Properties = new() } });
+
+            var content = Mock.Of<IPublishedContent>();
+            var breadcrumb = new BreadcrumbList();
+            var breadcrumbProvider = new Mock<IBreadcrumbSchemaProvider>();
+            breadcrumbProvider.Setup(x => x.Get(content)).Returns(breadcrumb);
+
+            var converter = new SchemaSeoValueConverter(_resolvers, schemaEntryService.Object, breadcrumbProvider.Object, Mock.Of<ILogger<SchemaSeoValueConverter>>());
+
+            var result = (IThing[])converter.Convert(new[] { organizationId }, content, "schema");
+
+            Assert.That(result, Has.Length.EqualTo(2));
+            Assert.That(result[0], Is.InstanceOf<Organization>());
+            Assert.That(result[1], Is.SameAs(breadcrumb));
         }
     }
 }
