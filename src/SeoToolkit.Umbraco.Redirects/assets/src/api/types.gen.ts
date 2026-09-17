@@ -37,82 +37,6 @@ export type SeoSettingsViewModel = {
     displays: Array<SeoDisplayViewModel>;
 };
 
-export type RedirectViewModel = {
-    id: number;
-    key: string;
-    domain?: number | null;
-    customDomain?: string | null;
-    isEnabled: boolean;
-    isRegex: boolean;
-    oldUrl?: string | null;
-    newUrl?: string | null;
-    newNodeId?: string | null;
-    newNodeType?: string | null;
-    newCultureIso?: string | null;
-    redirectCode: number;
-    lastUpdated?: string | null;
-};
-
-export type RobotsTxtSavePostModel = {
-    skipValidation: boolean;
-    content?: string | null;
-    domainId?: string | null;
-};
-
-export type RobotsTxtSaveResponseModel = {
-    content?: string | null;
-    errors?: Array<RobotsTxtValidationViewModel> | null;
-};
-
-export type RobotsTxtValidationViewModel = {
-    readonly lineNumber: number;
-    readonly error?: string | null;
-};
-
-export type SaveRedirectPostModel = {
-    id: number;
-    key?: string | null;
-    domain?: number | null;
-    customDomain?: string | null;
-    isEnabled: boolean;
-    isRegex: boolean;
-    oldUrl?: string | null;
-    newUrl?: string | null;
-    newNodeId?: string | null;
-    newCultureId?: string | null;
-    redirectCode: number;
-};
-
-export type ScriptDefinitionViewModel = {
-    readonly name?: string | null;
-    readonly alias?: string | null;
-    readonly fields?: Array<ScriptField> | null;
-};
-
-export type ScriptDetailViewModel = {
-    id: number;
-    key?: string | null;
-    name?: string | null;
-    definitionAlias?: string | null;
-    config?: {
-        [key: string]: string | null;
-    } | null;
-    domainId?: string | null;
-};
-
-export type ScriptField = {
-    key?: string | null;
-    name?: string | null;
-    description?: string | null;
-    propertyAlias?: string | null;
-};
-
-export type ScriptListViewModel = {
-    id: string;
-    name?: string | null;
-    definitionName?: string | null;
-};
-
 export type SeoDisplayViewModel = {
     alias: string;
     name: string;
@@ -197,6 +121,7 @@ export type RedirectViewModel = {
     oldUrl?: null | string;
     newUrl?: null | string;
     newNodeId?: null | string;
+    newNodeType?: null | string;
     newCultureIso?: null | string;
     redirectCode: number | string;
     lastUpdated?: null | string;
