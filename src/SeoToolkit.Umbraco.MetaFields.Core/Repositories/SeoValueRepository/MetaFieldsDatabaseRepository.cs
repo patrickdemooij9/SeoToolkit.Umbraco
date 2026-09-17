@@ -51,7 +51,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         public void Delete(int nodeId, string fieldAlias, string culture)
         {
             using var scope = _scopeProvider.CreateScope();
-            scope.Database.Delete(scope.SqlContext.Sql()
+            scope.Database.Delete<MetaFieldsValueEntity>(scope.SqlContext.Sql()
                 .Where<MetaFieldsValueEntity>(it => it.NodeId == nodeId && it.Alias == fieldAlias && it.Culture == culture));
             scope.Complete();
         }
@@ -102,7 +102,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         public void Delete(Guid nodeId, string fieldAlias, string culture)
         {
             using var scope = _scopeProvider.CreateScope();
-            scope.Database.Delete(scope.SqlContext.Sql()
+            scope.Database.Delete<MetaFieldsValueEntity>(scope.SqlContext.Sql()
                 .Where<MetaFieldsValueEntity>(it => it.NodeKey == nodeId && it.Alias == fieldAlias && it.Culture == culture));
             scope.Complete();
         }
