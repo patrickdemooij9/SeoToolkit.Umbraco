@@ -9,7 +9,10 @@ import { css, html, LitElement } from "lit";
 import { SeoKeyValueSettingViewModel } from "../api";
 import { umbExtensionsRegistry } from "@umbraco-cms/backoffice/extension-registry";
 import { createExtensionElement } from "@umbraco-cms/backoffice/extension-api";
-import { ManifestPropertyEditorUi } from "@umbraco-cms/backoffice/property-editor";
+import {
+  ManifestPropertyEditorUi,
+  UmbPropertyEditorConfigCollection,
+} from "@umbraco-cms/backoffice/property-editor";
 import { UmbChangeEvent } from "@umbraco-cms/backoffice/event";
 
 @customElement("st-setting-field")
@@ -73,14 +76,14 @@ export class SeoSettingFieldElement extends UmbElementMixin(LitElement) {
       });
 
       this._element.value = this.field?.value;
-      /*if (this.field?.editConfig) {
+      if (this.field?.editConfig) {
         this._element.config = new UmbPropertyEditorConfigCollection(
-          Object.entries(this.field?.editConfig).map((item) => ({
+          Object.entries(this.field.editConfig).map((item) => ({
             alias: item[0],
             value: item[1],
           }))
         );
-      }*/
+      }
     }
   }
 
