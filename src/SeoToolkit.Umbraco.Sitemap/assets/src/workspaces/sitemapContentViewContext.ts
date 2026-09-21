@@ -3,9 +3,20 @@ import { UmbWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
 import { UmbContextToken } from "@umbraco-cms/backoffice/context-api";
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/document";
+import {
+  UMB_ACTION_EVENT_CONTEXT,
+  UmbActionEventContext,
+} from "@umbraco-cms/backoffice/action";
 import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import { SitemapContentSettingsViewModel } from "../api";
 import { ContentSettingsRepository } from "../repositories/contentSettingsRepository";
+
+const SEO_CONTENT_SAVED_EVENT_TYPE = "seo-content-saved";
+
+interface SeoContentSavedEventDetail {
+  unique: string;
+  cultures: string[];
+}
 
 export default class SitemapContentViewContext
   extends UmbContextBase
@@ -14,14 +25,12 @@ export default class SitemapContentViewContext
   workspaceAlias: string = "Umb.Workspace.Document";
 
   #repository: ContentSettingsRepository;
+  #actionEventContext?: UmbActionEventContext;
   #nodeId?: string;
-  #loadedNodeId?: string;
-  #lastUpdateDate?: string;
-  // Guards against posting before the current node's settings have loaded.
-  // Without this, a save triggered right after navigation would persist the
-  // previous page's model (overwriting the new node) or post empty defaults
-  // (which the backend treats as "default" and deletes the existing row).
+
   #loaded = false;
+  #isDirty = false;
+  #editVersion = 0;
 
   #model = new UmbObjectState<SitemapContentSettingsViewModel>({
     excludeFromSitemap: false,
@@ -33,6 +42,16 @@ export default class SitemapContentViewContext
 
     this.#repository = new ContentSettingsRepository(host);
 
+    this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
+      if (this.#actionEventContext || !instance) return;
+
+      this.#actionEventContext = instance;
+      instance.addEventListener(
+        SEO_CONTENT_SAVED_EVENT_TYPE,
+        this.#onContentSaved
+      );
+    });
+
     this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
       if (!instance) return;
 
@@ -40,79 +59,74 @@ export default class SitemapContentViewContext
         instance.unique,
         (unique) => {
           const nodeId = unique?.toString();
-          if (!nodeId) return;
-          // The document workspace context is reused across navigation, so reset
-          // all per-node state before loading the new node's settings. Only do so
-          // when the node actually changed: re-subscribing to this observable
-          // replays the current value, and resetting on that would drop the
-          // update date bookkeeping save() relies on, along with unsaved edits.
-          if (nodeId === this.#loadedNodeId) return;
-          this.#loadedNodeId = nodeId;
+          if (!nodeId || nodeId === this.#nodeId) return;
 
           this.#nodeId = nodeId;
-          this.#lastUpdateDate = undefined;
           this.#loaded = false;
+          this.#isDirty = false;
+          this.#editVersion++;
           this.#model.setValue({ excludeFromSitemap: false });
-          this.#loadData();
+          this.#loadData(nodeId);
         },
         "stSitemapContentUnique"
       );
-
-      this.observe(
-        instance.data,
-        (item) => {
-          if (item?.isTrashed) return;
-
-          let shouldSave = false;
-          item?.variants.forEach((variant) => {
-            const updateDate = variant.updateDate;
-            // The document was saved when a variant's update date changes.
-            // Track the latest value each time (not a monotonic max) so the
-            // detection keeps working after navigating between pages.
-            if (this.#lastUpdateDate && updateDate && this.#lastUpdateDate !== updateDate) {
-              shouldSave = true;
-            }
-            if (updateDate) {
-              this.#lastUpdateDate = updateDate;
-            }
-          });
-          if (shouldSave) {
-            this.save();
-          }
-        },
-        "stSitemapContentData"
-      );
     });
   }
 
-  #loadData() {
-    if (!this.#nodeId) return;
-    const node = this.#nodeId;
+  #loadData(node: string) {
     this.#repository.getContentSettings(node).then((resp) => {
       // Ignore late responses if the user already navigated to another node.
       if (this.#nodeId !== node) return;
-      if (resp?.data) {
-        this.#model.setValue(resp.data);
-      }
+      if (!resp || resp.error) return;
+
+      const data = resp.data ?? { excludeFromSitemap: false };
+      this.#model.setValue(data);
       this.#loaded = true;
+      this.#isDirty = false;
     });
   }
 
+  #onContentSaved = (event: Event) => {
+    const detail = (event as CustomEvent<SeoContentSavedEventDetail>).detail;
+    // The action event context is shared, so events for other documents reach us too.
+    if (!detail || detail.unique !== this.#nodeId) return;
+
+    this.save();
+  };
+
   update(model: Partial<SitemapContentSettingsViewModel>) {
+    this.#isDirty = true;
+    this.#editVersion++;
     this.#model.update(model);
   }
 
-  save() {
-    // Don't persist until this node's settings have loaded, otherwise we'd
-    // write stale/default values over the node's real settings.
-    if (!this.#nodeId || !this.#loaded) return;
-    const value = this.#model.getValue();
-    this.#repository.setContentSettings({
-      nodeKey: this.#nodeId,
-      excludeFromSitemap: value.excludeFromSitemap ?? false,
-      changeFrequency: value.changeFrequency,
-      priority: value.priority,
+  async save() {
+    const node = this.#nodeId;
+    if (!node || !this.#loaded || !this.#isDirty) return;
+
+    const settings = this.#model.getValue();
+    const editVersionAtSave = this.#editVersion;
+
+    const resp = await this.#repository.setContentSettings({
+      nodeKey: node,
+      excludeFromSitemap: settings.excludeFromSitemap,
+      changeFrequency: settings.changeFrequency,
+      priority: settings.priority,
     });
+
+    if (!resp || resp.error) return;
+    if (this.#nodeId !== node) return;
+    if (this.#editVersion !== editVersionAtSave) return;
+
+    this.#isDirty = false;
+  }
+
+  destroy(): void {
+    super.destroy();
+    this.#actionEventContext?.removeEventListener(
+      SEO_CONTENT_SAVED_EVENT_TYPE,
+      this.#onContentSaved
+    );
   }
 
   getEntityType(): string {

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SeoToolkit.Umbraco.Sitemap.Core.Controllers;
+using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.PostModels;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.ViewModels;
 using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
@@ -53,7 +54,7 @@ namespace SeoToolkit.Tests
         }
 
         [Test]
-        public void SetContentSettings_WhenContentDoesNotExist_ReturnsNotFound()
+        public void SetContentSettings_WhenContentDoesNotExist_ReturnsOkWithoutSaving()
         {
             var nodeKey = Guid.NewGuid();
             var model = new SitemapContentSettingsPostModel
@@ -63,7 +64,8 @@ namespace SeoToolkit.Tests
 
             var result = _controller.SetContentSettings(model);
 
-            Assert.That(result, Is.TypeOf<NotFoundResult>());
+            Assert.That(result, Is.TypeOf<OkResult>());
+            _sitemapService.Verify(x => x.SetContentSettings(It.IsAny<SitemapContentSettings>()), Times.Never);
         }
     }
 }

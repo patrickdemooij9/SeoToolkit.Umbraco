@@ -142,6 +142,7 @@ export type RedirectViewModel = {
     oldUrl?: string | null;
     newUrl?: string | null;
     newNodeId?: string | null;
+    newNodeType?: string | null;
     newCultureIso?: string | null;
     redirectCode: number;
     lastUpdated?: string | null;

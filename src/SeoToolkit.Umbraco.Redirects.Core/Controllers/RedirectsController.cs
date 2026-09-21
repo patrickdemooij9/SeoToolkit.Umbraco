@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SeoToolkit.Umbraco.Common.Core.Controllers;
 using SeoToolkit.Umbraco.Redirects.Core.Constants;
 using SeoToolkit.Umbraco.Redirects.Core.Enumerators;
+using SeoToolkit.Umbraco.Redirects.Core.Extensions;
 using SeoToolkit.Umbraco.Redirects.Core.Helpers;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
@@ -16,6 +17,7 @@ using Umbraco.Cms.Api.Common.Builders;
 using Umbraco.Cms.Api.Common.ViewModels.Pagination;
 using Umbraco.Cms.Core.Security;
 using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Core.Services.Navigation;
 using Umbraco.Cms.Core.Services.OperationStatus;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.Routing;
@@ -33,13 +35,15 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
         private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
         private readonly RedirectsImportHelper _redirectsImportHelper;
         private readonly ITemporaryFileService _temporaryFileService;
+        private readonly IDocumentNavigationQueryService _documentNavigationQueryService;
 
         public RedirectsController(IRedirectsService redirectsService,
             IUmbracoContextFactory umbracoContextFactory,
             ILanguageService languageService,
             IBackOfficeSecurityAccessor backOfficeSecurityAccessor,
             RedirectsImportHelper redirectsImportHelper,
-            ITemporaryFileService temporaryFileService)
+            ITemporaryFileService temporaryFileService,
+            IDocumentNavigationQueryService documentNavigationQueryService)
         {
             _redirectsService = redirectsService;
             _umbracoContextFactory = umbracoContextFactory;
@@ -47,6 +51,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
             _backOfficeSecurityAccessor = backOfficeSecurityAccessor;
             _redirectsImportHelper = redirectsImportHelper;
             _temporaryFileService = temporaryFileService;
+            _documentNavigationQueryService = documentNavigationQueryService;
         }
 
         [HttpPost("redirect")]
@@ -76,9 +81,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
 
             if (postModel.NewNodeId != null)
             {
-                redirect.NewNode = postModel.NewCultureId != null
-                    ? ctx.UmbracoContext.Content.GetById(postModel.NewNodeId.Value)
-                    : ctx.UmbracoContext.Media.GetById(postModel.NewNodeId.Value);
+                redirect.NewNode = ctx.UmbracoContext.GetContentOrMediaByKey(postModel.NewNodeId.Value, _documentNavigationQueryService);
                 if (redirect.NewNode is null)
                     return new BadRequestResult();
             }

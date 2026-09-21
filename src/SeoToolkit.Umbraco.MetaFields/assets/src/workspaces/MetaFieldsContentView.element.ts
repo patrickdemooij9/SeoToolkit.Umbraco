@@ -110,7 +110,7 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
   override render() {
     return html`
       ${when(
-        this._model,
+        this._model?.seoEnabled && this._model.groups?.length,
         () => html`
           <div>
             ${when(
@@ -126,7 +126,7 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
               `
             )}
             ${repeat(
-              this._model!.groups!,
+              this._model!.groups ?? [],
               (group) => group.alias,
               (group) => html`
                 <uui-box headline=${group.name!} class="seo-group">
@@ -134,7 +134,7 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
                   <div class="content">
                     <div class="fields">
                       ${repeat(
-                        this.#getFieldsByGroup(group.alias!)!,
+                        this.#getFieldsByGroup(group.alias!) ?? [],
                         (item) => item.alias,
                         (item) => html`
                           <st-metafield-contentfield

@@ -8,11 +8,28 @@ import type { MetaFieldsAIFieldSuggestion } from "../dataAccess/MetaFieldsAISour
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/document";
 import { UmbBooleanState, UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
+import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
+import {
+  UMB_ACTION_EVENT_CONTEXT,
+  UmbActionEventContext,
+} from "@umbraco-cms/backoffice/action";
+
+// Dispatched by SeoToolkitContentContext in SeoToolkit.Umbraco.Common when the document
+// has been saved on the server.
+const SEO_CONTENT_SAVED_EVENT_TYPE = "seo-content-saved";
+
+interface SeoContentSavedEventDetail {
+  unique: string;
+  cultures: string[];
+}
 
 interface MetaFieldsSettingsVariant {
   variant: string;
   model: UmbObjectState<MetaFieldsSettingsViewModel>;
   isDirty: boolean;
+  editVersion: number;
+  saving: boolean;
+  saveQueued: boolean;
 }
 
 export default class MetaFieldsContentContext
@@ -27,12 +44,9 @@ export default class MetaFieldsContentContext
   #nodeId?: string;
   #loadedNodeId?: string;
   #cultures: string[] = [];
+  #actionEventContext?: UmbActionEventContext;
 
   #variants: { [key: string]: MetaFieldsSettingsVariant } = {};
-
-  // Kept outside of #variants so a variant reset cannot lose it. Without it the
-  // next document save has nothing to compare against and silently skips saving.
-  #lastUpdated: { [key: string]: string | null | undefined } = {};
 
   #isAIAvailable = new UmbBooleanState(false);
   readonly isAIAvailable = this.#isAIAvailable.asObservable();
@@ -71,7 +85,7 @@ export default class MetaFieldsContentContext
         (unique) => {
           const nodeId = unique?.toString();
           // Only reset when we actually moved to another node. Re-emissions for the
-          // same node would otherwise drop the loaded model and the bookkeeping that
+          // same node would otherwise drop the loaded model and the dirty state that
           // save() depends on.
           if (!nodeId || nodeId === this.#loadedNodeId) return;
           this.#loadedNodeId = nodeId;
@@ -81,38 +95,40 @@ export default class MetaFieldsContentContext
         },
         "stMetaFieldsUnique"
       );
-      this.observe(
-        instance.data,
-        (item) => {
-          if (item?.isTrashed) return;
+    });
 
-          item?.variants.forEach((variant) => {
-            const culture = variant.culture ?? "invariant";
-            const previousDate = this.#lastUpdated[culture];
-            this.#lastUpdated[culture] = variant.updateDate;
+    this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
+      if (this.#actionEventContext || !instance) return;
 
-            // The document was saved. Only push our own values along if the editor
-            // actually changed something here.
-            if (previousDate === undefined) return;
-            if (previousDate === variant.updateDate) return;
-            if (!this.#getVariant(culture).isDirty) return;
-
-            this.save(culture);
-          });
-        },
-        "stMetaFieldsData"
+      this.#actionEventContext = instance;
+      instance.addEventListener(
+        SEO_CONTENT_SAVED_EVENT_TYPE,
+        this.#onContentSaved
       );
     });
   }
 
-  #resetVariants() {
-    this.#lastUpdated = {};
+  #onContentSaved = (event: Event) => {
+    const detail = (event as CustomEvent<SeoContentSavedEventDetail>).detail;
+    // The action event context is shared, so events for other documents reach us too.
+    if (!detail || detail.unique !== this.#nodeId) return;
 
+    detail.cultures.forEach((culture) => {
+      if (!this.#getVariant(culture).isDirty) return;
+
+      this.save(culture);
+    });
+  };
+
+  #resetVariants() {
     // Reset in place. MetaFieldsContentView observes the state object handed out by
     // getModel(), so replacing it would leave the view bound to a dead observable.
     Object.values(this.#variants).forEach((variant) => {
       variant.model.setValue({ seoEnabled: false });
       variant.isDirty = false;
+      // Invalidate any in-flight save so its response cannot be applied on top
+      // of the node we just switched to.
+      variant.editVersion++;
     });
   }
 
@@ -147,6 +163,9 @@ export default class MetaFieldsContentContext
         seoEnabled: false,
       }),
       isDirty: false,
+      editVersion: 0,
+      saving: false,
+      saveQueued: false,
     };
     return this.#variants[variant];
   }
@@ -158,6 +177,32 @@ export default class MetaFieldsContentContext
   async save(culture: string) {
     const variant = this.#variants[culture];
     if (!variant || !this.#nodeId) return;
+
+    if (variant.saving) {
+      variant.saveQueued = true;
+      return;
+    }
+
+    variant.saving = true;
+    try {
+      await this.#performSave(variant, culture);
+    } finally {
+      variant.saving = false;
+    }
+
+    if (variant.saveQueued) {
+      variant.saveQueued = false;
+      // Only worth another request when something is still unsaved — either
+      // edits that arrived mid-flight or a save attempt that failed.
+      if (variant.isDirty) {
+        await this.save(culture);
+      }
+    }
+  }
+
+  async #performSave(variant: MetaFieldsSettingsVariant, culture: string) {
+    const nodeId = this.#nodeId;
+    if (!nodeId) return;
 
     const model = variant.model.getValue();
     if (model.seoEnabled === false) return;
@@ -171,16 +216,41 @@ export default class MetaFieldsContentContext
       }
     });
 
+    const editVersionAtSave = variant.editVersion;
     const resp = await this.#repository.save({
-      nodeId: this.#nodeId,
+      nodeId: nodeId,
       culture: culture,
       userValues: userValues,
     });
 
+    // tryExecute never throws; a failed request comes back as an error without
+    // data. Leave the variant dirty so the next document save retries, and tell
+    // the editor — the document itself saved fine, so nothing else will. When a
+    // follow-up save is already queued, let that attempt decide instead of
+    // showing an error for a state that may recover on its own.
+    if (!resp || resp.error || !resp.data) {
+      if (variant.saveQueued) return;
+      this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
+        instance?.peek("danger", {
+          data: {
+            headline: "SEO",
+            message:
+              "The SEO meta fields could not be saved. Your changes are still here — save the page again to retry.",
+          },
+        });
+      });
+      return;
+    }
+
+    // Edits made while the request was in flight are not in the response;
+    // applying it would wipe them. Keep the variant dirty so the next document
+    // save picks them up.
+    if (variant.editVersion !== editVersionAtSave) return;
+
     // Reconcile with what was actually persisted, otherwise this model keeps
     // serving the values it was first loaded with for the rest of the session.
-    const data = resp?.data;
-    if (data && data.seoEnabled !== false) {
+    const data = resp.data;
+    if (data.seoEnabled !== false) {
       variant.model.update(data);
     }
     variant.isDirty = false;
@@ -202,6 +272,7 @@ export default class MetaFieldsContentContext
       userValue: userValue,
     };
     entry.isDirty = true;
+    entry.editVersion++;
     entry.model.update({
       fields: updated,
     });
@@ -223,6 +294,7 @@ export default class MetaFieldsContentContext
       }
     }
     entry.isDirty = true;
+    entry.editVersion++;
     entry.model.update({ fields: updated });
   }
 
@@ -237,6 +309,14 @@ export default class MetaFieldsContentContext
     return data?.suggestions ?? [];
   }
 
+  destroy(): void {
+    super.destroy();
+    this.#actionEventContext?.removeEventListener(
+      SEO_CONTENT_SAVED_EVENT_TYPE,
+      this.#onContentSaved
+    );
+  }
+
   getEntityType(): string {
     return "st-metafield";
   }
@@ -244,4 +324,3 @@ export default class MetaFieldsContentContext
 
 export const ST_METAFIELDS_CONTENT_TOKEN_CONTEXT =
   new UmbContextToken<MetaFieldsContentContext>("ST-MetaFieldsContent-Context");
-

@@ -1,18 +1,29 @@
 <Project>
   <PropertyGroup>
-    <SeoToolkitVersionCommon>6.4.0-beta2</SeoToolkitVersionCommon>
-    <SeoToolkitVersionMetaFields>6.4.0-beta2</SeoToolkitVersionMetaFields>
-    <SeoToolkitVersionNotFound>6.4.0-beta2</SeoToolkitVersionNotFound>
-    <SeoToolkitVersionRedirects>6.4.0-beta2</SeoToolkitVersionRedirects>
-    <SeoToolkitVersionRobotsTxt>6.4.0-beta2</SeoToolkitVersionRobotsTxt>
-    <SeoToolkitVersionScriptManager>6.4.0-beta2</SeoToolkitVersionScriptManager>
-    <SeoToolkitVersionSiteAudit>6.4.0-beta2</SeoToolkitVersionSiteAudit>
-    <SeoToolkitVersionSitemap>6.4.0-beta2</SeoToolkitVersionSitemap>
-    <SeoToolkitVersionCore>6.4.0-beta2</SeoToolkitVersionCore>
-    <SeoToolkitVersionPackage>6.4.0-beta2</SeoToolkitVersionPackage>
-	<SeoToolkitVersionUsync>1.0.0-beta2</SeoToolkitVersionUsync>
-	<SeoToolkitVersionAICore>1.0.0</SeoToolkitVersionAICore>
-	<SeoToolkitVersionAIIntegration>1.0.0</SeoToolkitVersionAIIntegration>
+    <!--
+      The per-feature assets/ folders hold TypeScript sources, not shippable content.
+      The Razor SDK would otherwise pick up every assets/package.json and
+      assets/tsconfig.json as a Content item; because the feature projects set
+      ContentTargetFolders to ".", all eight collide on the same relative path and
+      "dotnet publish" of a site referencing them fails with NETSDK1152.
+      These files are not part of the NuGet packages, so excluding them changes
+      nothing about what ships.
+    -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);assets/**</DefaultItemExcludes>
+
+    <SeoToolkitVersionCommon>6.4.3</SeoToolkitVersionCommon>
+    <SeoToolkitVersionMetaFields>6.4.3</SeoToolkitVersionMetaFields>
+    <SeoToolkitVersionNotFound>6.4.3</SeoToolkitVersionNotFound>
+    <SeoToolkitVersionRedirects>6.4.3</SeoToolkitVersionRedirects>
+    <SeoToolkitVersionRobotsTxt>6.4.3</SeoToolkitVersionRobotsTxt>
+    <SeoToolkitVersionScriptManager>6.4.3</SeoToolkitVersionScriptManager>
+    <SeoToolkitVersionSiteAudit>6.4.3</SeoToolkitVersionSiteAudit>
+    <SeoToolkitVersionSitemap>6.4.3</SeoToolkitVersionSitemap>
+    <SeoToolkitVersionCore>6.4.3</SeoToolkitVersionCore>
+    <SeoToolkitVersionPackage>6.4.3</SeoToolkitVersionPackage>
+	<SeoToolkitVersionUsync>1.0.0-beta1</SeoToolkitVersionUsync>
+	<SeoToolkitVersionAICore>1.1.0</SeoToolkitVersionAICore>
+	<SeoToolkitVersionAIIntegration>1.1.0</SeoToolkitVersionAIIntegration>
 
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.Common'))">$(SeoToolkitVersionCommon)</VersionPrefix>
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.MetaFields'))">$(SeoToolkitVersionMetaFields)</VersionPrefix>

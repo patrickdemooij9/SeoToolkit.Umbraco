@@ -1,5 +1,6 @@
 ﻿using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
 using System;
+using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
@@ -24,6 +25,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
 
         public Guid? NewNodeId { get; set; }
 
+        public string NewNodeType { get; set; }
+
         public string NewCultureIso { get; set; }
 
         public int RedirectCode { get; set; }
@@ -41,6 +44,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
             OldUrl = redirect.OldUrl.IfNullOrWhiteSpace("/");
             NewUrl = redirect.NewUrl;
             NewNodeId = redirect.NewNode?.Key;
+            NewNodeType = redirect.NewNode is null
+                ? null
+                : redirect.NewNode.ItemType == PublishedItemType.Media ? "Media" : "Content";
             NewCultureIso = redirect.NewNodeCulture?.IsoCode;
             RedirectCode = redirect.RedirectCode;
             LastUpdated = redirect.LastUpdated.ToString("G");
