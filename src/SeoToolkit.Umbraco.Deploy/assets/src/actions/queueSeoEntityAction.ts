@@ -1,9 +1,8 @@
 import { UmbEntityActionBase, UmbEntityActionArgs } from "@umbraco-cms/backoffice/entity-action";
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
-import { UMB_AUTH_CONTEXT } from "@umbraco-cms/backoffice/auth";
 import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
 import { umbOpenModal } from "@umbraco-cms/backoffice/modal";
-import { SeoDeployClient } from "../api/seoDeployClient";
+import { BackofficeSeoToolkitDeploy } from "../api/generated";
 import { DEPLOY_TRANSFER_QUEUE_MANAGER } from "../api/deployTransferQueue";
 import { DEPLOY_QUEUE_MODAL } from "../api/deployQueueModal";
 
@@ -18,11 +17,8 @@ export class QueueSeoEntityAction extends UmbEntityActionBase<never> {
 		const contentKey = this.args.unique;
 		if (!contentKey) return;
 
-		const authContext = await this.getContext(UMB_AUTH_CONTEXT);
 		const notificationContext = await this.getContext(UMB_NOTIFICATION_CONTEXT);
 		const queueManager = await this.getContext(DEPLOY_TRANSFER_QUEUE_MANAGER);
-		const token = await authContext?.getLatestToken();
-		if (!token) return;
 		if (!queueManager) {
 			notificationContext?.peek("danger", { data: { message: "Deploy transfer queue is unavailable." } });
 			return;
@@ -38,9 +34,15 @@ export class QueueSeoEntityAction extends UmbEntityActionBase<never> {
 		if (!options) return; // dialog cancelled
 
 		try {
-			const client = new SeoDeployClient(token);
 			// One server call queues everything; then refresh the widget once.
-			const { added } = await client.queueSeo(contentKey, options.includeDescendants, options.releaseDate ?? null);
+			const { data } = await BackofficeSeoToolkitDeploy.postUmbracoSeoToolkitDeploySeoQueueAdd({
+				query: {
+					contentKey,
+					includeDescendants: options.includeDescendants,
+					releaseDate: options.releaseDate ?? undefined,
+				},
+			});
+			const { added } = data;
 			if (added === 0) {
 				notificationContext?.peek("warning", { data: { message: "No SEO data to transfer for this node." } });
 				return;

@@ -13,6 +13,7 @@ const input = 'http://localhost:57441/umbraco/openapi/seoToolkit.json';
  */
 export const apiTags = {
 	aiIntegration: 'Backoffice SeoToolkit AI Integration',
+	deploy: 'Backoffice SeoToolkit Deploy',
 	metaFields: 'Backoffice SeoToolkit MetaFields',
 	notFound: 'Backoffice SeoToolkit NotFound',
 	publicApi: 'SeoToolkit Public Api',
@@ -31,10 +32,18 @@ export const apiTags = {
  * they reference. Models nothing references are dropped.
  */
 export const defineModuleConfig = (...tags: ReadonlyArray<string>) =>
+	defineModuleConfigAt('src/api', ...tags);
+
+/**
+ * Same as defineModuleConfig, but generates into the given folder. The
+ * generator clears its output folder, so use this when src/api also holds
+ * hand-written files.
+ */
+export const defineModuleConfigAt = (outputPath: string, ...tags: ReadonlyArray<string>) =>
 	defineConfig({
 		input,
 		output: {
-			path: 'src/api',
+			path: outputPath,
 		},
 		parser: {
 			filters: {

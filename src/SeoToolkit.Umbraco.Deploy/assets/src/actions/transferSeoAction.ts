@@ -5,6 +5,7 @@ import { UMB_AUTH_CONTEXT } from "@umbraco-cms/backoffice/auth";
 import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
 import { SeoDeployClient } from "../api/seoDeployClient";
 import { buildTransferSet } from "../api/seoDeployItems";
+import { BackofficeSeoToolkitDeploy } from "../api/generated";
 
 export default class TransferSeoAction extends UmbWorkspaceActionBase {
 
@@ -23,7 +24,10 @@ export default class TransferSeoAction extends UmbWorkspaceActionBase {
 
 		try {
 			const client = new SeoDeployClient(token);
-			const items = buildTransferSet(await client.getSeoItems(contentKey));
+			const { data } = await BackofficeSeoToolkitDeploy.getUmbracoSeoToolkitDeploySeoTransferItems({
+				query: { contentKey },
+			});
+			const items = buildTransferSet(data.items);
 			if (items.length === 0) {
 				notificationContext?.peek("warning", { data: { message: "No SEO data to transfer for this node." } });
 				return;

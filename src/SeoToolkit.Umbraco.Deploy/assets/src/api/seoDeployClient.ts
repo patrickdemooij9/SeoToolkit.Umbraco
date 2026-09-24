@@ -1,5 +1,6 @@
 import { SeoDeployItem } from "./seoDeployItems";
 
+// Umbraco Deploy's own management API. SeoToolkit's endpoints use the generated client in ./generated.
 const BASE = "/umbraco/deploy/management/api/v1";
 
 export class SeoDeployClient {
@@ -15,17 +16,6 @@ export class SeoDeployClient {
     };
   }
 
-  /** The per-node SEO entities that actually have data for the node (empty when none). */
-  async getSeoItems(contentKey: string): Promise<SeoDeployItem[]> {
-    const resp = await fetch(
-      `/umbraco/seoToolkitDeploy/seoTransferItems?contentKey=${contentKey}`,
-      { headers: this.#headers() },
-    );
-    if (!resp.ok) throw new Error(`Could not resolve SEO items (${resp.status}).`);
-    const body = await resp.json();
-    return (body?.items ?? []) as SeoDeployItem[];
-  }
-
   // The upstream target's Deploy API endpoint (deployUrl), NOT its backoffice umbracoUrl. Instant
   // deploy opens a Deploy session against this URL; passing umbracoUrl makes the remote session
   // request 404 ("The remote API was not found") in Deploy's SourceDeployWorkItem.
@@ -34,24 +24,6 @@ export class SeoDeployClient {
     if (!resp.ok) return undefined;
     const body = await resp.json();
     return body?.clientConfiguration?.target?.deployUrl ?? undefined;
-  }
-
-  // Queues the node's SEO (and every descendant's when includeDescendants is set) in one server
-  // call, and returns how many SEO entities were queued (0 when there is no SEO data).
-  async queueSeo(
-    contentKey: string,
-    includeDescendants: boolean,
-    releaseDate: string | null,
-  ): Promise<{ added: number }> {
-    const descendants = includeDescendants ? "&includeDescendants=true" : "";
-    const release = releaseDate ? `&releaseDate=${encodeURIComponent(releaseDate)}` : "";
-    const resp = await fetch(
-      `/umbraco/seoToolkitDeploy/seoQueueAdd?contentKey=${contentKey}${descendants}${release}`,
-      { method: "POST", headers: this.#headers() },
-    );
-    if (!resp.ok) throw new Error(`Could not add SEO to the transfer queue (${resp.status}).`);
-    const body = await resp.json();
-    return { added: (body?.added ?? 0) as number };
   }
 
   async instantDeploy(items: SeoDeployItem[]): Promise<Response> {
