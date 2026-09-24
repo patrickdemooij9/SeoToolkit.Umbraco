@@ -17,6 +17,13 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
             builder.Services.AddOptions<SeoToolkitDeploySettings>()
                 .Bind(builder.Config.GetSection("SeoToolkit:Deploy"));
 
+            // Without Umbraco Deploy the handlers and component below can't be constructed and the
+            // site fails to start, so register nothing rather than crash.
+            if (!UmbracoDeployDetector.IsInstalled(builder))
+            {
+                return;
+            }
+
             // Disk (.uda) refreshers: rewrite the settings artifact whenever it is saved/deleted.
             builder.AddNotificationAsyncHandler<SeoSettingSavedNotification, SeoSettingDiskRefresherHandler>();
             builder.AddNotificationAsyncHandler<MetaFieldSettingsSavedNotification, MetaFieldsSettingDiskRefresherHandler>();

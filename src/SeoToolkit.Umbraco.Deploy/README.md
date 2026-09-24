@@ -2,6 +2,10 @@
 
 Umbraco Deploy connectors for [SeoToolkit](https://github.com/patrickdemooij9/SeoToolkit.Umbraco). Lets Umbraco Deploy carry SeoToolkit settings and per-node SEO data between environments — via `.uda` disk artifacts, queue-for-transfer/restore, and content import/export.
 
+## Requirements
+
+Umbraco Deploy must be installed on the site (`Umbraco.Deploy.OnPrem`, or Umbraco Cloud). This package doesn't install it for you. Without it, the package does nothing: no handlers or backoffice actions are registered, so the site still starts.
+
 ## What it does
 
 - **Settings** are written to `.uda` disk artifacts whenever you save them in the backoffice, and can be transferred/restored on demand like any other Deploy entity.

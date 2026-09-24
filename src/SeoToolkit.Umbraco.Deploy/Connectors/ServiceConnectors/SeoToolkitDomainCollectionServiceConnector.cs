@@ -6,6 +6,7 @@ using SeoToolkit.Umbraco.Deploy.Configuration;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Deploy;
 using Umbraco.Cms.Core.Services;
+using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
 {
@@ -52,8 +53,7 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
             // Order names/settings (ordinal) for a stable serialization/checksum.
             var domainNames = entity.DomainIds
                 .Select(id => allDomains.FirstOrDefault(d => d.Id == id)?.DomainName)
-                .Where(name => name is not null)
-                .Select(name => name!)
+                .WhereNotNull()
                 .OrderBy(name => name, StringComparer.Ordinal)
                 .ToList();
 

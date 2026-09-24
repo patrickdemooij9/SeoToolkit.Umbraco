@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using SeoToolkit.Umbraco.Common.Core.Helpers;
+using SeoToolkit.Umbraco.Deploy.Composing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
@@ -15,6 +16,12 @@ namespace SeoToolkit.Umbraco.Deploy
     {
         public void Compose(IUmbracoBuilder builder)
         {
+            // The backoffice actions call Umbraco Deploy's API, so don't show them without it.
+            if (!UmbracoDeployDetector.IsInstalled(builder))
+            {
+                return;
+            }
+
             builder.Services.AddSingleton<IPackageManifestReader, ManifestFilter>();
         }
     }
