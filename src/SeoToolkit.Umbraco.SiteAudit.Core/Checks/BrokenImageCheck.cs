@@ -41,7 +41,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
             var results = new List<CheckPageCrawlResult>();
             foreach (var imageElement in images)
             {
-                var sourceUrl = imageElement.Attributes["src"].Value;
+                var sourceUrl = HtmlEntity.DeEntitize(imageElement.Attributes["src"].Value);
                 if (string.IsNullOrWhiteSpace(sourceUrl))
                     continue;
 
