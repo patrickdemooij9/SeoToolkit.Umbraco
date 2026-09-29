@@ -15,6 +15,8 @@ export default class ExportRedirectAction extends UmbWorkspaceActionBase<Redirec
             const a = document.createElement('a');
             a.href = url;
             a.download = filename;
+            // Umbraco's router intercepts same-origin anchor clicks (blob URLs included since 17.x), which would cancel the download
+            a.dataset.routerSlot = 'disabled';
             document.body.appendChild(a);
             a.click();
             a.remove();

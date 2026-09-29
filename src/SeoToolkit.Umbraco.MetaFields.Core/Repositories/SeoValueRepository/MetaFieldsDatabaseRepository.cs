@@ -55,8 +55,6 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         public void Delete(int nodeId, string fieldAlias, string culture)
         {
             using var scope = _scopeProvider.CreateScope();
-            // Generic Delete<T>(Sql) builds "DELETE FROM <table> WHERE ...". The non-generic
-            // Delete(sql) binds to Delete(object poco) and crashes in NPoco's setter emit.
             scope.Database.Delete<MetaFieldsValueEntity>(scope.SqlContext.Sql()
                 .Where<MetaFieldsValueEntity>(it => it.NodeId == nodeId && it.Alias == fieldAlias && it.Culture == culture));
             scope.Complete();
@@ -108,15 +106,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Repositories.SeoValueRepository
         public void Delete(Guid nodeId, string fieldAlias, string culture)
         {
             using var scope = _scopeProvider.CreateScope();
-            // GetAllValues maps a NULL culture to "", so treat an empty culture as "empty or NULL"
-            // here — otherwise the prune path (which passes "") could never delete NULL-culture rows.
             var sql = string.IsNullOrEmpty(culture)
                 ? scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(
                     it => it.NodeKey == nodeId && it.Alias == fieldAlias && (it.Culture == null || it.Culture == ""))
                 : scope.SqlContext.Sql().Where<MetaFieldsValueEntity>(
                     it => it.NodeKey == nodeId && it.Alias == fieldAlias && it.Culture == culture);
-            // Generic Delete<T>(Sql) builds "DELETE FROM <table> WHERE ...". The non-generic
-            // Delete(sql) binds to Delete(object poco) and crashes in NPoco's setter emit.
             scope.Database.Delete<MetaFieldsValueEntity>(sql);
             scope.Complete();
         }

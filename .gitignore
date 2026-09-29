@@ -491,3 +491,4 @@ $RECYCLE.BIN/
 *.csproj.lscache
 
 !**/SeoToolkit.Umbraco.Deploy/Artifacts
+**/uSync/

@@ -121,6 +121,7 @@ export type RedirectViewModel = {
     oldUrl?: null | string;
     newUrl?: null | string;
     newNodeId?: null | string;
+    newNodeType?: null | string;
     newCultureIso?: null | string;
     redirectCode: number | string;
     lastUpdated?: null | string;
