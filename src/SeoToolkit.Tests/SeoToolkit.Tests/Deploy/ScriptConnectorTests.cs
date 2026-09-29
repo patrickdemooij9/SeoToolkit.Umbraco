@@ -19,7 +19,7 @@ namespace SeoToolkit.Tests.Deploy
     public class ScriptConnectorTests
     {
         private static IOptionsMonitor<SeoToolkitDeploySettings> DefaultSettings()
-            => Settings(new SeoToolkitDeploySettings { EnableScripts = true });
+            => Settings(new SeoToolkitDeploySettings { Scripts = new() { Enabled = true } });
 
         private static IOptionsMonitor<SeoToolkitDeploySettings> Settings(SeoToolkitDeploySettings value)
         {

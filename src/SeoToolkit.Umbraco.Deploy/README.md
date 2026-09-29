@@ -30,31 +30,26 @@ The first six are settings-like: disk-registered and available for queue-for-tra
 
 ## Configuration
 
-Disable individual entity types from all deploy operations via the `SeoToolkit:Deploy` config section:
+Each entity type can be enabled or disabled under the `SeoToolkit:Deploy` config section. A disabled entity type produces no artifacts and skips processing. These are the defaults:
 
 ```json
 {
   "SeoToolkit": {
     "Deploy": {
-      "DisabledEntityTypes": [ "seotoolkit-key-values" ]
+      "SeoSettings": { "Enabled": true },
+      "MetaFieldsSettings": { "Enabled": true },
+      "MetaFieldsValues": { "Enabled": true },
+      "SitemapPageTypes": { "Enabled": true },
+      "SitemapContent": { "Enabled": true },
+      "Scripts": { "Enabled": false },
+      "DomainCollections": { "Enabled": true },
+      "KeyValues": { "Enabled": true }
     }
   }
 }
 ```
 
-A disabled connector produces no artifacts and skips processing.
-
-Scripts usually hold environment-specific settings (analytics ids, tag managers, etc.), so the `seotoolkit-script` connector is **disabled by default**. Set `EnableScripts` to `true` to include them:
-
-```json
-{
-  "SeoToolkit": {
-    "Deploy": {
-      "EnableScripts": true
-    }
-  }
-}
-```
+Scripts usually hold environment-specific settings (analytics ids, tag managers, etc.), so they are **disabled by default**. Set `Scripts:Enabled` to `true` to include them.
 
 Restores are **convergent**: target key/values, per-node meta field values, and document-type field settings that are absent from the incoming artifact are deleted so the target mirrors the source.
 
@@ -65,7 +60,7 @@ Restores are **convergent**: target key/values, per-node meta field values, and 
 - **Key/values converge.** Transferred keys overwrite the matching keys in the target, and keys that exist only in the target are deleted.
 - **Per-node SEO data updates travel.** The per-node MetaFields values and sitemap overrides are attached to the document as `Match` dependencies, so Deploy compares their checksum and re-transfers them whenever the values change — not just on the first transfer.
 - **Per-node SEO data stays in sync on disk.** Whenever a node's MetaFields values change, its `.uda` is rewritten; when the node's last value is removed, the `.uda` is deleted. The same applies to sitemap content overrides: the `.uda` is rewritten while the node has non-default settings and deleted when they are reset to default. Removing a node's data therefore propagates as a delete on restore, and removing *some* meta field values converges as well.
-- **Disabling a connector can affect dependent deploys.** Scripts and key/values emit dependencies on `seotoolkit-domain-collection`; if that entity type is listed in `DisabledEntityTypes`, those dependencies cannot be satisfied and a deploy that includes domain-scoped scripts or key/values may error. Disable the domain-collection connector only if you also disable the connectors that depend on it.
+- **Disabling a connector can affect dependent deploys.** Scripts and key/values emit dependencies on `seotoolkit-domain-collection`; if `DomainCollections` is disabled, those dependencies cannot be satisfied and a deploy that includes domain-scoped scripts or key/values may error. Disable the domain-collection connector only if you also disable the connectors that depend on it.
 - **appsettings-based SeoToolkit config** (e.g. `SeoToolkit:Global`) is intentionally out of scope — deploy that through your normal configuration transformation pipeline.
 
 ## Known follow-ups
