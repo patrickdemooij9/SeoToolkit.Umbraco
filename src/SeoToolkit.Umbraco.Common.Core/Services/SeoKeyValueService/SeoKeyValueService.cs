@@ -1,8 +1,10 @@
 ﻿using SeoToolkit.Umbraco.Common.Core.Helpers;
+using SeoToolkit.Umbraco.Common.Core.Notifications;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Umbraco.Cms.Core.Events;
 
 namespace SeoToolkit.Umbraco.Common.Core.Services.SeoKeyValueService
 {
@@ -10,11 +12,13 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoKeyValueService
     {
         private readonly ISeoDomainResolver _seoDomainResolver;
         private readonly ISeoKeyValueRepository _seoKeyValueRepository;
+        private readonly IEventAggregator _eventAggregator;
 
-        public SeoKeyValueService(ISeoDomainResolver seoDomainResolver, ISeoKeyValueRepository seoKeyValueRepository)
+        public SeoKeyValueService(ISeoDomainResolver seoDomainResolver, ISeoKeyValueRepository seoKeyValueRepository, IEventAggregator eventAggregator)
         {
             _seoDomainResolver = seoDomainResolver;
             _seoKeyValueRepository = seoKeyValueRepository;
+            _eventAggregator = eventAggregator;
         }
 
         public string GetValue(string key)
@@ -31,6 +35,22 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.SeoKeyValueService
                 return domainValue;
             }
             return rootValues.TryGetValue(key, out var rootValue) ? rootValue : null;
+        }
+
+        public void SaveValues(IDictionary<string, string?> values, Guid? domainId)
+        {
+            foreach (var (key, value) in values)
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    _seoKeyValueRepository.Delete(key, domainId);
+                    continue;
+                }
+
+                _seoKeyValueRepository.Set(key, value, domainId);
+            }
+
+            _eventAggregator.Publish(new SeoKeyValueSavedNotification(domainId));
         }
     }
 }

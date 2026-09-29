@@ -20,7 +20,7 @@ Eight `GuidUdi` entity types, all prefixed `seotoolkit-`:
 | `seotoolkit-seo-setting` | Per-document-type SEO enable toggle |
 | `seotoolkit-metafields-setting` | MetaFields document-type field settings |
 | `seotoolkit-sitemap-page-type` | Sitemap per-document-type settings |
-| `seotoolkit-script` | Script Manager scripts |
+| `seotoolkit-script` | Script Manager scripts (opt-in, see Configuration) |
 | `seotoolkit-domain-collection` | SeoToolkit domain collections |
 | `seotoolkit-key-values` | Global / per-domain key-value settings |
 | `seotoolkit-metafields-value` | Per-node MetaFields values (rides along with content) |
@@ -36,7 +36,7 @@ Disable individual entity types from all deploy operations via the `SeoToolkit:D
 {
   "SeoToolkit": {
     "Deploy": {
-      "DisabledEntityTypes": [ "seotoolkit-script", "seotoolkit-key-values" ]
+      "DisabledEntityTypes": [ "seotoolkit-key-values" ]
     }
   }
 }
@@ -44,25 +44,27 @@ Disable individual entity types from all deploy operations via the `SeoToolkit:D
 
 A disabled connector produces no artifacts and skips processing.
 
-By default a restore is **overwrite-only**: it adds and updates the data in the artifact but never deletes target-only data. Set `PruneMissing` to `true` to make restores **convergent** — target key/values, per-node meta field values, and document-type field settings that are absent from the incoming artifact are then deleted so the target mirrors the source:
+Scripts usually hold environment-specific settings (analytics ids, tag managers, etc.), so the `seotoolkit-script` connector is **disabled by default**. Set `EnableScripts` to `true` to include them:
 
 ```json
 {
   "SeoToolkit": {
     "Deploy": {
-      "PruneMissing": true
+      "EnableScripts": true
     }
   }
 }
 ```
 
+Restores are **convergent**: target key/values, per-node meta field values, and document-type field settings that are absent from the incoming artifact are deleted so the target mirrors the source.
+
 ## Behaviour and caveats
 
 - **Missing target entities are skipped, not failed.** If a document type, node, or script definition referenced by an artifact doesn't exist in the target environment, that artifact is logged and skipped — a deploy never fails wholesale because of a missing SeoToolkit dependency.
 - **Domain names, not ids.** Domain collections store Umbraco domain **names** in the artifact (portable), and resolve them back to local domain ids on import. Names that don't exist in the target are silently dropped, since environment hostnames are expected to differ.
-- **Key/values deploy by overwrite.** Transferred keys overwrite the matching keys in the target; keys that exist only in the target are never deleted — unless `PruneMissing` is enabled (see Configuration), which makes restores convergent across key/values, meta field values, and meta field settings.
+- **Key/values converge.** Transferred keys overwrite the matching keys in the target, and keys that exist only in the target are deleted.
 - **Per-node SEO data updates travel.** The per-node MetaFields values and sitemap overrides are attached to the document as `Match` dependencies, so Deploy compares their checksum and re-transfers them whenever the values change — not just on the first transfer.
-- **Per-node SEO data stays in sync on disk.** Whenever a node's MetaFields values change, its `.uda` is rewritten; when the node's last value is removed, the `.uda` is deleted. The same applies to sitemap content overrides: the `.uda` is rewritten while the node has non-default settings and deleted when they are reset to default. Removing a node's data therefore propagates as a delete on restore, and removing *some* meta field values converges when `PruneMissing` is enabled.
+- **Per-node SEO data stays in sync on disk.** Whenever a node's MetaFields values change, its `.uda` is rewritten; when the node's last value is removed, the `.uda` is deleted. The same applies to sitemap content overrides: the `.uda` is rewritten while the node has non-default settings and deleted when they are reset to default. Removing a node's data therefore propagates as a delete on restore, and removing *some* meta field values converges as well.
 - **Disabling a connector can affect dependent deploys.** Scripts and key/values emit dependencies on `seotoolkit-domain-collection`; if that entity type is listed in `DisabledEntityTypes`, those dependencies cannot be satisfied and a deploy that includes domain-scoped scripts or key/values may error. Disable the domain-collection connector only if you also disable the connectors that depend on it.
 - **appsettings-based SeoToolkit config** (e.g. `SeoToolkit:Global`) is intentionally out of scope — deploy that through your normal configuration transformation pipeline.
 

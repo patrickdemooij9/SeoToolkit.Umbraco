@@ -18,8 +18,10 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
 
         protected override string[] ValidOpenSelectors => ["this", "this-and-descendants", "descendants"];
 
-        protected bool IsDisabled
-            => settings.CurrentValue.DisabledEntityTypes.Contains(UdiEntityType, StringComparer.OrdinalIgnoreCase);
+        protected SeoToolkitDeploySettings Settings => settings.CurrentValue;
+
+        protected virtual bool IsDisabled
+            => Settings.DisabledEntityTypes.Contains(UdiEntityType, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// When true, GetRangeAsync returns a range for a missing entity instead of throwing.

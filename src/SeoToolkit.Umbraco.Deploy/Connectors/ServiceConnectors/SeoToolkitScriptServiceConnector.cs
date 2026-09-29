@@ -24,6 +24,9 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
 
         protected override int[] ProcessPasses => [2];
 
+        // Scripts are opt-in: they usually hold environment-specific settings.
+        protected override bool IsDisabled => !Settings.EnableScripts || base.IsDisabled;
+
         public override string GetEntityName(Script entity) => entity.Name;
 
         protected override GuidUdi GetEntityUdi(Script entity)

@@ -106,8 +106,43 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Services.SeoValueService
             }
         }
 
+        public void ReplaceAllValues(Guid nodeId, Dictionary<string, Dictionary<string, object>> valuesByCulture)
+        {
+            try
+            {
+                foreach (var (culture, fields) in _repository.GetAllValues(nodeId))
+                {
+                    foreach (var alias in fields.Keys)
+                    {
+                        if (!valuesByCulture.TryGetValue(culture, out var newFields) || !newFields.ContainsKey(alias))
+                        {
+                            _repository.Delete(nodeId, alias, culture);
+                        }
+                    }
+                }
 
-        public void NotifyChanged(Guid nodeId)
+                foreach (var (culture, fields) in valuesByCulture)
+                {
+                    foreach (var (alias, value) in fields)
+                    {
+                        if (_repository.Exists(nodeId, alias, culture))
+                            _repository.Update(nodeId, alias, culture, value);
+                        else
+                        {
+                            _repository.Add(nodeId, alias, culture, value);
+                        }
+                    }
+                }
+                _eventAggregator.Publish(new MetaFieldsValueChangedNotification(nodeId));
+            }
+            finally
+            {
+                // Every repository call commits its own scope, so always clear the cache.
+                ClearCache(nodeId);
+            }
+        }
+
+        private void NotifyChanged(Guid nodeId)
         {
             ClearCache(nodeId);
             _eventAggregator.Publish(new MetaFieldsValueChangedNotification(nodeId));

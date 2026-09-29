@@ -111,12 +111,13 @@ namespace SeoToolkit.Tests.Deploy
         }
 
         [Test]
-        public async Task Process_Pass7_WritesValuesPerCultureViaAddOrUpdate()
+        public async Task Process_Pass7_ReplacesAllValuesPerCultureThroughService()
         {
             var nodeKey = Guid.NewGuid();
             SetUpContent(nodeKey);
-            _valueRepository.Setup(r => r.Exists(nodeKey, "title", "")).Returns(false);
-            _valueRepository.Setup(r => r.Exists(nodeKey, "title", "da-DK")).Returns(true);
+            Dictionary<string, Dictionary<string, object>>? replaced = null;
+            _valueService.Setup(s => s.ReplaceAllValues(nodeKey, It.IsAny<Dictionary<string, Dictionary<string, object>>>()))
+                .Callback<Guid, Dictionary<string, Dictionary<string, object>>>((_, values) => replaced = values);
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, nodeKey);
             var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.MetaFieldsValueArtifact(udi)
@@ -124,7 +125,7 @@ namespace SeoToolkit.Tests.Deploy
                 Name = "Some Page",
                 Values = new Dictionary<string, Dictionary<string, string?>>
                 {
-                    [""] = new() { ["title"] = "\"Hello\"" },
+                    [""] = new() { ["title"] = "\"Hello\"", ["description"] = null },
                     ["da-DK"] = new() { ["title"] = "\"Hej\"" },
                 },
             };
@@ -132,66 +133,33 @@ namespace SeoToolkit.Tests.Deploy
             var state = await _connector.ProcessInitAsync(artifact, Mock.Of<IDeployContext>());
             await _connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 7);
 
-            _valueRepository.Verify(r => r.Add(nodeKey, "title", "", "Hello"), Times.Once);
-            _valueRepository.Verify(r => r.Update(nodeKey, "title", "da-DK", "Hej"), Times.Once);
-            // Cache invalidation + change notification must fire after a repository-level write.
-            _valueService.Verify(s => s.NotifyChanged(nodeKey), Times.Once);
+            _valueService.Verify(s => s.ReplaceAllValues(nodeKey, It.IsAny<Dictionary<string, Dictionary<string, object>>>()), Times.Once);
+            Assert.That(replaced, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(replaced![""], Is.EquivalentTo(new Dictionary<string, object> { ["title"] = "Hello" }));
+                Assert.That(replaced["da-DK"], Is.EquivalentTo(new Dictionary<string, object> { ["title"] = "Hej" }));
+            });
+            // The connector goes through the service, never straight to the repository.
+            _valueRepository.Verify(r => r.Add(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object>()), Times.Never);
+            _valueRepository.Verify(r => r.Delete(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [Test]
-        public async Task Process_Pass7_ReconcilesTargetToSource_DeletesTargetValuesAbsentFromArtifact()
+        public async Task Process_Pass7_EmptyArtifact_ReplacesWithNoValues()
         {
             var nodeKey = Guid.NewGuid();
             SetUpContent(nodeKey);
-            _valueRepository.Setup(r => r.GetAllValues(nodeKey)).Returns(new Dictionary<string, Dictionary<string, object>>
-            {
-                [""] = new() { ["title"] = "Old title", ["description"] = "Stale" },
-            });
-
-            var connector = new SeoToolkitMetaFieldsValueServiceConnector(
-                _valueRepository.Object, _contentService.Object, _fieldCollection, _valueService.Object,
-                DefaultSettings());
-
-            var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, nodeKey);
-            var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.MetaFieldsValueArtifact(udi)
-            {
-                Name = "Some Page",
-                Values = new Dictionary<string, Dictionary<string, string?>> { [""] = new() { ["title"] = "\"New\"" } },
-            };
-
-            var state = await connector.ProcessInitAsync(artifact, Mock.Of<IDeployContext>());
-            await connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 7);
-
-            _valueRepository.Verify(r => r.Delete(nodeKey, "description", ""), Times.Once);
-            _valueRepository.Verify(r => r.Delete(nodeKey, "title", ""), Times.Never);
-        }
-
-        [Test]
-        public async Task Process_Pass7_EmptyArtifact_ClearsAllTargetValues()
-        {
-            var nodeKey = Guid.NewGuid();
-            SetUpContent(nodeKey);
-            _valueRepository.Setup(r => r.GetAllValues(nodeKey)).Returns(new Dictionary<string, Dictionary<string, object>>
-            {
-                [""] = new() { ["title"] = "Old", ["description"] = "Old" },
-                ["da-DK"] = new() { ["title"] = "Gammel" },
-            });
-
-            var connector = new SeoToolkitMetaFieldsValueServiceConnector(
-                _valueRepository.Object, _contentService.Object, _fieldCollection, _valueService.Object,
-                DefaultSettings());
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, nodeKey);
             // An artifact carrying no values is a "clear everything for this node" instruction.
             var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.MetaFieldsValueArtifact(udi) { Name = "Some Page" };
 
-            var state = await connector.ProcessInitAsync(artifact, Mock.Of<IDeployContext>());
-            await connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 7);
+            var state = await _connector.ProcessInitAsync(artifact, Mock.Of<IDeployContext>());
+            await _connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 7);
 
-            _valueRepository.Verify(r => r.Delete(nodeKey, "title", ""), Times.Once);
-            _valueRepository.Verify(r => r.Delete(nodeKey, "description", ""), Times.Once);
-            _valueRepository.Verify(r => r.Delete(nodeKey, "title", "da-DK"), Times.Once);
-            _valueRepository.Verify(r => r.Add(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object>()), Times.Never);
+            _valueService.Verify(s => s.ReplaceAllValues(
+                nodeKey, It.Is<Dictionary<string, Dictionary<string, object>>>(v => v.Count == 0)), Times.Once);
         }
 
         [Test]
@@ -210,7 +178,7 @@ namespace SeoToolkit.Tests.Deploy
             var state = await _connector.ProcessInitAsync(artifact, Mock.Of<IDeployContext>());
             Assert.DoesNotThrowAsync(() => _connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 7));
             _valueRepository.Verify(r => r.Add(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object>()), Times.Never);
-            _valueService.Verify(s => s.NotifyChanged(It.IsAny<Guid>()), Times.Never);
+            _valueService.Verify(s => s.ReplaceAllValues(It.IsAny<Guid>(), It.IsAny<Dictionary<string, Dictionary<string, object>>>()), Times.Never);
         }
 
         /// <summary>Minimal media-style converter: its database value is a bare media GUID.</summary>

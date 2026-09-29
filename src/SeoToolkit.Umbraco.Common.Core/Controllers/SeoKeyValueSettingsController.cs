@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Models.ViewModels;
-using SeoToolkit.Umbraco.Common.Core.Notifications;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository;
+using SeoToolkit.Umbraco.Common.Core.Services.SeoKeyValueService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Web.Common.Routing;
 
 namespace SeoToolkit.Umbraco.Common.Core.Controllers
@@ -17,13 +16,13 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
     {
         private readonly SeoKeyValueSettingCollection _seoKeyValueSettings;
         private readonly ISeoKeyValueRepository _seoKeyValueRepository;
-        private readonly IEventAggregator _eventAggregator;
+        private readonly ISeoKeyValueService _seoKeyValueService;
 
-        public SeoKeyValueSettingsController(SeoKeyValueSettingCollection seoKeyValueSettings, ISeoKeyValueRepository seoKeyValueRepository, IEventAggregator eventAggregator)
+        public SeoKeyValueSettingsController(SeoKeyValueSettingCollection seoKeyValueSettings, ISeoKeyValueRepository seoKeyValueRepository, ISeoKeyValueService seoKeyValueService)
         {
             _seoKeyValueSettings = seoKeyValueSettings;
             _seoKeyValueRepository = seoKeyValueRepository;
-            _eventAggregator = eventAggregator;
+            _seoKeyValueService = seoKeyValueService;
         }
 
         [HttpGet("value")]
@@ -60,20 +59,9 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         }
 
         [HttpPost("save")]
-        public IActionResult SaveSettings(Dictionary<string, string> values, Guid? domainId)
+        public IActionResult SaveSettings(Dictionary<string, string?> values, Guid? domainId)
         {
-            foreach (var value in values)
-            {
-                if (string.IsNullOrWhiteSpace(value.Value))
-                {
-                    _seoKeyValueRepository.Delete(value.Key, domainId);
-                    continue;
-                }
-
-                _seoKeyValueRepository.Set(value.Key, value.Value, domainId);
-            }
-
-            _eventAggregator.Publish(new SeoKeyValueSavedNotification(domainId));
+            _seoKeyValueService.SaveValues(values, domainId);
             return Ok();
         }
     }

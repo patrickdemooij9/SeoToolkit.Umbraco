@@ -136,53 +136,26 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
                 return Task.CompletedTask; // node not (yet) in target; skip rather than fail
             }
 
-            // The artifact is the node's complete value set: delete target values absent from the
-            // source (an absent or null value is a clear) so it converges.
-            foreach (var (culture, fields) in valueRepository.GetAllValues(nodeKey))
-            {
-                foreach (var alias in fields.Keys)
-                {
-                    var inArtifact = state.Artifact.Values.TryGetValue(culture, out var artifactFields)
-                        && artifactFields.TryGetValue(alias, out var artifactJson)
-                        && artifactJson is not null;
-                    if (!inArtifact)
-                    {
-                        valueRepository.Delete(nodeKey, alias, culture);
-                    }
-                }
-            }
-
+            // The artifact is the node's complete value set (an absent or null value is a clear), so
+            // replace the node's values with it; the service deletes target values absent from the
+            // source, then invalidates the cache and publishes the change notification once.
+            var valuesByCulture = new Dictionary<string, Dictionary<string, object>>();
             foreach (var (culture, fields) in state.Artifact.Values)
             {
+                var cultureValues = new Dictionary<string, object>();
                 foreach (var (alias, json) in fields)
                 {
-                    if (json is null)
+                    var value = json is null ? null : JsonConvert.DeserializeObject(json);
+                    if (value is not null)
                     {
-                        continue;
-                    }
-
-                    var value = JsonConvert.DeserializeObject(json);
-                    if (value is null)
-                    {
-                        continue;
-                    }
-
-                    if (valueRepository.Exists(nodeKey, alias, culture))
-                    {
-                        valueRepository.Update(nodeKey, alias, culture, value);
-                    }
-                    else
-                    {
-                        valueRepository.Add(nodeKey, alias, culture, value);
+                        cultureValues[alias] = value;
                     }
                 }
+
+                valuesByCulture[culture] = cultureValues;
             }
 
-            // We wrote straight to the repository (rather than through the service's culture-aware
-            // AddValues), so ask the service to invalidate the per-node runtime cache across the
-            // load-balanced environment and publish the change notification — which also refreshes
-            // the target's own per-node .uda via MetaFieldsValueDiskRefresherHandler.
-            metaFieldsValueService.NotifyChanged(nodeKey);
+            metaFieldsValueService.ReplaceAllValues(nodeKey, valuesByCulture);
 
             return Task.CompletedTask;
         }

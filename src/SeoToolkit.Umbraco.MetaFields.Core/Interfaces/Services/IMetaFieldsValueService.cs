@@ -44,12 +44,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services
         void Delete(Guid nodeId, string fieldAlias, string culture = null);
 
         /// <summary>
-        /// Invalidates the cached values for a node across the (load-balanced) environment and
-        /// publishes a change notification. Call this after writing values through a path that
-        /// bypasses <see cref="AddValues(Guid, Dictionary{string, object}, string)"/> /
-        /// <see cref="Delete(Guid, string, string)"/> — e.g. a Deploy restore that writes straight
-        /// to the repository — so cache invalidation and the disk-refresh can't drift out of sync.
+        /// Replaces all of a node's values across every culture, so the node ends up with exactly
+        /// <paramref name="valuesByCulture"/> (keyed by culture, then field alias; invariant values
+        /// use an empty culture). Existing values that are not in the set are deleted. Unlike
+        /// <see cref="AddValues(Guid, Dictionary{string, object}, string)"/>, cultures are used as-is
+        /// and the cache refresh and change notification happen only once.
         /// </summary>
-        void NotifyChanged(Guid nodeId);
+        void ReplaceAllValues(Guid nodeId, Dictionary<string, Dictionary<string, object>> valuesByCulture);
     }
 }

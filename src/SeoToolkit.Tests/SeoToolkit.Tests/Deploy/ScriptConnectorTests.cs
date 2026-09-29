@@ -19,10 +19,34 @@ namespace SeoToolkit.Tests.Deploy
     public class ScriptConnectorTests
     {
         private static IOptionsMonitor<SeoToolkitDeploySettings> DefaultSettings()
+            => Settings(new SeoToolkitDeploySettings { EnableScripts = true });
+
+        private static IOptionsMonitor<SeoToolkitDeploySettings> Settings(SeoToolkitDeploySettings value)
         {
             var monitor = new Mock<IOptionsMonitor<SeoToolkitDeploySettings>>();
-            monitor.Setup(m => m.CurrentValue).Returns(new SeoToolkitDeploySettings());
+            monitor.Setup(m => m.CurrentValue).Returns(value);
             return monitor.Object;
+        }
+
+        [Test]
+        public async Task Scripts_AreDisabledByDefault()
+        {
+            var scriptKey = Guid.NewGuid();
+            var definition = new Mock<IScriptDefinition>();
+            definition.SetupGet(d => d.Alias).Returns("googleAnalytics");
+
+            var scriptService = new Mock<IScriptManagerService>();
+            scriptService.Setup(s => s.Get(scriptKey))
+                .Returns(new Script { Key = scriptKey, Name = "GA4", Definition = definition.Object });
+
+            var connector = new SeoToolkitScriptServiceConnector(
+                scriptService.Object, CreateDefinitionCollection(definition.Object), Mock.Of<ISeoDomainsService>(),
+                Settings(new SeoToolkitDeploySettings()));
+
+            var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.Script, scriptKey);
+            var artifact = await connector.GetArtifactAsync(udi, PassThroughCache.Instance);
+
+            Assert.That(artifact, Is.Null);
         }
 
         [Test]

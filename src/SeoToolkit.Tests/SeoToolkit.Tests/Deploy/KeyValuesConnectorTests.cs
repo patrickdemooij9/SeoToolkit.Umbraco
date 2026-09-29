@@ -1,9 +1,11 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
+using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.Common.Core.Notifications;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
+using SeoToolkit.Umbraco.Common.Core.Services.SeoKeyValueService;
 using SeoToolkit.Umbraco.Deploy;
 using SeoToolkit.Umbraco.Deploy.Configuration;
 using SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors;
@@ -23,6 +25,9 @@ namespace SeoToolkit.Tests.Deploy
             return monitor.Object;
         }
 
+        private static SeoKeyValueService CreateService(ISeoKeyValueRepository repository, IEventAggregator eventAggregator)
+            => new(Mock.Of<ISeoDomainResolver>(), repository, eventAggregator);
+
         [Test]
         public async Task RootKeyValues_UseWellKnownGuid_AndSetOnImport()
         {
@@ -34,7 +39,7 @@ namespace SeoToolkit.Tests.Deploy
             var eventAggregator = new Mock<IEventAggregator>();
 
             var connector = new SeoToolkitKeyValuesServiceConnector(
-                repository.Object, domainsService.Object, eventAggregator.Object, DefaultSettings());
+                repository.Object, domainsService.Object, CreateService(repository.Object, eventAggregator.Object), DefaultSettings());
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.KeyValues, SeoToolkitDeployConstants.RootKeyValuesGuid);
             var artifact = await connector.GetArtifactAsync(udi, PassThroughCache.Instance);
@@ -47,8 +52,8 @@ namespace SeoToolkit.Tests.Deploy
             await connector.ProcessAsync(state, Mock.Of<IDeployContext>(), 2);
 
             repository.Verify(r => r.Set("siteName", "My Site", null), Times.Once);
-            // The repository write bypasses the controller's notification, so the connector must
-            // publish it to keep the target's key/values .uda in sync.
+            // Saving goes through the service, which publishes the notification once to keep the
+            // target's key/values .uda in sync.
             eventAggregator.Verify(e => e.Publish(
                 It.Is<SeoKeyValueSavedNotification>(n => n.DomainCollectionId == null)), Times.Once);
         }
@@ -64,7 +69,7 @@ namespace SeoToolkit.Tests.Deploy
             domainsService.Setup(s => s.GetAll()).Returns([]);
 
             var connector = new SeoToolkitKeyValuesServiceConnector(
-                repository.Object, domainsService.Object, Mock.Of<IEventAggregator>(), DefaultSettings());
+                repository.Object, domainsService.Object, CreateService(repository.Object, Mock.Of<IEventAggregator>()), DefaultSettings());
 
             var udi = new GuidUdi(SeoToolkitDeployConstants.UdiEntityType.KeyValues, SeoToolkitDeployConstants.RootKeyValuesGuid);
             var artifact = new SeoToolkit.Umbraco.Deploy.Artifacts.KeyValuesArtifact(udi)
@@ -79,6 +84,24 @@ namespace SeoToolkit.Tests.Deploy
             repository.Verify(r => r.Delete("drop", null), Times.Once);
             repository.Verify(r => r.Delete("keep", null), Times.Never);
             repository.Verify(r => r.Set("keep", "source", null), Times.Once);
+        }
+
+        [Test]
+        public void SaveValues_SetsAndDeletes_AndPublishesOnce()
+        {
+            var domainId = Guid.NewGuid();
+            var repository = new Mock<ISeoKeyValueRepository>();
+            var eventAggregator = new Mock<IEventAggregator>();
+            var service = CreateService(repository.Object, eventAggregator.Object);
+
+            service.SaveValues(new Dictionary<string, string?> { ["a"] = "1", ["b"] = "", ["c"] = null, ["d"] = "4" }, domainId);
+
+            repository.Verify(r => r.Set("a", "1", domainId), Times.Once);
+            repository.Verify(r => r.Set("d", "4", domainId), Times.Once);
+            repository.Verify(r => r.Delete("b", domainId), Times.Once);
+            repository.Verify(r => r.Delete("c", domainId), Times.Once);
+            eventAggregator.Verify(e => e.Publish(
+                It.Is<SeoKeyValueSavedNotification>(n => n.DomainCollectionId == domainId)), Times.Once);
         }
     }
 }

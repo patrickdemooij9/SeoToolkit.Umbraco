@@ -1,13 +1,12 @@
 using Microsoft.Extensions.Options;
-using SeoToolkit.Umbraco.Common.Core.Notifications;
 using SeoToolkit.Umbraco.Common.Core.Repositories.SeoKeyValueRepository;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
+using SeoToolkit.Umbraco.Common.Core.Services.SeoKeyValueService;
 using SeoToolkit.Umbraco.Deploy.Artifacts;
 using SeoToolkit.Umbraco.Deploy.Configuration;
 using SeoToolkit.Umbraco.Deploy.Models;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Deploy;
-using Umbraco.Cms.Core.Events;
 
 namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
 {
@@ -15,7 +14,7 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
     public class SeoToolkitKeyValuesServiceConnector(
         ISeoKeyValueRepository keyValueRepository,
         ISeoDomainsService seoDomainsService,
-        IEventAggregator eventAggregator,
+        ISeoKeyValueService keyValueService,
         IOptionsMonitor<SeoToolkitDeploySettings> settings)
         : SeoToolkitEntityServiceConnectorBase<KeyValuesArtifact, KeyValuesModel>(settings)
     {
@@ -117,24 +116,17 @@ namespace SeoToolkit.Umbraco.Deploy.Connectors.ServiceConnectors
 
             Guid? domainId = state.Artifact.DomainCollectionUdi?.Guid;
 
-            // The artifact is authoritative: drop target keys absent from the source so it converges.
-            var targetKeys = keyValueRepository.Get(domainId).Keys.ToArray();
-            foreach (var targetKey in targetKeys)
+            // The artifact is authoritative: target keys absent from the source are passed as null
+            // so the service deletes them and the target converges.
+            var values = new Dictionary<string, string?>(state.Artifact.Values);
+            foreach (var targetKey in keyValueRepository.Get(domainId).Keys)
             {
-                if (!state.Artifact.Values.ContainsKey(targetKey))
-                {
-                    keyValueRepository.Delete(targetKey, domainId);
-                }
+                values.TryAdd(targetKey, null);
             }
 
-            foreach (var (key, value) in state.Artifact.Values)
-            {
-                keyValueRepository.Set(key, value, domainId);
-            }
-
-            // The repository write skips the controller's notification, so publish it here — that
-            // keeps the target's own key/values .uda in sync via KeyValuesDiskRefresherHandler.
-            eventAggregator.Publish(new SeoKeyValueSavedNotification(domainId));
+            // Saving through the service publishes SeoKeyValueSavedNotification once, which keeps the
+            // target's own key/values .uda in sync via KeyValuesDiskRefresherHandler.
+            keyValueService.SaveValues(values, domainId);
 
             return Task.CompletedTask;
         }

@@ -58,15 +58,55 @@ namespace SeoToolkit.Tests.Deploy
         }
 
         [Test]
-        public void NotifyChanged_PublishesChangedNotification()
+        public void ReplaceAllValues_WritesEachCultureAsIs_AndDeletesValuesNotInTheSet()
         {
             var nodeKey = Guid.NewGuid();
             var repository = new Mock<IMetaFieldsValueRepository>();
+            repository.Setup(r => r.GetAllValues(nodeKey)).Returns(new Dictionary<string, Dictionary<string, object>>
+            {
+                [""] = new() { ["title"] = "Old title", ["description"] = "Stale" },
+                ["nl-NL"] = new() { ["title"] = "Oud" },
+            });
+            repository.Setup(r => r.Exists(nodeKey, "title", "")).Returns(true);
             var eventAggregator = new Mock<IEventAggregator>();
 
             var service = CreateService(repository, eventAggregator);
-            service.NotifyChanged(nodeKey);
+            service.ReplaceAllValues(nodeKey, new Dictionary<string, Dictionary<string, object>>
+            {
+                [""] = new() { ["title"] = "New" },
+                ["da-DK"] = new() { ["title"] = "Hej" },
+            });
 
+            // Invariant values stay under "" rather than falling back to the variation context culture.
+            repository.Verify(r => r.Update(nodeKey, "title", "", "New"), Times.Once);
+            repository.Verify(r => r.Add(nodeKey, "title", "da-DK", "Hej"), Times.Once);
+            repository.Verify(r => r.Delete(nodeKey, "description", ""), Times.Once);
+            repository.Verify(r => r.Delete(nodeKey, "title", "nl-NL"), Times.Once);
+            repository.Verify(r => r.Delete(nodeKey, "title", ""), Times.Never);
+            repository.Verify(r => r.Add(It.IsAny<Guid>(), It.IsAny<string>(), "en-US", It.IsAny<object>()), Times.Never);
+            eventAggregator.Verify(e => e.Publish(
+                It.Is<MetaFieldsValueChangedNotification>(n => n.NodeKey == nodeKey)), Times.Once);
+        }
+
+        [Test]
+        public void ReplaceAllValues_WithNoValues_ClearsAllTargetValues()
+        {
+            var nodeKey = Guid.NewGuid();
+            var repository = new Mock<IMetaFieldsValueRepository>();
+            repository.Setup(r => r.GetAllValues(nodeKey)).Returns(new Dictionary<string, Dictionary<string, object>>
+            {
+                [""] = new() { ["title"] = "Old", ["description"] = "Old" },
+                ["da-DK"] = new() { ["title"] = "Gammel" },
+            });
+            var eventAggregator = new Mock<IEventAggregator>();
+
+            var service = CreateService(repository, eventAggregator);
+            service.ReplaceAllValues(nodeKey, new Dictionary<string, Dictionary<string, object>>());
+
+            repository.Verify(r => r.Delete(nodeKey, "title", ""), Times.Once);
+            repository.Verify(r => r.Delete(nodeKey, "description", ""), Times.Once);
+            repository.Verify(r => r.Delete(nodeKey, "title", "da-DK"), Times.Once);
+            repository.Verify(r => r.Add(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object>()), Times.Never);
             eventAggregator.Verify(e => e.Publish(
                 It.Is<MetaFieldsValueChangedNotification>(n => n.NodeKey == nodeKey)), Times.Once);
         }
