@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SeoToolkit.Umbraco.Common.Core.Interfaces
 {
@@ -10,5 +11,16 @@ namespace SeoToolkit.Umbraco.Common.Core.Interfaces
         public string PropertyAlias { get; }
 
         public Type EditorType { get; }
+
+        /// <summary>
+        /// Optional configuration passed to the property editor that renders this setting.
+        /// </summary>
+        public IReadOnlyDictionary<string, object> EditConfig => null;
+
+        /// <summary>
+        /// When <c>true</c>, this setting is only shown on the root settings node and not on
+        /// individual domain nodes.
+        /// </summary>
+        public bool RootOnly => false;
     }
 }

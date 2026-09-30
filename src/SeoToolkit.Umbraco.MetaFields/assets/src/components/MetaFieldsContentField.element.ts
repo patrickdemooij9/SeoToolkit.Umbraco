@@ -103,11 +103,15 @@ export class MetaFieldsContentField extends UmbElementMixin(LitElement) {
       >
         <div slot="editor">
           ${this._element}
-          ${(when(
-            this.field?.value,
-            () => html` <small>Fallback value: ${this.field?.value}</small> `,
-            () => html` <small>No fallback value found</small>`
-          ))}
+          ${when(
+            this.field?.allowFallback ?? true,
+            () =>
+              when(
+                this.field?.value,
+                () => html` <small>Fallback value: ${this.field?.value}</small> `,
+                () => html` <small>No fallback value found</small>`
+              )
+          )}
           ${when(this.field!.suggestions!.length > 0, () => html`
             ${repeat(this.field!.suggestions!, (item) => item.alias, (item) => html`
               <div class="field-suggestion">

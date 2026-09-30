@@ -1,4 +1,6 @@
-﻿namespace SeoToolkit.Umbraco.Common.Core.Models.ViewModels
+﻿using System.Collections.Generic;
+
+namespace SeoToolkit.Umbraco.Common.Core.Models.ViewModels
 {
     public class SeoKeyValueSettingViewModel
     {
@@ -9,5 +11,6 @@
 
         public object? Value { get; set; }
         public bool IsRoot { get; set; }
+        public IReadOnlyDictionary<string, object>? EditConfig { get; set; }
     }
 }

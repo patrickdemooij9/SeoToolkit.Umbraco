@@ -28,4 +28,18 @@ const betterCheckboxListPropertyEditor: ManifestPropertyEditorUi = {
   },
 };
 
-export const PropertyEditorManifests = [ fieldsEditorPropertyEditor, betterCheckboxListPropertyEditor ];
+const schemaEditorPropertyEditor: ManifestPropertyEditorUi = {
+  type: "propertyEditorUi",
+  alias: "SeoToolkit.SchemaEditor",
+  name: "SeoToolkit Schema Editor",
+  element: () =>
+    import("../propertyEditors/SchemaEditorPropertyEditor.element"),
+  meta: {
+    label: "Schema Editor",
+    icon: 'icon-sitemap',
+    group: 'common',
+    propertyEditorSchemaAlias: "Umbraco.Plain.String",
+  },
+};
+
+export const PropertyEditorManifests = [ fieldsEditorPropertyEditor, betterCheckboxListPropertyEditor, schemaEditorPropertyEditor ];

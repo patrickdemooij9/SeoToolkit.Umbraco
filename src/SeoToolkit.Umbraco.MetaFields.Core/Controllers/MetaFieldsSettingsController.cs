@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Mapping;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
@@ -50,10 +51,29 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 if (contentType != null)
                 {
                     var model = _documentTypeSettingsService.Get(contentType.Key);
-                    if (model != null)
+                    var fields = _seoFieldCollection.GetAll().Select(it =>
                     {
-                        content = new DocumentTypeSettingsContentViewModel(model, _seoFieldCollection.GetAll().Select(it => new SeoFieldViewModel(it, model.Get(it.Alias))).ToArray());
-                    }
+                        var fieldVm = model != null
+                            ? new SeoFieldViewModel(it, model.Get(it.Alias))
+                            : new SeoFieldViewModel(it);
+
+                        if (fieldVm.Editor != null)
+                        {
+                            var config = new Dictionary<string, object>(
+                                fieldVm.Editor.Config ?? new Dictionary<string, object>())
+                            {
+                                ["nodeGuid"] = contentType.Key.ToString(),
+                                ["ownerType"] = "documentType"
+                            };
+                            fieldVm.Editor.Config = config;
+                        }
+
+                        return fieldVm;
+                    }).ToArray();
+
+                    content = model != null
+                        ? new DocumentTypeSettingsContentViewModel(model, fields)
+                        : new DocumentTypeSettingsContentViewModel(fields);
                 }
             }
             if (content is null)
