@@ -10,6 +10,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels
         public string GroupAlias { get; set; }
         public SeoSuggestionViewModel[] Suggestions { get; set; }
         public string Value { get; set; }
+        public bool AllowFallback { get; set; }
         public object UserValue { get; set; }
         public string EditView { get; set; }
         public Dictionary<string, object> EditConfig { get; set; }

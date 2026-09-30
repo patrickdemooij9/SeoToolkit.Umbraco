@@ -79,7 +79,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                             intermediateObject = result;
                     }
 
-                    if (intermediateObject is null && settings != null)
+                    if (intermediateObject is null && it.AllowDocumentTypeFallback && settings != null)
                     {
                         var documentTypeValue = settings.Get(it.Alias);
                         if (documentTypeValue != null && documentTypeValue.UseInheritedValue)
@@ -96,6 +96,16 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                             }
                         }
                         intermediateObject = documentTypeValue?.Value;
+                    }
+
+                    // For fields that don't fall back to the document type, still run the value
+                    // converter on the field's own (possibly empty) value. This lets converters that
+                    // merge in extra data - e.g. the schema converter adding document type schemas -
+                    // run even when the content has no value of its own.
+                    if (intermediateObject is null && !it.AllowDocumentTypeFallback)
+                    {
+                        var ownValue = userValues?.ContainsKey(it.Alias) is true ? userValues[it.Alias] : null;
+                        intermediateObject = it.EditEditor.ValueConverter.ConvertDatabaseToObject(ownValue);
                     }
 
                     if (intermediateObject is null)

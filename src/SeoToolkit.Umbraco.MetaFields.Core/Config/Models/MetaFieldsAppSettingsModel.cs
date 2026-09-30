@@ -12,5 +12,10 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Config.Models
         /// Determines if the meta field keywords should be shown. Most search engines don't use it anymore.
         /// </summary>
         public bool ShowKeywordsField { get; set; }
+
+        /// <summary>
+        /// Determines if a BreadcrumbList schema is automatically generated from the content tree and rendered on each page.
+        /// </summary>
+        public bool EnableBreadcrumbSchema { get; set; } = true;
     }
 }
