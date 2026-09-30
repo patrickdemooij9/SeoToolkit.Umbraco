@@ -1,6 +1,7 @@
 ﻿using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Umbraco.Cms.Core.Models.PublishedContent;
@@ -8,7 +9,7 @@ using Umbraco.Cms.Core.Web;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
 {
-    public class UmbracoMediaConverter : IEditorValueConverter
+    public class UmbracoMediaConverter : IEditorValueConverter, IMediaReferenceConverter
     {
         private readonly IUmbracoContextFactory _umbracoContextFactory;
 
@@ -44,10 +45,29 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
             {
                 new MediaEditorModel
                 {
-                    Key = Guid.NewGuid(),
+                    // Deterministic entry key (the media key itself): the editor discards this on
+                    // save, but keeping it stable means the serialized value — and therefore the
+                    // Deploy artifact checksum — doesn't change on every export.
+                    Key = content.Key,
                     MediaKey = content.Key
                 }
             };
+        }
+
+        public IEnumerable<Guid> GetReferencedMediaKeys(object value)
+        {
+            switch (value)
+            {
+                case IPublishedContent content:
+                    yield return content.Key;
+                    break;
+                default:
+                    if (Guid.TryParse(value?.ToString(), out var id))
+                    {
+                        yield return id;
+                    }
+                    break;
+            }
         }
 
         public bool IsEmpty(object value)

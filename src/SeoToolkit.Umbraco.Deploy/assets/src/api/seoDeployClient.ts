@@ -1,0 +1,60 @@
+import { SeoDeployItem } from "./seoDeployItems";
+
+// Umbraco Deploy's own management API. SeoToolkit's endpoints use the generated client in ./generated.
+const BASE = "/umbraco/deploy/management/api/v1";
+
+export class SeoDeployClient {
+  #token: string;
+  constructor(token: string) {
+    this.#token = token;
+  }
+
+  #headers(): HeadersInit {
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.#token}`,
+    };
+  }
+
+  // The upstream target's Deploy API endpoint (deployUrl), NOT its backoffice umbracoUrl. Instant
+  // deploy opens a Deploy session against this URL; passing umbracoUrl makes the remote session
+  // request 404 ("The remote API was not found") in Deploy's SourceDeployWorkItem.
+  async getTargetDeployUrl(): Promise<string | undefined> {
+    const resp = await fetch(`${BASE}/configuration/client`, { headers: this.#headers() });
+    if (!resp.ok) return undefined;
+    const body = await resp.json();
+    return body?.clientConfiguration?.target?.deployUrl ?? undefined;
+  }
+
+  async instantDeploy(items: SeoDeployItem[]): Promise<Response> {
+    const targetUrl = await this.getTargetDeployUrl();
+    if (!targetUrl) throw new Error("No upstream target environment configured.");
+    return fetch(`${BASE}/deploy/instant`, {
+      method: "POST",
+      headers: this.#headers(),
+      body: JSON.stringify({
+        targetUrl,
+        ignoreDependencies: false,
+        enableLogging: false,
+        items,
+      }),
+    });
+  }
+
+  // Partial-restore the given SEO UDIs from the chosen source environment. The SEO artifacts
+  // depend on the document in Exist mode only, so the document content is left untouched;
+  // ignoreDependencies stays false unless the environment allows it and the user opts in.
+  async restorePartial(udis: string[], sourceUrl: string, ignoreDependencies = false): Promise<Response> {
+    return fetch(`${BASE}/restore/partial`, {
+      method: "POST",
+      headers: this.#headers(),
+      body: JSON.stringify({
+        sourceUrl,
+        enableLogging: false,
+        ignoreDependencies,
+        restoreNodes: udis.map((udi) => ({ udi, includeDescendants: false, selector: "this" })),
+      }),
+    });
+  }
+
+}

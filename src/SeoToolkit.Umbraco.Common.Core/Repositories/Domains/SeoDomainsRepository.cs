@@ -18,7 +18,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
 
         public SeoDomainCollection? Get(Guid id)
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             var collection = scope.Database.FirstOrDefault<SeoDomainCollectionEntity>(scope.SqlContext.Sql()
                 .SelectAll()
                 .From<SeoDomainCollectionEntity>()
@@ -46,7 +46,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
 
         public SeoDomainCollection[] GetAll()
         {
-            using var scope = _scopeProvider.CreateScope();
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
             var collections = scope.Database.Fetch<SeoDomainCollectionEntity>(scope.SqlContext.Sql()
                 .SelectAll()
                 .From<SeoDomainCollectionEntity>()).Select(it => new SeoDomainCollection
@@ -85,7 +85,9 @@ namespace SeoToolkit.Umbraco.Common.Core.Repositories.Domains
 
             collectionEntity ??= new SeoDomainCollectionEntity
             {
-                Id = Guid.NewGuid()
+                // Preserve a caller-supplied Id when it doesn't exist yet in this environment
+                // (e.g. a collection transferred via Deploy) so the identifier round-trips.
+                Id = collection.Id == null || collection.Id.Value == Guid.Empty ? Guid.NewGuid() : collection.Id.Value
             };
 
             collectionEntity.Name = collection.Name;

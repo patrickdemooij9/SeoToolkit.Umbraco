@@ -41,11 +41,14 @@ namespace SeoToolkit.Tests
                 NoAppCache.Instance,
                 new IsolatedCaches(_ => new ObjectCacheAppCache()));
 
+            var eventAggregatorMock = new Mock<IEventAggregator>();
+
             _service = new MetaFieldsValueService(
                 _repository.Object,
                 variationContextAccessor.Object,
                 appCaches,
-                BuildDistributedCache(appCaches));
+                BuildDistributedCache(appCaches),
+                eventAggregatorMock.Object);
         }
 
         /// <summary>
