@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using SeoToolkit.Umbraco.SiteAudit.Core.Enums;
 using SeoToolkit.Umbraco.SiteAudit.Core.Interfaces;
@@ -41,7 +42,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Checks
             var results = new List<CheckPageCrawlResult>();
             foreach (var imageElement in images)
             {
-                var sourceUrl = imageElement.Attributes["src"].Value;
+                var sourceUrl = HtmlEntity.DeEntitize(imageElement.Attributes["src"].Value);
                 if (string.IsNullOrWhiteSpace(sourceUrl))
                     continue;
 
