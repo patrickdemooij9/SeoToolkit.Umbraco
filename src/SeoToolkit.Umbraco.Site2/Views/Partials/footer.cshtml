@@ -1,0 +1,24 @@
+﻿@inherits UmbracoViewPage
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+
+@{
+    var homePage = Model.AncestorOrSelf<ContentModels.Home>();
+}
+
+<!-- Footer-->
+<footer>
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                @if (homePage.SocialIconLinks != null && homePage.SocialIconLinks.Any())
+                {
+                    <ul class="list-inline text-center">
+                        @Html.GetBlockListHtml(homePage.SocialIconLinks)
+                    </ul>
+                }
+                <p class="small text-center text-muted fst-italic">@Umbraco.GetDictionaryValue("Footer.CopyrightTitle") &copy; @DateTime.Now.Year @Umbraco.GetDictionaryValue("Footer.CopyrightStatement")</p>
+                <p class="small text-center text-muted fst-italic">Theme by <a href="https://startbootstrap.com/" target="_blank" rel="noopener">Start Bootstrap</a>, implemented in Umbraco by Paul Seal from <a href="https://codeshare.co.uk" target="_blank" rel="noopener">codeshare.co.uk</a></p>
+            </div>
+        </div>
+    </div>
+</footer>

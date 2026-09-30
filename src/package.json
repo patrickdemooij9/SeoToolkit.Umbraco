@@ -16,10 +16,11 @@
     "siteAuditDeploy": "cd SeoToolkit.Umbraco.SiteAudit/assets && npm run deploy",
     "metaFieldsDeploy": "cd SeoToolkit.Umbraco.MetaFields/assets && npm run deploy",
     "notFoundDeploy": "cd SeoToolkit.Umbraco.NotFound/assets && npm run deploy",
+	"deployDeploy": "cd SeoToolkit.Umbraco.Deploy/assets && npm run deploy",
     "start": "concurrently \"npm run common\" \"npm run robotsTxt\" \"npm run scriptManager\" \"npm run redirect\" \"npm run sitemap\" \"npm run siteAudit\" \"npm run metaFields\" \"npm run notFound\"",
     "build:all": "npm run build --workspaces --if-present",
     "generate": "npm run generate --workspaces --if-present",
-    "deploy": "npm run commonDeploy && npm run robotsTxtDeploy && npm run scriptManagerDeploy && npm run redirectDeploy && npm run sitemapDeploy && npm run siteAuditDeploy && npm run metaFieldsDeploy && npm run notFoundDeploy"
+    "deploy": "npm run commonDeploy && npm run robotsTxtDeploy && npm run scriptManagerDeploy && npm run redirectDeploy && npm run sitemapDeploy && npm run siteAuditDeploy && npm run metaFieldsDeploy && npm run notFoundDeploy && npm run deployDeploy"
   },
   "dependencies": {
     "@lit/context": "^1.1.2",
@@ -42,6 +43,7 @@
     "SeoToolkit.Umbraco.Sitemap/assets",
     "SeoToolkit.Umbraco.SiteAudit/assets",
     "SeoToolkit.Umbraco.MetaFields/assets",
-    "SeoToolkit.Umbraco.NotFound/assets"
+    "SeoToolkit.Umbraco.NotFound/assets",
+	"SeoToolkit.Umbraco.Deploy/assets"
   ]
 }

@@ -2,10 +2,12 @@
 using SeoToolkit.Umbraco.Common.Core.Caching;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Models.Business;
+using SeoToolkit.Umbraco.Common.Core.Notifications;
 using SeoToolkit.Umbraco.Common.Core.Repositories.Domains;
 using System;
 using System.Linq;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Extensions;
 
@@ -16,12 +18,14 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
         private readonly ISeoDomainsRepository _seoDomainsRepository;
         private readonly DistributedCache _distributedCache;
         private readonly AppCaches _cache;
+        private readonly IEventAggregator _eventAggregator;
 
-        public SeoDomainsService(ISeoDomainsRepository seoDomainsRepository, AppCaches appCaches, DistributedCache distributedCache)
+        public SeoDomainsService(ISeoDomainsRepository seoDomainsRepository, AppCaches appCaches, DistributedCache distributedCache, IEventAggregator eventAggregator)
         {
             _seoDomainsRepository = seoDomainsRepository;
             _cache = appCaches;
             _distributedCache = distributedCache;
+            _eventAggregator = eventAggregator;
         }
 
         public SeoDomainCollection[] GetAll()
@@ -43,6 +47,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
         {
             var id =  _seoDomainsRepository.Save(collection);
             _distributedCache.RefreshAll(SeoDomainsCacheRefresher.CacheRefreshGuid);
+            collection.Id = id;
+            _eventAggregator.Publish(new SeoDomainCollectionSavedNotification(collection));
             return id;
         }
 
@@ -50,6 +56,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Services.Domains
         {
             _seoDomainsRepository.Delete(domainId);
             _distributedCache.RefreshAll(SeoDomainsCacheRefresher.CacheRefreshGuid);
+            _eventAggregator.Publish(new SeoDomainCollectionDeletedNotification(domainId));
         }
     }
 }

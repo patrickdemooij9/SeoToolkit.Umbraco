@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <DefaultItemExcludes>$(DefaultItemExcludes);App_Plugins/**;</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);umbraco/**;</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);wwwroot/media/**;</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <!-- Force windows to use ICU. Otherwise Windows 10 2019H1+ will do it, but older windows 10 and most if not all winodws servers will run NLS -->
+  <ItemGroup>
+    <PackageReference Include="Clean" Version="8.0.0" />
+    <PackageReference Include="Umbraco.Cms" Version="18.0.0" />
+    <!-- Opt-in to app-local ICU to ensure consistent globalization APIs across different platforms -->
+    <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="72.1.0.3" />
+    <PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="18.0.0" />
+    <PackageReference Include="Umbraco.Deploy.OnPrem" Version="18.0.1" />
+    <PackageReference Include="uSync" Version="18.0.0" />
+    <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="72.1.0.3" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="App_Plugins/**" CopyToOutputDirectory="Always" />
+    <Content Include="umbraco/**" CopyToOutputDirectory="Always" />
+    <Compile Remove="umbraco\**" />
+    <Content Remove="App_Plugins\**" />
+    <Content Remove="umbraco/Data/**" />
+    <Content Remove="umbraco/Logs/**" />
+    <Content Remove="umbraco/mediacache/**" />
+    <Content Remove="umbraco/models/**" />
+    <Content Remove="umbraco\**" />
+    <Compile Include="umbraco/models/**" Exclude="**/*.flag" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- extends watching group to include *.js files -->
+    <Watch Include="**\*.js" Exclude="node_modules\**\*;**\*.js.map;obj\**\*;bin\**\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="App_Plugins\**" />
+    <EmbeddedResource Remove="umbraco\**" />
+    <None Remove="umbraco\**" />
+    <Watch Remove="App_Plugins\**" />
+    <Watch Remove="umbraco\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SeoToolkit.Umbraco.AI.Integration\SeoToolkit.Umbraco.AI.Integration.csproj" />
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Deploy\SeoToolkit.Umbraco.Deploy.csproj" />
+    <ProjectReference Include="..\SeoToolkit.Umbraco.uSync\SeoToolkit.Umbraco.uSync.csproj" />
+    <ProjectReference Include="..\SeoToolkit.Umbraco\SeoToolkit.Umbraco.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
+  </PropertyGroup>
+
+  <!-- Set this to true if ModelsBuilder mode is not InMemoryAuto-->
+  <PropertyGroup>
+    <RazorCompileOnBuild>false</RazorCompileOnBuild>
+    <RazorCompileOnPublish>false</RazorCompileOnPublish>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Umbraco.Web.UI' " />
+</Project>

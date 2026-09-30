@@ -14,6 +14,7 @@
     <!-- Opt-in to app-local ICU to ensure consistent globalization APIs across different platforms -->
     <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="72.1.0.3" />
     <PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="18.0.0" />
+    <PackageReference Include="Umbraco.Deploy.OnPrem" Version="18.0.1" />
     <PackageReference Include="uSync" Version="18.0.0" />
     <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="72.1.0.3" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
   </ItemGroup>
@@ -44,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SeoToolkit.Umbraco.AI.Integration\SeoToolkit.Umbraco.AI.Integration.csproj" />
+    <ProjectReference Include="..\SeoToolkit.Umbraco.Deploy\SeoToolkit.Umbraco.Deploy.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco.uSync\SeoToolkit.Umbraco.uSync.csproj" />
     <ProjectReference Include="..\SeoToolkit.Umbraco\SeoToolkit.Umbraco.csproj" />
   </ItemGroup>
