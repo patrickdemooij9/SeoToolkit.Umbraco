@@ -11,20 +11,20 @@
     -->
     <DefaultItemExcludes>$(DefaultItemExcludes);assets/**</DefaultItemExcludes>
 
-    <SeoToolkitVersionCommon>6.4.3</SeoToolkitVersionCommon>
-    <SeoToolkitVersionMetaFields>6.4.3</SeoToolkitVersionMetaFields>
-    <SeoToolkitVersionNotFound>6.4.3</SeoToolkitVersionNotFound>
-    <SeoToolkitVersionRedirects>6.4.3</SeoToolkitVersionRedirects>
-    <SeoToolkitVersionRobotsTxt>6.4.3</SeoToolkitVersionRobotsTxt>
-    <SeoToolkitVersionScriptManager>6.4.3</SeoToolkitVersionScriptManager>
-    <SeoToolkitVersionSiteAudit>6.4.3</SeoToolkitVersionSiteAudit>
-    <SeoToolkitVersionSitemap>6.4.3</SeoToolkitVersionSitemap>
-    <SeoToolkitVersionCore>6.4.3</SeoToolkitVersionCore>
-    <SeoToolkitVersionPackage>6.4.3</SeoToolkitVersionPackage>
-	<SeoToolkitVersionUsync>1.0.0-beta1</SeoToolkitVersionUsync>
+    <SeoToolkitVersionCommon>6.5.0</SeoToolkitVersionCommon>
+    <SeoToolkitVersionMetaFields>6.5.0</SeoToolkitVersionMetaFields>
+    <SeoToolkitVersionNotFound>6.5.0</SeoToolkitVersionNotFound>
+    <SeoToolkitVersionRedirects>6.5.0</SeoToolkitVersionRedirects>
+    <SeoToolkitVersionRobotsTxt>6.5.0</SeoToolkitVersionRobotsTxt>
+    <SeoToolkitVersionScriptManager>6.5.0</SeoToolkitVersionScriptManager>
+    <SeoToolkitVersionSiteAudit>6.5.0</SeoToolkitVersionSiteAudit>
+    <SeoToolkitVersionSitemap>6.5.0</SeoToolkitVersionSitemap>
+    <SeoToolkitVersionCore>6.5.0</SeoToolkitVersionCore>
+    <SeoToolkitVersionPackage>6.5.0</SeoToolkitVersionPackage>
+    <SeoToolkitVersionUsync>1.0.0-beta1</SeoToolkitVersionUsync>
     <SeoToolkitVersionDeploy>1.0.0-beta1</SeoToolkitVersionDeploy>
-	<SeoToolkitVersionAICore>1.1.0</SeoToolkitVersionAICore>
-	<SeoToolkitVersionAIIntegration>1.1.0</SeoToolkitVersionAIIntegration>
+    <SeoToolkitVersionAICore>1.1.0</SeoToolkitVersionAICore>
+    <SeoToolkitVersionAIIntegration>1.1.0</SeoToolkitVersionAIIntegration>
 
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.Common'))">$(SeoToolkitVersionCommon)</VersionPrefix>
     <VersionPrefix Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.MetaFields'))">$(SeoToolkitVersionMetaFields)</VersionPrefix>
