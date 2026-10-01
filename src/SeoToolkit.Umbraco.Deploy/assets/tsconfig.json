@@ -24,5 +24,6 @@
       "@umbraco-cms/backoffice/extension-types"
     ]
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
 }

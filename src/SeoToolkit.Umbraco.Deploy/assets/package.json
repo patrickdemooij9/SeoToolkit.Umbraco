@@ -10,5 +10,8 @@
     "generate": "openapi-ts",
     "deploy": "npm install && tsc && vite build",
     "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.9"
   }
 }
