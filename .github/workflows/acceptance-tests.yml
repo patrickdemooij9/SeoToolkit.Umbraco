@@ -104,11 +104,40 @@ jobs:
         # the repo root gives a process that boots happily and answers /umbraco, but
         # resolves wwwroot/, Views/ and umbraco/ against the repo root - every
         # /App_Plugins/SeoToolkit/... request 404s and the readiness check never passes.
+        #
+        # The site is booted TWICE. Umbraco Deploy only maps its SignalR hubs
+        # (/umbraco/backoffice/DeployHub and RestoreHub) when the runtime level is already
+        # Run while routes are built. On the first boot against an empty database the level
+        # is still Install at that point, so the hubs are never mapped for that process and
+        # every backoffice page logs SignalR 404s. A restart after the unattended install
+        # gives a normally booted site.
         working-directory: ./publish
         run: |
-          nohup dotnet ./SeoToolkit.Umbraco.Site.dll > "$GITHUB_WORKSPACE/site.log" 2>&1 &
-          echo $! > "$GITHUB_WORKSPACE/site.pid"
-          echo "Started site, pid $(cat "$GITHUB_WORKSPACE/site.pid")"
+          start_site() {
+            nohup dotnet ./SeoToolkit.Umbraco.Site.dll >> "$GITHUB_WORKSPACE/site.log" 2>&1 &
+            echo $! > "$GITHUB_WORKSPACE/site.pid"
+            echo "Started site, pid $(cat "$GITHUB_WORKSPACE/site.pid")"
+          }
+
+          : > "$GITHUB_WORKSPACE/site.log"
+          start_site
+          pid=$(cat "$GITHUB_WORKSPACE/site.pid")
+
+          # First boot: unattended install + package migrations. If it never comes up,
+          # leave the process alone and let "Wait for the site" report why.
+          deadline=$((SECONDS + 600))
+          until curl -skf -o /dev/null "$SITE_URL/umbraco"; do
+            if [ $SECONDS -ge $deadline ] || ! kill -0 "$pid" 2>/dev/null; then
+              echo "First boot did not complete; skipping the restart."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Unattended install finished after ${SECONDS}s, restarting the site."
+
+          kill "$pid"
+          wait "$pid" 2>/dev/null || true
+          start_site
         env:
           # Umbraco backoffice auth REQUIRES HTTPS. The login flow relies on the
           # __Host-umbPkceCode cookie, and the __Host- prefix plus the Secure flag mean

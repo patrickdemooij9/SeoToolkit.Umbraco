@@ -42,7 +42,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Caching
                 return;
             }
 
-            _bloomFilter.Add(url.ToLowerInvariant());
+            _bloomFilter.Add(ToKey(url));
             _spaceLeft--;
         }
 
@@ -63,7 +63,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Caching
                 return true;
             }
 
-            return _bloomFilter.Contains(url.ToLowerInvariant());
+            return _bloomFilter.Contains(ToKey(url));
         }
 
         public void Rebuild()
@@ -77,8 +77,13 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Caching
 
             _spaceLeft = 1000;
             _bloomFilter = FilterBuilder.Build(redirects.Length + 1000, 0.0001);
-            _bloomFilter.Add(redirects.Select(r => r.OldUrl.ToLowerInvariant()).ToArray());
+            _bloomFilter.Add(redirects.Select(r => ToKey(r.OldUrl)).ToArray());
         }
+
+        // BloomFilter.NetCore reports the empty string as present in roughly half of all filters
+        // above ~1000 items, and "/" is cleaned to "" before lookup - so without the prefix every
+        // homepage request could fall through to the database. The prefix keeps keys non-empty.
+        private static string ToKey(string url) => "url:" + url.ToLowerInvariant();
 
         private bool IsEnabled() { return _settingsService.GetSettings().EnableBloomFilter; }
     }
