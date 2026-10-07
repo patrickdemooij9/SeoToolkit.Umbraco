@@ -67,5 +67,40 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Helpers
 
         [GeneratedRegex(@"\s+")]
         private static partial Regex WhitespaceRegex();
+
+        [GeneratedRegex(@"<[a-zA-Z/!][\s\S]*?>")]
+        private static partial Regex StringHtmlRegex();
+
+        // This is the implementation of Umbraco 18
+        private static string StripHtml(this string text, string replacement)
+        {
+            var stripped = StringHtmlRegex().Replace(text, replacement);
+            if (string.IsNullOrEmpty(replacement))
+            {
+                return stripped;
+            }
+
+            // Collapse consecutive replacements into a single instance (e.g. "</p><p>" produces two
+            // adjacent replacements).
+            var doubled = replacement + replacement;
+            while (stripped.Contains(doubled))
+            {
+                stripped = stripped.Replace(doubled, replacement);
+            }
+
+            // Remove the leading/trailing replacement left over from outer tags (e.g. the opening
+            // <p> and closing </p> that wrap the entire content).
+            if (stripped.StartsWith(replacement))
+            {
+                stripped = stripped[replacement.Length..];
+            }
+
+            if (stripped.EndsWith(replacement))
+            {
+                stripped = stripped[..^replacement.Length];
+            }
+
+            return stripped.Trim();
+        }
     }
 }
