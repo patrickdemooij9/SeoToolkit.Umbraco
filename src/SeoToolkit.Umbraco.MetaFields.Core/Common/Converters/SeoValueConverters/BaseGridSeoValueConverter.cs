@@ -4,6 +4,7 @@ using System.Linq;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Models.Blocks;
 using Umbraco.Extensions;
+using SeoToolkit.Umbraco.MetaFields.Core.Helpers;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Converters;
 using Umbraco.Cms.Core.Strings;
 
@@ -31,7 +32,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                     foreach(var property in item.Properties.Where(p => dataTypes.Contains(p.PropertyType.DataType.EditorAlias))) {
                         var propertyValue = item.Value(property.Alias);
                         if (propertyValue is IHtmlEncodedString encodedString) {
-                            values.Add(encodedString.ToHtmlString()?.StripHtml());
+                            values.Add(SeoTextHelper.HtmlToPlainText(encodedString.ToHtmlString()));
                         } else {
                             values.Add(propertyValue);
                         }
@@ -40,7 +41,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.SeoValueConverter
                     }
                 }
             }
-            return values.Aggregate("", (a, b) => $"{a} {b}").Trim();
+            return SeoTextHelper.CollapseWhitespace(string.Join(" ", values));
         }
     }
 }

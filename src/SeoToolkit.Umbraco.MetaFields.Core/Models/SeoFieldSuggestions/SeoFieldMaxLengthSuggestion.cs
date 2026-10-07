@@ -9,6 +9,11 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldSuggestions
         public string Alias => "maxLength";
         public int MaxLength { get; set; }
 
+        /// <summary>
+        /// When true, a value taken from the document type fallback is cut to <see cref="MaxLength"/>. A value an editor typed is never cut.
+        /// </summary>
+        public bool TruncateFallbackValue { get; set; }
+
         public SeoSuggestionViewModel ToViewModel()
         {
             return new SeoSuggestionViewModel
