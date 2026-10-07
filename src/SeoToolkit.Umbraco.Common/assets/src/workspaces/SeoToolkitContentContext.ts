@@ -5,7 +5,11 @@ import {
 import { UmbContextBase } from "@umbraco-cms/backoffice/class-api";
 import { UmbContextToken } from "@umbraco-cms/backoffice/context-api";
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
-import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/document";
+import {
+  UMB_DOCUMENT_ENTITY_TYPE,
+  UMB_DOCUMENT_WORKSPACE_CONTEXT,
+} from "@umbraco-cms/backoffice/document";
+import { UmbEntityUpdatedEvent } from "@umbraco-cms/backoffice/entity-action";
 import { UmbWorkspaceContext } from "@umbraco-cms/backoffice/workspace";
 import { SeoContentSavedEvent } from "../events/seoContentSavedEvent";
 
@@ -15,10 +19,14 @@ const INVARIANT_CULTURE = "invariant";
  * Detects when the document in the workspace has been saved and tells the modules about
  * it, so each of them can persist their own settings without repeating the detection.
  *
- * Umbraco has no client-side event for "this document was saved": UmbEntityUpdatedEvent
- * is only dispatched for updates, never for the first save of a new node, and it does
- * not say which cultures were saved. A variant's update date changing is the signal
- * that does cover both.
+ * Umbraco has no single client-side event for "this document was saved":
+ * - Updates dispatch UmbEntityUpdatedEvent after every successful save, but it does not
+ *   say which cultures were saved, so we report every culture and let the modules only
+ *   persist what the editor changed.
+ * - The first save of a new node dispatches no such event. A variant's update date
+ *   changing is the signal there. It can't be used for updates: the server leaves the
+ *   dates alone when nothing in the document itself changed, which is exactly the case
+ *   when the editor only changed SEO settings.
  */
 export default class SeoToolkitContentContext
   extends UmbContextBase
@@ -35,8 +43,10 @@ export default class SeoToolkitContentContext
     super(host, ST_SEO_CONTENT_TOKEN_CONTEXT.toString());
 
     this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
-      if (!instance) return;
+      if (this.#actionEventContext || !instance) return;
+
       this.#actionEventContext = instance;
+      instance.addEventListener(UmbEntityUpdatedEvent.TYPE, this.#onEntityUpdated);
     });
 
     this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
@@ -77,18 +87,43 @@ export default class SeoToolkitContentContext
             savedCultures.push(culture);
           });
 
-          if (savedCultures.length === 0) return;
+          // Updates are reported through UmbEntityUpdatedEvent. The workspace stores the
+          // created node before it stops being new, so this only lets the create through.
+          if (!instance.getIsNew()) return;
 
-          this.#actionEventContext?.dispatchEvent(
-            new SeoContentSavedEvent({
-              unique: this.#nodeId,
-              cultures: savedCultures,
-            })
-          );
+          this.#dispatchSaved(savedCultures);
         },
         "stSeoContentData"
       );
     });
+  }
+
+  #onEntityUpdated = (event: Event) => {
+    if (!(event instanceof UmbEntityUpdatedEvent)) return;
+    if (event.getEntityType() !== UMB_DOCUMENT_ENTITY_TYPE) return;
+    // The action event context is shared, so events for other documents reach us too.
+    if (!this.#nodeId || event.getUnique() !== this.#nodeId) return;
+
+    this.#dispatchSaved(Object.keys(this.#lastUpdated));
+  };
+
+  #dispatchSaved(cultures: string[]) {
+    if (!this.#nodeId || cultures.length === 0) return;
+
+    this.#actionEventContext?.dispatchEvent(
+      new SeoContentSavedEvent({
+        unique: this.#nodeId,
+        cultures: cultures,
+      })
+    );
+  }
+
+  destroy(): void {
+    super.destroy();
+    this.#actionEventContext?.removeEventListener(
+      UmbEntityUpdatedEvent.TYPE,
+      this.#onEntityUpdated
+    );
   }
 
   getEntityType(): string {
