@@ -32,7 +32,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
 
         public List<ISeoFieldSuggestion> Suggestions { get; } = new List<ISeoFieldSuggestion>
         {
-            new SeoFieldMaxLengthSuggestion() { MaxLength = 160, TruncateFallbackValue = true }
+            new SeoFieldMaxLengthSuggestion() { MaxLength = 160 }
         };
 
         public HtmlString Render(object value)

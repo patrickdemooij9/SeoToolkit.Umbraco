@@ -10,6 +10,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.Business;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldSuggestions;
 using SeoToolkit.Umbraco.MetaFields.Core.Providers;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 using Umbraco.Cms.Core.Events;
@@ -40,8 +41,18 @@ namespace SeoToolkit.Tests
         }
 
         [Test]
-        public void Get_TruncatesFallbackDescription()
+        public void Get_LeavesFallbackDescriptionUncutByDefault()
         {
+            var metaTags = CreateProvider().Get(CreateContent(), true);
+
+            Assert.That(metaTags.GetValue<string>(SeoFieldAliasConstants.MetaDescription), Is.EqualTo(LongDescription));
+        }
+
+        [Test]
+        public void Get_TruncatesFallbackDescription_WhenEnabled()
+        {
+            EnableTruncateFallbackValue();
+
             var metaTags = CreateProvider().Get(CreateContent(), true);
 
             Assert.That(metaTags.GetValue<string>(SeoFieldAliasConstants.MetaDescription),
@@ -49,14 +60,20 @@ namespace SeoToolkit.Tests
         }
 
         [Test]
-        public void Get_LeavesEditorDescriptionUncut()
+        public void Get_LeavesEditorDescriptionUncut_WhenEnabled()
         {
+            EnableTruncateFallbackValue();
             _valueService.Setup(s => s.GetUserValues(_contentKey, It.IsAny<string>()))
                 .Returns(new Dictionary<string, object> { { SeoFieldAliasConstants.MetaDescription, LongDescription } });
 
             var metaTags = CreateProvider().Get(CreateContent(), true);
 
             Assert.That(metaTags.GetValue<string>(SeoFieldAliasConstants.MetaDescription), Is.EqualTo(LongDescription));
+        }
+
+        private void EnableTruncateFallbackValue()
+        {
+            _descriptionField.Suggestions.OfType<SeoFieldMaxLengthSuggestion>().First().TruncateFallbackValue = true;
         }
 
         private DefaultMetaTagsProvider CreateProvider()
