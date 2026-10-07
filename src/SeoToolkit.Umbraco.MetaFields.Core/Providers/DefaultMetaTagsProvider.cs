@@ -6,9 +6,12 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
 using SeoToolkit.Umbraco.MetaFields.Core.Collections;
+using SeoToolkit.Umbraco.MetaFields.Core.Helpers;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces;
+using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.Services;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField;
+using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoFieldSuggestions;
 using SeoToolkit.Umbraco.MetaFields.Core.Models.SeoService;
 using SeoToolkit.Umbraco.MetaFields.Core.Services.DocumentTypeSettings;
 using Umbraco.Cms.Core.Events;
@@ -78,6 +81,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                         if (!it.EditEditor.ValueConverter.IsEmpty(result))
                             intermediateObject = result;
                     }
+                    var isUserValue = intermediateObject is not null;
 
                     if (intermediateObject is null && it.AllowDocumentTypeFallback && settings != null)
                     {
@@ -113,7 +117,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
                     var fromType = intermediateObject.GetType();
                     var converter = _seoConverterCollection.GetConverter(fromType, it.FieldType);
                     if (converter is not null)
-                        return new SeoValue(it, converter.Convert(intermediateObject, content, it.Alias));
+                    {
+                        var converted = converter.Convert(intermediateObject, content, it.Alias);
+                        if (!isUserValue)
+                            converted = TruncateFallbackValue(it, converted);
+                        return new SeoValue(it, converted);
+                    }
 
                     if (fromType != it.FieldType)
                     {
@@ -131,6 +140,17 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Providers
 
                 return metaTags;
             }
+        }
+
+        private static object TruncateFallbackValue(ISeoField field, object value)
+        {
+            if (value is not string text || field is not ISeoFieldHasSuggestions hasSuggestions)
+                return value;
+
+            var maxLength = hasSuggestions.Suggestions
+                .OfType<SeoFieldMaxLengthSuggestion>()
+                .FirstOrDefault(it => it.TruncateFallbackValue);
+            return maxLength is null ? text : SeoTextHelper.Truncate(text, maxLength.MaxLength);
         }
 
         public MetaTagsModel GetEmpty()
