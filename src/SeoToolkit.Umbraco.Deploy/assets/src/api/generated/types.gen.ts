@@ -68,6 +68,9 @@ export type SeoKeyValueSettingViewModel = {
     propertyAlias: string;
     value?: unknown;
     isRoot: boolean;
+    editConfig?: null | {
+        [key: string]: unknown;
+    };
 };
 
 export type SeoDomainModuleSettingViewModel = {

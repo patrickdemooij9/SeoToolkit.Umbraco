@@ -6,7 +6,7 @@ export type ClientOptions = {
 
 export type UpdateStatusCodesRedirectPostModel = {
     redirectIds?: null | Array<string>;
-    redirectCode: number | string;
+    redirectCode: number;
 };
 
 export type SeoToolkitTreeItemApiModel = {
@@ -60,6 +60,9 @@ export type SeoKeyValueSettingViewModel = {
     propertyAlias: string;
     value?: unknown;
     isRoot: boolean;
+    editConfig?: null | {
+        [key: string]: unknown;
+    };
 };
 
 export type SeoDomainModuleSettingViewModel = {
@@ -75,11 +78,11 @@ export type SeoDomainConfigViewModel = {
 export type IDomainModel = {
     domainName: string;
     isWildcard: boolean;
-    languageId?: null | number | string;
+    languageId?: null | number;
     languageIsoCode?: null | string;
-    rootContentId?: null | number | string;
-    sortOrder: number | string;
-    id: number | string;
+    rootContentId?: null | number;
+    sortOrder: number;
+    id: number;
     key: string;
     createDate: string;
     updateDate: string;
@@ -91,16 +94,16 @@ export type SeoDomainCollection = {
     id?: null | string;
     name: string;
     baseUrl?: null | string;
-    domainIds: Array<number | string>;
+    domainIds: Array<number>;
     settings: {
         [key: string]: string;
     };
 };
 
 export type SaveRedirectPostModel = {
-    id: number | string;
+    id: number;
     key?: null | string;
-    domain?: null | number | string;
+    domain?: null | number;
     customDomain?: null | string;
     isEnabled: boolean;
     isRegex: boolean;
@@ -108,13 +111,13 @@ export type SaveRedirectPostModel = {
     newUrl?: null | string;
     newNodeId?: null | string;
     newCultureId?: null | string;
-    redirectCode: number | string;
+    redirectCode: number;
 };
 
 export type RedirectViewModel = {
-    id: number | string;
+    id: number;
     key: string;
-    domain?: null | number | string;
+    domain?: null | number;
     customDomain?: null | string;
     isEnabled: boolean;
     isRegex: boolean;
@@ -123,7 +126,7 @@ export type RedirectViewModel = {
     newNodeId?: null | string;
     newNodeType?: null | string;
     newCultureIso?: null | string;
-    redirectCode: number | string;
+    redirectCode: number;
     lastUpdated?: null | string;
 };
 
@@ -133,24 +136,27 @@ export type RedirectListViewModel = {
     domain?: null | string;
     oldUrl?: null | string;
     newUrl?: null | string;
-    statusCode: number | string;
+    statusCode: number;
     lastUpdated?: null | string;
 };
 
 export type PagedSeoToolkitTreeItemApiModel = {
-    total: number | string;
+    total: number;
     items: Array<SeoToolkitTreeItemApiModel>;
 };
 
 export type PagedRedirectListModel = {
-    total: number | string;
+    total: number;
     items: Array<RedirectListViewModel>;
 };
 
-export type ImportRedirectsFileExtension = number;
+export enum ImportRedirectsFileExtension {
+    CSV = 'Csv',
+    EXCEL = 'Excel'
+}
 
 export type DomainViewModel = {
-    id: number | string;
+    id: number;
     name?: null | string;
 };
 
@@ -215,8 +221,8 @@ export type GetUmbracoSeoToolkitTreeInfoChildrenData = {
     path?: never;
     query?: {
         parentUnique?: string;
-        skip?: number | string;
-        take?: number | string;
+        skip?: number;
+        take?: number;
     };
     url: '/umbraco/seoToolkit/tree/info/children';
 };
@@ -234,8 +240,8 @@ export type GetUmbracoSeoToolkitTreeInfoRootData = {
     body?: never;
     path?: never;
     query?: {
-        skip?: number | string;
-        take?: number | string;
+        skip?: number;
+        take?: number;
     };
     url: '/umbraco/seoToolkit/tree/info/root';
 };
@@ -303,7 +309,7 @@ export type GetUmbracoSeoToolkitDomainsGetPredefinedData = {
     body?: never;
     path?: never;
     query?: {
-        umbracoDomainId?: number | string;
+        umbracoDomainId?: number;
     };
     url: '/umbraco/seoToolkitDomains/getPredefined';
 };
@@ -540,8 +546,8 @@ export type GetUmbracoSeoToolkitRedirectsRedirectsData = {
     body?: never;
     path?: never;
     query?: {
-        pageNumber?: number | string;
-        pageSize?: number | string;
+        pageNumber?: number;
+        pageSize?: number;
         orderBy?: string;
         orderDirection?: string;
         search?: string;
@@ -577,7 +583,7 @@ export type PostUmbracoSeoToolkitRedirectsValidateData = {
     path?: never;
     query?: {
         fileExtension?: ImportRedirectsFileExtension;
-        domain?: number | string;
+        domain?: number;
         tempFileId?: string;
     };
     url: '/umbraco/seoToolkitRedirects/validate';

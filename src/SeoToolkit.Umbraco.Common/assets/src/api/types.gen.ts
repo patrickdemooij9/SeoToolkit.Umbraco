@@ -55,9 +55,9 @@ export type SeoKeyValueSettingViewModel = {
     propertyAlias: string;
     value?: unknown;
     isRoot: boolean;
-    editConfig?: {
+    editConfig?: null | {
         [key: string]: unknown;
-    } | null;
+    };
 };
 
 export type SeoDomainModuleSettingViewModel = {
@@ -73,11 +73,11 @@ export type SeoDomainConfigViewModel = {
 export type IDomainModel = {
     domainName: string;
     isWildcard: boolean;
-    languageId?: null | number | string;
+    languageId?: null | number;
     languageIsoCode?: null | string;
-    rootContentId?: null | number | string;
-    sortOrder: number | string;
-    id: number | string;
+    rootContentId?: null | number;
+    sortOrder: number;
+    id: number;
     key: string;
     createDate: string;
     updateDate: string;
@@ -89,14 +89,14 @@ export type SeoDomainCollection = {
     id?: null | string;
     name: string;
     baseUrl?: null | string;
-    domainIds: Array<number | string>;
+    domainIds: Array<number>;
     settings: {
         [key: string]: string;
     };
 };
 
 export type PagedSeoToolkitTreeItemApiModel = {
-    total: number | string;
+    total: number;
     items: Array<SeoToolkitTreeItemApiModel>;
 };
 
@@ -157,8 +157,8 @@ export type GetUmbracoSeoToolkitTreeInfoChildrenData = {
     path?: never;
     query?: {
         parentUnique?: string;
-        skip?: number | string;
-        take?: number | string;
+        skip?: number;
+        take?: number;
     };
     url: '/umbraco/seoToolkit/tree/info/children';
 };
@@ -176,8 +176,8 @@ export type GetUmbracoSeoToolkitTreeInfoRootData = {
     body?: never;
     path?: never;
     query?: {
-        skip?: number | string;
-        take?: number | string;
+        skip?: number;
+        take?: number;
     };
     url: '/umbraco/seoToolkit/tree/info/root';
 };
@@ -245,7 +245,7 @@ export type GetUmbracoSeoToolkitDomainsGetPredefinedData = {
     body?: never;
     path?: never;
     query?: {
-        umbracoDomainId?: number | string;
+        umbracoDomainId?: number;
     };
     url: '/umbraco/seoToolkitDomains/getPredefined';
 };

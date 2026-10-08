@@ -86,7 +86,7 @@ export class RedirectSource {
       this.#host,
       BackofficeSeoToolkitRedirects.postUmbracoSeoToolkitRedirectsValidate({
         query: {
-          fileExtension: fileExtension as ImportRedirectsFileExtension,
+          fileExtension: fileExtension as unknown as ImportRedirectsFileExtension,
           domain: domain!,
           tempFileId: tempFileId!,
         },

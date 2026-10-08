@@ -5,42 +5,42 @@ export type ClientOptions = {
 };
 
 export type StopAuditPostModel = {
-    id: number | string;
+    id: number;
 };
 
 export type SiteAuditResultDetailViewModel = {
     message?: null | string;
-    checkId: number | string;
+    checkId: number;
     isError: boolean;
     isWarning: boolean;
 };
 
 export type SiteAuditPageDetailViewModel = {
     url?: null | string;
-    statusCode: number | string;
+    statusCode: number;
     results?: null | Array<SiteAuditResultDetailViewModel>;
 };
 
 export type SiteAuditOverviewViewModel = {
-    id: number | string;
+    id: number;
     name?: null | string;
     createdDate?: null | string;
     status?: null | string;
 };
 
 export type SiteAuditDetailViewModel = {
-    id: number | string;
+    id: number;
     name?: null | string;
-    maxPagesToCrawl?: null | number | string;
-    totalPagesFound: number | string;
-    progress: number | string;
+    maxPagesToCrawl?: null | number;
+    totalPagesFound: number;
+    progress: number;
     status?: null | string;
     checks?: null | Array<SiteAuditCheckViewModel>;
     pagesCrawled?: null | Array<SiteAuditPageDetailViewModel>;
 };
 
 export type SiteAuditCheckViewModel = {
-    id: number | string;
+    id: number;
     name?: null | string;
     description?: null | string;
     errorMessage?: null | string;
@@ -48,7 +48,7 @@ export type SiteAuditCheckViewModel = {
 
 export type SiteAuditCreateConfigViewModel = {
     checks?: null | Array<SiteAuditCheckViewModel>;
-    minimumDelayBetweenRequest: number | string;
+    minimumDelayBetweenRequest: number;
     allowMinimumDelayBetweenRequestSetting: boolean;
 };
 
@@ -103,6 +103,9 @@ export type SeoKeyValueSettingViewModel = {
     propertyAlias: string;
     value?: unknown;
     isRoot: boolean;
+    editConfig?: null | {
+        [key: string]: unknown;
+    };
 };
 
 export type SeoDomainModuleSettingViewModel = {
@@ -118,11 +121,11 @@ export type SeoDomainConfigViewModel = {
 export type IDomainModel = {
     domainName: string;
     isWildcard: boolean;
-    languageId?: null | number | string;
+    languageId?: null | number;
     languageIsoCode?: null | string;
-    rootContentId?: null | number | string;
-    sortOrder: number | string;
-    id: number | string;
+    rootContentId?: null | number;
+    sortOrder: number;
+    id: number;
     key: string;
     createDate: string;
     updateDate: string;
@@ -134,7 +137,7 @@ export type SeoDomainCollection = {
     id?: null | string;
     name: string;
     baseUrl?: null | string;
-    domainIds: Array<number | string>;
+    domainIds: Array<number>;
     settings: {
         [key: string]: string;
     };
@@ -145,21 +148,21 @@ export type RunPageCheckPostModel = {
 };
 
 export type PagedSeoToolkitTreeItemApiModel = {
-    total: number | string;
+    total: number;
     items: Array<SeoToolkitTreeItemApiModel>;
 };
 
 export type DeleteAuditsPostModel = {
-    ids?: null | Array<number | string>;
+    ids?: null | Array<number>;
 };
 
 export type CreateAuditPostModel = {
     name: null | string;
     selectedNodeId: string;
-    checks?: null | Array<number | string>;
+    checks?: null | Array<number>;
     startAudit: boolean;
-    maxPagesToCrawl: number | string;
-    delayBetweenRequests: number | string;
+    maxPagesToCrawl: number;
+    delayBetweenRequests: number;
 };
 
 export type GetUmbracoSeoToolkitIsEnabledData = {
@@ -219,8 +222,8 @@ export type GetUmbracoSeoToolkitTreeInfoChildrenData = {
     path?: never;
     query?: {
         parentUnique?: string;
-        skip?: number | string;
-        take?: number | string;
+        skip?: number;
+        take?: number;
     };
     url: '/umbraco/seoToolkit/tree/info/children';
 };
@@ -238,8 +241,8 @@ export type GetUmbracoSeoToolkitTreeInfoRootData = {
     body?: never;
     path?: never;
     query?: {
-        skip?: number | string;
-        take?: number | string;
+        skip?: number;
+        take?: number;
     };
     url: '/umbraco/seoToolkit/tree/info/root';
 };
@@ -307,7 +310,7 @@ export type GetUmbracoSeoToolkitDomainsGetPredefinedData = {
     body?: never;
     path?: never;
     query?: {
-        umbracoDomainId?: number | string;
+        umbracoDomainId?: number;
     };
     url: '/umbraco/seoToolkitDomains/getPredefined';
 };
@@ -489,7 +492,7 @@ export type GetUmbracoSeoToolkitSiteAuditSiteAuditData = {
     body?: never;
     path?: never;
     query?: {
-        id?: number | string;
+        id?: number;
     };
     url: '/umbraco/seoToolkitSiteAudit/siteAudit';
 };
@@ -514,7 +517,7 @@ export type PostUmbracoSeoToolkitSiteAuditSiteAuditResponses = {
     /**
      * OK
      */
-    200: number | string;
+    200: number;
 };
 
 export type PostUmbracoSeoToolkitSiteAuditSiteAuditResponse = PostUmbracoSeoToolkitSiteAuditSiteAuditResponses[keyof PostUmbracoSeoToolkitSiteAuditSiteAuditResponses];

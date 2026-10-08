@@ -9,7 +9,6 @@ import { css, html, LitElement } from "lit";
 import {
   UmbPropertyEditorConfigCollection,
   UmbPropertyEditorUiElement,
-  UmbPropertyValueChangeEvent,
 } from "@umbraco-cms/backoffice/property-editor";
 import { UMB_MODAL_MANAGER_CONTEXT } from "@umbraco-cms/backoffice/modal";
 import {
@@ -32,6 +31,7 @@ import {
   SCHEMA_OWNER_TYPE,
   WEBSITE_OWNER_KEY,
 } from "../constants/schemaConstants";
+import { UmbChangeEvent } from "@umbraco-cms/backoffice/event";
 
 interface SchemaEditorValue {
   schemas: string[];
@@ -154,7 +154,7 @@ export default class SchemaEditorPropertyEditor
   /** Persist the value to the host, except in website mode where entries are saved via the API. */
   #notifyChange() {
     if (this.#isWebsite()) return;
-    this.dispatchEvent(new UmbPropertyValueChangeEvent());
+    this.dispatchEvent(new UmbChangeEvent());
   }
 
   #getNodeGuid(): string {

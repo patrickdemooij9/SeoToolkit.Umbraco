@@ -59,6 +59,9 @@ export type SeoKeyValueSettingViewModel = {
     propertyAlias: string;
     value?: unknown;
     isRoot: boolean;
+    editConfig?: null | {
+        [key: string]: unknown;
+    };
 };
 
 export type SeoDomainModuleSettingViewModel = {
@@ -74,11 +77,11 @@ export type SeoDomainConfigViewModel = {
 export type IDomainModel = {
     domainName: string;
     isWildcard: boolean;
-    languageId?: null | number | string;
+    languageId?: null | number;
     languageIsoCode?: null | string;
-    rootContentId?: null | number | string;
-    sortOrder: number | string;
-    id: number | string;
+    rootContentId?: null | number;
+    sortOrder: number;
+    id: number;
     key: string;
     createDate: string;
     updateDate: string;
@@ -90,7 +93,7 @@ export type SeoDomainCollection = {
     id?: null | string;
     name: string;
     baseUrl?: null | string;
-    domainIds: Array<number | string>;
+    domainIds: Array<number>;
     settings: {
         [key: string]: string;
     };
@@ -100,7 +103,7 @@ export type ScriptListViewModel = {
     id: string;
     name?: null | string;
     definitionName?: null | string;
-    sortOrder: number | string;
+    sortOrder: number;
 };
 
 export type ScriptField = {
@@ -111,7 +114,7 @@ export type ScriptField = {
 };
 
 export type ScriptDetailViewModel = {
-    id: number | string;
+    id: number;
     key?: null | string;
     name?: null | string;
     definitionAlias?: null | string;
@@ -119,7 +122,7 @@ export type ScriptDetailViewModel = {
         [key: string]: string;
     };
     domainId?: null | string;
-    sortOrder: number | string;
+    sortOrder: number;
 };
 
 export type ScriptDefinitionViewModel = {
@@ -129,7 +132,7 @@ export type ScriptDefinitionViewModel = {
 };
 
 export type PagedSeoToolkitTreeItemApiModel = {
-    total: number | string;
+    total: number;
     items: Array<SeoToolkitTreeItemApiModel>;
 };
 
@@ -138,7 +141,7 @@ export type DeleteScriptPostModel = {
 };
 
 export type CreateScriptPostModel = {
-    id: number | string;
+    id: number;
     key?: null | string;
     name: null | string;
     definitionAlias: null | string;
@@ -146,7 +149,7 @@ export type CreateScriptPostModel = {
         [key: string]: string;
     };
     domainId?: null | string;
-    sortOrder?: null | number | string;
+    sortOrder?: null | number;
 };
 
 export type GetUmbracoSeoToolkitIsEnabledData = {
@@ -206,8 +209,8 @@ export type GetUmbracoSeoToolkitTreeInfoChildrenData = {
     path?: never;
     query?: {
         parentUnique?: string;
-        skip?: number | string;
-        take?: number | string;
+        skip?: number;
+        take?: number;
     };
     url: '/umbraco/seoToolkit/tree/info/children';
 };
@@ -225,8 +228,8 @@ export type GetUmbracoSeoToolkitTreeInfoRootData = {
     body?: never;
     path?: never;
     query?: {
-        skip?: number | string;
-        take?: number | string;
+        skip?: number;
+        take?: number;
     };
     url: '/umbraco/seoToolkit/tree/info/root';
 };
@@ -294,7 +297,7 @@ export type GetUmbracoSeoToolkitDomainsGetPredefinedData = {
     body?: never;
     path?: never;
     query?: {
-        umbracoDomainId?: number | string;
+        umbracoDomainId?: number;
     };
     url: '/umbraco/seoToolkitDomains/getPredefined';
 };
