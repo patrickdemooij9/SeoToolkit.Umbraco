@@ -10,18 +10,18 @@
       nothing about what ships.
     -->
     <DefaultItemExcludes>$(DefaultItemExcludes);assets/**</DefaultItemExcludes>
-    <SeoToolkitVersionCommon>7.0.0</SeoToolkitVersionCommon>
-    <SeoToolkitVersionMetaFields>7.0.0</SeoToolkitVersionMetaFields>
-    <SeoToolkitVersionNotFound>7.0.0</SeoToolkitVersionNotFound>
-    <SeoToolkitVersionRedirects>7.0.0</SeoToolkitVersionRedirects>
-    <SeoToolkitVersionRobotsTxt>7.0.0</SeoToolkitVersionRobotsTxt>
-    <SeoToolkitVersionScriptManager>7.0.0</SeoToolkitVersionScriptManager>
-    <SeoToolkitVersionSiteAudit>7.0.0</SeoToolkitVersionSiteAudit>
-    <SeoToolkitVersionSitemap>7.0.0</SeoToolkitVersionSitemap>
-    <SeoToolkitVersionCore>7.0.0</SeoToolkitVersionCore>
-    <SeoToolkitVersionPackage>7.0.0</SeoToolkitVersionPackage>
+    <SeoToolkitVersionCommon>7.1.0</SeoToolkitVersionCommon>
+    <SeoToolkitVersionMetaFields>7.1.0</SeoToolkitVersionMetaFields>
+    <SeoToolkitVersionNotFound>7.1.0</SeoToolkitVersionNotFound>
+    <SeoToolkitVersionRedirects>7.1.0</SeoToolkitVersionRedirects>
+    <SeoToolkitVersionRobotsTxt>7.1.0</SeoToolkitVersionRobotsTxt>
+    <SeoToolkitVersionScriptManager>7.1.0</SeoToolkitVersionScriptManager>
+    <SeoToolkitVersionSiteAudit>7.1.0</SeoToolkitVersionSiteAudit>
+    <SeoToolkitVersionSitemap>7.1.0</SeoToolkitVersionSitemap>
+    <SeoToolkitVersionCore>7.1.0</SeoToolkitVersionCore>
+    <SeoToolkitVersionPackage>7.1.0</SeoToolkitVersionPackage>
 	<SeoToolkitVersionUsync>1.0.0-beta1</SeoToolkitVersionUsync>
-	<SeoToolkitVersionDeploy>1.0.0-beta1</SeoToolkitVersionDeploy>
+	<SeoToolkitVersionDeploy>2.0.0-beta1</SeoToolkitVersionDeploy>
 	<SeoToolkitVersionAICore>2.0.0</SeoToolkitVersionAICore>
 	<SeoToolkitVersionAIIntegration>2.0.0</SeoToolkitVersionAIIntegration>
 
