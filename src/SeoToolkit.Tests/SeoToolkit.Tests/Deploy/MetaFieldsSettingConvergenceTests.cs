@@ -62,9 +62,14 @@ namespace SeoToolkit.Tests.Deploy
         // twitterCardType (via DropdownFieldPropertyEditor).
         [TestCase("[\"summary\"]")]
         [TestCase("[\"summary_large_image\"]")]
-        [TestCase("[\"[]\"]")]
         public void SingleDropdown_Converges(string sourceValue)
             => Assert.That(RoundTrip(new SingleDropdownValueConverter(), sourceValue), Is.EqualTo(sourceValue));
+
+        // A cleared dropdown used to be saved as the text "[]", which exported as ["[]"]. It now reads as
+        // no selection, so it imports and re-exports as omitted.
+        [Test]
+        public void SingleDropdown_SavedEmptyArrayText_ImportsAsOmitted()
+            => Assert.That(RoundTrip(new SingleDropdownValueConverter(), "[\"[]\"]"), Is.Null);
 
         // Regression: ListValueConverter (the keywords field) must never yield null from
         // ConvertDatabaseToObject, so an empty keywords field always exports as "[]" (never omitted)

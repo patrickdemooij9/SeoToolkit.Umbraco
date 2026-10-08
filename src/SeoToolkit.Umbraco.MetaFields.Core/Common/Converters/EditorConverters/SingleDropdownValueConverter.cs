@@ -13,27 +13,31 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Common.Converters.EditorConverters
     {
         public object ConvertEditorToDatabaseValue(object value)
         {
+            // The editor sends its selection as an array, and an empty one is a cleared field. Don't
+            // fall back to value.ToString() for it: that stores the text "[]" as the selection.
             var items = JsonHelpers.DeserializeArray<string>(value);
-            return items?.FirstOrDefault() ?? value?.ToString();
+            return items is not null ? Selection(items.FirstOrDefault()) : Selection(value?.ToString());
         }
 
         public object ConvertObjectToEditorValue(object value)
         {
-            if (string.IsNullOrWhiteSpace(value?.ToString()))
-            {
-                return Array.Empty<string>();
-            }
-            return new string[] { value?.ToString() };
+            var selection = Selection(value?.ToString());
+            return selection is null ? Array.Empty<string>() : new[] { selection };
         }
 
         public object ConvertDatabaseToObject(object value)
         {
-            return value;
+            return Selection(value?.ToString());
         }
 
         public bool IsEmpty(object value)
         {
-            return string.IsNullOrWhiteSpace(value?.ToString());
+            return Selection(value?.ToString()) is null;
         }
+
+        // A cleared field used to be saved as the text "[]", so read that as no selection too: those
+        // values then fall back to the document type's instead of rendering "[]".
+        private static string Selection(string value)
+            => string.IsNullOrWhiteSpace(value) || value.Trim() == "[]" ? null : value;
     }
 }
