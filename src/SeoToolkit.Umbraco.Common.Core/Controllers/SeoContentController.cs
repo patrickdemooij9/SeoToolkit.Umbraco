@@ -25,7 +25,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
         public IActionResult Get(int contentId)
         {
             var content = _contentService.GetById(contentId);
-            return new JsonResult(new SeoContentViewModel
+            return Ok(new SeoContentViewModel
             {
                 Displays = _seoDisplayCollection.Select(it => it.Get(content)).WhereNotNull().ToArray()
             });
