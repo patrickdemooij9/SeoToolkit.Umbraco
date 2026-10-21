@@ -13,6 +13,13 @@ import {
   UMB_ACTION_EVENT_CONTEXT,
   UmbActionEventContext,
 } from "@umbraco-cms/backoffice/action";
+import {
+  groupSettingsFields,
+  isFieldConfigured,
+  METAFIELDS_VIEW_PATHNAME,
+  SeoDocumentNavigation,
+  ST_SEO_DOCUMENT_NAVIGATION_CONTEXT,
+} from "./metaFieldsSettingsGroups";
 
 export default class MetaFieldsDocumentContext
   extends UmbContextBase
@@ -25,6 +32,11 @@ export default class MetaFieldsDocumentContext
 
   #model = new UmbObjectState<DocumentTypeSettingsContentViewModel>({});
   public readonly model = this.#model.asObservable();
+  public readonly groups = this.#model.asObservablePart((model) =>
+    groupSettingsFields(model.fields ?? [], model.groups ?? [])
+  );
+
+  #navigation?: SeoDocumentNavigation;
 
   #nodeId: string | undefined;
 
@@ -48,12 +60,39 @@ export default class MetaFieldsDocumentContext
       this.#actionEventContext = instance;
       instance.addEventListener("seo-settings", this.#save);
     });
+
+    this.consumeContext(ST_SEO_DOCUMENT_NAVIGATION_CONTEXT, (instance) => {
+      this.#navigation = instance;
+      this.#updateNavigation();
+    });
+
+    this.observe(this.groups, () => this.#updateNavigation());
+  }
+
+  activeGroupAlias() {
+    return this.#navigation?.activeNavItem(METAFIELDS_VIEW_PATHNAME);
+  }
+
+  // Shows the field groups, with how many fields are configured, in the SEO side navigation.
+  #updateNavigation() {
+    const model = this.#model.getValue();
+    const groups = groupSettingsFields(model.fields ?? [], model.groups ?? []);
+    this.#navigation?.setNavItems(
+      METAFIELDS_VIEW_PATHNAME,
+      groups.map((group) => ({
+        key: group.alias!,
+        label: group.name!,
+        icon: group.icon ?? undefined,
+        badge: `${group.fields.filter(isFieldConfigured).length}/${group.fields.length}`,
+      }))
+    );
   }
 
   fetchFromServer(unique: string) {
     this.#repository.get(unique!).then((metaFieldSettings) => {
       this.#model.update({
         fields: metaFieldSettings?.data?.contentModel?.fields,
+        groups: metaFieldSettings?.data?.contentModel?.groups,
         inheritance: metaFieldSettings?.data?.contentModel?.inheritance,
       });
     });

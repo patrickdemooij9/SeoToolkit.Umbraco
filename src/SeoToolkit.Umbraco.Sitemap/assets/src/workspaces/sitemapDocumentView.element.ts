@@ -91,7 +91,7 @@ export default class SitemapDocumentViewElement extends UmbElementMixin(LitEleme
 
     render() {
         return html`
-            <uui-box>
+            <uui-box headline="Sitemap">
                 <umb-property-dataset
                     .value=${this._content!}
                     @change=${this.#onPropertyDataChange}>
@@ -104,7 +104,7 @@ export default class SitemapDocumentViewElement extends UmbElementMixin(LitEleme
                     </umb-property>
                     <umb-property 
                         alias='changeFrequency'
-                        label='Change frequence'
+                        label='Change frequency'
                         description='The change frequency showed in the sitemap for all pages of this type'
                         property-editor-ui-alias='Umb.PropertyEditorUi.Dropdown'
                         val

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Html;
+using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 using SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
@@ -10,6 +11,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public abstract string Alias { get; }
         public abstract string Description { get; }
         public abstract string GroupAlias { get; }
+        public virtual string SettingsGroupAlias => SeoFieldSettingsGroupConstants.Others;
         public Type FieldType => typeof(T);
         public abstract ISeoFieldEditor Editor { get; }
         public abstract ISeoFieldEditEditor EditEditor { get; }
