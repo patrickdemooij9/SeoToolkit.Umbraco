@@ -175,6 +175,11 @@ export default class MetaFieldsContentView extends UmbElementMixin(LitElement) {
         .fields {
           width: 60%;
         }
+
+        .preview {
+          flex: 1;
+          min-width: 0;
+        }
       }
 
       .view-toolbar {
