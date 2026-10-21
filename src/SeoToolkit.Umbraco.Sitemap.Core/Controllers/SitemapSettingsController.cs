@@ -34,7 +34,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Controllers
                 settings = _sitemapService.GetPageTypeSettings(contentType.Key) ?? new SitemapPageSettings();
             }
 
-            return new JsonResult(new SitemapPageTypeSettingsViewModel
+            return Ok(new SitemapPageTypeSettingsViewModel
             {
                 HideFromSitemap = settings.HideFromSitemap,
                 ChangeFrequency = settings.ChangeFrequency,
