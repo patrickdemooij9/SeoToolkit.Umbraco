@@ -51,7 +51,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
             if (model is null)
                 return NotFound();
 
-            return new JsonResult(new SiteAuditDetailViewModel(model));
+            return Ok(new SiteAuditDetailViewModel(model));
         }
 
         [HttpDelete("siteAudit")]
@@ -70,7 +70,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
         public IActionResult GetAll()
         {
             var test = _settingsService.GetSettings();
-            return new JsonResult(_siteAuditService.GetAll().Select(it => new SiteAuditOverviewViewModel
+            return Ok(_siteAuditService.GetAll().Select(it => new SiteAuditOverviewViewModel
             {
                 Id = it.Id,
                 Name = it.Name,
@@ -84,7 +84,7 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Controllers
         public IActionResult GetConfiguration()
         {
             var config = _settingsService.GetSettings();
-            return new JsonResult(new SiteAuditCreateConfigViewModel
+            return Ok(new SiteAuditCreateConfigViewModel
             {
                 Checks = _siteCheckService.GetAll().Select(it => new SiteAuditCheckViewModel { Id = it.Id, Name = it.Check.Name, Description = it.Check.Description }).ToArray(),
                 AllowMinimumDelayBetweenRequestSetting = config.AllowMinimumDelayBetweenRequestSetting,
