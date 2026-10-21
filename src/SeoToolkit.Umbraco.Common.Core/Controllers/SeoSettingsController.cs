@@ -43,7 +43,7 @@ namespace SeoToolkit.Umbraco.Common.Core.Controllers
                 isEnabled = _seoSettingsService.IsEnabled(contentType);
             }
 
-            return new JsonResult(new SeoSettingsViewModel
+            return Ok(new SeoSettingsViewModel
             {
                 IsEnabled = isEnabled,
                 SupressContentAppSavingNotification = _seoSettingsService.SupressContentAppSavingNotification()
