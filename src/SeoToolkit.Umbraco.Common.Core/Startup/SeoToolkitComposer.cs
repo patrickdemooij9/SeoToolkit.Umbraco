@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SeoToolkit.Umbraco.Common.Core.Collections;
+using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.DeliveryApi;
 using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.Common.Core.Models.Config;
@@ -13,6 +15,7 @@ using SeoToolkit.Umbraco.Common.Core.Services.SeoSettingsService;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Common.Core.Startup;
 using SeoToolkit.Umbraco.Common.Core.Swagger;
+using Umbraco.Cms.Api.Common.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DeliveryApi;
 using Umbraco.Cms.Core.DependencyInjection;
@@ -31,6 +34,12 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
             var settings = section?.Get<GlobalAppSettingsModel>();
 
             builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
+
+            // Pinned JSON options for the SeoToolkit backoffice controllers (see SeoToolkitAuthenticatedControllerBase)
+            builder.Services.AddControllers().AddJsonOptions(JsonOptionsConstants.SeoToolkit, options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            });
 
             builder.Services.AddSingleton<ModuleCollection>();
 
