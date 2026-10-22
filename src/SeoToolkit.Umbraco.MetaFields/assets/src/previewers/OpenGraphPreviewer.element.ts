@@ -5,6 +5,7 @@ import {
   state,
   when,
 } from "@umbraco-cms/backoffice/external/lit";
+import { UMB_THEME_CONTEXT } from "@umbraco-cms/backoffice/themes";
 import { css, html, LitElement } from "lit";
 import { SeoSettingsFieldViewModel } from "../api";
 import { ISeoContentPreviewer } from "./ISeoContentPreviewer";
@@ -42,6 +43,19 @@ export default class OpenGraphPreviewer
 
   @state()
   public loading = true;
+
+  @property({ type: Boolean, reflect: true })
+  public dark = false;
+
+  constructor() {
+    super();
+
+    this.consumeContext(UMB_THEME_CONTEXT, (instance) => {
+      this.observe(instance?.theme, (themeAlias) => {
+        this.dark = themeAlias === "umb-dark-theme";
+      });
+    });
+  }
 
   public getValue(key: string) {
     const foundItem = this._value.find((item) => item.alias === key);
@@ -91,30 +105,60 @@ export default class OpenGraphPreviewer
     this.currentTab = tab;
   }
 
+  #renderImage() {
+    return when(
+      this.imageUrl,
+      () => html`<div
+        class="card-image"
+        style="background-image: url(${this.imageUrl})"
+      ></div>`,
+      () => html`<div class="card-image empty-image">
+        <uui-icon name="icon-picture"></uui-icon>
+        <span>No image set</span>
+      </div>`
+    );
+  }
+
+  #renderTitle() {
+    const title = this.getValue("openGraphTitle");
+    return title
+      ? html`${title}`
+      : html`<span class="empty">No title set</span>`;
+  }
+
+  #renderDescription() {
+    const description = this.getValue("openGraphDescription");
+    return description
+      ? html`${description}`
+      : html`<span class="empty">No description set</span>`;
+  }
+
   protected render() {
     return html` <div class="open-graph-previewer">
-      <div class="umb-editor-tab-bar">
-        <uui-tab-group class="navigation" slot="header">
-          <uui-tab
-            ?active=${this.currentTab === "facebook"}
-            @click=${() => this.handleTabClick("facebook")}
-          >
-            Facebook
-          </uui-tab>
-          <uui-tab
-            ?active=${this.currentTab === "twitter"}
-            @click=${() => this.handleTabClick("twitter")}
-          >
-            Twitter
-          </uui-tab>
-          <uui-tab
-            ?active=${this.currentTab === "linkedin"}
-            @click=${() => this.handleTabClick("linkedin")}
-          >
-            LinkedIn
-          </uui-tab>
-        </uui-tab-group>
+      <div class="preview-label">
+        <uui-icon name="icon-share-alt"></uui-icon>
+        <span>Social media preview</span>
       </div>
+      <uui-tab-group class="navigation">
+        <uui-tab
+          ?active=${this.currentTab === "facebook"}
+          @click=${() => this.handleTabClick("facebook")}
+        >
+          Facebook
+        </uui-tab>
+        <uui-tab
+          ?active=${this.currentTab === "twitter"}
+          @click=${() => this.handleTabClick("twitter")}
+        >
+          X (Twitter)
+        </uui-tab>
+        <uui-tab
+          ?active=${this.currentTab === "linkedin"}
+          @click=${() => this.handleTabClick("linkedin")}
+        >
+          LinkedIn
+        </uui-tab>
+      </uui-tab-group>
 
       <div class="previewers">
         ${when(
@@ -122,19 +166,12 @@ export default class OpenGraphPreviewer
           () => html`
             <div class="facebook-previewer">
               <div class="card">
-                <div
-                  class="card-image"
-                  style="background-image: url(${this.imageUrl})"
-                ></div>
+                ${this.#renderImage()}
                 <div class="card-text">
                   <p class="card-subtitle">${this.getDomain()}</p>
-                  <div class="card-content">
-                    <div class="card-title">
-                      ${this.getValue("openGraphTitle")}
-                    </div>
-                    <div class="card-description">
-                      ${this.getValue("openGraphDescription")}
-                    </div>
+                  <div class="card-title">${this.#renderTitle()}</div>
+                  <div class="card-description">
+                    ${this.#renderDescription()}
                   </div>
                 </div>
               </div>
@@ -146,22 +183,10 @@ export default class OpenGraphPreviewer
           () => html`
             <div class="twitter-previewer">
               <div class="card">
-                <div
-                  class="card-image"
-                  style="background-image: url(${this.imageUrl})"
-                ></div>
-                <div class="card-text">
-                  <p class="card-subtitle">${this.getDomain()}</p>
-                  <div class="card-content">
-                    <div class="card-title">
-                      ${this.getValue("openGraphTitle")}
-                    </div>
-                    <div class="card-description">
-                      ${this.getValue("openGraphDescription")}
-                    </div>
-                  </div>
-                </div>
+                ${this.#renderImage()}
+                <div class="card-title">${this.#renderTitle()}</div>
               </div>
+              <p class="card-subtitle">From ${this.getDomain()}</p>
             </div>
           `
         )}
@@ -170,12 +195,9 @@ export default class OpenGraphPreviewer
           () => html`
             <div class="linkedin-previewer">
               <div class="card">
-                <div
-                  class="card-image"
-                  style="background-image: url(${this.imageUrl})"
-                ></div>
+                ${this.#renderImage()}
                 <div class="card-text">
-                  <h2 class="card-title">${this.getValue("openGraphTitle")}</h2>
+                  <h2 class="card-title">${this.#renderTitle()}</h2>
                   <h3 class="card-subtitle">${this.getDomain()}</h3>
                 </div>
               </div>
@@ -183,192 +205,229 @@ export default class OpenGraphPreviewer
           `
         )}
       </div>
+      <small class="preview-hint">
+        This is an approximation. Each platform may crop the image or shorten
+        the text differently.
+      </small>
     </div>`;
   }
 
   static styles = [
     css`
-      .facebook-previewer .card {
-        width: 300px;
-        font-family: Helvetica, Arial, sans-serif;
+      :host {
+        --st-facebook-background: #f0f2f5;
+        --st-facebook-border: #dadde1;
+        --st-facebook-title: #080809;
+        --st-facebook-text: #65686c;
+
+        --st-twitter-border: #cfd9de;
+        --st-twitter-text: #536471;
+        --st-twitter-label-background: rgba(0, 0, 0, 0.77);
+
+        --st-linkedin-background: #ffffff;
+        --st-linkedin-border: #e0dfdc;
+        --st-linkedin-title: rgba(0, 0, 0, 0.9);
+        --st-linkedin-text: rgba(0, 0, 0, 0.6);
+
+        --st-empty-image-background: #e4e6eb;
+        --st-empty-image-text: #65686c;
+        display: block;
       }
 
-      .facebook-previewer .card-image {
+      :host([dark]) {
+        --st-facebook-background: #3a3b3c;
+        --st-facebook-border: #3e4042;
+        --st-facebook-title: #e4e6eb;
+        --st-facebook-text: #b0b3b8;
+
+        --st-twitter-border: #2f3336;
+        --st-twitter-text: #71767b;
+
+        --st-linkedin-background: #1b1f23;
+        --st-linkedin-border: #38434f;
+        --st-linkedin-title: rgba(255, 255, 255, 0.9);
+        --st-linkedin-text: rgba(255, 255, 255, 0.6);
+
+        --st-empty-image-background: #303134;
+        --st-empty-image-text: #9aa0a6;
+      }
+
+      .preview-label {
+        display: flex;
+        align-items: center;
+        gap: var(--uui-size-space-2);
+        margin-bottom: var(--uui-size-space-3);
+        color: var(--uui-color-text-alt);
+        font-size: var(--uui-type-small-size);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .navigation {
+        margin-bottom: var(--uui-size-space-4);
+        border-bottom: 1px solid var(--uui-color-border);
+      }
+
+      .previewers {
+        max-width: 500px;
+      }
+
+      .card-image {
         aspect-ratio: 1.91 / 1;
         background-size: cover;
+        background-position: center;
+      }
+
+      .empty-image {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: var(--st-empty-image-background);
+        color: var(--st-empty-image-text);
+        font-family: arial, sans-serif;
+        font-size: 13px;
+      }
+
+      .empty-image uui-icon {
+        font-size: 28px;
+      }
+
+      .empty {
+        font-style: italic;
+        font-weight: normal;
+        opacity: 0.8;
+      }
+
+      .preview-hint {
+        display: block;
+        max-width: 500px;
+        margin-top: var(--uui-size-space-2);
+        color: var(--uui-color-text-alt);
+      }
+
+      /* Facebook */
+      .facebook-previewer .card {
+        overflow: hidden;
+        border: 1px solid var(--st-facebook-border);
+        border-radius: 8px;
+        font-family: Helvetica, Arial, sans-serif;
       }
 
       .facebook-previewer .card-text {
         padding: 10px 12px;
-        margin: 0;
-        font-size: 14px;
-        color: #4b4f56;
-        background-color: #f2f3f5;
-        border-left: 1px solid #dadde1;
-        border-right: 1px solid #dadde1;
-        border-bottom: 1px solid #dadde1;
-      }
-
-      .facebook-previewer .card-content {
-        max-height: 46px;
-        overflow: hidden;
+        background-color: var(--st-facebook-background);
+        border-top: 1px solid var(--st-facebook-border);
       }
 
       .facebook-previewer .card-subtitle {
-        color: #606770;
-        flex-shrink: 0;
+        margin: 0;
+        overflow: hidden;
+        color: var(--st-facebook-text);
         font-size: 12px;
         line-height: 16px;
-        overflow: hidden;
-        padding: 0;
         text-overflow: ellipsis;
         text-transform: uppercase;
         white-space: nowrap;
-        margin: 0;
       }
 
       .facebook-previewer .card-title {
-        font-weight: 600;
-        font-family: inherit;
-        font-size: 16px;
-        line-height: 20px;
         margin: 3px 0 0;
-        padding-top: 2px;
-        color: #1d2129;
+        overflow: hidden;
+        color: var(--st-facebook-title);
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 20px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .facebook-previewer .card-description {
-        margin: 3px 0 0 0;
-        color: #606770;
+        margin: 3px 0 0;
+        overflow: hidden;
+        color: var(--st-facebook-text);
         font-size: 14px;
         line-height: 20px;
-        word-break: break-word;
-        max-height: 80px;
-        overflow: hidden;
-        text-overflow: clip;
-        white-space: normal;
-        -webkit-line-clamp: 1;
-        border-collapse: collapse;
-        display: -webkit-box;
-        overflow-wrap: break-word;
-        -webkit-box-orient: vertical;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* X (Twitter) */
+      .twitter-previewer {
+        font-family: TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
       }
 
       .twitter-previewer .card {
-        width: 300px;
-        max-width: 100%;
+        position: relative;
         overflow: hidden;
+        border: 1px solid var(--st-twitter-border);
         border-radius: 16px;
-        border: 1px solid #e1e8ed;
-        background: #fff;
-        font-family: TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          Roboto, Helvetica, Arial, sans-serif;
-        line-height: 1.3em;
-        cursor: pointer;
-        font-size: 15px;
-      }
-
-      .twitter-previewer .card-image {
-        aspect-ratio: 16 / 9;
-        background-size: cover;
-        border-bottom: 1px solid #e1e8ed;
-      }
-
-      .twitter-previewer .card-text {
-        padding: 12px;
-        margin: 0;
-        background-color: white;
-        gap: 2px;
-        -webkit-box-pack: center;
-        justify-content: center;
-        display: flex;
-        flex-basis: auto;
-        flex-direction: column;
-      }
-
-      .twitter-previewer .card-subtitle {
-        overflow-wrap: break-word;
-        color: rgb(83, 100, 113);
-        font-weight: 400;
-        font-size: 15px;
-        line-height: 20px;
-        min-width: 0px;
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        margin: 0;
       }
 
       .twitter-previewer .card-title {
-        overflow-wrap: break-word;
-        color: rgb(15, 20, 25);
-        font-weight: 400;
-        font-size: 15px;
-        line-height: 20px;
-        min-width: 0px;
-        max-width: 100%;
+        position: absolute;
+        bottom: 12px;
+        left: 12px;
+        max-width: calc(100% - 40px);
+        padding: 0 4px;
         overflow: hidden;
+        border-radius: 4px;
+        background: var(--st-twitter-label-background);
+        color: #ffffff;
+        font-size: 13px;
+        line-height: 20px;
         text-overflow: ellipsis;
         white-space: nowrap;
-        margin: 0;
       }
 
-      .twitter-previewer .card-description {
-        color: rgb(83, 100, 113);
-        font-weight: 400;
-        font-size: 15px;
-        line-height: 20px;
-        min-width: 0px;
-        max-width: 100%;
+      .twitter-previewer .card-subtitle {
+        margin: 4px 0 0;
         overflow: hidden;
+        color: var(--st-twitter-text);
+        font-size: 13px;
+        line-height: 16px;
         text-overflow: ellipsis;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        display: -webkit-box;
+        white-space: nowrap;
       }
 
+      /* LinkedIn */
       .linkedin-previewer .card {
-        width: 300px;
         overflow: hidden;
-        margin: 0;
-        background-color: #eef3f8;
-      }
-
-      .linkedin-previewer .card-image {
-        aspect-ratio: 1.91 / 1;
-        background-size: cover;
+        border: 1px solid var(--st-linkedin-border);
+        border-radius: 8px;
+        background-color: var(--st-linkedin-background);
+        font-family: -apple-system, system-ui, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
       }
 
       .linkedin-previewer .card-text {
-        padding: 8px 12px;
+        padding: 8px 12px 12px;
       }
 
       .linkedin-previewer .card-title {
         display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        max-height: 4rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        color: rgba(0, 0, 0, 0.9);
-        font-size: 1rem;
-        font-weight: 600;
         margin: 0;
+        overflow: hidden;
+        color: var(--st-linkedin-title);
+        font-size: 14px;
+        font-weight: 600;
         line-height: 20px;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
 
       .linkedin-previewer .card-subtitle {
-        margin-top: 8px;
-        max-height: none;
-        white-space: nowrap;
+        margin: 4px 0 0;
         overflow: hidden;
-        text-overflow: ellipsis;
-        color: rgba(0, 0, 0, 0.6);
-        font-size: 0.8rem;
+        color: var(--st-linkedin-text);
+        font-size: 12px;
         font-weight: 400;
-        margin: 0;
         line-height: 16px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     `,
   ];
