@@ -19,7 +19,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Config
             return new RedirectsConfigModel
             {
                 DisabledModules = settings.DisabledModules,
-                EnableBloomFilter = settings.EnableBloomFilter
+                EnableBloomFilter = settings.EnableBloomFilter,
+                PermanentRedirectMaxAgeInSeconds = settings.PermanentRedirectMaxAgeInSeconds
             };
         }
     }
