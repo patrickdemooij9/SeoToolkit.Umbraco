@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Services;
+using Microsoft.Net.Http.Headers;
 using Umbraco.Cms.Core.Web;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.Redirects.Core.Config.Models;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using System.Diagnostics;
 
@@ -17,16 +20,19 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
         private readonly IRuntimeState _runtimeState;
         private readonly IRedirectsService _redirectsService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly ISettingsService<RedirectsConfigModel> _settingsService;
 
         public RedirectMiddleware(RequestDelegate next,
             IRuntimeState runtimeState,
             IRedirectsService redirectsService,
-            IUmbracoContextFactory umbracoContextFactory)
+            IUmbracoContextFactory umbracoContextFactory,
+            ISettingsService<RedirectsConfigModel> settingsService)
         {
             _next = next;
             _runtimeState = runtimeState;
             _redirectsService = redirectsService;
             _umbracoContextFactory = umbracoContextFactory;
+            _settingsService = settingsService;
         }
 
         public async Task Invoke(HttpContext context)
@@ -68,8 +74,23 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
             }
 
             var isPerm = matchedRedirectResult.Redirect.RedirectCode == (int)HttpStatusCode.MovedPermanently;
+            context.Response.GetTypedHeaders().CacheControl = GetCacheControl(isPerm);
             context.Response.Redirect(matchedRedirectResult.GetNewUrl(), isPerm);
             return true;
+        }
+
+        private CacheControlHeaderValue GetCacheControl(bool isPermanent)
+        {
+            if (!isPermanent)
+            {
+                return new CacheControlHeaderValue { NoStore = true };
+            }
+
+            return new CacheControlHeaderValue
+            {
+                Public = true,
+                MaxAge = TimeSpan.FromSeconds(_settingsService.GetSettings().PermanentRedirectMaxAgeInSeconds)
+            };
         }
     }
 }
