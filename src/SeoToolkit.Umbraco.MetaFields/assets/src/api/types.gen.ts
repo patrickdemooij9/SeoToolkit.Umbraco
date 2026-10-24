@@ -39,6 +39,7 @@ export type DeleteScriptPostModel = {
 
 export type DocumentTypeSettingsContentViewModel = {
     fields?: Array<SeoFieldViewModel> | null;
+    groups?: Array<SeoFieldSettingsGroupViewModel> | null;
     inheritance?: DocumentTypeSettingsInheritanceViewModel | null;
 };
 
@@ -305,10 +306,18 @@ export type SeoFieldGroupViewModel = {
     description?: string | null;
 };
 
+export type SeoFieldSettingsGroupViewModel = {
+    alias?: string | null;
+    name?: string | null;
+    description?: string | null;
+    icon?: string | null;
+};
+
 export type SeoFieldViewModel = {
     alias?: string | null;
     title?: string | null;
     description?: string | null;
+    settingsGroupAlias?: string | null;
     useInheritedValue: boolean;
     value?: unknown;
     editor?: SeoFieldEditorViewModel | null;

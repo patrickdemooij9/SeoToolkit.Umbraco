@@ -22,6 +22,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Alias => SeoFieldAliasConstants.Title;
         public string Description => "Title for the page";
         public string GroupAlias => SeoFieldGroupConstants.MetaFieldsGroup;
+        public string SettingsGroupAlias => SeoFieldSettingsGroupConstants.Search;
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.TextBox", "Umbraco.TextArea", "Umbraco.TinyMCE", "Umbraco.RichText" });

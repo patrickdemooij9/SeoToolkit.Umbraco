@@ -19,6 +19,7 @@ public class KeywordsField : ISeoField
     public string Alias => SeoFieldAliasConstants.Keywords;
     public string Description => "Keywords for the page";
     public string GroupAlias => SeoFieldGroupConstants.MetaFieldsGroup;
+    public string SettingsGroupAlias => SeoFieldSettingsGroupConstants.Search;
     public Type FieldType => typeof(string[]);
 
     public ISeoFieldEditor Editor => new KeywordsFieldPropertyEditor();

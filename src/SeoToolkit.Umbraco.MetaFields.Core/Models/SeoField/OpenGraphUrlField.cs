@@ -16,6 +16,7 @@ public class OpenGraphUrlField : SeoField<string>
     public override string Alias => SeoFieldAliasConstants.OpenGraphUrl;
     public override string Description => "Open Graph Url for the content";
     public override string GroupAlias => SeoFieldGroupConstants.SocialMediaGroup;
+    public override string SettingsGroupAlias => SeoFieldSettingsGroupConstants.OpenGraph;
     public override ISeoFieldEditor Editor { get; }
     public override ISeoFieldEditEditor EditEditor => new SeoTextBoxEditEditor();
 
