@@ -64,7 +64,7 @@ namespace SeoToolkit.Umbraco.uSync.Serializers
             var item = await FindItemAsync(node);
             item ??= new Script
             {
-                Key = node.Element("Key").ValueOrDefault(Guid.NewGuid())
+                Key = node.GetKey()
             };
 
             var infoNode = node.Element("Info");

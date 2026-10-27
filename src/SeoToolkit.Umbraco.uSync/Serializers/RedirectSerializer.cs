@@ -74,7 +74,7 @@ namespace SeoToolkit.Umbraco.uSync.Serializers
             var item = await FindItemAsync(node);
             item ??= new Redirect
             {
-                Key = node.Element("Key").ValueOrDefault(Guid.NewGuid())
+                Key = node.GetKey()
             };
 
             var infoNode = node.Element("Info");

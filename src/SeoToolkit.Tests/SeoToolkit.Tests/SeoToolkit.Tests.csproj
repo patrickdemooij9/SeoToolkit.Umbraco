@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\SeoToolkit.Umbraco\SeoToolkit.Umbraco.csproj" />
     <ProjectReference Include="..\..\SeoToolkit.Umbraco.Deploy\SeoToolkit.Umbraco.Deploy.csproj" />
+    <ProjectReference Include="..\..\SeoToolkit.Umbraco.uSync\SeoToolkit.Umbraco.uSync.csproj" />
   </ItemGroup>
 
 </Project>
