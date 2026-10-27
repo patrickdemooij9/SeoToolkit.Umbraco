@@ -18,6 +18,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Alias => SeoFieldAliasConstants.MetaDescription;
         public string Description => "Meta description for the page";
         public string GroupAlias => SeoFieldGroupConstants.MetaFieldsGroup;
+        public string SettingsGroupAlias => SeoFieldSettingsGroupConstants.Search;
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] {

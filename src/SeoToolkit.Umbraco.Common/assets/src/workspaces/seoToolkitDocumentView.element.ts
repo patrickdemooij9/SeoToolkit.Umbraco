@@ -21,6 +21,7 @@ import { UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/doc
 import SeoToolkitDocumentContext, {
   ST_METAFIELDS_SETTINGSDOCUMENT_TOKEN_CONTEXT,
 } from "./SeoToolkitDocumentContext";
+import { SeoDocumentNavItem } from "./seoDocumentNavigation";
 
 @customElement("st-document-view")
 export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
@@ -30,6 +31,9 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
 
   @state()
   private _documentViews: Array<SeoDocumentViewManifest> = [];
+
+  @state()
+  private _navItems: Record<string, SeoDocumentNavItem[]> = {};
 
   @state()
   private _routes?: UmbRoute[];
@@ -63,6 +67,10 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
 
         this._seoEnabled = value.enabled;
       });
+
+      this.observe(instance?.navItems, (value) => {
+        this._navItems = value ?? {};
+      });
     });
 
     new UmbExtensionsManifestInitializer(
@@ -83,22 +91,44 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
     let newRoutes: UmbRoute[] = [];
 
     if (this._documentViews.length > 0) {
-      newRoutes = this._documentViews.map((manifest) => {
-        return {
-          path: `view/${manifest.meta.pathname}`,
+      newRoutes = this._documentViews.flatMap((manifest) => {
+        const route = {
           component: () => createExtensionElement(manifest),
-          setup: (component) => {
+          setup: (component: HTMLElement) => {
             if (component) {
               (component as any).manifest = manifest;
             }
           },
-        } as UmbRoute;
+        };
+        // The item route comes first, as routes match on prefix.
+        return [
+          { ...route, path: `view/${manifest.meta.pathname}/:item` },
+          { ...route, path: `view/${manifest.meta.pathname}` },
+        ] as UmbRoute[];
       });
 
-      newRoutes.push({ ...newRoutes[0], path: "" });
+      newRoutes.push({ ...newRoutes[1], path: "" });
     }
 
     this._routes = newRoutes;
+  }
+
+  // Splits the active router path into the view pathname and the selected nav item.
+  private _getActiveSelection(): { pathname?: string; item?: string } {
+    const [, pathname, item] = (this._activePath ?? "").split("/");
+    return {
+      pathname: pathname ?? this._documentViews[0]?.meta.pathname,
+      item,
+    };
+  }
+
+  private _onRouteChange(event: UmbRouterSlotChangeEvent) {
+    this._activePath = event.target.localActiveViewPath;
+
+    const { pathname, item } = this._getActiveSelection();
+    if (pathname) {
+      this.#context?.setActiveNavItem(pathname, item);
+    }
   }
 
   private setSeoSettings(value: boolean) {
@@ -108,72 +138,41 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
   render() {
     return html`
       <umb-body-layout header-fit-height
-        >${this.#renderViews()} ${this.#renderRoutes()}</umb-body-layout
+        >${this.#renderHeader()} ${this.#renderContent()}</umb-body-layout
       >
     `;
   }
 
-  #renderViews() {
+  #renderHeader() {
     if (!this._showViews) return nothing;
     return html`
       <div class="top" slot="header">
-        <div>
-          ${when(
-            this._seoEnabled,
-            () => html`
-              <uui-tab-group class="navigation">
-                ${repeat(
-                  this._documentViews,
-                  (view) => view.alias,
-                  (view, index) =>
-                    html`
-                      <uui-tab
-                        href="${this._routerPath}/view/${view.meta.pathname}"
-                        .label="${view.meta.label
-                          ? this.localize.string(view.meta.label)
-                          : view.name}"
-                        ?active=${"view/" + view.meta.pathname ===
-                          this._activePath ||
-                        (index === 0 && this._activePath === "")}
-                      >
-                        ${view.meta.label
-                          ? this.localize.string(view.meta.label)
-                          : view.name}
-                      </uui-tab>
-                    `
-                )}
-              </uui-tab-group>
-            `
-          )}
-        </div>
-        <div>
-          ${when(
-            this._seoEnabled,
-            () => html`
-              <uui-button
-                look="outline"
-                label="Disable SEO settings"
-                @click=${() => this.setSeoSettings(false)}
-              >
-                Disable SEO settings
-              </uui-button>
-            `,
-            () => html`
-              <uui-button
-                look="outline"
-                label="Enable SEO settings"
-                @click=${() => this.setSeoSettings(true)}
-              >
-                Enable SEO settings
-              </uui-button>
-            `
-          )}
-        </div>
+        ${when(
+          this._seoEnabled,
+          () => html`
+            <uui-button
+              look="outline"
+              label="Disable SEO settings"
+              @click=${() => this.setSeoSettings(false)}
+            >
+              Disable SEO settings
+            </uui-button>
+          `,
+          () => html`
+            <uui-button
+              look="outline"
+              label="Enable SEO settings"
+              @click=${() => this.setSeoSettings(true)}
+            >
+              Enable SEO settings
+            </uui-button>
+          `
+        )}
       </div>
     `;
   }
 
-  #renderRoutes() {
+  #renderContent() {
     if (!this._routes || this._routes.length === 0) return nothing;
     if (!this._showViews) {
       return html`
@@ -184,16 +183,74 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
       return html` <div class="empty-state">Enable SEO to get started</div> `;
     }
     return html`
-      <umb-router-slot
-        id="router-slot"
-        .routes=${this._routes}
-        @init=${(event: UmbRouterSlotInitEvent) => {
-          this._routerPath = event.target.absoluteRouterPath;
-        }}
-        @change=${(event: UmbRouterSlotChangeEvent) => {
-          this._activePath = event.target.localActiveViewPath;
-        }}
-      ></umb-router-slot>
+      <div class="layout">
+        <nav class="navigation" aria-label="SEO settings">
+          ${repeat(
+            this._documentViews,
+            (view) => view.alias,
+            (view) => this.#renderViewNav(view)
+          )}
+        </nav>
+        <umb-router-slot
+          id="router-slot"
+          .routes=${this._routes}
+          @init=${(event: UmbRouterSlotInitEvent) => {
+            this._routerPath = event.target.absoluteRouterPath;
+          }}
+          @change=${this._onRouteChange}
+        ></umb-router-slot>
+      </div>
+    `;
+  }
+
+  #renderViewNav(view: SeoDocumentViewManifest) {
+    const label = view.meta.label
+      ? this.localize.string(view.meta.label)
+      : view.name;
+    const items = this._navItems[view.meta.pathname] ?? [];
+    const active = this._getActiveSelection();
+    const isActiveView = active.pathname === view.meta.pathname;
+    const href = `${this._routerPath}/view/${view.meta.pathname}`;
+
+    if (items.length === 0) {
+      return this.#renderNavItem(
+        href,
+        { key: view.meta.pathname, label, icon: view.meta.icon },
+        isActiveView
+      );
+    }
+
+    return html`
+      <div class="section">
+        <h4 class="section-title">${label}</h4>
+        ${repeat(
+          items,
+          (item) => item.key,
+          (item, index) =>
+            this.#renderNavItem(
+              `${href}/${item.key}`,
+              item,
+              isActiveView &&
+                (active.item === item.key || (!active.item && index === 0))
+            )
+        )}
+      </div>
+    `;
+  }
+
+  #renderNavItem(href: string, item: SeoDocumentNavItem, active: boolean) {
+    return html`
+      <a
+        class="nav-item ${active ? "active" : ""}"
+        href=${href}
+        aria-current=${active ? "page" : "false"}
+      >
+        <umb-icon name=${item.icon ?? "icon-settings"}></umb-icon>
+        <span class="nav-label">${item.label}</span>
+        ${item.badge
+          ? html`<span class="nav-badge">${item.badge}</span>`
+          : nothing}
+      </a>
     `;
   }
 
@@ -210,14 +267,87 @@ export default class SeoToolkitDocumentViewElement extends UmbElementMixin(
         height: 48px;
 
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 240px minmax(0, 1fr);
+        gap: var(--uui-size-space-5);
+        align-items: start;
+      }
+
+      .navigation {
+        display: flex;
+        flex-direction: column;
+        gap: var(--uui-size-space-4);
+        position: sticky;
+        top: 0;
+      }
+
+      .section {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .section-title {
+        margin: 0;
+        padding: 0 var(--uui-size-space-4) var(--uui-size-space-2);
+        font-size: var(--uui-type-small-size);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--uui-color-text-alt);
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: var(--uui-size-space-3);
+        padding: var(--uui-size-space-3) var(--uui-size-space-4);
+        border-radius: var(--uui-border-radius);
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .nav-item:hover {
+        background: var(--uui-color-surface-emphasis);
+      }
+
+      .nav-item:focus-visible {
+        outline: 2px solid var(--uui-color-focus);
+      }
+
+      .nav-item.active {
+        background: var(--uui-color-current);
+        color: var(--uui-color-current-contrast);
+        font-weight: 700;
+      }
+
+      .nav-label {
+        flex: 1;
+      }
+
+      .nav-badge {
+        font-size: var(--uui-type-small-size);
+        color: var(--uui-color-text-alt);
       }
 
       #router-slot {
         display: flex;
         flex-direction: column;
         height: 100%;
+      }
+
+      @media (max-width: 800px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .navigation {
+          position: static;
+        }
       }
     `,
   ];
