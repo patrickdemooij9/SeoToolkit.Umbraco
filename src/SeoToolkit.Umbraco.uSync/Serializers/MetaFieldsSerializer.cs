@@ -72,7 +72,7 @@ namespace SeoToolkit.Umbraco.uSync.Serializers
             var item = await FindItemAsync(node);
             if (item is null)
             {
-                var contentTypeKey = node.Element("Key").ValueOrDefault(Guid.Empty);
+                var contentTypeKey = node.GetKey();
                 if (contentTypeKey == Guid.Empty)
                 {
                     return SyncAttempt<DocumentTypeSettingsDto>.Fail(node.GetAlias(), ChangeType.Fail, "No valid content type key");

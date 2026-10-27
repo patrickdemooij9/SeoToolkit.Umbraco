@@ -74,7 +74,7 @@ namespace SeoToolkit.Umbraco.uSync.Serializers
             var item = await FindItemAsync(node);
             item ??= new SeoSetting
             {
-                ContentTypeKey = node.Element("Key").ValueOrDefault(Guid.Empty)
+                ContentTypeKey = node.GetKey()
             };
             if (item.ContentTypeKey == Guid.Empty)
             {
