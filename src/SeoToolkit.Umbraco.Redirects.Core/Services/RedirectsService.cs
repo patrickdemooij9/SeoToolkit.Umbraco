@@ -78,6 +78,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
             if (existingRedirect != null)
             {
                 redirect.Id = existingRedirect.Id;
+                redirect.LastHit = existingRedirect.LastHit;
             }
 
             var oldUrl = redirect.IsRegex ? redirect.OldUrl : redirect.OldUrl.CleanUrl();

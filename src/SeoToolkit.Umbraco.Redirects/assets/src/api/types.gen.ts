@@ -130,6 +130,7 @@ export type RedirectListViewModel = {
     newUrl?: string | null;
     statusCode: number;
     lastUpdated?: string | null;
+    lastHit?: string | null;
 };
 
 export type RedirectViewModel = {
