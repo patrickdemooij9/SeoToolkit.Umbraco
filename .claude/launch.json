@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site-unattended",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "src/SeoToolkit.Umbraco.Site/SeoToolkit.Umbraco.Site.csproj", "--launch-profile", "Unattended (Claude)"],
+      "port": 44324,
+      "url": "https://localhost:44324"
+    }
+  ]
+}

@@ -23,7 +23,22 @@
       "applicationUrl": "https://localhost:44324;http://localhost:57441",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }      
+      }
+    },
+    "Unattended (Claude)": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:44324;http://localhost:57441",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ConnectionStrings__umbracoDbDSN": "Data Source=|DataDirectory|/Claude.sqlite.db;Cache=Shared;Foreign Keys=True;Pooling=True",
+        "ConnectionStrings__umbracoDbDSN_ProviderName": "Microsoft.Data.Sqlite",
+        "Umbraco__CMS__Unattended__InstallUnattended": "true",
+        "Umbraco__CMS__Unattended__UnattendedUserName": "Claude",
+        "Umbraco__CMS__Unattended__UnattendedUserEmail": "claude@seotoolkit.test",
+        "Umbraco__CMS__Unattended__UnattendedUserPassword": "tkn9w8YQB1J1SwT4!9"
+      }
     }
   }
 }
