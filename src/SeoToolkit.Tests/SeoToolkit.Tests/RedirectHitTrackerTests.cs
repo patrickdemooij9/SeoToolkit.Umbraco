@@ -36,6 +36,21 @@ namespace SeoToolkit.Tests
         }
 
         [Test]
+        public void Flush_WithRegisteredHit_UsesUtcTime()
+        {
+            // Arrange
+            var key = Guid.NewGuid();
+            _tracker.RegisterHit(key);
+
+            // Act
+            _tracker.Flush();
+
+            // Assert
+            _mockRedirectsRepository.Verify(it => it.UpdateLastHits(It.Is<IDictionary<Guid, DateTime>>(hits =>
+                hits[key].Kind == DateTimeKind.Utc)), Times.Once);
+        }
+
+        [Test]
         public void Flush_AfterPreviousFlush_DoesNotUpdateSameHitsAgain()
         {
             // Arrange

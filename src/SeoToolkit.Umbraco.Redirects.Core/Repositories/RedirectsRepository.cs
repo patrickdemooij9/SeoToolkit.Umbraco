@@ -240,7 +240,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 LastUpdated = entity.LastUpdated,
                 CreatedBy = entity.CreatedBy,
                 RedirectCode = entity.RedirectCode,
-                LastHit = entity.LastHit
+                LastHit = entity.LastHit is null ? null : DateTime.SpecifyKind(entity.LastHit.Value, DateTimeKind.Utc)
             };
         }
 

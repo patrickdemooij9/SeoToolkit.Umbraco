@@ -98,7 +98,7 @@ export default class RedirectCollectionView extends UmbLitElement {
                             value: item.lastUpdated
                         },{
                             columnAlias: 'lastHit',
-                            value: item.lastHit
+                            value: item.lastHit ? this.localize.date(item.lastHit) : undefined
                         }]
                     }
                 })

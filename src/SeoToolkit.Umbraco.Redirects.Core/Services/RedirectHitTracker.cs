@@ -17,7 +17,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Services
 
         public void RegisterHit(Guid redirectKey)
         {
-            _lastHits[redirectKey] = DateTime.Now;
+            _lastHits[redirectKey] = DateTime.UtcNow;
         }
 
         public void Flush()
