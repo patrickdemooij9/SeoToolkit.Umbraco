@@ -84,7 +84,7 @@ const SiteAuditContentView: any = {
   alias: "seoToolkit.siteAudit.contentView",
   name: "SeoToolkit SiteAudit content view",
   js: () => import("../workspaces/SiteAuditContentView.element"),
-  weight: 500,
+  weight: 100,
   meta: {
     label: "Page checks",
     pathname: "pageChecks"
