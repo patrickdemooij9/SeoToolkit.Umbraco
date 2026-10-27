@@ -23,13 +23,15 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ILanguageService _languageService;
         private readonly ISettingsService<RedirectsConfigModel> _settingsService;
+        private readonly IRedirectHitTracker _redirectHitTracker;
 
         public RedirectMiddleware(RequestDelegate next,
             IRuntimeState runtimeState,
             IRedirectsService redirectsService,
             IUmbracoContextFactory umbracoContextFactory,
             ILanguageService languageService,
-            ISettingsService<RedirectsConfigModel> settingsService)
+            ISettingsService<RedirectsConfigModel> settingsService,
+            IRedirectHitTracker redirectHitTracker)
         {
             _next = next;
             _runtimeState = runtimeState;
@@ -37,6 +39,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
             _umbracoContextFactory = umbracoContextFactory;
             _languageService = languageService;
             _settingsService = settingsService;
+            _redirectHitTracker = redirectHitTracker;
         }
 
         public async Task Invoke(HttpContext context)
@@ -76,6 +79,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
             {
                 return false;
             }
+
+            _redirectHitTracker.RegisterHit(matchedRedirectResult.Redirect.Key);
 
             var isPerm = matchedRedirectResult.Redirect.RedirectCode == (int)HttpStatusCode.MovedPermanently;
             var isoCode = matchedRedirectResult.Redirect.NewNodeCultureId.HasValue ? (await _languageService.GetAllAsync()).FirstOrDefault(l => l.Id == matchedRedirectResult.Redirect.NewNodeCultureId.Value)?.IsoCode : null;

@@ -9,4 +9,5 @@ export interface RedirectOverviewItem {
     newUrl?: (string) | null;
     statusCode: number;
     lastUpdated?: (string) | null;
+    lastHit?: (string) | null;
 }

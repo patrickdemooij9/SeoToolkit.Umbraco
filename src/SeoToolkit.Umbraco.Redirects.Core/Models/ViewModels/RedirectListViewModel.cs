@@ -11,5 +11,6 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.ViewModels
         public string NewUrl { get; set; }
         public int StatusCode { get; set; }
         public string LastUpdated { get; set; }
+        public DateTime? LastHit { get; set; }
     }
 }
