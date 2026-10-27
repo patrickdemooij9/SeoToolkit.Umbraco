@@ -58,5 +58,9 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Database
         
         [Column("CreatedBy")]
         public Guid? CreatedBy { get; set; }
+
+        [Column("LastHit")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public DateTime? LastHit { get; set; }
     }
 }

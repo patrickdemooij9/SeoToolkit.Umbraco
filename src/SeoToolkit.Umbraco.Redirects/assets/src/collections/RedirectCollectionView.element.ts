@@ -39,6 +39,10 @@ export default class RedirectCollectionView extends UmbLitElement {
             alias: 'lastUpdated'
         },
         {
+            name: 'Last hit',
+            alias: 'lastHit'
+        },
+        {
             name: 'Enabled',
             alias: 'enabled'
         }
@@ -92,6 +96,9 @@ export default class RedirectCollectionView extends UmbLitElement {
                         },{
                             columnAlias: 'lastUpdated',
                             value: item.lastUpdated
+                        },{
+                            columnAlias: 'lastHit',
+                            value: item.lastHit
                         }]
                     }
                 })

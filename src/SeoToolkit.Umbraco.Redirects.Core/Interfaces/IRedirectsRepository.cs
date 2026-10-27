@@ -10,6 +10,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Interfaces
         [Obsolete("Use UpdateRedirectCodes(Guid[] keys, int redirectCode) method instead. Will be removed in next major version.")]
         void UpdateRedirectCodes(int[] ids, int redirectCode);
         void UpdateRedirectCodes(Guid[] keys, int redirectCode);
+        void UpdateLastHits(IDictionary<Guid, DateTime> lastHits);
         void Delete(Redirect redirect);
 
         [Obsolete("Use Get method with Guid instead. Will be removed in next major version.")]

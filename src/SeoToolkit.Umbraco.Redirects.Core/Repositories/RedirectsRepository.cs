@@ -74,6 +74,20 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             scope.Complete();
         }
 
+        public void UpdateLastHits(IDictionary<Guid, DateTime> lastHits)
+        {
+            using var scope = _scopeProvider.CreateScope();
+
+            foreach (var (key, lastHit) in lastHits)
+            {
+                var sql = scope.Database.SqlContext.Sql()
+                    .Update<RedirectEntity>(it => it.Set(e => e.LastHit, lastHit))
+                    .Where<RedirectEntity>(it => it.Key == key && (it.LastHit == null || it.LastHit < lastHit));
+                scope.Database.Execute(sql);
+            }
+            scope.Complete();
+        }
+
         public void Delete(Redirect redirect)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
@@ -199,7 +213,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 NewNodeCultureId = redirect.NewNodeCulture?.Id,
                 CreatedBy = redirect.CreatedBy,
                 LastUpdated = DateTime.Now,
-                RedirectCode = redirect.RedirectCode
+                RedirectCode = redirect.RedirectCode,
+                LastHit = redirect.LastHit
             };
         }
 
@@ -224,7 +239,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 NewUrl = entity.NewUrl,
                 LastUpdated = entity.LastUpdated,
                 CreatedBy = entity.CreatedBy,
-                RedirectCode = entity.RedirectCode
+                RedirectCode = entity.RedirectCode,
+                LastHit = entity.LastHit
             };
         }
 

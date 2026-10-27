@@ -25,6 +25,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Models.Business
         public DateTime LastUpdated { get; set; }
         public Guid? CreatedBy { get; set; }
         public int RedirectCode { get; set; }
+        public DateTime? LastHit { get; set; }
 
         public string GetNewUrl()
         {

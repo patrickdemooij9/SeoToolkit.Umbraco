@@ -17,6 +17,7 @@ namespace SeoToolkit.Tests
     {
         private Mock<IRedirectsService> _mockRedirectsService = null!;
         private Mock<ISettingsService<RedirectsConfigModel>> _mockSettingsService = null!;
+        private Mock<IRedirectHitTracker> _mockRedirectHitTracker = null!;
         private RedirectMiddleware _middleware = null!;
         private DefaultHttpContext _httpContext = null!;
 
@@ -33,13 +34,15 @@ namespace SeoToolkit.Tests
             _mockRedirectsService = new Mock<IRedirectsService>();
             _mockSettingsService = new Mock<ISettingsService<RedirectsConfigModel>>();
             _mockSettingsService.Setup(it => it.GetSettings()).Returns(new RedirectsConfigModel());
+            _mockRedirectHitTracker = new Mock<IRedirectHitTracker>();
 
             _middleware = new RedirectMiddleware(
                 Mock.Of<RequestDelegate>(),
                 runtimeState.Object,
                 _mockRedirectsService.Object,
                 umbracoContextFactory.Object,
-                _mockSettingsService.Object);
+                _mockSettingsService.Object,
+                _mockRedirectHitTracker.Object);
 
             _httpContext = new DefaultHttpContext();
             _httpContext.Request.Scheme = "https";
@@ -89,11 +92,35 @@ namespace SeoToolkit.Tests
             Assert.AreEqual("no-store", _httpContext.Response.Headers.CacheControl.ToString());
         }
 
-        private void SetupRedirect(HttpStatusCode redirectCode)
+        [Test]
+        public async Task Invoke_WithMatchingRedirect_RegistersHit()
+        {
+            // Arrange
+            var redirect = SetupRedirect(HttpStatusCode.MovedPermanently);
+
+            // Act
+            await _middleware.Invoke(_httpContext);
+
+            // Assert
+            _mockRedirectHitTracker.Verify(it => it.RegisterHit(redirect.Key), Times.Once);
+        }
+
+        [Test]
+        public async Task Invoke_WithoutMatchingRedirect_DoesNotRegisterHit()
+        {
+            // Act
+            await _middleware.Invoke(_httpContext);
+
+            // Assert
+            _mockRedirectHitTracker.Verify(it => it.RegisterHit(It.IsAny<Guid>()), Times.Never);
+        }
+
+        private Redirect SetupRedirect(HttpStatusCode redirectCode)
         {
             var redirect = new Redirect { Key = Guid.NewGuid(), OldUrl = "/old", NewUrl = "/new", RedirectCode = (int)redirectCode };
             _mockRedirectsService.Setup(it => it.GetByUrl(It.IsAny<Uri>()))
                 .Returns((Uri uri) => new RedirectFindResult(uri, redirect));
+            return redirect;
         }
     }
 }

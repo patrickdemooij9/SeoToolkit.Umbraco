@@ -133,7 +133,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Controllers
                     NewUrl = it.GetNewUrl(),
                     Domain = domain,
                     StatusCode = it.RedirectCode,
-                    LastUpdated = it.LastUpdated.ToShortDateString()
+                    LastUpdated = it.LastUpdated.ToShortDateString(),
+                    LastHit = it.LastHit?.ToShortDateString()
                 };
             });
             return Ok(new PagedViewModel<RedirectListViewModel>() { Total = redirectsPaged.TotalItems, Items = viewModels });

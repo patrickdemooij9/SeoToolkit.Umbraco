@@ -21,18 +21,21 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
         private readonly IRedirectsService _redirectsService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISettingsService<RedirectsConfigModel> _settingsService;
+        private readonly IRedirectHitTracker _redirectHitTracker;
 
         public RedirectMiddleware(RequestDelegate next,
             IRuntimeState runtimeState,
             IRedirectsService redirectsService,
             IUmbracoContextFactory umbracoContextFactory,
-            ISettingsService<RedirectsConfigModel> settingsService)
+            ISettingsService<RedirectsConfigModel> settingsService,
+            IRedirectHitTracker redirectHitTracker)
         {
             _next = next;
             _runtimeState = runtimeState;
             _redirectsService = redirectsService;
             _umbracoContextFactory = umbracoContextFactory;
             _settingsService = settingsService;
+            _redirectHitTracker = redirectHitTracker;
         }
 
         public async Task Invoke(HttpContext context)
@@ -72,6 +75,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
             {
                 return false;
             }
+
+            _redirectHitTracker.RegisterHit(matchedRedirectResult.Redirect.Key);
 
             var isPerm = matchedRedirectResult.Redirect.RedirectCode == (int)HttpStatusCode.MovedPermanently;
             context.Response.GetTypedHeaders().CacheControl = GetCacheControl(isPerm);
