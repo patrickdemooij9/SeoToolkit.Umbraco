@@ -19,6 +19,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Alias => SeoFieldAliasConstants.OpenGraphImage;
         public string Description => "Image for Open Graph";
         public string GroupAlias => SeoFieldGroupConstants.SocialMediaGroup;
+        public string SettingsGroupAlias => SeoFieldSettingsGroupConstants.OpenGraph;
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] { "Umbraco.MediaPicker", "Umbraco.MediaPicker3" });

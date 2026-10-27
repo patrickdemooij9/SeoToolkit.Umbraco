@@ -16,6 +16,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public string Alias => SeoFieldAliasConstants.OpenGraphDescription;
         public string Description => "Description for Open Graph";
         public string GroupAlias => SeoFieldGroupConstants.SocialMediaGroup;
+        public string SettingsGroupAlias => SeoFieldSettingsGroupConstants.OpenGraph;
         public Type FieldType => typeof(string);
 
         public ISeoFieldEditor Editor => new SeoFieldFieldsEditor(new[] {

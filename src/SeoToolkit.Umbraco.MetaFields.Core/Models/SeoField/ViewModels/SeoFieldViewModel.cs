@@ -9,6 +9,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels
         public string Alias { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public string SettingsGroupAlias { get; set; }
         public bool UseInheritedValue { get; set; }
         public object Value { get; set; }
         public SeoFieldEditorViewModel Editor { get; set; }
@@ -18,6 +19,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField.ViewModels
             Alias = field.Alias;
             Title = field.Title;
             Description = field.Description;
+            SettingsGroupAlias = field.SettingsGroupAlias;
             Editor = new SeoFieldEditorViewModel(field.Editor);
 
             if (field.Editor is ISeoFieldEditorDefaultValue defaultValueEditor)

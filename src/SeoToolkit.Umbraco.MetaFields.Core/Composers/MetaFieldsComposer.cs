@@ -12,6 +12,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Common.DisplayProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SchemaResolvers;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldGroups;
+using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoFieldSettingsGroups;
 using SeoToolkit.Umbraco.MetaFields.Core.Common.SeoSettings;
 using SeoToolkit.Umbraco.MetaFields.Core.Components;
 using SeoToolkit.Umbraco.MetaFields.Core.Config;
@@ -89,6 +90,15 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Composers
                 .Add<TwitterSiteField>()
                 .Add<TwitterCreatorField>()
                 .Add<FacebookIdField>();
+
+            builder.WithCollectionBuilder<SeoFieldSettingsGroupCollectionBuilder>()
+                .Append<SearchSettingsGroup>()
+                .Append<OpenGraphSettingsGroup>()
+                .Append<TwitterSettingsGroup>()
+                .Append<FacebookSettingsGroup>()
+                .Append<IndexingSettingsGroup>()
+                .Append<StructuredDataSettingsGroup>()
+                .Append<OthersSettingsGroup>();
 
             if (settings?.ShowKeywordsField is true)
             {

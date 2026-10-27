@@ -14,6 +14,7 @@ using SeoToolkit.Umbraco.MetaFields.Core.Common.FieldProviders;
 using System;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Core.Services;
+using SeoToolkit.Umbraco.MetaFields.Core.Constants;
 
 namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
 {
@@ -26,18 +27,21 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
         private readonly IUmbracoMapper _umbracoMapper;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly IContentTypeService _contentTypeService;
+        private readonly SeoFieldSettingsGroupCollection _settingsGroupCollection;
 
         public MetaFieldsSettingsController(IMetaFieldsSettingsService documentTypeSettingsService,
             SeoFieldCollection seoFieldCollection,
             IUmbracoMapper umbracoMapper,
             IUmbracoContextFactory umbracoContextFactory,
-            IContentTypeService contentTypeService)
+            IContentTypeService contentTypeService,
+            SeoFieldSettingsGroupCollection settingsGroupCollection)
         {
             _documentTypeSettingsService = documentTypeSettingsService;
             _seoFieldCollection = seoFieldCollection;
             _umbracoMapper = umbracoMapper;
             _umbracoContextFactory = umbracoContextFactory;
             _contentTypeService = contentTypeService;
+            _settingsGroupCollection = settingsGroupCollection;
         }
 
         [HttpGet("metaFieldsSettings")]
@@ -81,10 +85,30 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Controllers
                 content = new DocumentTypeSettingsContentViewModel(_seoFieldCollection.GetAll().Select(it => new SeoFieldViewModel(it)).ToArray());
             }
 
+            AssignSettingsGroups(content);
+
             return Ok(new DocumentTypeSettingsViewModel
             {
                 ContentModel = content,
             });
+        }
+
+        private void AssignSettingsGroups(DocumentTypeSettingsContentViewModel content)
+        {
+            var groups = _settingsGroupCollection.ToArray();
+            var groupAliases = groups.Select(it => it.Alias).ToHashSet();
+            foreach (var field in content.Fields)
+            {
+                if (field.SettingsGroupAlias is null || !groupAliases.Contains(field.SettingsGroupAlias))
+                {
+                    field.SettingsGroupAlias = SeoFieldSettingsGroupConstants.Others;
+                }
+            }
+
+            content.Groups = groups
+                .Where(group => content.Fields.Any(field => field.SettingsGroupAlias == group.Alias))
+                .Select(group => new SeoFieldSettingsGroupViewModel(group))
+                .ToArray();
         }
 
         [HttpGet("metaFieldsAdditionalFields")]
