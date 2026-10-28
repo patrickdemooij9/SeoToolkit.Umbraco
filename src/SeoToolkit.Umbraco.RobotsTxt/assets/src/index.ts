@@ -1,6 +1,7 @@
 import { UmbEntryPointOnInit } from "@umbraco-cms/backoffice/extension-api";
 import { client } from "./api";
 import { UMB_AUTH_CONTEXT } from "@umbraco-cms/backoffice/auth";
+import { DashboardTileManifests } from "./manifests/DashboardTileManifests";
 import { Manifests } from "./manifests/ModuleManifests";
 
 export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
@@ -25,4 +26,5 @@ export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
   });
 
   extensionRegistry.registerMany(Manifests);
+  extensionRegistry.registerMany(DashboardTileManifests);
 };

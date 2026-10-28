@@ -98,6 +98,46 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Repositories
         {
             return GetAll().FirstOrDefault(it => it.Id == id);
         }
+
+        public SiteAuditResultsSummary GetLatestFinishedSummary()
+        {
+            var audit = Database.Page<SiteAuditEntity>(1, 1, AmbientScope.SqlContext.Sql()
+                    .SelectAll()
+                    .From<SiteAuditEntity>()
+                    .Where<SiteAuditEntity>(it => it.StatusId == (int)SiteAuditStatus.Finished)
+                    .OrderByDescending<SiteAuditEntity>(it => it.CreatedDate, it => it.Id))
+                .Items.FirstOrDefault();
+            if (audit is null)
+                return null;
+
+            var checkIds = Database.Fetch<SiteAuditCheckEntity>(AmbientScope.SqlContext.Sql()
+                    .SelectAll()
+                    .From<SiteAuditCheckEntity>()
+                    .Where<SiteAuditCheckEntity>(it => it.AuditId == audit.Id))
+                .Select(it => it.CheckId)
+                .ToHashSet();
+
+            var rows = Database.Fetch<SiteAuditPageResultRow>(AmbientScope.SqlContext.Sql(
+                @"SELECT p.Id AS PageId, p.Url, r.CheckId, r.ResultId
+                  FROM SeoToolkitSiteAuditPage p
+                  LEFT JOIN SeoToolkitSiteAuditCheckResult r ON r.PageId = p.Id
+                  WHERE p.AuditId = @0", audit.Id));
+
+            return new SiteAuditResultsSummary
+            {
+                AuditId = audit.Id,
+                Name = audit.Name,
+                CreatedDate = audit.CreatedDate,
+                Checks = _siteCheckService.GetAll().Where(it => checkIds.Contains(it.Id)).ToList(),
+                Pages = rows.GroupBy(it => it.PageId).Select(page => new SiteAuditPageResults
+                {
+                    Url = page.First().Url,
+                    Results = page.Where(it => it.CheckId.HasValue && it.ResultId.HasValue)
+                        .Select(it => new SiteAuditPageResult { CheckId = it.CheckId.Value, Result = (SiteCrawlResultType)it.ResultId.Value })
+                        .ToList()
+                }).ToList()
+            };
+        }
         
         public SiteAuditDto Get(Guid key)
         {

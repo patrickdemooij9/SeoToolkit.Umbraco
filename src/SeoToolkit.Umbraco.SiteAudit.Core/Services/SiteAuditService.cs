@@ -103,6 +103,12 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
             }
             return currentlyRunningAudit;
         }
+        public SiteAuditResultsSummary GetLatestFinishedSummary()
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            return _siteAuditRepository.GetLatestFinishedSummary();
+        }
+
         public IEnumerable<SiteAuditDto> GetAll()
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);

@@ -62,6 +62,8 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
                 .Add<SeoToolkitInfoSection>();
 
             builder.WithCollectionBuilder<SeoKeyValueSettingCollectionBuilder>();
+
+            builder.WithCollectionBuilder<DashboardDataSourceCollectionBuilder>();
         }
     }
 }

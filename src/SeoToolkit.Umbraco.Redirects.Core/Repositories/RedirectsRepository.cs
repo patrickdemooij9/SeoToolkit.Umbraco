@@ -196,6 +196,41 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             }
         }
 
+        public RedirectStatistics GetStatistics(DateTime recentlyHitSince, DateTime staleBefore)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+
+            int Count(Expression<Func<RedirectEntity, bool>> predicate = null)
+            {
+                var sql = scope.SqlContext.Sql().SelectCount().From<RedirectEntity>();
+                if (predicate != null)
+                    sql = sql.Where(predicate);
+                return scope.Database.ExecuteScalar<int>(sql);
+            }
+
+            return new RedirectStatistics
+            {
+                Total = Count(),
+                Enabled = Count(it => it.IsEnabled),
+                Permanent = Count(it => it.RedirectCode == 301),
+                RecentlyHit = Count(it => it.IsEnabled && it.LastHit != null && it.LastHit >= recentlyHitSince),
+                Stale = Count(it => it.IsEnabled && it.LastHit != null && it.LastHit < staleBefore),
+                NeverHit = Count(it => it.IsEnabled && it.LastHit == null)
+            };
+        }
+
+        public IEnumerable<Redirect> GetMostRecentlyHit(int take)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var sql = scope.SqlContext.Sql()
+                .SelectAll()
+                .From<RedirectEntity>()
+                .Where<RedirectEntity>(it => it.IsEnabled && it.LastHit != null)
+                .OrderByDescending<RedirectEntity>(it => it.LastHit);
+
+            return scope.Database.Page<RedirectEntity>(1, take, sql).Items.Select(ToModel).ToArray();
+        }
+
         private RedirectEntity ToEntity(Redirect redirect)
         {
             return new RedirectEntity

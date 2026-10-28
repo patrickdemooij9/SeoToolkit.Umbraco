@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
+using SeoToolkit.Umbraco.Common.Core.Extensions;
+using SeoToolkit.Umbraco.ScriptManager.Core.Dashboard;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.ScriptManager.Core.Api;
 using SeoToolkit.Umbraco.ScriptManager.Core.Components;
@@ -54,6 +56,9 @@ namespace SeoToolkit.Umbraco.ScriptManager.Core.Composers
                 .Add<HotjarDefinition>()
                 .Add<CustomScriptDefinition>()
                 .Add<PiwikProDefinition>();
+
+            builder.DashboardDataSources()
+                .Add<ScriptsDataSource>();
 
             builder.Components().Append<EnableModuleComponent>();
 
