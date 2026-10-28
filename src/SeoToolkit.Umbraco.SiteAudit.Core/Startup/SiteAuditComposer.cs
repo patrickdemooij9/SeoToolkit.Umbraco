@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
+using SeoToolkit.Umbraco.Common.Core.Extensions;
+using SeoToolkit.Umbraco.SiteAudit.Core.Dashboard;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.SiteAudit.Core.Checks;
 using SeoToolkit.Umbraco.SiteAudit.Core.Collections;
@@ -66,6 +68,10 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Composers
 
             builder.WithCollectionBuilder<SeoDisplayCollectionBuilder>()
                 .Add<SiteAuditDisplayProvider>();
+
+            builder.DashboardDataSources()
+                .Add<SiteAuditHealthDataSource>()
+                .Add<SiteAuditChecksDataSource>();
 
             builder.Services.AddHttpClient<BrokenImageCheck>()
                 .ConfigurePrimaryHttpMessageHandler(x =>

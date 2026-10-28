@@ -9,6 +9,8 @@ using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
+using SeoToolkit.Umbraco.Common.Core.Extensions;
+using SeoToolkit.Umbraco.Redirects.Core.Dashboard;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Redirects.Core.BackgroundTasks;
 using SeoToolkit.Umbraco.Redirects.Core.Caching;
@@ -48,6 +50,10 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Composers
             }
 
             builder.Components().Append<EnableModuleComponent>();
+
+            builder.DashboardDataSources()
+                .Add<RedirectsCountDataSource>()
+                .Add<RedirectsUsageDataSource>();
 
             builder.Services.AddUnique<IRedirectsRepository, RedirectsRepository>();
             builder.Services.AddUnique<IRedirectsService, RedirectsService>();

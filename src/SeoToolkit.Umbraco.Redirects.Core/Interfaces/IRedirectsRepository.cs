@@ -22,5 +22,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Interfaces
         IEnumerable<Redirect> GetAll(int pageNumber, int pageSize, out long totalRecords, string orderBy = null, string orderDirection = null, string search = "");
         IEnumerable<Redirect> GetAllRegexRedirects();
         IEnumerable<Redirect> GetByUrls(params string[] paths);
+        RedirectStatistics GetStatistics(DateTime recentlyHitSince, DateTime staleBefore);
+        IEnumerable<Redirect> GetMostRecentlyHit(int take);
     }
 }
