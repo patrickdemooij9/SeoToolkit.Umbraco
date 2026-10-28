@@ -1,7 +1,7 @@
 import { UmbControllerBase } from "@umbraco-cms/backoffice/class-api";
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { ContentDashboardSource } from "../sources/contentDashboardSource";
-import { ContentDashboardLayout } from "../dashboards/content/contentDashboardLayout";
+import { ContentDashboardLayout, parseLayout } from "../dashboards/content/contentDashboardLayout";
 
 export class ContentDashboardRepository extends UmbControllerBase {
   #source: ContentDashboardSource;
@@ -21,7 +21,7 @@ export class ContentDashboardRepository extends UmbControllerBase {
     if (!stored) return undefined;
 
     try {
-      return JSON.parse(stored.value);
+      return parseLayout(JSON.parse(stored.value));
     } catch {
       return undefined;
     }

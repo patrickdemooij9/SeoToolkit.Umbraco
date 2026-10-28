@@ -1,144 +1,280 @@
-// A 12-column grid of SEO tiles. "Customize" slides in a sidebar with the tiles that aren't on the dashboard:
-// drag them onto the grid (or back to remove them), drag tiles to reorder, and drag the bottom-right corner to resize.
-import { LitElement, css, html, customElement, property, state, repeat, when } from "@umbraco-cms/backoffice/external/lit";
+// The SEO tiles on a GridStack grid (12 columns). "Customize" makes the grid editable and slides in a sidebar with
+// the tiles that aren't on the dashboard: drag them anywhere onto the grid, drag tiles back onto the sidebar to
+// remove them, move tiles freely and resize them from their edges.
+import { LitElement, PropertyValues, css, html, customElement, property, state, when, render, unsafeCSS } from "@umbraco-cms/backoffice/external/lit";
+import { GridStack, GridItemHTMLElement, GridStackWidget } from "gridstack";
+import gridstackStyles from "gridstack/dist/gridstack.min.css?inline";
 import { ManifestSeoDashboardTile, SeoDashboardTileSize } from "../../manifests/seoDashboardTileManifest";
-import { ContentDashboardLayout, GRID_COLUMNS, isDefaultLayout, tileSize } from "./contentDashboardLayout";
+import { ContentDashboardLayout, GRID_COLUMNS, TilePosition, defaultTileSize } from "./contentDashboardLayout";
 import "./contentDashboardTile.element";
 
-const ROW_HEIGHT = 64;
-const GAP = 16;
-const MAX_ROWS = 10;
+const ROW_HEIGHT = 80;
+const MARGIN = 8;
 const MIN_COLUMN_WIDTH = 70;
 const ACTION_FROM_HEIGHT = 4;
-
-type DragPayload = { kind: "new" | "move"; alias: string };
+const SYNC_DELAY = 100;
 
 @customElement("seo-content-dashboard-tile-grid")
 export class ContentDashboardTileGridElement extends LitElement {
   @property({ attribute: false }) tiles: ManifestSeoDashboardTile[] = [];
-  @property({ attribute: false }) layout!: ContentDashboardLayout;
+  /** The user's layout; undefined means the default (all tiles, placed in weight order). */
+  @property({ attribute: false }) layout?: ContentDashboardLayout;
 
   @state() private editing = false;
-  @state() private dropTarget?: string;
-  @state() private resizing?: { alias: string; size: SeoDashboardTileSize };
-  // Narrow screens (or an open sidebar) get fewer columns so tiles don't collapse into slivers.
-  @state() private columns = GRID_COLUMNS;
-  #drag?: DragPayload;
-  #observer = new ResizeObserver(([entry]) => {
-    const fit = Math.floor((entry.contentRect.width + GAP) / (MIN_COLUMN_WIDTH + GAP));
-    this.columns = Math.max(4, Math.min(GRID_COLUMNS, fit));
-  });
+  @state() private overSidebar = false;
 
-  firstUpdated() {
-    this.#observer.observe(this.renderRoot.querySelector(".grid")!);
+  #grid?: GridStack;
+  // The grid items by tile alias. GridStack owns these elements; Lit only renders their content.
+  #items = new Map<string, GridItemHTMLElement>();
+  // The last layout this grid reported, so it doesn't rebuild when that layout comes back in.
+  // Starts as null (never a valid layout), so a reset to the default (undefined) always rebuilds.
+  #emitted: ContentDashboardLayout | null = null;
+  #syncTimer?: number;
+  // The grid at the start of a drag or resize.
+  #before?: string;
+
+  #trackPointer = (e: PointerEvent) => {
+    const rect = this.renderRoot.querySelector(".sidebar")!.getBoundingClientRect();
+    this.overSidebar =
+      this.editing && e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
+  };
+
+  get #gridEl() {
+    return this.renderRoot.querySelector<HTMLElement>(".grid-stack")!;
   }
 
   disconnectedCallback() {
-    this.#observer.disconnect();
+    document.removeEventListener("pointermove", this.#trackPointer);
+    window.clearTimeout(this.#syncTimer);
+    this.#grid?.destroy(false);
+    this.#grid = undefined;
+    this.#items.clear();
+    this.#gridEl?.replaceChildren();
     super.disconnectedCallback();
   }
 
-  #emit(layout: ContentDashboardLayout) {
-    this.dispatchEvent(new CustomEvent("layout-change", { detail: layout }));
-  }
-
-  #sizeOf(tile: ManifestSeoDashboardTile) {
-    if (this.resizing?.alias === tile.alias) return this.resizing.size;
-    return tileSize(this.layout, tile);
-  }
-
-  // ---- drag & drop (sidebar → grid, grid → grid, grid → sidebar) ----
-
-  #dragStart(e: DragEvent, payload: DragPayload) {
-    this.#drag = payload;
-    e.dataTransfer!.effectAllowed = "move";
-    e.dataTransfer!.setData("text/plain", payload.alias);
-  }
-
-  // `target` is a tile alias, "end" (the bottom of the grid) or "sidebar".
-  #dragOver(e: DragEvent, target: string) {
-    if (!this.#drag) return;
-    if (target === "sidebar" && this.#drag.kind === "new") return;
-    e.preventDefault();
-    e.stopPropagation();
-    this.dropTarget = target;
-  }
-
-  #drop(e: DragEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    const drag = this.#drag;
-    const target = this.dropTarget;
-    this.#dragEnd();
-    if (!drag || !target || drag.alias === target) return;
-
-    if (target === "sidebar") {
-      this.#remove(drag.alias);
-      return;
+  protected updated(changed: PropertyValues) {
+    if (!this.#grid) {
+      this.#init();
+      this.#scheduleSync();
+    } else if (changed.has("layout") && this.layout !== this.#emitted) {
+      this.#sync(true);
+    } else if (changed.has("tiles")) {
+      this.#scheduleSync();
     }
-    const order = this.layout.order.filter((alias) => alias !== drag.alias);
-    const index = target === "end" ? order.length : order.indexOf(target);
-    order.splice(index, 0, drag.alias);
-    this.#emit({ ...this.layout, order, hidden: this.layout.hidden.filter((alias) => alias !== drag.alias) });
+
+    if (changed.has("editing")) this.#grid!.setStatic(!this.editing);
+    if (this.editing) this.#setupDragIn();
+    this.#renderItems();
   }
 
-  #dragEnd() {
-    this.#drag = undefined;
-    this.dropTarget = undefined;
+  #init() {
+    const grid = GridStack.init(
+      {
+        column: GRID_COLUMNS,
+        cellHeight: ROW_HEIGHT,
+        margin: MARGIN,
+        mode: "float",
+        staticGrid: !this.editing,
+        acceptWidgets: (el) => el.classList.contains("catalog-item"),
+        resizable: { handles: "e,se,s,sw,w" },
+        // Fewer columns on narrow screens; positions are still saved for 12 columns.
+        columnOpts: { columnWidth: MIN_COLUMN_WIDTH, columnMax: GRID_COLUMNS },
+      },
+      this.#gridEl
+    )!;
+
+    // Only user actions are saved, not GridStack reflowing the grid by itself (e.g. on a column change),
+    // and only when the drag or resize actually changed something.
+    grid.on("dragstart", () => {
+      this.#before = this.#snapshot();
+      document.addEventListener("pointermove", this.#trackPointer);
+    });
+    grid.on("dragstop", (_event, el) => {
+      document.removeEventListener("pointermove", this.#trackPointer);
+      if (this.overSidebar) this.#removeTile(String(el.gridstackNode?.id));
+      this.overSidebar = false;
+      setTimeout(() => this.#emitLayoutIfChanged());
+    });
+    grid.on("resizestart", () => (this.#before = this.#snapshot()));
+    grid.on("resize", () => this.#renderItems());
+    grid.on("resizestop", () => setTimeout(() => this.#emitLayoutIfChanged()));
+    grid.on("change", () => this.#renderItems());
+    // A tile dragged in from the sidebar arrives as the drag helper; swap it for a real tile at the same spot.
+    grid.on("dropped", (_event, _previous, node) => {
+      const tile = this.tiles.find((t) => t.alias === String(node.id));
+      grid.removeWidget(node.el!, true, false);
+      if (tile) this.#addTile(tile, { x: node.x ?? 0, y: node.y ?? 0, w: node.w ?? 1, h: node.h ?? 1 });
+      this.#emitLayout();
+    });
+
+    this.#grid = grid;
   }
 
-  #add(alias: string) {
-    const order = [...this.layout.order.filter((o) => o !== alias), alias];
-    this.#emit({ ...this.layout, order, hidden: this.layout.hidden.filter((h) => h !== alias) });
+  // Tiles arrive in batches (as each module's "enabled" condition resolves), so wait for them to settle. On the
+  // default layout the grid is rebuilt, so the tiles are always placed in weight order whatever loaded first.
+  #scheduleSync() {
+    window.clearTimeout(this.#syncTimer);
+    this.#syncTimer = window.setTimeout(() => this.#sync(!this.layout), SYNC_DELAY);
   }
 
-  #remove(alias: string) {
-    this.#emit({ ...this.layout, hidden: [...this.layout.hidden, alias] });
+  // Puts the visible tiles on the grid. `reset` rebuilds it, e.g. after "Reset to default".
+  #sync(reset: boolean) {
+    const grid = this.#grid;
+    if (!grid) return;
+    const hidden = this.layout?.hidden ?? [];
+    const positions = this.layout?.positions ?? {};
+    const visible = this.tiles.filter((tile) => !hidden.includes(tile.alias));
+
+    if (reset) {
+      grid.removeAll(true, false);
+      this.#items.clear();
+    }
+    for (const [alias, el] of this.#items) {
+      if (!visible.some((tile) => tile.alias === alias)) {
+        grid.removeWidget(el, true, false);
+        this.#items.delete(alias);
+      }
+    }
+    // Tiles with a position go first, so tiles without one (new tiles, or all of them by default) fill the free space.
+    // Added one by one (not batched), so each auto-positioned tile takes the first free spot in weight order.
+    visible
+      .filter((tile) => !this.#items.has(tile.alias))
+      .sort((a, b) => Number(!positions[a.alias]) - Number(!positions[b.alias]))
+      .forEach((tile) => this.#addTile(tile, positions[tile.alias]));
+    this.requestUpdate();
   }
 
-  // ---- free resize via the corner handle ----
+  #addTile(tile: ManifestSeoDashboardTile, position?: TilePosition) {
+    const el = document.createElement("div");
+    el.className = "grid-stack-item";
+    el.innerHTML = `<div class="grid-stack-item-content"></div>`;
+    this.#gridEl.append(el);
 
-  #resizeStart(e: PointerEvent, tile: ManifestSeoDashboardTile) {
-    e.preventDefault();
-    e.stopPropagation();
-    const handle = e.currentTarget as HTMLElement;
-    handle.setPointerCapture(e.pointerId);
+    const widget: GridStackWidget = position
+      ? { id: tile.alias, ...position }
+      : { id: tile.alias, ...defaultTileSize(tile), autoPosition: true };
+    this.#items.set(tile.alias, this.#grid!.makeWidget(el, widget));
+  }
 
-    const grid = this.renderRoot.querySelector(".grid") as HTMLElement;
-    const columnWidth = (grid.clientWidth - GAP * (this.columns - 1)) / this.columns;
-    const start = { x: e.clientX, y: e.clientY, ...this.#sizeOf(tile) };
-    this.resizing = { alias: tile.alias, size: { w: start.w, h: start.h } };
+  #removeTile(alias: string) {
+    const el = this.#items.get(alias);
+    if (!el) return;
+    this.#grid!.removeWidget(el, true, false);
+    this.#items.delete(alias);
+  }
 
-    const move = (ev: PointerEvent) => {
-      const w = Math.round(start.w + (ev.clientX - start.x) / (columnWidth + GAP));
-      const h = Math.round(start.h + (ev.clientY - start.y) / (ROW_HEIGHT + GAP));
-      this.resizing = {
-        alias: tile.alias,
-        size: { w: Math.min(GRID_COLUMNS, Math.max(2, w)), h: Math.min(MAX_ROWS, Math.max(1, h)) },
-      };
-    };
-    const up = () => {
-      handle.removeEventListener("pointermove", move);
-      handle.removeEventListener("pointerup", up);
-      const size = this.resizing!.size;
-      this.resizing = undefined;
-      this.#emit({ ...this.layout, sizes: { ...this.layout.sizes, [tile.alias]: size } });
-    };
-    handle.addEventListener("pointermove", move);
-    handle.addEventListener("pointerup", up);
+  #add(tile: ManifestSeoDashboardTile) {
+    this.#addTile(tile);
+    this.#emitLayout();
+  }
+
+  #snapshot() {
+    return JSON.stringify(this.#grid?.save(false, false, undefined, GRID_COLUMNS));
+  }
+
+  #emitLayoutIfChanged() {
+    if (this.#snapshot() !== this.#before) this.#emitLayout();
+    this.#renderItems();
+  }
+
+  #emitLayout() {
+    if (!this.#grid) return;
+    const known = new Set(this.tiles.map((tile) => tile.alias));
+    const positions: Record<string, TilePosition> = {};
+    // Keep the place of tiles that aren't available right now (e.g. of a disabled module).
+    for (const [alias, position] of Object.entries(this.layout?.positions ?? {})) {
+      if (!known.has(alias)) positions[alias] = position;
+    }
+    for (const widget of this.#grid.save(false, false, undefined, GRID_COLUMNS) as GridStackWidget[]) {
+      if (widget.id == null) continue;
+      positions[String(widget.id)] = { x: widget.x ?? 0, y: widget.y ?? 0, w: widget.w ?? 1, h: widget.h ?? 1 };
+    }
+    const hidden = [
+      ...this.tiles.map((tile) => tile.alias).filter((alias) => !this.#items.has(alias)),
+      ...(this.layout?.hidden ?? []).filter((alias) => !known.has(alias)),
+    ];
+
+    this.#emitted = { positions, hidden };
+    this.dispatchEvent(new CustomEvent("layout-change", { detail: this.#emitted }));
+    this.requestUpdate();
+  }
+
+  // ---- sidebar → grid ----
+
+  #setupDragIn() {
+    const items = [...this.renderRoot.querySelectorAll<HTMLElement>(".catalog-item")];
+    if (items.length) GridStack.setupDragIn(items, { appendTo: "body", helper: (el) => this.#dragHelper(el) });
+  }
+
+  // The helper lives in the document body (outside this element's styles), so it is styled inline.
+  #dragHelper(el: HTMLElement) {
+    const helper = document.createElement("div");
+    for (const attribute of ["gs-id", "gs-w", "gs-h"]) helper.setAttribute(attribute, el.getAttribute(attribute) ?? "");
+    helper.textContent = el.dataset.title ?? "";
+    Object.assign(helper.style, {
+      padding: "8px 12px",
+      background: "#fff",
+      border: "1px solid #d8d7d9",
+      borderRadius: "6px",
+      boxShadow: "0 6px 16px rgba(0, 0, 0, 0.2)",
+      font: "600 13px/1.2 sans-serif",
+      zIndex: "10000",
+    });
+    return helper;
+  }
+
+  // ---- rendering ----
+
+  #renderItems() {
+    for (const [alias, el] of this.#items) {
+      const tile = this.tiles.find((t) => t.alias === alias);
+      const content = el.querySelector<HTMLElement>(".grid-stack-item-content");
+      if (!tile || !content) continue;
+      const size = { w: el.gridstackNode?.w ?? 1, h: el.gridstackNode?.h ?? 1 };
+      render(this.#renderTile(tile, size), content, { host: this });
+    }
+  }
+
+  #renderTile(tile: ManifestSeoDashboardTile, size: SeoDashboardTileSize) {
+    const action = tile.meta.action;
+    return html`
+      <div class="tile">
+        <div class="headline">
+          <uui-icon name=${tile.meta.icon}></uui-icon>
+          <span class="title">${tile.meta.title}</span>
+          ${when(
+            this.editing,
+            () => html`<button
+              class="remove"
+              title="Remove"
+              @click=${() => {
+                this.#removeTile(tile.alias);
+                this.#emitLayout();
+              }}>
+              ✕
+            </button>`
+          )}
+        </div>
+        <seo-content-dashboard-tile .manifest=${tile} .size=${size}></seo-content-dashboard-tile>
+        ${when(
+          action && size.h >= ACTION_FROM_HEIGHT,
+          () => html`<uui-button class="action" look="secondary" compact href=${action!.href}>${action!.label}</uui-button>`
+        )}
+        ${when(this.editing, () => html`<div class="size-label">${size.w} × ${size.h}</div>`)}
+      </div>
+    `;
   }
 
   render() {
-    const byAlias = new Map(this.tiles.map((tile) => [tile.alias, tile]));
-    const visible = this.layout.order.filter((alias) => !this.layout.hidden.includes(alias) && byAlias.has(alias));
-    const available = this.tiles.filter((tile) => !visible.includes(tile.alias));
+    const available = this.tiles.filter((tile) => !this.#items.has(tile.alias));
 
     return html`
       <div class="toolbar">
         <h2>SEO overview</h2>
         <div class="toolbar-actions">
           ${when(
-            this.editing && !isDefaultLayout(this.layout, this.tiles),
+            this.editing && this.layout,
             () => html`<uui-button look="secondary" @click=${() => this.dispatchEvent(new CustomEvent("layout-reset"))}>
               Reset to default
             </uui-button>`
@@ -150,229 +286,168 @@ export class ContentDashboardTileGridElement extends LitElement {
       </div>
 
       <div class="workspace ${this.editing ? "editing" : ""}">
-        <div
-          class="grid"
-          style="--columns:${this.columns};--row:${ROW_HEIGHT}px;--gap:${GAP}px"
-          @dragover=${(e: DragEvent) => this.#dragOver(e, "end")}
-          @drop=${this.#drop}>
-          ${repeat(visible, (alias) => alias, (alias) => this.#renderTile(byAlias.get(alias)!))}
-          ${when(
-            this.editing,
-            () => html`<div class="drop-end ${this.dropTarget === "end" ? "active" : ""}">Drop here to add at the end</div>`
-          )}
-        </div>
+        <div class="grid-stack"></div>
 
-        <aside
-          class="sidebar ${this.dropTarget === "sidebar" ? "active" : ""}"
-          @dragover=${(e: DragEvent) => this.#dragOver(e, "sidebar")}
-          @drop=${this.#drop}>
+        <aside class="sidebar ${this.overSidebar ? "active" : ""}">
           <h3>Tiles</h3>
           <p class="hint">Drag a tile onto the dashboard. Drag a dashboard tile here to remove it.</p>
           ${when(!available.length, () => html`<p class="hint">All tiles are on the dashboard.</p>`)}
-          ${available.map(
-            (tile) => html`<div
-              class="catalog-item"
-              draggable="true"
-              @dragstart=${(e: DragEvent) => this.#dragStart(e, { kind: "new", alias: tile.alias })}
-              @dragend=${this.#dragEnd}>
+          ${available.map((tile) => {
+            const size = defaultTileSize(tile);
+            return html`<div class="catalog-item" gs-id=${tile.alias} gs-w=${size.w} gs-h=${size.h} data-title=${tile.meta.title}>
               <uui-icon name=${tile.meta.icon}></uui-icon>
               <div>
                 <strong>${tile.meta.title}</strong>
                 <p>${tile.meta.description}</p>
               </div>
-              <uui-button compact label="Add" @click=${() => this.#add(tile.alias)}><uui-icon name="icon-add"></uui-icon></uui-button>
-            </div>`
-          )}
+              <uui-button compact label="Add" @click=${() => this.#add(tile)}><uui-icon name="icon-add"></uui-icon></uui-button>
+            </div>`;
+          })}
         </aside>
       </div>
     `;
   }
 
-  #renderTile(tile: ManifestSeoDashboardTile) {
-    const size = this.#sizeOf(tile);
-    const action = tile.meta.action;
-    return html`
-      <div
-        class="tile ${this.dropTarget === tile.alias ? "drop-before" : ""} ${this.resizing?.alias === tile.alias ? "resizing" : ""}"
-        style="grid-column: span ${Math.min(size.w, this.columns)}; grid-row: span ${size.h}"
-        draggable=${this.editing ? "true" : "false"}
-        @dragstart=${(e: DragEvent) => this.#dragStart(e, { kind: "move", alias: tile.alias })}
-        @dragend=${this.#dragEnd}
-        @dragover=${(e: DragEvent) => this.#dragOver(e, tile.alias)}
-        @drop=${this.#drop}>
-        <div class="headline">
-          <uui-icon name=${tile.meta.icon}></uui-icon>
-          <span class="title">${tile.meta.title}</span>
-          ${when(this.editing, () => html`<button class="remove" title="Remove" @click=${() => this.#remove(tile.alias)}>✕</button>`)}
-        </div>
-        <seo-content-dashboard-tile .manifest=${tile} .size=${size}></seo-content-dashboard-tile>
-        ${when(
-          action && size.h >= ACTION_FROM_HEIGHT,
-          () => html`<uui-button class="action" look="secondary" compact href=${action!.href}>${action!.label}</uui-button>`
-        )}
-        ${when(
-          this.editing,
-          () => html`<div class="size-label">${size.w} × ${size.h}</div>
-            <div class="resize" title="Drag to resize" @pointerdown=${(e: PointerEvent) => this.#resizeStart(e, tile)}></div>`
-        )}
-      </div>
-    `;
-  }
-
-  static styles = css`
-    .toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: var(--uui-size-space-4);
-    }
-    h2 {
-      margin: 0;
-    }
-    .toolbar-actions {
-      display: flex;
-      gap: var(--uui-size-space-2);
-    }
-    .workspace {
-      display: flex;
-      align-items: flex-start;
-    }
-    .grid {
-      flex: 1;
-      min-width: 0;
-      display: grid;
-      grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
-      grid-auto-rows: var(--row);
-      grid-auto-flow: dense;
-      gap: var(--gap);
-    }
-    .tile {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: var(--uui-size-space-3);
-      overflow: hidden;
-      padding: var(--uui-size-space-4) var(--uui-size-space-5);
-      background: var(--uui-color-surface);
-      border-radius: var(--uui-border-radius);
-      box-shadow: var(--uui-shadow-depth-1);
-    }
-    .editing .tile {
-      cursor: grab;
-      outline: 2px dashed var(--uui-color-border-emphasis);
-    }
-    .tile.drop-before {
-      box-shadow: -6px 0 0 0 var(--uui-color-interactive-emphasis);
-    }
-    .tile.resizing {
-      outline: 2px solid var(--uui-color-interactive-emphasis);
-    }
-    .headline {
-      display: flex;
-      align-items: center;
-      gap: var(--uui-size-space-2);
-      font-weight: 700;
-    }
-    .headline .title {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .remove {
-      all: unset;
-      cursor: pointer;
-      margin-left: auto;
-      padding: 0 4px;
-      color: var(--uui-color-text-alt);
-    }
-    .action {
-      align-self: flex-start;
-    }
-    .size-label {
-      position: absolute;
-      right: 24px;
-      bottom: 6px;
-      font-size: 11px;
-      color: var(--uui-color-text-alt);
-    }
-    .resize {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      width: 18px;
-      height: 18px;
-      cursor: nwse-resize;
-      touch-action: none;
-      background: linear-gradient(135deg, transparent 50%, var(--uui-color-border-emphasis) 50%);
-      border-bottom-right-radius: var(--uui-border-radius);
-    }
-    .drop-end {
-      grid-column: 1 / -1;
-      display: grid;
-      place-items: center;
-      border: 2px dashed var(--uui-color-border);
-      border-radius: var(--uui-border-radius);
-      color: var(--uui-color-text-alt);
-    }
-    .drop-end.active {
-      border-color: var(--uui-color-interactive-emphasis);
-      color: var(--uui-color-interactive-emphasis);
-    }
-    .sidebar {
-      position: sticky;
-      top: 0;
-      flex: none;
-      width: 0;
-      max-height: calc(100vh - 200px);
-      overflow: hidden auto;
-      opacity: 0;
-      margin-left: 0;
-      padding: 0;
-      background: var(--uui-color-surface);
-      border-radius: var(--uui-border-radius);
-      box-shadow: var(--uui-shadow-depth-3);
-      transition: width 200ms ease, opacity 200ms ease, margin 200ms ease;
-    }
-    .editing .sidebar {
-      width: 320px;
-      opacity: 1;
-      margin-left: var(--uui-size-space-5);
-      padding: var(--uui-size-space-4);
-      box-sizing: border-box;
-    }
-    .sidebar.active {
-      outline: 2px dashed var(--uui-color-danger);
-    }
-    .sidebar h3 {
-      margin: 0 0 var(--uui-size-space-2);
-    }
-    .hint {
-      color: var(--uui-color-text-alt);
-      font-size: 12px;
-    }
-    .catalog-item {
-      display: flex;
-      gap: var(--uui-size-space-3);
-      align-items: flex-start;
-      padding: var(--uui-size-space-3);
-      margin-bottom: var(--uui-size-space-2);
-      border: 1px solid var(--uui-color-border);
-      border-radius: var(--uui-border-radius);
-      cursor: grab;
-      background: var(--uui-color-surface);
-    }
-    .catalog-item:hover {
-      border-color: var(--uui-color-border-emphasis);
-    }
-    .catalog-item uui-icon {
-      margin-top: 3px;
-    }
-    .catalog-item p {
-      margin: 4px 0 0;
-      font-size: 12px;
-      color: var(--uui-color-text-alt);
-    }
-  `;
+  static styles = [
+    unsafeCSS(gridstackStyles),
+    css`
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--uui-size-space-4);
+      }
+      h2 {
+        margin: 0;
+      }
+      .toolbar-actions {
+        display: flex;
+        gap: var(--uui-size-space-2);
+      }
+      .workspace {
+        display: flex;
+        align-items: flex-start;
+      }
+      .grid-stack {
+        flex: 1;
+        min-width: 0;
+        margin: calc(-1 * ${MARGIN}px);
+      }
+      .grid-stack-item-content {
+        display: flex;
+      }
+      .tile {
+        position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--uui-size-space-3);
+        min-width: 0;
+        overflow: hidden;
+        padding: var(--uui-size-space-4) var(--uui-size-space-5);
+        background: var(--uui-color-surface);
+        border-radius: var(--uui-border-radius);
+        box-shadow: var(--uui-shadow-depth-1);
+      }
+      .editing .tile {
+        cursor: grab;
+        outline: 2px dashed var(--uui-color-border-emphasis);
+      }
+      .editing .ui-draggable-dragging .tile,
+      .editing .ui-resizable-resizing .tile {
+        outline: 2px solid var(--uui-color-interactive-emphasis);
+      }
+      .grid-stack-placeholder > .placeholder-content {
+        border: 2px dashed var(--uui-color-interactive-emphasis);
+        border-radius: var(--uui-border-radius);
+        background: transparent;
+      }
+      .headline {
+        display: flex;
+        align-items: center;
+        gap: var(--uui-size-space-2);
+        font-weight: 700;
+      }
+      .headline .title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .remove {
+        all: unset;
+        cursor: pointer;
+        margin-left: auto;
+        padding: 0 4px;
+        color: var(--uui-color-text-alt);
+      }
+      .action {
+        align-self: flex-start;
+      }
+      .size-label {
+        position: absolute;
+        right: 16px;
+        bottom: 6px;
+        font-size: 11px;
+        color: var(--uui-color-text-alt);
+      }
+      .sidebar {
+        position: sticky;
+        top: 0;
+        flex: none;
+        width: 0;
+        max-height: calc(100vh - 200px);
+        overflow: hidden auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--uui-color-divider-emphasis) transparent;
+        opacity: 0;
+        margin-left: 0;
+        padding: 0;
+        background: var(--uui-color-surface);
+        border-radius: var(--uui-border-radius);
+        box-shadow: var(--uui-shadow-depth-3);
+        transition: width 200ms ease, opacity 200ms ease, margin 200ms ease;
+      }
+      .editing .sidebar {
+        width: 320px;
+        opacity: 1;
+        margin-left: var(--uui-size-space-5);
+        padding: var(--uui-size-space-4);
+        box-sizing: border-box;
+      }
+      .sidebar.active {
+        outline: 2px dashed var(--uui-color-danger);
+      }
+      .sidebar h3 {
+        margin: 0 0 var(--uui-size-space-2);
+      }
+      .hint {
+        color: var(--uui-color-text-alt);
+        font-size: 12px;
+      }
+      .catalog-item {
+        display: flex;
+        gap: var(--uui-size-space-3);
+        align-items: flex-start;
+        padding: var(--uui-size-space-3);
+        margin-bottom: var(--uui-size-space-2);
+        border: 1px solid var(--uui-color-border);
+        border-radius: var(--uui-border-radius);
+        cursor: grab;
+        background: var(--uui-color-surface);
+      }
+      .catalog-item:hover {
+        border-color: var(--uui-color-border-emphasis);
+      }
+      .catalog-item uui-icon {
+        margin-top: 3px;
+      }
+      .catalog-item p {
+        margin: 4px 0 0;
+        font-size: 12px;
+        color: var(--uui-color-text-alt);
+      }
+    `,
+  ];
 }
 
 declare global {

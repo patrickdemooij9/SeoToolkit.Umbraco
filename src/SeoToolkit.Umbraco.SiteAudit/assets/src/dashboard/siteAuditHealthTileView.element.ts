@@ -96,6 +96,12 @@ export class SiteAuditHealthTileViewElement extends LitElement implements SeoDas
       padding: 0;
       margin: 0;
       overflow: auto;
+      padding-right: var(--uui-size-space-3);
+      scrollbar-width: thin;
+      scrollbar-color: var(--uui-color-divider-emphasis) transparent;
+    }
+    ul:hover {
+      scrollbar-color: var(--uui-color-border-emphasis) transparent;
     }
     li {
       display: flex;

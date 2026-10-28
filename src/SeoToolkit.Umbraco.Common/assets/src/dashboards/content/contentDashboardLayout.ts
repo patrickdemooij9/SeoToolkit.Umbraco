@@ -1,12 +1,17 @@
 import { ManifestSeoDashboardTile, SeoDashboardTileSize } from "../../manifests/seoDashboardTileManifest";
 
+export interface TilePosition extends SeoDashboardTileSize {
+  x: number;
+  y: number;
+}
+
 /**
- * How a user arranged the dashboard, keyed by tile alias.
+ * Where a user placed the tiles on the dashboard (in a 12-column grid), keyed by tile alias.
+ * Tiles without a position (e.g. new tiles) are placed in the first free spot; removed tiles are listed in `hidden`.
  */
 export interface ContentDashboardLayout {
-  order: string[];
+  positions: Record<string, TilePosition>;
   hidden: string[];
-  sizes: Record<string, SeoDashboardTileSize>;
 }
 
 export const GRID_COLUMNS = 12;
@@ -14,36 +19,9 @@ const DEFAULT_TILE_SIZE: SeoDashboardTileSize = { w: 3, h: 2 };
 
 export const defaultTileSize = (tile?: ManifestSeoDashboardTile) => tile?.meta.size ?? DEFAULT_TILE_SIZE;
 
-export const tileSize = (layout: ContentDashboardLayout, tile: ManifestSeoDashboardTile) =>
-  layout.sizes[tile.alias] ?? defaultTileSize(tile);
-
-// The tiles in weight order (as the extension registry returns them), all visible, at their own size.
-export const defaultLayout = (tiles: ManifestSeoDashboardTile[]): ContentDashboardLayout => ({
-  order: tiles.map((tile) => tile.alias),
-  hidden: [],
-  sizes: {},
-});
-
-/**
- * The user's layout, or the default when there is none. Tiles the layout doesn't know yet (from a new version
- * or a newly installed module) are added at the end, unless the user removed them.
- */
-export function resolveLayout(layout: ContentDashboardLayout | undefined, tiles: ManifestSeoDashboardTile[]) {
-  if (!layout) return defaultLayout(tiles);
-  const unknown = tiles.map((tile) => tile.alias).filter((alias) => !layout.order.includes(alias) && !layout.hidden.includes(alias));
-  return { ...layout, order: [...layout.order, ...unknown] };
+// Stored layouts come from user data, so anything that isn't a valid layout counts as "not customized".
+export function parseLayout(value: unknown): ContentDashboardLayout | undefined {
+  const layout = value as Partial<ContentDashboardLayout> | undefined;
+  if (!layout || typeof layout.positions !== "object" || !Array.isArray(layout.hidden)) return undefined;
+  return { positions: layout.positions ?? {}, hidden: layout.hidden };
 }
-
-// Drops sizes that match the tile's default and sorts `hidden`, so an unchanged layout equals the default.
-// Aliases of tiles that aren't available right now (e.g. a disabled module) are kept, so their place isn't lost.
-export function normalizeLayout(layout: ContentDashboardLayout, tiles: ManifestSeoDashboardTile[]): ContentDashboardLayout {
-  const sizes: ContentDashboardLayout["sizes"] = {};
-  for (const [alias, size] of Object.entries(layout.sizes ?? {})) {
-    const fallback = defaultTileSize(tiles.find((tile) => tile.alias === alias));
-    if (size.w !== fallback.w || size.h !== fallback.h) sizes[alias] = size;
-  }
-  return { order: [...(layout.order ?? [])], hidden: [...(layout.hidden ?? [])].sort(), sizes };
-}
-
-export const isDefaultLayout = (layout: ContentDashboardLayout, tiles: ManifestSeoDashboardTile[]) =>
-  JSON.stringify(normalizeLayout(layout, tiles)) === JSON.stringify(normalizeLayout(defaultLayout(tiles), tiles));

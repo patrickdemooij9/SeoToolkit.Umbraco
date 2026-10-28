@@ -9,6 +9,7 @@ using SeoToolkit.Umbraco.Common.Core.Models.PostModels;
 using SeoToolkit.Umbraco.Redirects.Core.Dashboard;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
+using SeoToolkit.Umbraco.RobotsTxt.Core.Common.Validators;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Dashboard;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.SiteAudit.Core.Collections;
@@ -60,33 +61,38 @@ namespace SeoToolkit.Tests
             Assert.That(((OkObjectResult)result).Value, Is.SameAs(expected));
         }
 
+        private static DashboardData CreateRobotsTxtData(string content) =>
+            RobotsTxtIndexableDataSource.Create(content, new DefaultRobotsTxtValidator().Validate(content));
+
         [Test]
         public void RobotsTxtIndexable_DisallowAllForWildcard_IsNotIndexable()
         {
-            var data = RobotsTxtIndexableDataSource.Create("User-agent: *\nDisallow: /\n");
+            var data = CreateRobotsTxtData("User-agent: *\nDisallow: /\n");
 
             Assert.That(data.Text, Is.EqualTo("No"));
             Assert.That(data.Status, Is.EqualTo(DashboardDataStatus.Danger));
+            Assert.That(data.Items.Single(it => it.Label == "Line 2").Status, Is.EqualTo(DashboardDataStatus.Danger));
         }
 
         [Test]
         public void RobotsTxtIndexable_DisallowAllForOtherAgentOnly_IsIndexable()
         {
-            var data = RobotsTxtIndexableDataSource.Create("User-agent: BadBot\nDisallow: /\n\nUser-agent: *\nDisallow: /umbraco # backoffice\n");
+            var data = CreateRobotsTxtData("User-agent: BadBot\nDisallow: /\n\nUser-agent: *\nDisallow: /umbraco\nSitemap: https://example.com/sitemap.xml\n");
 
             Assert.That(data.Text, Is.EqualTo("Yes"));
-            Assert.That(data.Items.Single(it => it.Label == "Rules").Value, Is.EqualTo(2));
+            Assert.That(data.Status, Is.EqualTo(DashboardDataStatus.Positive));
+            Assert.That(data.Items.Single().Text, Is.EqualTo("present"));
         }
 
         [Test]
-        public void RobotsTxtIndexable_SitemapLines_AreListedAndEmptyContentWarnsAboutMissingSitemap()
+        public void RobotsTxtIndexable_UnsupportedSyntaxAndMissingSitemap_AreWarnings()
         {
-            var withSitemap = RobotsTxtIndexableDataSource.Create("Sitemap: https://example.com/sitemap.xml\r\n");
-            var empty = RobotsTxtIndexableDataSource.Create("");
+            var data = CreateRobotsTxtData("User-agent: *\nNoindex: /private\n");
 
-            Assert.That(withSitemap.Items.Single(it => it.Label == "Sitemap reference").Text, Is.EqualTo("https://example.com/sitemap.xml"));
-            Assert.That(empty.Text, Is.EqualTo("Yes"));
-            Assert.That(empty.Items.Single(it => it.Label == "Sitemap reference").Status, Is.EqualTo(DashboardDataStatus.Warning));
+            Assert.That(data.Text, Is.EqualTo("Yes"));
+            Assert.That(data.Status, Is.EqualTo(DashboardDataStatus.Warning));
+            Assert.That(data.Items.Single(it => it.Label == "Line 2").Status, Is.EqualTo(DashboardDataStatus.Warning));
+            Assert.That(data.Items.Single(it => it.Label == "Sitemap reference").Status, Is.EqualTo(DashboardDataStatus.Warning));
         }
 
         [Test]

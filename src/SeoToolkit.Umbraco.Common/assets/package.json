@@ -9,5 +9,8 @@
     "preview": "vite preview",
     "generate": "openapi-ts",
     "deploy": "npm install && tsc && vite build"
+  },
+  "dependencies": {
+    "gridstack": "14.0.0"
   }
 }
