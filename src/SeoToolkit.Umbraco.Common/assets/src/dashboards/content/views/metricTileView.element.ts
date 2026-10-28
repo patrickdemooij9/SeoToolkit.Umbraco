@@ -123,6 +123,12 @@ export class MetricTileViewElement extends LitElement implements SeoDashboardTil
       margin: 0;
       overflow: auto;
       flex: 1;
+      padding-right: var(--uui-size-space-3);
+      scrollbar-width: thin;
+      scrollbar-color: var(--uui-color-divider-emphasis) transparent;
+    }
+    .items:hover {
+      scrollbar-color: var(--uui-color-border-emphasis) transparent;
     }
     .items li {
       display: flex;

@@ -4,7 +4,7 @@ import { UmbExtensionsManifestInitializer } from "@umbraco-cms/backoffice/extens
 import { umbExtensionsRegistry } from "@umbraco-cms/backoffice/extension-registry";
 import { ContentDashboardRepository } from "../../repositories/contentDashboardRepository";
 import { ManifestSeoDashboardTile } from "../../manifests/seoDashboardTileManifest";
-import { ContentDashboardLayout, isDefaultLayout, normalizeLayout, resolveLayout } from "./contentDashboardLayout";
+import { ContentDashboardLayout } from "./contentDashboardLayout";
 import "./contentDashboardTileGrid.element";
 
 const SAVE_DELAY = 500;
@@ -44,8 +44,9 @@ export class ContentDashboardElement extends UmbElementMixin(LitElement) {
     super.disconnectedCallback();
   }
 
+  // Only called for changes the user made, so a user who never customizes keeps following the default.
   #onLayoutChange(layout: ContentDashboardLayout | undefined) {
-    this.userLayout = layout && !isDefaultLayout(layout, this.tiles) ? normalizeLayout(layout, this.tiles) : undefined;
+    this.userLayout = layout;
     window.clearTimeout(this.#saveTimer);
     this.#saveTimer = window.setTimeout(() => this.#save(), SAVE_DELAY);
   }
@@ -62,7 +63,7 @@ export class ContentDashboardElement extends UmbElementMixin(LitElement) {
           this.loaded,
           () => html`<seo-content-dashboard-tile-grid
             .tiles=${this.tiles}
-            .layout=${resolveLayout(this.userLayout, this.tiles)}
+            .layout=${this.userLayout}
             @layout-change=${(e: CustomEvent<ContentDashboardLayout>) => this.#onLayoutChange(e.detail)}
             @layout-reset=${() => this.#onLayoutChange(undefined)}></seo-content-dashboard-tile-grid>`,
           () => html`<uui-loader></uui-loader>`
