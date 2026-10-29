@@ -5,6 +5,7 @@ using SeoToolkit.Umbraco.Deploy.NotificationHandlers;
 using SeoToolkit.Umbraco.MetaFields.Core.Notifications;
 using SeoToolkit.Umbraco.ScriptManager.Core.Notifications;
 using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 
@@ -24,6 +25,11 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
                 return;
             }
 
+            // Deploy can read the .uda files before components initialize: an unattended upgrade only
+            // initializes them once migrations finish. The types must be known by then, so register
+            // them here rather than in the component.
+            RegisterUdiTypes();
+
             // Disk (.uda) refreshers: rewrite the settings artifact whenever it is saved/deleted.
             builder.AddNotificationAsyncHandler<SeoSettingSavedNotification, SeoSettingDiskRefresherHandler>();
             builder.AddNotificationAsyncHandler<MetaFieldSettingsSavedNotification, MetaFieldsSettingDiskRefresherHandler>();
@@ -40,6 +46,18 @@ namespace SeoToolkit.Umbraco.Deploy.Composing
             builder.AddNotificationAsyncHandler<SitemapContentChangedNotification, SitemapContentSignatureRefresherHandler>();
 
             builder.Components().Append<SeoToolkitDeployComponent>();
+        }
+
+        private static void RegisterUdiTypes()
+        {
+            UdiParser.RegisterUdiType(SeoToolkitDeployConstants.UdiEntityType.SeoSetting, UdiType.GuidUdi);
+            UdiParser.RegisterUdiType(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsSetting, UdiType.GuidUdi);
+            UdiParser.RegisterUdiType(SeoToolkitDeployConstants.UdiEntityType.SitemapPageType, UdiType.GuidUdi);
+            UdiParser.RegisterUdiType(SeoToolkitDeployConstants.UdiEntityType.Script, UdiType.GuidUdi);
+            UdiParser.RegisterUdiType(SeoToolkitDeployConstants.UdiEntityType.DomainCollection, UdiType.GuidUdi);
+            UdiParser.RegisterUdiType(SeoToolkitDeployConstants.UdiEntityType.KeyValues, UdiType.GuidUdi);
+            UdiParser.RegisterUdiType(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue, UdiType.GuidUdi);
+            UdiParser.RegisterUdiType(SeoToolkitDeployConstants.UdiEntityType.SitemapContent, UdiType.GuidUdi);
         }
     }
 }
