@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
+using SeoToolkit.Umbraco.Deploy;
 using SeoToolkit.Umbraco.Deploy.Composing;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Events;
@@ -36,6 +38,24 @@ namespace SeoToolkit.Tests.Deploy
 
             Assert.That(services.Any(IsNotificationHandler), Is.True);
             builder.Verify(b => b.WithCollectionBuilder<ComponentCollectionBuilder>(), Times.Once);
+        }
+
+        [TestCase(SeoToolkitDeployConstants.UdiEntityType.SeoSetting)]
+        [TestCase(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsSetting)]
+        [TestCase(SeoToolkitDeployConstants.UdiEntityType.SitemapPageType)]
+        [TestCase(SeoToolkitDeployConstants.UdiEntityType.Script)]
+        [TestCase(SeoToolkitDeployConstants.UdiEntityType.DomainCollection)]
+        [TestCase(SeoToolkitDeployConstants.UdiEntityType.KeyValues)]
+        [TestCase(SeoToolkitDeployConstants.UdiEntityType.MetaFieldsValue)]
+        [TestCase(SeoToolkitDeployConstants.UdiEntityType.SitemapContent)]
+        public void Compose_WithUmbracoDeploy_RegistersUdiTypeBeforeComponentsInitialize(string entityType)
+        {
+            var (builder, _) = CreateBuilder(typeof(global::Umbraco.Deploy.OnPrem.UmbracoDeployOnPremComposer));
+
+            new SeoToolkitDeployComposer().Compose(builder.Object);
+
+            Assert.That(UdiParser.TryParse($"umb://{entityType}/5e0a7f2c9d4b4c6a8e1f3b2a6c9d0e51", out Udi? udi), Is.True);
+            Assert.That(udi, Is.TypeOf<GuidUdi>());
         }
 
         private static bool IsNotificationHandler(ServiceDescriptor descriptor)
