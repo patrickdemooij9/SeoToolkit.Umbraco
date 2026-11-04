@@ -163,9 +163,9 @@ namespace SeoToolkit.Tests
 
             return new RedirectsRepository(Mock.Of<IScopeProvider>(),
                 contextFactory.Object,
-                AppCaches.Disabled,
                 null!,
-                documentNavigationQueryService.Object);
+                documentNavigationQueryService.Object,
+                null!);
         }
     }
 }

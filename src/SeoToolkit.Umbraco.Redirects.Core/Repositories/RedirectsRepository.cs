@@ -1,6 +1,5 @@
 ﻿using NPoco;
 using SeoToolkit.Umbraco.Redirects.Core.Caching;
-using SeoToolkit.Umbraco.Redirects.Core.Constants;
 using SeoToolkit.Umbraco.Redirects.Core.Extensions;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using SeoToolkit.Umbraco.Redirects.Core.Models.Business;
@@ -22,21 +21,21 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
     {
         private readonly IScopeProvider _scopeProvider;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
-        private readonly AppCaches _appCaches;
         private readonly DistributedCache _distributedCache;
         private readonly IDocumentNavigationQueryService _documentNavigationQueryService;
+        private readonly RegexRedirectsCache _regexRedirectsCache;
 
         public RedirectsRepository(IScopeProvider scopeProvider,
             IUmbracoContextFactory umbracoContextFactory,
-            AppCaches appCaches,
             DistributedCache distributedCache,
-            IDocumentNavigationQueryService documentNavigationQueryService)
+            IDocumentNavigationQueryService documentNavigationQueryService,
+            RegexRedirectsCache regexRedirectsCache)
         {
             _scopeProvider = scopeProvider;
             _umbracoContextFactory = umbracoContextFactory;
-            _appCaches = appCaches;
             _distributedCache = distributedCache;
             _documentNavigationQueryService = documentNavigationQueryService;
+            _regexRedirectsCache = regexRedirectsCache;
         }
 
         public void Save(Redirect redirect)
@@ -152,17 +151,17 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
 
         public IEnumerable<Redirect> GetAllRegexRedirects()
         {
-            return _appCaches.RuntimeCache.GetCacheItem($"{CacheConstants.Redirects}GetRegexRedirects", () =>
-            {
-                using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-                {
-                    return scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
-                            .SelectAll()
-                            .From<RedirectEntity>()
-                            .Where<RedirectEntity>(it => it.IsEnabled && it.IsRegex))
-                        .Select(ToModel).ToArray();
-                }
-            }, TimeSpan.FromMinutes(10));
+            return _regexRedirectsCache.Get(LoadRegexRedirects);
+        }
+
+        private Redirect[] LoadRegexRedirects()
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            return scope.Database.Fetch<RedirectEntity>(scope.SqlContext.Sql()
+                    .SelectAll()
+                    .From<RedirectEntity>()
+                    .Where<RedirectEntity>(it => it.IsEnabled && it.IsRegex))
+                .Select(ToModel).ToArray();
         }
 
         public IEnumerable<Redirect> GetByUrls(params string[] paths)
