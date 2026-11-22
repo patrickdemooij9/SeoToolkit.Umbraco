@@ -153,7 +153,7 @@ namespace SeoToolkit.Tests
             });
 
             // Act
-            var data = await new RedirectsUsageDataSource(repository.Object).GetAsync(new Dictionary<string, string>
+            var data = await new RedirectsUsageDataSource(repository.Object, Mock.Of<global::Umbraco.Cms.Core.Services.ILanguageService>()).GetAsync(new Dictionary<string, string>
             {
                 ["recentDays"] = "7", ["staleDays"] = "60", ["take"] = "2"
             });

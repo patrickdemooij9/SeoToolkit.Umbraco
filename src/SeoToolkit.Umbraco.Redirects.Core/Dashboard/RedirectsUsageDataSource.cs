@@ -6,6 +6,8 @@ using SeoToolkit.Umbraco.Common.Core.Enums;
 using SeoToolkit.Umbraco.Common.Core.Interfaces;
 using SeoToolkit.Umbraco.Common.Core.Models.Business;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
+using Umbraco.Cms.Core.Models;
+using Umbraco.Cms.Core.Services;
 
 namespace SeoToolkit.Umbraco.Redirects.Core.Dashboard
 {
@@ -16,15 +18,17 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Dashboard
     public class RedirectsUsageDataSource : IDashboardDataSource
     {
         private readonly IRedirectsRepository _redirectsRepository;
+        private readonly ILanguageService _languageService;
 
-        public RedirectsUsageDataSource(IRedirectsRepository redirectsRepository)
+        public RedirectsUsageDataSource(IRedirectsRepository redirectsRepository, ILanguageService languageService)
         {
             _redirectsRepository = redirectsRepository;
+            _languageService = languageService;
         }
 
         public string Alias => "redirects.usage";
 
-        public Task<DashboardData> GetAsync(IReadOnlyDictionary<string, string> parameters)
+        public async Task<DashboardData> GetAsync(IReadOnlyDictionary<string, string> parameters)
         {
             var recentDays = GetInt(parameters, "recentDays", 30);
             var staleDays = GetInt(parameters, "staleDays", 90);
@@ -45,13 +49,17 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Dashboard
                     new DashboardDataItem { Label = "No hit recorded", Value = statistics.NeverHit }
                 }
             };
+            // Redirects to a node can target a specific culture, which is needed to build the right URL
+            var languages = mostRecentlyHit.Any(it => it.NewNodeCultureId.HasValue)
+                ? (await _languageService.GetAllAsync()).ToArray()
+                : Array.Empty<ILanguage>();
             data.Items.AddRange(mostRecentlyHit.Select(it => new DashboardDataItem
             {
-                Label = $"{it.OldUrl} → {it.GetNewUrl()}",
+                Label = $"{it.OldUrl} → {it.GetNewUrl(languages.FirstOrDefault(l => l.Id == it.NewNodeCultureId)?.IsoCode)}",
                 Date = it.LastHit
             }));
 
-            return Task.FromResult(data);
+            return data;
         }
 
         private static int GetInt(IReadOnlyDictionary<string, string> parameters, string key, int fallback)
