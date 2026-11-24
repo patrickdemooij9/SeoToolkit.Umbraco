@@ -34,6 +34,16 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.CollectionProviders
         public string Alias => ProviderAlias;
         public string DisplayName => "Pages";
 
+        //Content pages only depend on Umbraco data, which clears the cache when it changes.
+        public TimeSpan? CacheDuration
+        {
+            get
+            {
+                var minutes = _settingsService.GetSettings().CacheDurationInMinutes;
+                return minutes > 0 ? TimeSpan.FromMinutes(minutes) : null;
+            }
+        }
+
         public ContentSitemapCollectionProvider(IUmbracoContextFactory umbracoContextFactory,
             ISitemapService sitemapService,
             IPublicAccessService publicAccessService,

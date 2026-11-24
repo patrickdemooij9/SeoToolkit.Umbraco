@@ -47,10 +47,19 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator
                         continue;
 
                     var seoDomain = _seoDomainsService.GetByDomain(domain.Id);
-                    var options = new SitemapGeneratorOptions(rootNode, domain.Culture, seoDomain?.BaseUrl) { Domain = domain };
+                    var rootUrl = BaseUrlHelper.ApplyBaseUrl(rootNode.Url(domain.Culture, UrlMode.Absolute), seoDomain?.BaseUrl);
+                    var sitemapUrl = $"{rootUrl.TrimEnd('/')}/sitemap.xml";
+
+                    // Without splitting, every domain has exactly one sitemap.xml, so there is no need to generate its items.
+                    if (!_sitemapGenerator.IsSplittingEnabled)
+                    {
+                        rootNamespace.Add(ToSitemapElement(sitemapUrl, null));
+                        continue;
+                    }
 
                     // A sitemap index may not reference another sitemap index, so a domain that is split over multiple
                     // sitemaps gets all of its parts listed here instead of its own sitemap.xml.
+                    var options = new SitemapGeneratorOptions(rootNode, domain.Culture, seoDomain?.BaseUrl) { Domain = domain };
                     var parts = _sitemapGenerator.GetParts(options);
                     if (parts.Count > 1)
                     {
@@ -61,8 +70,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator
                     }
                     else
                     {
-                        var rootUrl = BaseUrlHelper.ApplyBaseUrl(rootNode.Url(domain.Culture, UrlMode.Absolute), seoDomain?.BaseUrl);
-                        rootNamespace.Add(ToSitemapElement($"{rootUrl.TrimEnd('/')}/sitemap.xml", parts.Count == 1 ? parts[0] : null));
+                        rootNamespace.Add(ToSitemapElement(sitemapUrl, parts.Count == 1 ? parts[0] : null));
                     }
                 }
             }

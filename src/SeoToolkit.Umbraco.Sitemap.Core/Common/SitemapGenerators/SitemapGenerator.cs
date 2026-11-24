@@ -41,10 +41,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             _logger = logger;
         }
 
+        public bool IsSplittingEnabled => _settings.MaxUrlsPerSitemap < int.MaxValue;
+
         public XDocument Generate(SitemapGeneratorOptions options)
         {
             var parts = GetParts(options);
-            if (parts.Count <= 1)
+
+            // Without splitting, every collection ends up in a single urlset, like before collections got their own files.
+            if (!IsSplittingEnabled || parts.Count <= 1)
                 return ToUrlSet(parts.SelectMany(it => it.Items));
 
             return ToSitemapIndex(parts);
@@ -52,20 +56,25 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
 
         public XDocument? GeneratePart(SitemapGeneratorOptions options, string alias, int index)
         {
-            var part = GetParts(options).FirstOrDefault(it => it.Index == index && string.Equals(it.Alias, alias, StringComparison.OrdinalIgnoreCase));
-            return part is null ? null : ToUrlSet(part.Items);
+            // Parts only exist when splitting is enabled. Otherwise everything is in the sitemap.xml.
+            if (!IsSplittingEnabled || index < 1)
+                return null;
+
+            var context = CreateContext(options);
+            var provider = GetProviders().FirstOrDefault(it => string.Equals(it.Alias, alias, StringComparison.OrdinalIgnoreCase));
+            if (provider is null || !provider.IsEnabled(context))
+                return null;
+
+            // Only load the requested collection, not all of them.
+            var chunk = GetItems(provider, context).Chunk(GetMaxUrls()).ElementAtOrDefault(index - 1);
+            return chunk is null ? null : ToUrlSet(chunk);
         }
 
         public IReadOnlyList<SitemapPart> GetParts(SitemapGeneratorOptions options)
         {
-            if (!string.IsNullOrWhiteSpace(options.Culture))
-            {
-                _variationContextAccessor.VariationContext = new VariationContext(options.Culture);
-            }
-
-            var context = new SitemapCollectionContext(options.StartingNode, options.Domain, options.Culture, options.BaseUrl);
+            var context = CreateContext(options);
             var rootUrl = GetRootUrl(options);
-            var maxUrls = Math.Max(_settings.MaxUrlsPerSitemap, 1);
+            var maxUrls = GetMaxUrls();
 
             var parts = new List<SitemapPart>();
             foreach (var provider in GetProviders())
@@ -84,6 +93,18 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             }
             return parts;
         }
+
+        private SitemapCollectionContext CreateContext(SitemapGeneratorOptions options)
+        {
+            if (!string.IsNullOrWhiteSpace(options.Culture))
+            {
+                _variationContextAccessor.VariationContext = new VariationContext(options.Culture);
+            }
+
+            return new SitemapCollectionContext(options.StartingNode, options.Domain, options.Culture, options.BaseUrl);
+        }
+
+        private int GetMaxUrls() => Math.Max(_settings.MaxUrlsPerSitemap, 1);
 
         private IEnumerable<ISitemapCollectionProvider> GetProviders()
         {
@@ -117,11 +138,14 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
                 .Where(it => it != null && !it.HideFromSitemap)
                 .ToArray();
 
-            if (_settings.CacheDurationInMinutes <= 0)
+            // Every provider decides for itself whether its items may be cached. Null (the default) means no caching,
+            // so custom collections with data from outside Umbraco are never served stale.
+            var cacheDuration = provider.CacheDuration;
+            if (cacheDuration is null || cacheDuration <= TimeSpan.Zero)
                 return Load();
 
             var cacheKey = $"{SitemapCacheConstants.ItemsCacheKeyPrefix}{provider.Alias}_{context.RootNode?.Key.ToString() ?? "root"}_{context.Domain?.Id.ToString() ?? "none"}_{context.Culture}_{context.BaseUrl}";
-            return _appCaches.RuntimeCache.GetCacheItem(cacheKey, Load, TimeSpan.FromMinutes(_settings.CacheDurationInMinutes)) ?? Array.Empty<SitemapNodeItem>();
+            return _appCaches.RuntimeCache.GetCacheItem(cacheKey, Load, cacheDuration) ?? Array.Empty<SitemapNodeItem>();
         }
 
         private static string GetRootUrl(SitemapGeneratorOptions options)

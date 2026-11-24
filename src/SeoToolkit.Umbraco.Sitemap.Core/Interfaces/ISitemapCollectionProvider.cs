@@ -28,6 +28,13 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Interfaces
         bool IsEnabled(SitemapCollectionContext context) => true;
 
         /// <summary>
+        /// How long the items of this collection may be cached. Null or zero (the default) means the items are loaded on every request.
+        /// Cached items are cleared whenever Umbraco content, domains, public access, document types or sitemap settings change,
+        /// so only cache items that depend on Umbraco data, or pick a duration that matches how fresh your own data has to be.
+        /// </summary>
+        TimeSpan? CacheDuration => null;
+
+        /// <summary>
         /// Returns all items for the given context. Splitting the items over multiple sitemaps is done by the generator.
         /// </summary>
         IEnumerable<SitemapNodeItem> GetItems(SitemapCollectionContext context)

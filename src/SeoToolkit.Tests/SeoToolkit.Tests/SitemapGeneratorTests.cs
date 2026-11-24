@@ -169,18 +169,75 @@ namespace SeoToolkit.Tests
         }
 
         [Test]
-        public void GetParts_WithCacheEnabled_CallsCollectionOnce()
+        public void Generate_WithDefaultLimitAndMultipleCollections_ReturnsSingleUrlSet()
         {
-            _settings.CacheDurationInMinutes = 10;
-            var provider = new TestProvider("news", 1);
-            var appCaches = new AppCaches(new ObjectCacheAppCache(), NoAppCache.Instance, new IsolatedCaches(_ => NoAppCache.Instance));
-            var generator = CreateGenerator(appCaches, provider);
+            _settings = new SitemapConfig { CacheDurationInMinutes = 0, ShowAlternatePages = false };
+            var generator = CreateGenerator(new TestProvider("pages", 2), new TestProvider("products", 3));
+
+            var doc = generator.Generate(CreateOptions());
+
+            Assert.That(doc.Root!.Name, Is.EqualTo(Ns + "urlset"));
+            Assert.That(doc.Root.Elements(Ns + "url"), Has.Exactly(5).Items);
+        }
+
+        [Test]
+        public void GeneratePart_WithSplittingDisabled_ReturnsNull()
+        {
+            _settings = new SitemapConfig { CacheDurationInMinutes = 0, ShowAlternatePages = false };
+            var generator = CreateGenerator(new TestProvider("pages", 2));
+
+            Assert.That(generator.IsSplittingEnabled, Is.False);
+            Assert.That(generator.GeneratePart(CreateOptions(), "pages", 1), Is.Null);
+        }
+
+        [Test]
+        public void GeneratePart_OnlyLoadsRequestedCollection()
+        {
+            var pages = new TestProvider("pages", 3);
+            var products = new TestProvider("products", 3);
+            var generator = CreateGenerator(pages, products);
+
+            generator.GeneratePart(CreateOptions(), "products", 2);
+
+            Assert.That(pages.CallCount, Is.EqualTo(0));
+            Assert.That(products.CallCount, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void GetParts_WithProviderCacheDuration_CallsCollectionOnce()
+        {
+            var provider = new TestProvider("news", 1) { CacheDuration = TimeSpan.FromMinutes(10) };
+            var generator = CreateGenerator(CreateRuntimeCache(), provider);
 
             generator.GetParts(CreateOptions());
             generator.GetParts(CreateOptions());
 
             Assert.That(provider.CallCount, Is.EqualTo(1));
         }
+
+        [TestCase(null)]
+        [TestCase(0)]
+        public void GetParts_WithoutProviderCacheDuration_CallsCollectionEveryTime(int? minutes)
+        {
+            // The global setting only applies to the built-in pages collection, custom collections decide themselves.
+            _settings.CacheDurationInMinutes = 60;
+            var provider = new TestProvider("news", 1) { CacheDuration = minutes is null ? null : TimeSpan.FromMinutes(minutes.Value) };
+            var generator = CreateGenerator(CreateRuntimeCache(), provider);
+
+            generator.GetParts(CreateOptions());
+            generator.GetParts(CreateOptions());
+
+            Assert.That(provider.CallCount, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void LegacyCollection_IsNotCachedByDefault()
+        {
+            Assert.That(((ISitemapCollectionProvider)new LegacyProvider()).CacheDuration, Is.Null);
+        }
+
+        private static AppCaches CreateRuntimeCache()
+            => new(new ObjectCacheAppCache(), NoAppCache.Instance, new IsolatedCaches(_ => NoAppCache.Instance));
 
         [TestCase(typeof(NewsArticlesSitemapCollectionProvider), "news-articles")]
         [TestCase(typeof(LegacyProvider), "legacy")]
@@ -216,6 +273,7 @@ namespace SeoToolkit.Tests
         {
             public string Alias { get; }
             public bool Enabled { get; set; } = true;
+            public TimeSpan? CacheDuration { get; set; }
             public List<SitemapNodeItem> Items { get; }
             public SitemapCollectionContext? LastContext { get; private set; }
             public int CallCount { get; private set; }

@@ -23,7 +23,8 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Config.Models
         //Defaults to int.MaxValue (no splitting) to stay backwards compatible. The default will change to 50000 in a future major version.
         public int MaxUrlsPerSitemap { get; set; } = int.MaxValue;
 
-        //How long generated sitemap items are cached. Content changes clear the cache. Use 0 to disable caching.
+        //How long the content pages in the sitemap are cached. Content changes clear the cache. Use 0 to disable caching.
+        //Custom collections decide their own cache duration through ISitemapCollectionProvider.CacheDuration.
         public int CacheDurationInMinutes { get; set; } = 60;
 
         //Aliases of sitemap collections that should not be rendered, for example "pages".

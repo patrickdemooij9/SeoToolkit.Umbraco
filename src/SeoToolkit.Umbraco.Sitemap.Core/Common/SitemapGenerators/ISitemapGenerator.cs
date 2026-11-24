@@ -7,13 +7,18 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
     public interface ISitemapGenerator
     {
         /// <summary>
-        /// Generates the sitemap.xml for the given options. This is a urlset when everything fits in a single sitemap,
+        /// Whether sitemaps are split into parts. Only true when MaxUrlsPerSitemap is configured.
+        /// </summary>
+        bool IsSplittingEnabled { get; }
+
+        /// <summary>
+        /// Generates the sitemap.xml for the given options. This is a urlset when splitting is disabled or everything fits in a single sitemap,
         /// otherwise a sitemap index referencing all parts.
         /// </summary>
         XDocument Generate(SitemapGeneratorOptions options);
 
         /// <summary>
-        /// Generates a single part ("{alias}-{index}-sitemap.xml"). Returns null if the part does not exist.
+        /// Generates a single part ("{alias}-{index}-sitemap.xml"). Returns null if the part does not exist or splitting is disabled.
         /// </summary>
         XDocument? GeneratePart(SitemapGeneratorOptions options, string alias, int index);
 

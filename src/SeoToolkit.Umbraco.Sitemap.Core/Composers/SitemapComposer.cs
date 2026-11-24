@@ -57,6 +57,9 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Composers
 
             builder.AddNotificationHandler<ContentCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
             builder.AddNotificationHandler<DomainCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
+            builder.AddNotificationHandler<PublicAccessCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
+            builder.AddNotificationHandler<ContentTypeCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
+            builder.AddNotificationHandler<LanguageCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
             builder.AddNotificationHandler<SitemapContentChangedNotification, SitemapCacheClearNotificationHandler>();
             builder.AddNotificationHandler<SitemapPageSettingsSavedNotification, SitemapCacheClearNotificationHandler>();
 
