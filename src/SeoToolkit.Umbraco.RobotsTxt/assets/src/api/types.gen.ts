@@ -116,6 +116,39 @@ export type PagedSeoToolkitTreeItemApiModel = {
     items: Array<SeoToolkitTreeItemApiModel>;
 };
 
+export enum DashboardDataStatus {
+    NONE = 'None',
+    POSITIVE = 'Positive',
+    WARNING = 'Warning',
+    DANGER = 'Danger'
+}
+
+export type DashboardDataPostModel = {
+    dataSource: string;
+    parameters?: null | {
+        [key: string]: string;
+    };
+};
+
+export type DashboardDataItem = {
+    label: string;
+    value?: null | number;
+    text?: null | string;
+    date?: null | string;
+    status: DashboardDataStatus;
+    url?: null | string;
+};
+
+export type DashboardData = {
+    status: DashboardDataStatus;
+    value?: null | number;
+    total?: null | number;
+    text?: null | string;
+    description?: null | string;
+    date?: null | string;
+    items: Array<DashboardDataItem>;
+};
+
 export type GetUmbracoSeoToolkitIsEnabledData = {
     body?: never;
     path?: never;
@@ -206,6 +239,29 @@ export type GetUmbracoSeoToolkitTreeInfoRootResponses = {
 };
 
 export type GetUmbracoSeoToolkitTreeInfoRootResponse = GetUmbracoSeoToolkitTreeInfoRootResponses[keyof GetUmbracoSeoToolkitTreeInfoRootResponses];
+
+export type PostUmbracoSeoToolkitDashboardDataData = {
+    body: DashboardDataPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitDashboard/data';
+};
+
+export type PostUmbracoSeoToolkitDashboardDataErrors = {
+    /**
+     * Not Found
+     */
+    404: unknown;
+};
+
+export type PostUmbracoSeoToolkitDashboardDataResponses = {
+    /**
+     * OK
+     */
+    200: DashboardData;
+};
+
+export type PostUmbracoSeoToolkitDashboardDataResponse = PostUmbracoSeoToolkitDashboardDataResponses[keyof PostUmbracoSeoToolkitDashboardDataResponses];
 
 export type GetUmbracoSeoToolkitDomainsConfigData = {
     body?: never;

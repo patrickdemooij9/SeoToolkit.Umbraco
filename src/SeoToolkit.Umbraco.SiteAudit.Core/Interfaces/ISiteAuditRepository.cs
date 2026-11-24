@@ -6,5 +6,6 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Interfaces
     public interface ISiteAuditRepository : IRepository<SiteAuditDto>
     {
         void SaveCrawledPage(SiteAuditDto audit, CrawledPageDto page);
+        SiteAuditResultsSummary GetLatestFinishedSummary();
     }
 }

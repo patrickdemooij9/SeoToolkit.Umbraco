@@ -86,6 +86,7 @@ export type SeoFieldViewModel = {
     alias?: null | string;
     title?: null | string;
     description?: null | string;
+    settingsGroupAlias?: null | string;
     useInheritedValue: boolean;
     value?: unknown;
     editor?: SeoFieldEditorViewModel;
@@ -96,6 +97,13 @@ export type SeoFieldEditorViewModel = {
     config?: null | {
         [key: string]: unknown;
     };
+};
+
+export type SeoFieldSettingsGroupViewModel = {
+    alias?: null | string;
+    name?: null | string;
+    description?: null | string;
+    icon?: null | string;
 };
 
 export type SeoFieldGroupViewModel = {
@@ -251,6 +259,7 @@ export type DocumentTypeSettingsInheritanceViewModel = {
 
 export type DocumentTypeSettingsContentViewModel = {
     fields?: null | Array<SeoFieldViewModel>;
+    groups?: null | Array<SeoFieldSettingsGroupViewModel>;
     inheritance?: DocumentTypeSettingsInheritanceViewModel;
 };
 
@@ -261,6 +270,39 @@ export type DocumentTypeSettingsPostViewModel = {
         [key: string]: DocumentTypeValuePostViewModel;
     };
     inheritanceId?: null | string;
+};
+
+export enum DashboardDataStatus {
+    NONE = 'None',
+    POSITIVE = 'Positive',
+    WARNING = 'Warning',
+    DANGER = 'Danger'
+}
+
+export type DashboardDataPostModel = {
+    dataSource: string;
+    parameters?: null | {
+        [key: string]: string;
+    };
+};
+
+export type DashboardDataItem = {
+    label: string;
+    value?: null | number;
+    text?: null | string;
+    date?: null | string;
+    status: DashboardDataStatus;
+    url?: null | string;
+};
+
+export type DashboardData = {
+    status: DashboardDataStatus;
+    value?: null | number;
+    total?: null | number;
+    text?: null | string;
+    description?: null | string;
+    date?: null | string;
+    items: Array<DashboardDataItem>;
 };
 
 export type GetUmbracoSeoToolkitIsEnabledData = {
@@ -353,6 +395,29 @@ export type GetUmbracoSeoToolkitTreeInfoRootResponses = {
 };
 
 export type GetUmbracoSeoToolkitTreeInfoRootResponse = GetUmbracoSeoToolkitTreeInfoRootResponses[keyof GetUmbracoSeoToolkitTreeInfoRootResponses];
+
+export type PostUmbracoSeoToolkitDashboardDataData = {
+    body: DashboardDataPostModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/seoToolkitDashboard/data';
+};
+
+export type PostUmbracoSeoToolkitDashboardDataErrors = {
+    /**
+     * Not Found
+     */
+    404: unknown;
+};
+
+export type PostUmbracoSeoToolkitDashboardDataResponses = {
+    /**
+     * OK
+     */
+    200: DashboardData;
+};
+
+export type PostUmbracoSeoToolkitDashboardDataResponse = PostUmbracoSeoToolkitDashboardDataResponses[keyof PostUmbracoSeoToolkitDashboardDataResponses];
 
 export type GetUmbracoSeoToolkitDomainsConfigData = {
     body?: never;

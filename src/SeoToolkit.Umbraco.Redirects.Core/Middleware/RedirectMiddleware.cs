@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Services;
+using Microsoft.Net.Http.Headers;
 using Umbraco.Cms.Core.Web;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.Redirects.Core.Config.Models;
 using SeoToolkit.Umbraco.Redirects.Core.Interfaces;
 using System.Diagnostics;
 using System.Linq;
@@ -19,18 +22,24 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
         private readonly IRedirectsService _redirectsService;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ILanguageService _languageService;
+        private readonly ISettingsService<RedirectsConfigModel> _settingsService;
+        private readonly IRedirectHitTracker _redirectHitTracker;
 
         public RedirectMiddleware(RequestDelegate next,
             IRuntimeState runtimeState,
             IRedirectsService redirectsService,
             IUmbracoContextFactory umbracoContextFactory,
-            ILanguageService languageService)
+            ILanguageService languageService,
+            ISettingsService<RedirectsConfigModel> settingsService,
+            IRedirectHitTracker redirectHitTracker)
         {
             _next = next;
             _runtimeState = runtimeState;
             _redirectsService = redirectsService;
             _umbracoContextFactory = umbracoContextFactory;
             _languageService = languageService;
+            _settingsService = settingsService;
+            _redirectHitTracker = redirectHitTracker;
         }
 
         public async Task Invoke(HttpContext context)
@@ -71,10 +80,27 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Middleware
                 return false;
             }
 
+            _redirectHitTracker.RegisterHit(matchedRedirectResult.Redirect.Key);
+
             var isPerm = matchedRedirectResult.Redirect.RedirectCode == (int)HttpStatusCode.MovedPermanently;
             var isoCode = matchedRedirectResult.Redirect.NewNodeCultureId.HasValue ? (await _languageService.GetAllAsync()).FirstOrDefault(l => l.Id == matchedRedirectResult.Redirect.NewNodeCultureId.Value)?.IsoCode : null;
+            context.Response.GetTypedHeaders().CacheControl = GetCacheControl(isPerm);
             context.Response.Redirect(matchedRedirectResult.GetNewUrl(isoCode), isPerm);
             return true;
+        }
+
+        private CacheControlHeaderValue GetCacheControl(bool isPermanent)
+        {
+            if (!isPermanent)
+            {
+                return new CacheControlHeaderValue { NoStore = true };
+            }
+
+            return new CacheControlHeaderValue
+            {
+                Public = true,
+                MaxAge = TimeSpan.FromSeconds(_settingsService.GetSettings().PermanentRedirectMaxAgeInSeconds)
+            };
         }
     }
 }

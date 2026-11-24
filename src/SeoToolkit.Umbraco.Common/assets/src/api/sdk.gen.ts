@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteUmbracoSeoToolkitDomainsDeleteData, DeleteUmbracoSeoToolkitDomainsDeleteResponses, GetUmbracoSeoToolkitDomainsConfigData, GetUmbracoSeoToolkitDomainsConfigResponses, GetUmbracoSeoToolkitDomainsGetData, GetUmbracoSeoToolkitDomainsGetPredefinedData, GetUmbracoSeoToolkitDomainsGetPredefinedResponses, GetUmbracoSeoToolkitDomainsGetResponses, GetUmbracoSeoToolkitIsEnabledData, GetUmbracoSeoToolkitIsEnabledResponses, GetUmbracoSeoToolkitModulesData, GetUmbracoSeoToolkitModulesResponses, GetUmbracoSeoToolkitSeoKeyValueSettingsData, GetUmbracoSeoToolkitSeoKeyValueSettingsResponses, GetUmbracoSeoToolkitSeoKeyValueSettingsValueData, GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses, GetUmbracoSeoToolkitSettingsIsAiAvailableData, GetUmbracoSeoToolkitSettingsIsAiAvailableResponses, GetUmbracoSeoToolkitSettingsSeoSettingsData, GetUmbracoSeoToolkitSettingsSeoSettingsResponses, GetUmbracoSeoToolkitTreeInfoAncestorsData, GetUmbracoSeoToolkitTreeInfoAncestorsResponses, GetUmbracoSeoToolkitTreeInfoChildrenData, GetUmbracoSeoToolkitTreeInfoChildrenResponses, GetUmbracoSeoToolkitTreeInfoRootData, GetUmbracoSeoToolkitTreeInfoRootResponses, PostUmbracoSeoToolkitDomainsSaveData, PostUmbracoSeoToolkitDomainsSaveResponses, PostUmbracoSeoToolkitSeoKeyValueSettingsSaveData, PostUmbracoSeoToolkitSeoKeyValueSettingsSaveResponses, PostUmbracoSeoToolkitSettingsSeoSettingsData, PostUmbracoSeoToolkitSettingsSeoSettingsResponses } from './types.gen';
+import type { DeleteUmbracoSeoToolkitDomainsDeleteData, DeleteUmbracoSeoToolkitDomainsDeleteResponses, GetUmbracoSeoToolkitDomainsConfigData, GetUmbracoSeoToolkitDomainsConfigResponses, GetUmbracoSeoToolkitDomainsGetData, GetUmbracoSeoToolkitDomainsGetPredefinedData, GetUmbracoSeoToolkitDomainsGetPredefinedResponses, GetUmbracoSeoToolkitDomainsGetResponses, GetUmbracoSeoToolkitIsEnabledData, GetUmbracoSeoToolkitIsEnabledResponses, GetUmbracoSeoToolkitModulesData, GetUmbracoSeoToolkitModulesResponses, GetUmbracoSeoToolkitSeoKeyValueSettingsData, GetUmbracoSeoToolkitSeoKeyValueSettingsResponses, GetUmbracoSeoToolkitSeoKeyValueSettingsValueData, GetUmbracoSeoToolkitSeoKeyValueSettingsValueResponses, GetUmbracoSeoToolkitSettingsIsAiAvailableData, GetUmbracoSeoToolkitSettingsIsAiAvailableResponses, GetUmbracoSeoToolkitSettingsSeoSettingsData, GetUmbracoSeoToolkitSettingsSeoSettingsResponses, GetUmbracoSeoToolkitTreeInfoAncestorsData, GetUmbracoSeoToolkitTreeInfoAncestorsResponses, GetUmbracoSeoToolkitTreeInfoChildrenData, GetUmbracoSeoToolkitTreeInfoChildrenResponses, GetUmbracoSeoToolkitTreeInfoRootData, GetUmbracoSeoToolkitTreeInfoRootResponses, PostUmbracoSeoToolkitDashboardDataData, PostUmbracoSeoToolkitDashboardDataErrors, PostUmbracoSeoToolkitDashboardDataResponses, PostUmbracoSeoToolkitDomainsSaveData, PostUmbracoSeoToolkitDomainsSaveResponses, PostUmbracoSeoToolkitSeoKeyValueSettingsSaveData, PostUmbracoSeoToolkitSeoKeyValueSettingsSaveResponses, PostUmbracoSeoToolkitSettingsSeoSettingsData, PostUmbracoSeoToolkitSettingsSeoSettingsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -37,6 +37,17 @@ export class BackofficeSeoToolkit {
     
     public static getUmbracoSeoToolkitTreeInfoRoot<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitTreeInfoRootData, ThrowOnError>) {
         return (options?.client ?? client).get<GetUmbracoSeoToolkitTreeInfoRootResponses, unknown, ThrowOnError>({ url: '/umbraco/seoToolkit/tree/info/root', ...options });
+    }
+    
+    public static postUmbracoSeoToolkitDashboardData<ThrowOnError extends boolean = true>(options: Options<PostUmbracoSeoToolkitDashboardDataData, ThrowOnError>) {
+        return (options.client ?? client).post<PostUmbracoSeoToolkitDashboardDataResponses, PostUmbracoSeoToolkitDashboardDataErrors, ThrowOnError>({
+            url: '/umbraco/seoToolkitDashboard/data',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
     }
     
     public static getUmbracoSeoToolkitDomainsConfig<ThrowOnError extends boolean = true>(options?: Options<GetUmbracoSeoToolkitDomainsConfigData, ThrowOnError>) {

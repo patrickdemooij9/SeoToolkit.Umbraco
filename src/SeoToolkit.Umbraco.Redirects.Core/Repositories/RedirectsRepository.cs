@@ -70,6 +70,20 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             scope.Complete();
         }
 
+        public void UpdateLastHits(IDictionary<Guid, DateTime> lastHits)
+        {
+            using var scope = _scopeProvider.CreateScope();
+
+            foreach (var (key, lastHit) in lastHits)
+            {
+                var sql = scope.Database.SqlContext.Sql()
+                    .Update<RedirectEntity>(it => it.Set(e => e.LastHit, lastHit))
+                    .Where<RedirectEntity>(it => it.Key == key && (it.LastHit == null || it.LastHit < lastHit));
+                scope.Database.Execute(sql);
+            }
+            scope.Complete();
+        }
+
         public void Delete(Redirect redirect)
         {
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
@@ -178,6 +192,41 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
             }
         }
 
+        public RedirectStatistics GetStatistics(DateTime recentlyHitSince, DateTime staleBefore)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+
+            int Count(Expression<Func<RedirectEntity, bool>> predicate = null)
+            {
+                var sql = scope.SqlContext.Sql().SelectCount().From<RedirectEntity>();
+                if (predicate != null)
+                    sql = sql.Where(predicate);
+                return scope.Database.ExecuteScalar<int>(sql);
+            }
+
+            return new RedirectStatistics
+            {
+                Total = Count(),
+                Enabled = Count(it => it.IsEnabled),
+                Permanent = Count(it => it.RedirectCode == 301),
+                RecentlyHit = Count(it => it.IsEnabled && it.LastHit != null && it.LastHit >= recentlyHitSince),
+                Stale = Count(it => it.IsEnabled && it.LastHit != null && it.LastHit < staleBefore),
+                NeverHit = Count(it => it.IsEnabled && it.LastHit == null)
+            };
+        }
+
+        public IEnumerable<Redirect> GetMostRecentlyHit(int take)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var sql = scope.SqlContext.Sql()
+                .SelectAll()
+                .From<RedirectEntity>()
+                .Where<RedirectEntity>(it => it.IsEnabled && it.LastHit != null)
+                .OrderByDescending<RedirectEntity>(it => it.LastHit);
+
+            return scope.Database.Page<RedirectEntity>(1, take, sql).Items.Select(ToModel).ToArray();
+        }
+
         private RedirectEntity ToEntity(Redirect redirect)
         {
             return new RedirectEntity
@@ -195,7 +244,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 NewNodeCultureId = redirect.NewNodeCultureId,
                 CreatedBy = redirect.CreatedBy,
                 LastUpdated = DateTime.Now,
-                RedirectCode = redirect.RedirectCode
+                RedirectCode = redirect.RedirectCode,
+                LastHit = redirect.LastHit
             };
         }
 
@@ -220,7 +270,8 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Repositories
                 NewUrl = entity.NewUrl,
                 LastUpdated = entity.LastUpdated,
                 CreatedBy = entity.CreatedBy,
-                RedirectCode = entity.RedirectCode
+                RedirectCode = entity.RedirectCode,
+                LastHit = entity.LastHit is null ? null : DateTime.SpecifyKind(entity.LastHit.Value, DateTimeKind.Utc)
             };
         }
 

@@ -62,7 +62,7 @@ namespace SeoToolkit.Umbraco.uSync.Serializers
             var item = await FindItemAsync(node);
             item ??= new SitemapPageSettings
             {
-                ContentTypeGuid = node.Element("Key").ValueOrDefault(Guid.Empty)
+                ContentTypeGuid = node.GetKey()
             };
             if (item.ContentTypeGuid == Guid.Empty)
             {
