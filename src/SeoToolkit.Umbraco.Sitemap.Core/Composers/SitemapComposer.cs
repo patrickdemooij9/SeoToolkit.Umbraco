@@ -22,7 +22,6 @@ using SeoToolkit.Umbraco.Sitemap.Core.Config;
 using SeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 using SeoToolkit.Umbraco.Sitemap.Core.Middleware;
-using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using SeoToolkit.Umbraco.Sitemap.Core.Repositories;
 using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
 
@@ -60,8 +59,6 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Composers
             builder.AddNotificationHandler<PublicAccessCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
             builder.AddNotificationHandler<ContentTypeCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
             builder.AddNotificationHandler<LanguageCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
-            builder.AddNotificationHandler<SitemapContentChangedNotification, SitemapCacheClearNotificationHandler>();
-            builder.AddNotificationHandler<SitemapPageSettingsSavedNotification, SitemapCacheClearNotificationHandler>();
 
             if (!disabledModules.Contains(DisabledModuleConstant.Middleware))
             {

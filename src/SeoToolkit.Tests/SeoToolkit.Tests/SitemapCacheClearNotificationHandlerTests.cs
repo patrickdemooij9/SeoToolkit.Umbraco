@@ -1,9 +1,8 @@
 using Moq;
 using NUnit.Framework;
 using SeoToolkit.Umbraco.Sitemap.Core.Caching;
-using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
-using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Core.Sync;
 
@@ -13,10 +12,9 @@ namespace SeoToolkit.Tests
     public class SitemapCacheClearNotificationHandlerTests
     {
         private const string CacheKey = SitemapCacheConstants.ItemsCacheKeyPrefix + "pages_root";
+        private const string OtherCacheKey = "SomethingElse";
 
         private AppCaches _appCaches = null!;
-        private Mock<IServerMessenger> _messenger = null!;
-        private Mock<ICacheRefresher> _refresher = null!;
         private SitemapCacheClearNotificationHandler _handler = null!;
 
         [SetUp]
@@ -24,45 +22,49 @@ namespace SeoToolkit.Tests
         {
             _appCaches = new AppCaches(new ObjectCacheAppCache(), NoAppCache.Instance, new IsolatedCaches(_ => NoAppCache.Instance));
             _appCaches.RuntimeCache.Insert(CacheKey, () => "cached");
+            _appCaches.RuntimeCache.Insert(OtherCacheKey, () => "other");
 
-            _messenger = new Mock<IServerMessenger>();
-            _refresher = new Mock<ICacheRefresher>();
-            _refresher.SetupGet(r => r.RefresherUniqueId).Returns(SitemapCacheRefresher.CacheGuid);
-            var distributedCache = new DistributedCache(_messenger.Object, new CacheRefresherCollection(() => new[] { _refresher.Object }));
-
-            _handler = new SitemapCacheClearNotificationHandler(_appCaches, distributedCache);
+            _handler = new SitemapCacheClearNotificationHandler(_appCaches);
         }
 
         [Test]
-        public void PublicAccessChange_ClearsLocalCache()
+        public void PublicAccessChange_ClearsSitemapCache()
         {
             _handler.Handle(new PublicAccessCacheRefresherNotification(new object(), MessageType.RefreshAll));
 
-            Assert.That(_appCaches.RuntimeCache.Get(CacheKey), Is.Null);
+            AssertOnlySitemapCacheCleared();
         }
 
         [Test]
-        public void ContentTypeChange_ClearsLocalCache()
+        public void ContentTypeChange_ClearsSitemapCache()
         {
             _handler.Handle(new ContentTypeCacheRefresherNotification(new object(), MessageType.RefreshAll));
 
+            AssertOnlySitemapCacheCleared();
+        }
+
+        [Test]
+        public void LanguageChange_ClearsSitemapCache()
+        {
+            _handler.Handle(new LanguageCacheRefresherNotification(new object(), MessageType.RefreshAll));
+
+            AssertOnlySitemapCacheCleared();
+        }
+
+        [Test]
+        public void SitemapCacheRefresher_RefreshAll_ClearsSitemapCache()
+        {
+            var refresher = new SitemapCacheRefresher(_appCaches, Mock.Of<IEventAggregator>(), Mock.Of<ICacheRefresherNotificationFactory>());
+
+            refresher.RefreshAll();
+
+            AssertOnlySitemapCacheCleared();
+        }
+
+        private void AssertOnlySitemapCacheCleared()
+        {
             Assert.That(_appCaches.RuntimeCache.Get(CacheKey), Is.Null);
-        }
-
-        [Test]
-        public void SitemapContentChanged_RefreshesAllServers()
-        {
-            _handler.Handle(new SitemapContentChangedNotification(Guid.NewGuid()));
-
-            _messenger.Verify(m => m.QueueRefreshAll(_refresher.Object), Times.Once);
-        }
-
-        [Test]
-        public void SitemapPageSettingsSaved_RefreshesAllServers()
-        {
-            _handler.Handle(new SitemapPageSettingsSavedNotification(new SitemapPageSettings()));
-
-            _messenger.Verify(m => m.QueueRefreshAll(_refresher.Object), Times.Once);
+            Assert.That(_appCaches.RuntimeCache.Get(OtherCacheKey), Is.EqualTo("other"));
         }
     }
 }
