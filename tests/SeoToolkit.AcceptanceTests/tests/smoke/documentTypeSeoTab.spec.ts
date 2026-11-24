@@ -1,6 +1,6 @@
 import { ConstantHelper } from '@umbraco-cms/acceptance-test-helpers';
 import { test, expect } from '../../helpers/test';
-import { SeoTab, SeoTabElement } from '../../helpers/seoToolkitConstants';
+import { SeoDocumentNav, SeoTab, SeoTabElement } from '../../helpers/seoToolkitConstants';
 
 const templateName = 'SeoToolkitAcceptanceDocTypeTemplate';
 const documentTypeName = 'SeoToolkitAcceptanceDocType';
@@ -47,12 +47,18 @@ test.describe('SEO tab on document types', () => {
     const seoView = page.locator(SeoTabElement.documentTypeView);
     await expect(seoView, 'the SEO tab should render <st-document-view>').toBeVisible();
 
-    await expect(page.locator(SeoTab.metaFields)).toBeVisible();
-    await expect(page.locator(SeoTab.sitemap)).toBeVisible();
+    // Meta Fields shows one nav link per field group, Sitemap a single link.
+    const metaFieldsNav = page.locator(SeoDocumentNav.metaFields).first();
+    const sitemapNav = page.locator(SeoDocumentNav.sitemap).first();
+    await expect(metaFieldsNav).toBeVisible();
+    await expect(sitemapNav).toBeVisible();
 
     // The landing sub-view is not stable (see the note in contentSeoTab.spec.ts), so
-    // click Meta Fields explicitly rather than assuming it is the default.
-    await page.locator(SeoTab.metaFields).click();
+    // open each one explicitly rather than assuming which is the default.
+    await sitemapNav.click();
+    await expect(page.locator(SeoTabElement.sitemapDocumentType)).toBeVisible();
+
+    await metaFieldsNav.click();
     await expect(page.locator(SeoTabElement.metaFieldsDocumentType)).toBeVisible();
   });
 

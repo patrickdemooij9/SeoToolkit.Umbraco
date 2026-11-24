@@ -153,3 +153,15 @@ export const SeoTab = {
   sitemap: 'uui-tab[href$="/view/seo/view/sitemap"]',
   pageChecks: 'uui-tab[href$="/view/seo/view/pageChecks"]',
 } as const;
+
+/**
+ * Selectors for the side navigation of the SEO tab on a document type
+ * (st-document-view), which replaced the module sub-tabs there; content items still use SeoTab.
+ *
+ * A module that registers nav items gets one link per item, at `view/<pathname>/<item>`
+ * (Meta Fields: one per field group), so match on the prefix and take the first.
+ */
+export const SeoDocumentNav = {
+  metaFields: 'a.nav-item[href*="/view/seo/view/metaFields"]',
+  sitemap: 'a.nav-item[href*="/view/seo/view/sitemap"]',
+} as const;
