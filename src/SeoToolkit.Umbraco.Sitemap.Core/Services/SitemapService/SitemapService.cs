@@ -1,7 +1,9 @@
+using SeoToolkit.Umbraco.Sitemap.Core.Caching;
 using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
 using System;
+using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Services;
 
@@ -13,9 +15,15 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
         private readonly ISitemapPageTypeRepository _sitemapPageTypeRepository;
         private readonly ISitemapContentRepository _sitemapContentRepository;
         private readonly IEventAggregator _eventAggregator;
+        private readonly DistributedCache _distributedCache;
 
-        public SitemapService(IContentTypeService contentTypeService, ISitemapPageTypeRepository sitemapPageTypeRepository, ISitemapContentRepository sitemapContentRepository, IEventAggregator eventAggregator)
+        public SitemapService(IContentTypeService contentTypeService,
+            ISitemapPageTypeRepository sitemapPageTypeRepository,
+            ISitemapContentRepository sitemapContentRepository,
+            IEventAggregator eventAggregator,
+            DistributedCache distributedCache)
         {
+            _distributedCache = distributedCache;
             _contentTypeService = contentTypeService;
             _sitemapPageTypeRepository = sitemapPageTypeRepository;
             _sitemapContentRepository = sitemapContentRepository;
@@ -32,6 +40,7 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
             }
 
             _sitemapPageTypeRepository.Set(pageSettings);
+            ClearSitemapCache();
             _eventAggregator.Publish(new SitemapPageSettingsSavedNotification(pageSettings));
         }
 
@@ -57,11 +66,13 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
             if (isDefault)
             {
                 _sitemapContentRepository.Delete(settings.NodeKey);
+                ClearSitemapCache();
                 _eventAggregator.Publish(new SitemapContentChangedNotification(settings.NodeKey));
                 return;
             }
 
             _sitemapContentRepository.Set(settings);
+            ClearSitemapCache();
             _eventAggregator.Publish(new SitemapContentChangedNotification(settings.NodeKey));
         }
 
@@ -73,6 +84,12 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService
         public SitemapContentSettings[] GetAllContentSettings()
         {
             return _sitemapContentRepository.GetAll();
+        }
+
+        //These settings change which pages are in the sitemap, so the cached items are cleared on every server.
+        private void ClearSitemapCache()
+        {
+            _distributedCache.RefreshAll(SitemapCacheRefresher.CacheGuid);
         }
     }
 }

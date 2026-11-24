@@ -5,11 +5,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Extensions;
 using SeoToolkit.Umbraco.Common.Core.Collections;
 using SeoToolkit.Umbraco.Common.Core.Constants;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.Sitemap.Core.Caching;
+using SeoToolkit.Umbraco.Sitemap.Core.Collections;
+using SeoToolkit.Umbraco.Sitemap.Core.Common.CollectionProviders;
 using SeoToolkit.Umbraco.Sitemap.Core.Common.DisplayProviders;
 using SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators;
 using SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator;
@@ -46,6 +50,15 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Composers
             builder.Services.AddUnique<ISitemapService, SitemapService>();
             builder.Services.AddUnique<ISitemapPageTypeRepository, SitemapPageTypeRepository>();
             builder.Services.AddUnique<ISitemapContentRepository, SitemapContentRepository>();
+
+            // Content pages always come first, custom collections are appended by other composers.
+            builder.SitemapCollections().Insert<ContentSitemapCollectionProvider>();
+
+            builder.AddNotificationHandler<ContentCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
+            builder.AddNotificationHandler<DomainCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
+            builder.AddNotificationHandler<PublicAccessCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
+            builder.AddNotificationHandler<ContentTypeCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
+            builder.AddNotificationHandler<LanguageCacheRefresherNotification, SitemapCacheClearNotificationHandler>();
 
             if (!disabledModules.Contains(DisabledModuleConstant.Middleware))
             {

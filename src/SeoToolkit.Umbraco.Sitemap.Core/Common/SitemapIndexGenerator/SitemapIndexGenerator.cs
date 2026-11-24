@@ -1,8 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.Common.Core.Services.Domains;
+using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators;
+using SeoToolkit.Umbraco.Sitemap.Core.Config.Models;
+using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
@@ -13,13 +15,20 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator
     {
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISeoDomainsService _seoDomainsService;
+        private readonly ISitemapGenerator _sitemapGenerator;
+        private readonly SitemapConfig _settings;
 
         private XNamespace _namespace => XNamespace.Get("http://www.sitemaps.org/schemas/sitemap/0.9");
 
-        public SitemapIndexGenerator(IUmbracoContextFactory umbracoContextFactory, ISeoDomainsService seoDomainsService)
+        public SitemapIndexGenerator(IUmbracoContextFactory umbracoContextFactory,
+            ISeoDomainsService seoDomainsService,
+            ISitemapGenerator sitemapGenerator,
+            ISettingsService<SitemapConfig> settingsService)
         {
             _umbracoContextFactory = umbracoContextFactory;
             _seoDomainsService = seoDomainsService;
+            _sitemapGenerator = sitemapGenerator;
+            _settings = settingsService.GetSettings();
         }
 
         public XDocument Generate()
@@ -33,22 +42,48 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapIndexGenerator
                     var rootNode = ctx.UmbracoContext.Content.GetById(domain.ContentId);
                     if (rootNode is null)
                         continue;
-                        
+
                     if (!rootNode.IsPublished(domain.Culture))
                         continue;
 
-                    var url = new Uri(Path.Join(rootNode.Url(domain.Culture, UrlMode.Absolute), "sitemap.xml")).AbsoluteUri;
-
                     var seoDomain = _seoDomainsService.GetByDomain(domain.Id);
-                    url = BaseUrlHelper.ApplyBaseUrl(url, seoDomain?.BaseUrl);
+                    var rootUrl = BaseUrlHelper.ApplyBaseUrl(rootNode.Url(domain.Culture, UrlMode.Absolute), seoDomain?.BaseUrl);
+                    var sitemapUrl = $"{rootUrl.TrimEnd('/')}/sitemap.xml";
 
-                    var sitemapElement = new XElement(_namespace + "sitemap");
-                    sitemapElement.Add(new XElement(_namespace + "loc", url));
+                    // Without splitting, every domain has exactly one sitemap.xml, so there is no need to generate its items.
+                    if (!_sitemapGenerator.IsSplittingEnabled)
+                    {
+                        rootNamespace.Add(ToSitemapElement(sitemapUrl, null));
+                        continue;
+                    }
 
-                    rootNamespace.Add(sitemapElement);
+                    // A sitemap index may not reference another sitemap index, so a domain that is split over multiple
+                    // sitemaps gets all of its parts listed here instead of its own sitemap.xml.
+                    var options = new SitemapGeneratorOptions(rootNode, domain.Culture, seoDomain?.BaseUrl) { Domain = domain };
+                    var parts = _sitemapGenerator.GetParts(options);
+                    if (parts.Count > 1)
+                    {
+                        foreach (var part in parts)
+                        {
+                            rootNamespace.Add(ToSitemapElement(part.Url, part));
+                        }
+                    }
+                    else
+                    {
+                        rootNamespace.Add(ToSitemapElement(sitemapUrl, parts.Count == 1 ? parts[0] : null));
+                    }
                 }
             }
             return new XDocument(rootNamespace);
+        }
+
+        private XElement ToSitemapElement(string url, SitemapPart? part)
+        {
+            var sitemapElement = new XElement(_namespace + "sitemap");
+            sitemapElement.Add(new XElement(_namespace + "loc", url));
+            if (part?.LastModifiedDate != null)
+                sitemapElement.Add(new XElement(_namespace + "lastmod", part.LastModifiedDate.Value.ToString(_settings.LastModifiedFormat)));
+            return sitemapElement;
         }
     }
 }

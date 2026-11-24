@@ -358,6 +358,84 @@ namespace SeoToolkit.Tests
             _mockNext.Verify(n => n.Invoke(_httpContext), Times.Once);
         }
 
+        [TestCase("/pages-1-sitemap.xml", "pages", 1)]
+        [TestCase("/News-Articles-12-sitemap.xml", "News-Articles", 12)]
+        [TestCase("/products-2024-3-sitemap.xml", "products-2024", 3)]
+        public async Task Invoke_WithSitemapPartRequest_GeneratesPart(string path, string expectedAlias, int expectedIndex)
+        {
+            // Arrange
+            _httpContext.Request.Path = path;
+            var settings = new SitemapConfig { ReturnContentType = "application/xml", StructureMode = StructureMode.OnlyRoot };
+
+            _mockSettingsService.Setup(s => s.GetSettings()).Returns(settings);
+            _mockSitemapGenerator.Setup(g => g.GeneratePart(It.IsAny<SitemapGeneratorOptions>(), It.IsAny<string>(), It.IsAny<int>()))
+                .Returns(new XDocument(new XElement("urlset")));
+            SetupBasicUmbracoContext();
+
+            // Act
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
+
+            // Assert
+            _mockSitemapGenerator.Verify(g => g.GeneratePart(It.IsAny<SitemapGeneratorOptions>(), expectedAlias, expectedIndex), Times.Once);
+            _mockSitemapGenerator.Verify(g => g.Generate(It.IsAny<SitemapGeneratorOptions>()), Times.Never);
+            Assert.That(_httpContext.Response.StatusCode, Is.EqualTo(200));
+        }
+
+        [Test]
+        public async Task Invoke_WithUnknownSitemapPart_PassesToNextMiddleware()
+        {
+            // Arrange - the generator returns null for parts that don't exist.
+            _httpContext.Request.Path = "/pages-9-sitemap.xml";
+            var settings = new SitemapConfig { ReturnContentType = "application/xml", StructureMode = StructureMode.OnlyRoot };
+
+            _mockSettingsService.Setup(s => s.GetSettings()).Returns(settings);
+            SetupBasicUmbracoContext();
+
+            // Act
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
+
+            // Assert
+            _mockNext.Verify(n => n.Invoke(_httpContext), Times.Once);
+        }
+
+        [TestCase("/pages-0-sitemap.xml")]
+        [TestCase("/pages-sitemap.xml")]
+        [TestCase("/some-file.xml")]
+        public async Task Invoke_WithNonPartXmlRequest_PassesToNextMiddleware(string path)
+        {
+            // Arrange
+            _httpContext.Request.Path = path;
+            var settings = new SitemapConfig { ReturnContentType = "application/xml", StructureMode = StructureMode.OnlyRoot };
+            _mockSettingsService.Setup(s => s.GetSettings()).Returns(settings);
+
+            // Act
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
+
+            // Assert
+            _mockNext.Verify(n => n.Invoke(_httpContext), Times.Once);
+            _mockSitemapGenerator.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public async Task Invoke_WithSitemapPartRequest_WithoutMatchingDomain_PassesToNextMiddleware()
+        {
+            // Arrange - parts only exist below a domain, there is no root index of parts.
+            _httpContext.Request.Scheme = "https";
+            _httpContext.Request.Host = new HostString("example.com");
+            _httpContext.Request.Path = "/pages-1-sitemap.xml";
+            var settings = new SitemapConfig { ReturnContentType = "application/xml", StructureMode = StructureMode.MultiRoot };
+
+            _mockSettingsService.Setup(s => s.GetSettings()).Returns(settings);
+            SetupUmbracoContextWithDomains(2);
+
+            // Act
+            await _middleware.Invoke(_httpContext, _mockSitemapGenerator.Object, _mockSitemapIndexGenerator.Object, _mockSeoDomainResolver.Object);
+
+            // Assert
+            _mockNext.Verify(n => n.Invoke(_httpContext), Times.Once);
+            _mockSitemapIndexGenerator.Verify(g => g.Generate(), Times.Never);
+        }
+
         private void SetupUmbracoContextWithDomains(int domainCount)
         {
             var mockUmbracoContext = new Mock<IUmbracoContext>();
