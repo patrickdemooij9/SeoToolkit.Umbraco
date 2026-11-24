@@ -58,6 +58,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Composers
             builder.Services.AddUnique<IRedirectsRepository, RedirectsRepository>();
             builder.Services.AddUnique<IRedirectsService, RedirectsService>();
             builder.Services.AddUnique<IRedirectsBloomFilter, RedirectsBloomFilter>();
+            builder.Services.AddSingleton<RegexRedirectsCache>();
             builder.Services.AddUnique<IRedirectHitTracker, RedirectHitTracker>();
             builder.Services.AddTransient<RedirectsImportHelper>();
 
