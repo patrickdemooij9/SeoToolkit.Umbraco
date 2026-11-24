@@ -1,200 +1,180 @@
-﻿using SeoToolkit.Umbraco.Common.Core.Helpers;
+﻿using Microsoft.Extensions.Logging;
+using SeoToolkit.Umbraco.Common.Core.Helpers;
 using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
+using SeoToolkit.Umbraco.Sitemap.Core.Caching;
 using SeoToolkit.Umbraco.Sitemap.Core.Collections;
 using SeoToolkit.Umbraco.Sitemap.Core.Config.Models;
 using SeoToolkit.Umbraco.Sitemap.Core.Interfaces;
 using SeoToolkit.Umbraco.Sitemap.Core.Models.Business;
-using SeoToolkit.Umbraco.Sitemap.Core.Notifications;
-using SeoToolkit.Umbraco.Sitemap.Core.Services.SitemapService;
+using SeoToolkit.Umbraco.Sitemap.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Umbraco.Cms.Core.Events;
+using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Services.Navigation;
-using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
 
 namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
 {
     public class SitemapGenerator : ISitemapGenerator
     {
-        private readonly IUmbracoContextFactory _umbracoContextFactory;
-        private readonly ISitemapService _sitemapService;
-        private readonly IPublicAccessService _publicAccessService;
-        private readonly IEventAggregator _eventAggregator;
         private readonly SitemapConfig _settings;
         private readonly IVariationContextAccessor _variationContextAccessor;
-        private readonly IDocumentNavigationQueryService _documentNavigationQueryService;
         private readonly SitemapCollectionProviderCollection _sitemapCollectionProviders;
-
-        private List<string> _validAlternateCultures;
-        private Dictionary<Guid, SitemapPageSettings> _pageTypeSettings; //Used to cache the types for the generation
-        private Dictionary<Guid, SitemapContentSettings> _contentSettings; //Used to cache the per-content overrides for the generation
-        private string? _baseUrl;
+        private readonly AppCaches _appCaches;
+        private readonly ILogger<SitemapGenerator> _logger;
 
         private XNamespace _namespace => XNamespace.Get("http://www.sitemaps.org/schemas/sitemap/0.9");
         private XNamespace _xHtmlNamespace = XNamespace.Get("http://www.w3.org/1999/xhtml");
 
-        public SitemapGenerator(IUmbracoContextFactory umbracoContextFactory,
-            ISettingsService<SitemapConfig> settingsService,
-            ISitemapService sitemapService,
-            IPublicAccessService publicAccessService,
-            IEventAggregator eventAggregator,
+        public SitemapGenerator(ISettingsService<SitemapConfig> settingsService,
             IVariationContextAccessor variationContextAccessor,
-            IDocumentNavigationQueryService documentNavigationQueryService,
-            SitemapCollectionProviderCollection sitemapCollectionProviders = null)
+            SitemapCollectionProviderCollection sitemapCollectionProviders,
+            AppCaches appCaches,
+            ILogger<SitemapGenerator> logger)
         {
-            _umbracoContextFactory = umbracoContextFactory;
-            _sitemapService = sitemapService;
-            _publicAccessService = publicAccessService;
-            _eventAggregator = eventAggregator;
             _variationContextAccessor = variationContextAccessor;
-            _documentNavigationQueryService = documentNavigationQueryService;
             _settings = settingsService.GetSettings();
             _sitemapCollectionProviders = sitemapCollectionProviders;
-
-            _pageTypeSettings = new Dictionary<Guid, SitemapPageSettings>();
-            _contentSettings = new Dictionary<Guid, SitemapContentSettings>();
+            _appCaches = appCaches;
+            _logger = logger;
         }
+
+        public bool IsSplittingEnabled => _settings.MaxUrlsPerSitemap < int.MaxValue;
 
         public XDocument Generate(SitemapGeneratorOptions options)
         {
-            // Pre-load all content overrides once per generation to avoid N+1 queries
-            foreach (var contentSetting in _sitemapService.GetAllContentSettings())
+            var parts = GetParts(options);
+
+            // Without splitting, every collection ends up in a single urlset, like before collections got their own files.
+            if (!IsSplittingEnabled || parts.Count <= 1)
+                return ToUrlSet(parts.SelectMany(it => it.Items));
+
+            return ToSitemapIndex(parts);
+        }
+
+        public XDocument? GeneratePart(SitemapGeneratorOptions options, string alias, int index)
+        {
+            // Parts only exist when splitting is enabled. Otherwise everything is in the sitemap.xml.
+            if (!IsSplittingEnabled || index < 1)
+                return null;
+
+            var context = CreateContext(options);
+            var provider = GetProviders().FirstOrDefault(it => string.Equals(it.Alias, alias, StringComparison.OrdinalIgnoreCase));
+            if (provider is null || !provider.IsEnabled(context))
+                return null;
+
+            // Only load the requested collection, not all of them.
+            var chunk = GetItems(provider, context).Chunk(GetMaxUrls()).ElementAtOrDefault(index - 1);
+            return chunk is null ? null : ToUrlSet(chunk);
+        }
+
+        public IReadOnlyList<SitemapPart> GetParts(SitemapGeneratorOptions options)
+        {
+            var context = CreateContext(options);
+            var rootUrl = GetRootUrl(options);
+            var maxUrls = GetMaxUrls();
+
+            var parts = new List<SitemapPart>();
+            foreach (var provider in GetProviders())
             {
-                _contentSettings[contentSetting.NodeKey] = contentSetting;
+                if (!provider.IsEnabled(context))
+                    continue;
+
+                var items = GetItems(provider, context);
+                var index = 1;
+                foreach (var chunk in items.Chunk(maxUrls))
+                {
+                    var url = $"{rootUrl.TrimEnd('/')}/{SitemapPart.GetFileName(provider.Alias, index)}";
+                    parts.Add(new SitemapPart(provider.Alias, provider.DisplayName, index, url, chunk));
+                    index++;
+                }
             }
+            return parts;
+        }
 
-            _baseUrl = options.BaseUrl;
-            _validAlternateCultures = new List<string>();
-            var rootNamespace = new XElement(_namespace + "urlset", _settings.ShowAlternatePages ? new XAttribute(XNamespace.Xmlns + "xhtml", _xHtmlNamespace) : null);
-
+        private SitemapCollectionContext CreateContext(SitemapGeneratorOptions options)
+        {
             if (!string.IsNullOrWhiteSpace(options.Culture))
             {
                 _variationContextAccessor.VariationContext = new VariationContext(options.Culture);
             }
-            
-            using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
+
+            return new SitemapCollectionContext(options.StartingNode, options.Domain, options.Culture, options.BaseUrl);
+        }
+
+        private int GetMaxUrls() => Math.Max(_settings.MaxUrlsPerSitemap, 1);
+
+        private IEnumerable<ISitemapCollectionProvider> GetProviders()
+        {
+            if (_sitemapCollectionProviders is null)
+                yield break;
+
+            var aliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var provider in _sitemapCollectionProviders)
             {
-                var startingNodes = new List<IPublishedContent>();
-                if (options.StartingNode != null)
-                    startingNodes.Add(options.StartingNode);
-                else
+                var alias = provider.Alias;
+                if (!SitemapAliasHelper.IsValid(alias))
                 {
-                    if (_documentNavigationQueryService.TryGetRootKeys(out var rootKeys))
-                    {
-                        var rootNodes = rootKeys.Select(ctx.UmbracoContext.Content.GetById).Where(it => it != null).ToArray();
-                        if (rootNodes.Length > 0)
-                            startingNodes.AddRange(rootNodes);
-                    }
+                    _logger.LogWarning("Sitemap collection {Provider} has an invalid alias '{Alias}'. Only lowercase letters, digits and hyphens are allowed. The collection is skipped.", provider.GetType().FullName, alias);
+                    continue;
                 }
-
-                foreach (var node in startingNodes)
+                if (!aliases.Add(alias))
                 {
-                    //We need to check the domains to figure out what cultures are valid for the alternate pages. Umbraco will otherwise just return the english variant for whatever reason
-                    if (_settings.ShowAlternatePages)
-                    {
-                        _validAlternateCultures.AddRange(ctx.UmbracoContext.Domains.GetAssigned(node.Root().Id).Select(it => it.Culture));
-                    }
-
-                    var items = GetSelfAndChildren(node, options.Culture);
-
-                    _eventAggregator.Publish(new GenerateSitemapNotification(items));
-
-                    if (_sitemapCollectionProviders != null)
-                    {
-                        foreach (var collection in _sitemapCollectionProviders)
-                        {
-                            items.AddRange(collection.GetItems());
-                        }
-                    }
-
-                    rootNamespace.Add(ToXmlElements(items));
-
-                    if (_settings.ShowAlternatePages)
-                        _validAlternateCultures.Clear();
+                    _logger.LogWarning("Sitemap collection {Provider} uses alias '{Alias}', which is already used by another collection. The collection is skipped.", provider.GetType().FullName, alias);
+                    continue;
                 }
+                if (_settings.DisabledCollections?.Contains(alias, StringComparer.OrdinalIgnoreCase) == true)
+                    continue;
+
+                yield return provider;
             }
+        }
 
+        private SitemapNodeItem[] GetItems(ISitemapCollectionProvider provider, SitemapCollectionContext context)
+        {
+            SitemapNodeItem[] Load() => (provider.GetItems(context) ?? Enumerable.Empty<SitemapNodeItem>())
+                .Where(it => it != null && !it.HideFromSitemap)
+                .ToArray();
+
+            // Every provider decides for itself whether its items may be cached. Null (the default) means no caching,
+            // so custom collections with data from outside Umbraco are never served stale.
+            var cacheDuration = provider.CacheDuration;
+            if (cacheDuration is null || cacheDuration <= TimeSpan.Zero)
+                return Load();
+
+            var cacheKey = $"{SitemapCacheConstants.ItemsCacheKeyPrefix}{provider.Alias}_{context.RootNode?.Key.ToString() ?? "root"}_{context.Domain?.Id.ToString() ?? "none"}_{context.Culture}_{context.BaseUrl}";
+            return _appCaches.RuntimeCache.GetCacheItem(cacheKey, Load, cacheDuration) ?? Array.Empty<SitemapNodeItem>();
+        }
+
+        private static string GetRootUrl(SitemapGeneratorOptions options)
+        {
+            if (!string.IsNullOrWhiteSpace(options.RootUrl))
+                return options.RootUrl;
+            if (options.StartingNode != null)
+                return BaseUrlHelper.ApplyBaseUrl(options.StartingNode.Url(options.Culture, UrlMode.Absolute), options.BaseUrl);
+            return "/";
+        }
+
+        private XDocument ToUrlSet(IEnumerable<SitemapNodeItem> nodes)
+        {
+            var rootNamespace = new XElement(_namespace + "urlset", _settings.ShowAlternatePages ? new XAttribute(XNamespace.Xmlns + "xhtml", _xHtmlNamespace) : null);
+            rootNamespace.Add(ToXmlElements(nodes));
             return new XDocument(rootNamespace);
         }
 
-        private List<SitemapNodeItem> GetSelfAndChildren(IPublishedContent content, string culture)
+        private XDocument ToSitemapIndex(IEnumerable<SitemapPart> parts)
         {
-            var items = new List<SitemapNodeItem>();
-
-            //Only show item if it actually has an template, so we don't index data objects and such
-            if (content.TemplateId > 0 && !_publicAccessService.IsProtected(content.Path))
+            var rootNamespace = new XElement(_namespace + "sitemapindex");
+            foreach (var part in parts)
             {
-                var docTypeSettings = GetPageTypeSettings(content.ContentType.Key);
-                var contentOverride = GetContentSettings(content.Key);
-
-                // Resolve HideFromSitemap: excludeFromSitemap (content) → doc type → false.
-                var hideFromSitemap = contentOverride?.ExcludeFromSitemap == true
-                    || (docTypeSettings?.HideFromSitemap ?? false)
-                    || (!string.IsNullOrWhiteSpace(culture) && !content.IsPublished(culture));
-
-                var item = new SitemapNodeItem(BaseUrlHelper.ApplyBaseUrl(content.Url(culture, UrlMode.Absolute), _baseUrl))
-                {
-                    HideFromSitemap = hideFromSitemap,
-                    Content = content
-                };
-
-                if (!hideFromSitemap)
-                {
-                    if (!string.IsNullOrWhiteSpace(_settings.LastModifiedFieldAlias) && HasValue(content, _settings.LastModifiedFieldAlias, culture)) 
-                        item.LastModifiedDate = Value<DateTime>(content, _settings.LastModifiedFieldAlias, culture);
-                    else 
-                        item.LastModifiedDate = content.UpdateDate;
-
-                    // Resolve ChangeFrequency: content override → doc type → config field alias
-                    var changeFrequency = contentOverride?.ChangeFrequency ?? docTypeSettings?.ChangeFrequency;
-                    if (!string.IsNullOrWhiteSpace(changeFrequency))
-                    {
-                        item.ChangeFrequency = changeFrequency;
-                    }
-                    else if (!string.IsNullOrWhiteSpace(_settings.ChangeFrequencyFieldAlias) && HasValue(content, _settings.ChangeFrequencyFieldAlias, culture))
-                    {
-                        item.ChangeFrequency = Value<string>(content, _settings.ChangeFrequencyFieldAlias, culture);
-                    }
-
-                    // Resolve Priority: content override → doc type → config field alias
-                    var priority = contentOverride?.Priority ?? docTypeSettings?.Priority;
-                    if (priority != null)
-                    {
-                        item.Priority = priority;
-                    }
-                    else if (!string.IsNullOrWhiteSpace(_settings.PriorityFieldAlias) && HasValue(content, _settings.PriorityFieldAlias, culture))
-                    {
-                        item.Priority = Value<double?>(content, _settings.PriorityFieldAlias, culture);
-                    }
-
-                    if (_settings.ShowAlternatePages)
-                    {
-                        var cultures = content.Cultures.Where(it => content.IsPublished(it.Key) && _validAlternateCultures.Contains(it.Key, StringComparer.InvariantCultureIgnoreCase)).ToArray();
-                        if (cultures.Length > 1)
-                        {
-                            foreach (var additionalCulture in cultures)
-                            {
-                                item.AlternatePages.Add(new SitemapNodeAlternatePage(BaseUrlHelper.ApplyBaseUrl(content.Url(additionalCulture.Key, UrlMode.Absolute), _baseUrl), additionalCulture.Key));
-                            }
-                        }
-                    }
-
-                    _eventAggregator.Publish(new GenerateSitemapNodeNotification(item));
-
-                    items.Add(item);
-                }
+                var sitemapElement = new XElement(_namespace + "sitemap", new XElement(_namespace + "loc", part.Url));
+                if (part.LastModifiedDate != null)
+                    sitemapElement.Add(new XElement(_namespace + "lastmod", part.LastModifiedDate.Value.ToString(_settings.LastModifiedFormat)));
+                rootNamespace.Add(sitemapElement);
             }
-
-            foreach (var child in content.Children(culture))
-            {
-                items.AddRange(GetSelfAndChildren(child, culture));
-            }
-            return items;
+            return new XDocument(rootNamespace);
         }
 
         private IEnumerable<XElement> ToXmlElements(IEnumerable<SitemapNodeItem> nodes)
@@ -226,37 +206,6 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Common.SitemapGenerators
             }
 
             return items;
-        }
-
-        //Sadly this is a bug with Umbraco itself: https://github.com/umbraco/Umbraco-CMS/issues/11815. We need to check with culture first and then without culture
-        private bool HasValue(IPublishedContent content, string alias, string culture)
-        {
-            var hasValue = content.HasValue(alias, culture);
-            if (hasValue) return hasValue;
-            return content.HasValue(alias);
-        }
-
-        //Sadly this is a bug with Umbraco itself: https://github.com/umbraco/Umbraco-CMS/issues/11815. We need to check with culture first and then without culture
-        private T Value<T>(IPublishedContent content, string alias, string culture)
-        {
-            if (content.HasValue(alias, culture))
-                return content.Value<T>(alias, culture);
-            if (content.HasValue(alias))
-                return content.Value<T>(alias);
-            return default;
-        }
-
-        private SitemapPageSettings GetPageTypeSettings(Guid contentTypeId)
-        {
-            if (!_pageTypeSettings.ContainsKey(contentTypeId))
-                _pageTypeSettings[contentTypeId] = _sitemapService.GetPageTypeSettings(contentTypeId);
-            return _pageTypeSettings[contentTypeId];
-        }
-
-        private SitemapContentSettings GetContentSettings(Guid nodeKey)
-        {
-            _contentSettings.TryGetValue(nodeKey, out var result);
-            return result;
         }
     }
 }
