@@ -63,6 +63,8 @@ Meta Fields allow you to easily set your meta fields like Title, Description, Op
 ### Sitemap
 Sitemap gives you an sitemap.xml where all your pages are listed. This package works with multiple domains and languages. It creates a /sitemap.xml for each domain and also a sitemap index with all your sitemaps listed within.
 
+Large sitemaps are split automatically. Every collection (the content pages, plus any custom `ISitemapCollectionProvider` you register with `builder.SitemapCollections().Append<T>()`) gets its own `{alias}-{index}-sitemap.xml` files with at most `MaxUrlsPerSitemap` urls each. The default is `int.MaxValue`, so nothing is split unless you configure it; set it to 50000 (the sitemap protocol maximum) or lower. The default will become 50000 in a future major version. When a domain has more than one of these files, its /sitemap.xml becomes a sitemap index listing them. Generated items are cached for `CacheDurationInMinutes` (default 60, 0 disables) and the cache is cleared when content changes. Collections can be turned off with `DisabledCollections`.
+
 ### Robots.txt
 Robots.txt gives you an easy interface to edit your robots.txt. After installing the package, you'll get the /robots.txt path that'll display your configured robots.txt.
 
