@@ -15,11 +15,14 @@ let originalContent = '';
  *
  * Note RobotsTxtController.Save VALIDATES by default and returns the errors WITHOUT
  * saving when any are found, so the content here has to be valid (or skipValidation set).
+ *
+ * The management API returns the content as a JSON string, so read it with .json(), not
+ * .text(): the raw body is quoted and escaped, and restoring that would re-encode it every run.
  */
 test.beforeEach(async ({ umbracoApi }) => {
   const response = await umbracoApi.get(ApiRoute.robotsTxt);
   expect(response.status()).toBe(200);
-  originalContent = response.status() === 200 ? await response.text() : '';
+  originalContent = response.status() === 200 ? ((await response.json()) ?? '') : '';
 });
 
 test.afterEach(async ({ umbracoApi }) => {
@@ -59,7 +62,7 @@ test.describe('robots.txt', () => {
 
     const response = await umbracoApi.get(ApiRoute.robotsTxt);
     expect(response.status()).toBe(200);
-    expect((await response.text()).trim()).toBe(testContent);
+    expect(((await response.json()) as string).trim()).toBe(testContent);
   });
 
   test('content that would block the whole site is rejected @smoke', async ({ umbracoApi, request }) => {
