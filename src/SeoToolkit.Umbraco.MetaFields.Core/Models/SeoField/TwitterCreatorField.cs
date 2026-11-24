@@ -16,6 +16,7 @@ public class TwitterCreatorField : SeoField<string>
     public override string Alias => SeoFieldAliasConstants.TwitterCreator;
     public override string Description => "Twitter Creator for the content";
     public override string GroupAlias => SeoFieldGroupConstants.SocialMediaGroup;
+    public override string SettingsGroupAlias => SeoFieldSettingsGroupConstants.Twitter;
     public override ISeoFieldEditor Editor { get; }
     public override ISeoFieldEditEditor EditEditor => new SeoTextBoxEditEditor();
 

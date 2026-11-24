@@ -7,6 +7,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.DocumentTypeSettings.ViewMod
     public class DocumentTypeSettingsContentViewModel
     {
         public SeoFieldViewModel[] Fields { get; set; }
+        public SeoFieldSettingsGroupViewModel[] Groups { get; set; } = Array.Empty<SeoFieldSettingsGroupViewModel>();
         public DocumentTypeSettingsInheritanceViewModel Inheritance { get; set; }
 
         public DocumentTypeSettingsContentViewModel()

@@ -15,6 +15,7 @@ using SeoToolkit.Umbraco.RobotsTxt.Core.Components;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Config;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Config.Models;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Controllers;
+using SeoToolkit.Umbraco.RobotsTxt.Core.Dashboard;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Interfaces;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Middleware;
 using SeoToolkit.Umbraco.RobotsTxt.Core.Repositories;
@@ -49,6 +50,9 @@ namespace SeoToolkit.Umbraco.RobotsTxt.Core.Composers
             builder.Services.AddSingleton<IRobotsTxtRepository, RobotsTxtRepository>();
             builder.Services.AddSingleton<IRobotsTxtService, RobotsTxtService>();
             builder.Services.AddSingleton<IRobotsTxtValidator, DefaultRobotsTxtValidator>();
+
+            builder.DashboardDataSources()
+                .Add<RobotsTxtIndexableDataSource>();
 
             builder.Components().Append<EnableModuleComponent>();
 

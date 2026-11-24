@@ -19,6 +19,7 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Models.SeoField
         public override string Description => "Robot tags for your page";
 
         public override string GroupAlias => SeoFieldGroupConstants.Others;
+        public override string SettingsGroupAlias => SeoFieldSettingsGroupConstants.Indexing;
 
         public override ISeoFieldEditor Editor { get; }
         public override ISeoFieldEditEditor EditEditor { get; }

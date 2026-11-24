@@ -1,8 +1,10 @@
-import { classMap, customElement, repeat, state } from "@umbraco-cms/backoffice/external/lit";
+import { customElement, repeat, state } from "@umbraco-cms/backoffice/external/lit";
 import { UmbModalBaseElement } from "@umbraco-cms/backoffice/modal";
-import { css, html } from "lit";
+import { UUIInputEvent } from "@umbraco-cms/backoffice/external/uui";
+import { css, html, nothing } from "lit";
 
 export interface ItemGroupPickerConfig {
+  headline?: string;
   items: ItemGroupPickerItem[];
 }
 
@@ -15,6 +17,7 @@ export interface ItemGroupPickerItem {
   name: string;
   value: string;
   group: string;
+  icon?: string;
 }
 
 @customElement("st-item-group-picker-modal")
@@ -23,37 +26,41 @@ export default class ItemGroupPicker extends UmbModalBaseElement<
   string[]
 > {
   @state()
-  groups: ItemGroupPickerGroup[] = [];
+  _search = "";
 
-  override async connectedCallback() {
-    super.connectedCallback();
+  get #groups(): ItemGroupPickerGroup[] {
+    const search = this._search.trim().toLowerCase();
+    const groups: ItemGroupPickerGroup[] = [];
 
     this.data?.items.forEach((item) => {
-      let group = this.groups.find((group) => group.group === item.group);
+      if (
+        search &&
+        !item.name.toLowerCase().includes(search) &&
+        !item.group.toLowerCase().includes(search)
+      ) {
+        return;
+      }
+
+      let group = groups.find((group) => group.group === item.group);
       if (!group) {
-        group = {
-          group: item.group,
-          items: [],
-        };
-        this.groups.push(group);
+        group = { group: item.group, items: [] };
+        groups.push(group);
       }
       group.items.push(item);
     });
-  }
 
-  isSelected(item: ItemGroupPickerItem) {
-    return this.value.includes(item.value);
+    return groups;
   }
 
   clickItem(item: ItemGroupPickerItem) {
-    if (this.value.includes(item.value)) {
-      const copyValue = [...this.value];
-      copyValue.splice(this.value.indexOf(item.value), 1);
-      this.value = copyValue;
-    } else {
-      this.value = [...this.value, item.value];
-    }
-    this.requestUpdate();
+    // The order of the value is the order the fields are checked in, so new picks go last.
+    this.value = this.value.includes(item.value)
+      ? this.value.filter((value) => value !== item.value)
+      : [...this.value, item.value];
+  }
+
+  #onSearch(e: UUIInputEvent) {
+    this._search = e.target.value as string;
   }
 
   #handleClose() {
@@ -65,74 +72,154 @@ export default class ItemGroupPicker extends UmbModalBaseElement<
   }
 
   override render() {
+    const groups = this.#groups;
+
     return html`
-      <umb-body-layout headline="Select items">
+      <umb-body-layout headline=${this.data?.headline ?? "Choose fields"}>
+        <uui-input
+          class="search"
+          label="Search fields"
+          placeholder="Search fields"
+          .value=${this._search}
+          @input=${this.#onSearch}
+        >
+          <uui-icon name="icon-search" slot="prepend"></uui-icon>
+        </uui-input>
+        <p class="hint">
+          Fields are checked in the order you pick them. You can reorder them
+          afterwards.
+        </p>
+
+        ${groups.length === 0
+          ? html`<p class="empty">No fields match "${this._search}".</p>`
+          : nothing}
         ${repeat(
-          this.groups,
+          groups,
           (group) => group.group,
           (group) => html`
-            <uui-box class="select-group" headline=${group.group}>
+            <section class="group">
+              <h4 class="group-name">${group.group || "Other"}</h4>
               ${repeat(
                 group.items,
-                (item) => item.name,
-                (item) =>
-                  html`
-                    <div
-                      class=${classMap({
-                        "select-item": true,
-                        selected: this.isSelected(item),
-                      })}
-                      @click="${() => this.clickItem(item)}"
-                    >
-                      ${item.name}
-                    </div>
-                  `
+                (item) => item.value,
+                (item) => this.#renderItem(item),
               )}
-            </uui-box>
-          `
+            </section>
+          `,
         )}
 
         <umb-footer-layout slot="footer">
           <uui-button
-            id="close"
-            label="Close"
-            look="primary"
-            color="danger"
+            label="Cancel"
             slot="actions"
             @click="${this.#handleClose}"
-            >Close</uui-button
-          >
+          ></uui-button>
           <uui-button
-            id="save"
-            label="Submit"
+            label="Choose${this.value.length ? ` (${this.value.length})` : ""}"
             look="primary"
             color="positive"
             slot="actions"
             @click="${this.#handleSubmit}"
-            >Submit</uui-button
-          >
+          ></uui-button>
         </umb-footer-layout>
       </umb-body-layout>
     `;
   }
 
+  #renderItem(item: ItemGroupPickerItem) {
+    const position = this.value.indexOf(item.value);
+    const selected = position !== -1;
+
+    return html`
+      <button
+        class="item ${selected ? "selected" : ""}"
+        role="checkbox"
+        aria-checked=${selected ? "true" : "false"}
+        @click=${() => this.clickItem(item)}
+      >
+        <span class="check">${selected ? position + 1 : nothing}</span>
+        ${item.icon ? html`<uui-icon name=${item.icon}></uui-icon>` : nothing}
+        <span class="name">${item.name}</span>
+      </button>
+    `;
+  }
+
   static styles = [
     css`
-      .select-group {
-        margin-top: 12px;
+      .search {
+        width: 100%;
       }
 
-      .select-item {
-        padding: 12px 20px;
-        cursor: pointer;
-        border-radius: 8px;
-        margin-bottom: 4px;
+      .search uui-icon {
+        margin-left: var(--uui-size-space-3);
+        color: var(--uui-color-text-alt);
+      }
 
-        &.selected,
-        &:hover {
-          border: 1px solid var(--uui-palette-gravel);
-          background-color: var(--uui-palette-gravel-light);
-        }
+      .hint,
+      .empty {
+        margin: var(--uui-size-space-3) 0 0;
+        color: var(--uui-color-text-alt);
+        font-size: var(--uui-type-small-size);
+      }
+
+      .group {
+        margin-top: var(--uui-size-space-5);
+      }
+
+      .group-name {
+        margin: 0 0 var(--uui-size-space-2);
+        font-size: var(--uui-type-small-size);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--uui-color-text-alt);
+      }
+
+      .item {
+        all: unset;
+        box-sizing: border-box;
+        cursor: pointer;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: var(--uui-size-space-3);
+        padding: var(--uui-size-space-3) var(--uui-size-space-4);
+        border-radius: var(--uui-border-radius);
+      }
+
+      .item:hover {
+        background: var(--uui-color-surface-emphasis);
+      }
+
+      .item:focus-visible {
+        outline: 2px solid var(--uui-color-focus);
+      }
+
+      .item.selected {
+        background: var(--uui-color-selected);
+        color: var(--uui-color-selected-contrast);
+      }
+
+      .check {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        border: 1px solid var(--uui-color-border-emphasis);
+        background: var(--uui-color-surface);
+        color: var(--uui-color-text);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .item.selected .check {
+        border-color: var(--uui-color-selected-contrast);
+      }
+
+      .name {
+        flex: 1;
       }
     `,
   ];

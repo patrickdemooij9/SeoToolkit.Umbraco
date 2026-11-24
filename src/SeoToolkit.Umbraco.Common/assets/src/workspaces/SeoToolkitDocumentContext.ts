@@ -11,10 +11,15 @@ import { SeoSettingsPostModel } from "../api";
 import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import { SeoToolkitSettingsRepository } from "../repositories/seoToolkitSettingsRepository";
 import { UmbEntityUpdatedEvent } from "@umbraco-cms/backoffice/entity-action";
+import {
+  SeoDocumentNavigation,
+  SeoDocumentNavItem,
+  ST_SEO_DOCUMENT_NAVIGATION_CONTEXT,
+} from "./seoDocumentNavigation";
 
 export default class SeoToolkitDocumentContext
   extends UmbContextBase
-  implements UmbWorkspaceContext
+  implements UmbWorkspaceContext, SeoDocumentNavigation
 {
   workspaceAlias: string = "Umb.Workspace.DocumentType";
 
@@ -28,8 +33,14 @@ export default class SeoToolkitDocumentContext
   });
   public readonly model = this.#model.asObservable();
 
+  #navItems = new UmbObjectState<Record<string, SeoDocumentNavItem[]>>({});
+  public readonly navItems = this.#navItems.asObservable();
+
+  #activeNavItems = new UmbObjectState<Record<string, string | undefined>>({});
+
   constructor(host: UmbControllerHost) {
     super(host, ST_METAFIELDS_SETTINGSDOCUMENT_TOKEN_CONTEXT.toString());
+    this.provideContext(ST_SEO_DOCUMENT_NAVIGATION_CONTEXT, this);
 
     this.consumeContext(UMB_DOCUMENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
       this.observe(instance?.isElement, (value) => {
@@ -82,6 +93,18 @@ export default class SeoToolkitDocumentContext
     this.#model.update({
       enabled: value,
     });
+  }
+
+  setNavItems(viewPathname: string, items: SeoDocumentNavItem[]) {
+    this.#navItems.update({ [viewPathname]: items });
+  }
+
+  activeNavItem(viewPathname: string) {
+    return this.#activeNavItems.asObservablePart((items) => items[viewPathname]);
+  }
+
+  setActiveNavItem(viewPathname: string, key: string | undefined) {
+    this.#activeNavItems.update({ [viewPathname]: key });
   }
 
   getEntityType(): string {

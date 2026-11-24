@@ -42,6 +42,9 @@ export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
   @property({ type: Boolean })
   public hasGlobalInheritance: boolean = false;
 
+  @property({ type: String })
+  public orientation: "horizontal" | "vertical" = "horizontal";
+
   @state()
   private _element?: ManifestPropertyEditorUi["ELEMENT_TYPE"];
 
@@ -99,6 +102,7 @@ export class MetaFieldsSettingsField extends UmbElementMixin(LitElement) {
       <umb-property-layout
         .label=${this.field!.title!}
         .description=${this.field!.description!}
+        .orientation=${this.orientation}
       >
         <div slot="editor">
           ${when(

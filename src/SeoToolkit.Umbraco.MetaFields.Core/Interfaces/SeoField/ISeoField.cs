@@ -10,6 +10,12 @@ namespace SeoToolkit.Umbraco.MetaFields.Core.Interfaces.SeoField
         string Alias { get; }
         string Description { get; }
         string GroupAlias { get; }
+
+        /// <summary>
+        /// The alias of the <see cref="ISeoFieldSettingsGroup"/> this field is shown in on the
+        /// document type settings screen. Fields with an unknown alias end up in the "others" group.
+        /// </summary>
+        string SettingsGroupAlias => Constants.SeoFieldSettingsGroupConstants.Others;
         Type FieldType { get; }
         ISeoFieldEditor Editor { get; }
         ISeoFieldEditEditor EditEditor { get; }

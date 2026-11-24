@@ -10,6 +10,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Interfaces
         [Obsolete("Use UpdateRedirectCodes(Guid[] keys, int redirectCode) method instead. Will be removed in next major version.")]
         void UpdateRedirectCodes(int[] ids, int redirectCode);
         void UpdateRedirectCodes(Guid[] keys, int redirectCode);
+        void UpdateLastHits(IDictionary<Guid, DateTime> lastHits);
         void Delete(Redirect redirect);
 
         [Obsolete("Use Get method with Guid instead. Will be removed in next major version.")]
@@ -21,5 +22,7 @@ namespace SeoToolkit.Umbraco.Redirects.Core.Interfaces
         IEnumerable<Redirect> GetAll(int pageNumber, int pageSize, out long totalRecords, string orderBy = null, string orderDirection = null, string search = "");
         IEnumerable<Redirect> GetAllRegexRedirects();
         IEnumerable<Redirect> GetByUrls(params string[] paths);
+        RedirectStatistics GetStatistics(DateTime recentlyHitSince, DateTime staleBefore);
+        IEnumerable<Redirect> GetMostRecentlyHit(int take);
     }
 }

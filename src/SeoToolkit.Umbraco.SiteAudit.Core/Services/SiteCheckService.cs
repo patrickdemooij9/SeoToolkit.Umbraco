@@ -16,7 +16,8 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
         private readonly SiteAuditCheckCollection _checkCollection;
         private readonly SiteAuditConfigModel _settings;
 
-        private List<SiteCheckDto> _items { get; set; }
+        private volatile List<SiteCheckDto> _items;
+        private readonly object _loadLock = new();
 
         public SiteCheckService(ISiteCheckRepository siteCheckRepository,
             ISettingsService<SiteAuditConfigModel> settingsService,
@@ -48,7 +49,20 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
             if (_items != null)
                 return;
 
-            _items = new List<SiteCheckDto>();
+            // Requests can load the checks at the same time (e.g. the dashboard tiles), so only one may build the list,
+            // and it's only published once complete.
+            lock (_loadLock)
+            {
+                if (_items != null)
+                    return;
+
+                _items = BuildItems();
+            }
+        }
+
+        private List<SiteCheckDto> BuildItems()
+        {
+            var items = new List<SiteCheckDto>();
             foreach (var codeCheck in _checkCollection)
             {
                 //If we cannot find the settings for it, just use default
@@ -61,8 +75,9 @@ namespace SeoToolkit.Umbraco.SiteAudit.Core.Services
 
                 var isBrokenLinkCheck = codeCheck is BrokenLinkCheck; //TODO: Remove this when we have a better way of handling this. Currently the check is based on the amount of crawled pages but we only want 1 for the content checks
                 if (settingsCheck is null || settingsCheck.Enabled)
-                    _items.Add(new SiteCheckDto { Id = registeredCheckId, Check = codeCheck, AllowedAsPageCheck = settingsCheck?.AllowedAsPageCheck ?? !isBrokenLinkCheck });
+                    items.Add(new SiteCheckDto { Id = registeredCheckId, Check = codeCheck, AllowedAsPageCheck = settingsCheck?.AllowedAsPageCheck ?? !isBrokenLinkCheck });
             }
+            return items;
         }
     }
 }
