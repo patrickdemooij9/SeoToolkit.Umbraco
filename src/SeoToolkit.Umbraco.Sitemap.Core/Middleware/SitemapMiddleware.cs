@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -22,6 +23,9 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
 {
     public class SitemapMiddleware
     {
+        //Matches a split sitemap, for example "/en/news-articles-2-sitemap.xml"
+        private static readonly Regex SitemapPartPathRegex = new(@"/(?<alias>[a-z0-9]+(?:-[a-z0-9]+)*?)-(?<index>[1-9][0-9]{0,5})-sitemap\.xml$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         private readonly RequestDelegate _next;
         private readonly IUmbracoContextFactory _umbracoContextFactory;
         private readonly ISettingsService<SitemapConfig> _sitemapConfigurationService;
@@ -53,8 +57,10 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
             var isSitemapRequest = context.Request.Path.Value.EndsWith("/sitemap.xml", StringComparison.OrdinalIgnoreCase);
             var isConfiguredIndexRequest = !string.IsNullOrWhiteSpace(settings.SitemapIndexPath)
                 && IsSitemapIndexRequest(context.Request.Path, settings.SitemapIndexPath);
+            var partMatch = SitemapPartPathRegex.Match(context.Request.Path.Value);
+            var isPartRequest = !isConfiguredIndexRequest && partMatch.Success;
 
-            if (!isSitemapRequest && !isConfiguredIndexRequest)
+            if (!isSitemapRequest && !isConfiguredIndexRequest && !isPartRequest)
             {
                 await _next.Invoke(context);
                 return;
@@ -63,11 +69,16 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
             XDocument doc = null;
             using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
             {
+                SitemapGeneratorOptions options = null;
+
                 //If domain is null, we are either at root or we don't have any domains on the website anyway.
                 var domains = ctx.UmbracoContext.Domains.GetAll(false).ToArray();
                 if (domains.Length == 0 || settings.StructureMode == StructureMode.OnlyRoot)
                 {
-                    doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture, baseUrl));
+                    options = new SitemapGeneratorOptions(null, ctx.UmbracoContext.Domains.DefaultCulture, baseUrl)
+                    {
+                        RootUrl = BaseUrlHelper.ApplyBaseUrl($"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}/", baseUrl)
+                    };
                 }
                 else if (isConfiguredIndexRequest)
                 {
@@ -80,7 +91,8 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                     var domain = DomainUtilities.SelectDomain(domains, new Uri(context.Request.GetEncodedUrl()));
                     if (domain is null)
                     {
-                        if (domains.Length == 1) // No point showing a sitemap index if there is only 1 domain.
+                        // No point showing a sitemap index if there is only 1 domain. Parts only exist below a domain.
+                        if (domains.Length == 1 || isPartRequest)
                         {
                             await _next.Invoke(context);
                             return;
@@ -96,9 +108,22 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Middleware
                             return;
                         }
 
-                        doc = sitemapGenerator.Generate(new SitemapGeneratorOptions(rootNode, domain.Culture, baseUrl));
+                        options = new SitemapGeneratorOptions(rootNode, domain.Culture, baseUrl) { Domain = domain };
                     }
                 }
+
+                if (options != null)
+                {
+                    doc = isPartRequest
+                        ? sitemapGenerator.GeneratePart(options, partMatch.Groups["alias"].Value, int.Parse(partMatch.Groups["index"].Value))
+                        : sitemapGenerator.Generate(options);
+                }
+            }
+
+            if (doc is null)
+            {
+                await _next.Invoke(context);
+                return;
             }
 
             context.Response.StatusCode = 200;

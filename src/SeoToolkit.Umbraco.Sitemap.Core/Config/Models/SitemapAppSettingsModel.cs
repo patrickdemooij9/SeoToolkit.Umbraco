@@ -18,5 +18,16 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Config.Models
         public StructureMode StructureMode { get; set; } = StructureMode.MultiRoot;
 
         public string SitemapIndexPath { get; set; } = string.Empty;
+
+        //Maximum amount of urls in a single sitemap. Collections with more urls are split over multiple sitemaps. The sitemap protocol allows at most 50000.
+        //Defaults to int.MaxValue (no splitting) to stay backwards compatible. The default will change to 50000 in a future major version.
+        public int MaxUrlsPerSitemap { get; set; } = int.MaxValue;
+
+        //How long the content pages in the sitemap are cached. Content changes clear the cache. Use 0 to disable caching.
+        //Custom collections decide their own cache duration through ISitemapCollectionProvider.CacheDuration.
+        public int CacheDurationInMinutes { get; set; } = 60;
+
+        //Aliases of sitemap collections that should not be rendered, for example "pages".
+        public string[] DisabledCollections { get; set; } = Array.Empty<string>();
     }
 }

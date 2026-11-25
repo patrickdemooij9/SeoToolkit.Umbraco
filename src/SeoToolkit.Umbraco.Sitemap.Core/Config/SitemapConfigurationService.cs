@@ -26,7 +26,10 @@ namespace SeoToolkit.Umbraco.Sitemap.Core.Config
                 LastModifiedFormat = settings.LastModifiedFormat,
                 DisabledModules = settings.DisabledModules,
                 StructureMode = settings.StructureMode,
-                SitemapIndexPath = settings.SitemapIndexPath
+                SitemapIndexPath = settings.SitemapIndexPath,
+                MaxUrlsPerSitemap = settings.MaxUrlsPerSitemap,
+                CacheDurationInMinutes = settings.CacheDurationInMinutes,
+                DisabledCollections = settings.DisabledCollections
             };
         }
     }
