@@ -16,6 +16,7 @@ using SeoToolkit.Umbraco.Common.Core.Services.SettingsService;
 using SeoToolkit.Umbraco.Common.Core.Startup;
 using Umbraco.Cms.Api.Common.DependencyInjection;
 using Umbraco.Cms.Api.Common.OpenApi;
+using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DeliveryApi;
 using Umbraco.Cms.Core.DependencyInjection;
@@ -46,7 +47,11 @@ namespace SeoToolkit.Umbraco.Common.Core.Composers
             builder.Services.AddUnique<ISeoSettingsRepository, SeoSettingsRepository>();
             builder.Services.AddUnique<ISeoSettingsService, SeoSettingsService>();
 
-            builder.Services.AddUnique<ISeoKeyValueRepository, SeoKeyValueRepository>();
+            builder.Services.AddSingleton<SeoKeyValueRepository>();
+            builder.Services.AddUnique<ISeoKeyValueRepository>(serviceProvider => new CachedSeoKeyValueRepository(
+                serviceProvider.GetRequiredService<SeoKeyValueRepository>(),
+                serviceProvider.GetRequiredService<AppCaches>(),
+                serviceProvider.GetRequiredService<DistributedCache>()));
             builder.Services.AddUnique<ISeoKeyValueService, SeoKeyValueService>();
 
             builder.Services.AddUnique<ISeoDomainsRepository, SeoDomainsRepository>();

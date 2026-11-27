@@ -4,5 +4,6 @@
     {
         public const string DocumentTypeSettings = "DocumentTypeSettings_";
         public const string SeoValue = "SeoValueService_";
+        public const string SchemaEntry = "SeoToolkitSchemaEntry_";
     }
 }
